@@ -3,7 +3,13 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+// Initialize Stripe lazily to avoid build errors when env vars are missing
+function getStripe() {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error("STRIPE_SECRET_KEY is not set");
+  }
+  return new Stripe(process.env.STRIPE_SECRET_KEY);
+}
 
 export async function POST(request: Request) {
   const body = await request.text();
@@ -17,6 +23,7 @@ export async function POST(request: Request) {
     );
   }
 
+  const stripe = getStripe();
   let event: Stripe.Event;
 
   try {

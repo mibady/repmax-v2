@@ -98,7 +98,9 @@ export async function updateAthleteProfile(athleteId: string, formData: FormData
     .eq("id", athleteId)
     .single();
 
-  if (!athlete || athlete.profile?.user_id !== user.id) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const athleteData = athlete as { profile?: { user_id: string } } | null;
+  if (!athleteData || athleteData.profile?.user_id !== user.id) {
     throw new Error("Forbidden");
   }
 

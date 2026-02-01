@@ -64,7 +64,9 @@ export async function PATCH(request: Request, context: RouteContext) {
       .eq("id", id)
       .single();
 
-    if (!athlete || athlete.profile?.user_id !== user.id) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const athleteData = athlete as { profile?: { user_id: string } } | null;
+    if (!athleteData || athleteData.profile?.user_id !== user.id) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 

@@ -32,9 +32,21 @@ export default async function DashboardPage() {
     avatar_url?: string;
   };
 
+  // Define types for role-specific data
+  type AthleteData = {
+    repmax_score?: number;
+    offers_count?: number;
+    star_rating?: number;
+    offers?: unknown[];
+  } | null;
+
+  type CoachData = {
+    id: string;
+  } | null;
+
   // Get role-specific data
-  let athleteData = null;
-  let coachData = null;
+  let athleteData: AthleteData = null;
+  let coachData: CoachData = null;
 
   if (typedProfile.role === "athlete") {
     const { data } = await supabase
@@ -42,14 +54,14 @@ export default async function DashboardPage() {
       .select("*, offers(*)")
       .eq("profile_id", typedProfile.id)
       .single();
-    athleteData = data;
+    athleteData = data as AthleteData;
   } else if (typedProfile.role === "coach" || typedProfile.role === "recruiter") {
     const { data } = await supabase
       .from("coaches")
       .select("*")
       .eq("profile_id", typedProfile.id)
       .single();
-    coachData = data;
+    coachData = data as CoachData;
   }
 
   return (
