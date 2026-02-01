@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { getZoneFromState, getZonePulse, getZoneEvents, getZoneName } from "@/lib/zone";
+import { getZoneFromState, getZonePulse, getZoneEvents, getZoneName } from "@repmax/shared/zone";
 
 function formatHeight(inches: number | null): string {
   if (!inches) return "--";
