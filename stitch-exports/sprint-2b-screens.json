@@ -1,0 +1,239 @@
+{
+  "projectId": "1682419891237734469",
+  "sprint": "2B",
+  "exportDate": "2026-02-01",
+  "screens": {
+    "auth": [
+      {
+        "id": "55a93ef6ab2b4f9c8cf3ddfcc226e4bc",
+        "title": "RepMax Sign-In Page",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzg5YzViNGM4YjU0YzRlNDJhMDExMDExMjNlZmQ1YjYwEgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "app/(auth)/login/page.tsx",
+        "dataRequirements": ["email", "password", "oauth_provider"]
+      },
+      {
+        "id": "08bda60086e14970ab772756b6ad8e96",
+        "title": "RepMax Sign-Up Page",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2I0MTIwY2JkNjUwNzQxZDI4NDIyZDg5N2EzYjYwNGEwEgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "app/(auth)/signup/page.tsx",
+        "dataRequirements": ["full_name", "email", "password", "role"]
+      },
+      {
+        "id": "8239b51bc5194175860054317a917c0d",
+        "title": "RepMax Role Selection Onboarding",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2VjYzhhNmI2NzBmZTQyZDk4NzM3MmUzYmNjMzJmODI2EgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "app/onboarding/role/page.tsx",
+        "dataRequirements": ["role"]
+      },
+      {
+        "id": "94449414cd944765928f9f7bd8ee40b0",
+        "title": "AI Onboarding Chat Interface",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzA4ZDA4ZjkwM2QzZjQ4N2M5MjUxMWViODE4OTM3YWNkEgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "app/onboarding/chat/page.tsx",
+        "dataRequirements": ["chat_messages", "onboarding_step"]
+      }
+    ],
+    "athleteDashboard": [
+      {
+        "id": "7269516636b74b458342da1c528af51e",
+        "title": "Athlete Recruitment Dashboard",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzNlOWM0ZWZhNDBmZDRjNzQ5YjMyMjg0MTQ5MGYxMmRkEgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "app/dashboard/athlete/page.tsx",
+        "dataRequirements": ["profile_views", "coaches_watching", "zone_pulse", "calendar_events", "athlete_metrics"]
+      },
+      {
+        "id": "453dc504fa104f8eab68ca5c8bfca28f",
+        "title": "Athlete Recruitment Dashboard Variant",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzg2Yjg0ZjJiZWU2ZTQ3NjY4YjI0ZGUzZmViNGI5MzE4EgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "components/dashboard/AthleteDashboardAlt.tsx",
+        "dataRequirements": ["profile_views", "coaches_watching", "zone_pulse"]
+      },
+      {
+        "id": "4ae30d27bc344d50a2008154447dd203",
+        "title": "Athlete Profile Analytics Dashboard",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzk0MmZkNjkwMjEzZDQ1NGFhODkwMTc3Y2M0NDRkNjZjEgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "app/dashboard/athlete/analytics/page.tsx",
+        "dataRequirements": ["profile_views_history", "engagement_metrics", "recruiter_activity", "comparison_data"]
+      },
+      {
+        "id": "4fe5e2ebeb9144ffa21518e043191a54",
+        "title": "Edit Companion Card Profile",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2QzMGY0ZDQ2M2M2NDQ0MmZhMGZiZDAyZWE4MjI2YTliEgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "app/dashboard/athlete/card/edit/page.tsx",
+        "dataRequirements": ["athlete_profile", "measurables", "academics", "highlights"]
+      }
+    ],
+    "zoneIntelligence": [
+      {
+        "id": "12fa24bf32654e8ebb28f691ff5d3788",
+        "title": "Zone Pulse Banner West",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2VhZjM1NzhkMDg5MzRhNDNiMWVlZjUzMzBiYmIwNTZjEgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "components/zone/ZonePulseBannerWest.tsx",
+        "dataRequirements": ["zone_activity", "hot_positions", "recent_commits"]
+      },
+      {
+        "id": "a4082bce36df42db8d75abe48824c334",
+        "title": "Zone Pulse Banner Southeast Expanded",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2YyZGViNTc4NWViNzQ3YzliN2MwNDQ3MWJmN2Y4MzdlEgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "components/zone/ZonePulseBannerSoutheast.tsx",
+        "dataRequirements": ["zone_activity", "hot_positions", "recent_commits"]
+      },
+      {
+        "id": "cb5835ceabe04aa7a7cb2fb65e4a9b94",
+        "title": "Southwest Zone Intelligence Panel",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2I2MzYyOWZhZGM0NzRhNTQ4ZmViYmNhYjdjMWQ2NzRjEgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "components/zone/SouthwestZonePanel.tsx",
+        "dataRequirements": ["zone_stats", "top_prospects", "program_activity"]
+      },
+      {
+        "id": "24c0b85880d64a9f8bac819c66a49888",
+        "title": "Texas Recruiting Intelligence Dashboard",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzU1MzQyOGYyNGFkMTQ4NDY4Y2RmNjk5OWUyZTQ0YzQxEgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "app/dashboard/zone/texas/page.tsx",
+        "dataRequirements": ["state_rankings", "program_rankings", "recent_offers", "commits"]
+      },
+      {
+        "id": "f792ccbe4eeb485abccc163864dcb5ae",
+        "title": "Zone Intelligence Map Dashboard",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzI4OWY0ODAzNTAxYjRhYzQ5MTI4NDg1Mzc4YzUyYTg0EgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "app/dashboard/zone/map/page.tsx",
+        "dataRequirements": ["zone_boundaries", "zone_stats", "hotspots"]
+      },
+      {
+        "id": "5d286afa18454bada0c2774bd465b2b1",
+        "title": "Compact Zone Map Widget",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzM4M2ZlYzJjOTZjNzQwNWRiZTI2MzFmYTNkOGE5YTdkEgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "components/zone/CompactZoneMap.tsx",
+        "dataRequirements": ["zone_summary"]
+      },
+      {
+        "id": "0543175bc27442a28a66818d4d06b7eb",
+        "title": "Geographic Viewer Analytics Map",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2Y4ODEwZWM3N2I0ZjQ3OWFhY2I3NTc5ODJlMzM4OTdhEgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "components/analytics/GeographicViewer.tsx",
+        "dataRequirements": ["viewer_locations", "engagement_by_region"]
+      }
+    ],
+    "widgets": [
+      {
+        "id": "266125955a3f4903a662d9d3687782e9",
+        "title": "Class Rankings Widget",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2E1ZmFkMmRhY2I1MTRjODM5OTEyMmQwYThmYTdkZmY4EgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "components/widgets/ClassRankingsWidget.tsx",
+        "dataRequirements": ["class_rankings"]
+      },
+      {
+        "id": "ca4330163f7f4bccb38e50e5ad5b851a",
+        "title": "Program Rankings Widget",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2M4NWYxZmI4Njc2ZjQ0OGI5NGRkMDczZTkxYTk3NjI5EgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "components/widgets/ProgramRankingsWidget.tsx",
+        "dataRequirements": ["program_rankings"]
+      },
+      {
+        "id": "bd58d5f9185e47808fc3aee7df8215aa",
+        "title": "Prospect Ticker Widget",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzljOTNiNWU2ZjhmYjQ1NTRhYjUyN2ZlZGY5YTc4MjBkEgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "components/widgets/ProspectTickerWidget.tsx",
+        "dataRequirements": ["recent_activity", "commits", "offers"]
+      },
+      {
+        "id": "eefdfbe7e87e4cb2aea45d8b10209b2b",
+        "title": "Standard Recruiting Calendar Widget",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2IyYWU3NGMyZTM0ZTRjYWM4OGJiZDU2NDJjNWJkMzQyEgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "components/widgets/RecruitingCalendarWidget.tsx",
+        "dataRequirements": ["calendar_events", "deadlines"]
+      },
+      {
+        "id": "ed087520aa4f4bcb9021fa2ed081c125",
+        "title": "Parent-Friendly Recruiting Calendar",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzJhMjljMTA2M2JkMDQ1MWNiNjhhMjhlODU1ZjkwMmEwEgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "components/widgets/ParentCalendarWidget.tsx",
+        "dataRequirements": ["calendar_events", "parent_tips"]
+      }
+    ],
+    "cards": [
+      {
+        "id": "af3abd76ef7b4f33aa7acb138a9160e8",
+        "title": "Companion Card: Ideal vs Partial States",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzE5YjIyMjE0ZGEyMDQ5OWRhYWRiOWIzN2I5ZTk1OTEwEgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "components/cards/CardStates.tsx",
+        "dataRequirements": ["athlete_profile", "completion_status"]
+      }
+    ],
+    "film": [
+      {
+        "id": "e6345b999ece469d9e11e636cbacb8c4",
+        "title": "Athlete Film Management Dashboard",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzQ3MmM3ZjY5MjQ3YTQ4YjE4ZjZmOGJlMDhlODA0YmEzEgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "app/dashboard/athlete/film/page.tsx",
+        "dataRequirements": ["highlights", "view_counts", "tags"]
+      },
+      {
+        "id": "53d732a2348c4edbacac88d42d8fee50",
+        "title": "Mobile Film Upload Flow",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzExZDI4MDc4NmI1OTQ4MDU5ZDQ0YWI0NTlkZDBiNzQ1EgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "apps/mobile/app/upload/page.tsx",
+        "dataRequirements": ["video_file", "title", "tags"]
+      },
+      {
+        "id": "dc3ed16466a448969641f3818d9c2ab9",
+        "title": "Recruiter Film Player with Bookmarks",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzU1Yzg3NzRlMjU1MDRjNDk4MzJmNTI1ZmU3ZWE1MDNhEgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "components/film/RecruiterFilmPlayer.tsx",
+        "dataRequirements": ["highlight", "bookmarks", "notes"]
+      },
+      {
+        "id": "5450c140c449483f93b7fdcf0a4dca8d",
+        "title": "RepMax Photo Capture Screen",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzdiM2ExMzgyNDNkMjRhOGU4MDJiNjlhYTI0NTBlYTg0EgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "apps/mobile/app/capture/page.tsx",
+        "dataRequirements": ["photo_type", "camera_settings"]
+      },
+      {
+        "id": "f959c87f974840ef82da8ae44fd33a01",
+        "title": "RepMax Photo Review Completion",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2MxOTE1Y2NjMTM2ZjQwMjdhYzA1YmNlNDZhMmJhMzc3EgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "apps/mobile/app/capture/review/page.tsx",
+        "dataRequirements": ["captured_photo", "photo_quality"]
+      }
+    ],
+    "mobile": [
+      {
+        "id": "744adb9e16fb4deab83dfc418a830279",
+        "title": "Mobile Athlete Home Screen",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzgwNWYxMjlhZDBhZDRjMTdhYjYyZjVjYjlmY2M4N2I5EgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "apps/mobile/app/(tabs)/index.tsx",
+        "dataRequirements": ["athlete_summary", "quick_stats", "recent_activity"]
+      },
+      {
+        "id": "b768718df4c64c749ecf9d62dbd14cfa",
+        "title": "Mobile Share Bottom Sheet",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzI5NjlmOWQ4NWJlNjQ4MDRhZDk0ZWY5MWEyYjQwNDQ2EgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "apps/mobile/components/ShareSheet.tsx",
+        "dataRequirements": ["share_url", "share_platforms"]
+      }
+    ],
+    "emptyStates": [
+      {
+        "id": "7ade0473bf3147d1b5b7abc7e4b50e17",
+        "title": "RepMax Empty State Collection",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzdhNDVmNWJhM2M5ZTQ1OGZhOTE2NGI4NjJkMzJjMjM5EgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "components/EmptyStateCollection.tsx",
+        "dataRequirements": []
+      }
+    ]
+  },
+  "summary": {
+    "totalScreens": 30,
+    "categories": {
+      "auth": 4,
+      "athleteDashboard": 4,
+      "zoneIntelligence": 7,
+      "widgets": 5,
+      "cards": 1,
+      "film": 5,
+      "mobile": 2,
+      "emptyStates": 1
+    }
+  }
+}

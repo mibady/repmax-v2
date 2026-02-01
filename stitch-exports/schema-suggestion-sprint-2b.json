@@ -1,0 +1,163 @@
+{
+  "extractedFrom": "Sprint 2B Stitch Screens",
+  "extractionDate": "2026-02-01",
+  "projectId": "1682419891237734469",
+  "entities": [
+    {
+      "name": "profile_views",
+      "description": "Tracks when athletes' profiles are viewed by recruiters/coaches",
+      "sourceScreens": [
+        "Athlete Profile Analytics Dashboard",
+        "Geographic Viewer Analytics Map"
+      ],
+      "fields": [
+        { "name": "id", "type": "uuid", "required": true },
+        { "name": "athlete_id", "type": "uuid", "required": true, "references": "athletes.id" },
+        { "name": "viewer_id", "type": "uuid", "required": false, "references": "profiles.id" },
+        { "name": "viewer_role", "type": "text", "required": false },
+        { "name": "viewer_school", "type": "text", "required": false },
+        { "name": "viewer_division", "type": "text", "required": false },
+        { "name": "viewer_state", "type": "text", "required": false },
+        { "name": "viewer_zone", "type": "enum:recruiting_zone", "required": false },
+        { "name": "source", "type": "enum", "enumValues": ["search", "shortlist", "share_link", "direct", "zone_pulse", "email"], "required": false },
+        { "name": "duration_seconds", "type": "integer", "required": false },
+        { "name": "created_at", "type": "timestamptz", "required": true }
+      ]
+    },
+    {
+      "name": "film_bookmarks",
+      "description": "Recruiter bookmarks and notes on athlete highlight videos",
+      "sourceScreens": [
+        "Recruiter Film Player with Bookmarks",
+        "Athlete Film Management Dashboard"
+      ],
+      "fields": [
+        { "name": "id", "type": "uuid", "required": true },
+        { "name": "highlight_id", "type": "uuid", "required": true, "references": "highlights.id" },
+        { "name": "coach_id", "type": "uuid", "required": true, "references": "coaches.id" },
+        { "name": "timestamp_seconds", "type": "integer", "required": true },
+        { "name": "label", "type": "text", "required": false },
+        { "name": "notes", "type": "text", "required": false },
+        { "name": "rating", "type": "integer", "required": false, "min": 1, "max": 5 },
+        { "name": "tags", "type": "text[]", "required": false },
+        { "name": "created_at", "type": "timestamptz", "required": true },
+        { "name": "updated_at", "type": "timestamptz", "required": true }
+      ]
+    },
+    {
+      "name": "zone_activity",
+      "description": "Aggregated daily recruiting activity metrics by zone",
+      "sourceScreens": [
+        "Zone Pulse Banner West",
+        "Zone Pulse Banner Southeast Expanded",
+        "Southwest Zone Intelligence Panel",
+        "Texas Recruiting Intelligence Dashboard",
+        "Zone Intelligence Map Dashboard",
+        "Compact Zone Map Widget"
+      ],
+      "fields": [
+        { "name": "id", "type": "uuid", "required": true },
+        { "name": "zone", "type": "enum:recruiting_zone", "required": true },
+        { "name": "date", "type": "date", "required": true },
+        { "name": "total_views", "type": "integer", "required": false, "default": 0 },
+        { "name": "unique_athletes_viewed", "type": "integer", "required": false, "default": 0 },
+        { "name": "unique_coaches_active", "type": "integer", "required": false, "default": 0 },
+        { "name": "new_offers", "type": "integer", "required": false, "default": 0 },
+        { "name": "new_commits", "type": "integer", "required": false, "default": 0 },
+        { "name": "hot_positions", "type": "text[]", "required": false },
+        { "name": "active_schools", "type": "jsonb", "required": false },
+        { "name": "activity_level", "type": "enum", "enumValues": ["low", "moderate", "high", "very_high"], "required": false },
+        { "name": "week_over_week_change", "type": "decimal", "required": false },
+        { "name": "created_at", "type": "timestamptz", "required": true },
+        { "name": "updated_at", "type": "timestamptz", "required": true }
+      ]
+    },
+    {
+      "name": "onboarding_progress",
+      "description": "Tracks user progress through AI-guided onboarding chat flow",
+      "sourceScreens": [
+        "AI Onboarding Chat Interface",
+        "RepMax Role Selection Onboarding"
+      ],
+      "fields": [
+        { "name": "id", "type": "uuid", "required": true },
+        { "name": "user_id", "type": "uuid", "required": true, "references": "auth.users.id" },
+        { "name": "role", "type": "enum:user_role", "required": true },
+        { "name": "current_step", "type": "integer", "required": true, "default": 1 },
+        { "name": "completed_steps", "type": "integer[]", "required": false },
+        { "name": "collected_data", "type": "jsonb", "required": false },
+        { "name": "started_at", "type": "timestamptz", "required": true },
+        { "name": "completed_at", "type": "timestamptz", "required": false },
+        { "name": "last_interaction_at", "type": "timestamptz", "required": true },
+        { "name": "chat_history", "type": "jsonb", "required": false }
+      ]
+    },
+    {
+      "name": "recruiting_events",
+      "description": "Recruiting calendar events, deadlines, and periods",
+      "sourceScreens": [
+        "Standard Recruiting Calendar Widget",
+        "Parent-Friendly Recruiting Calendar"
+      ],
+      "fields": [
+        { "name": "id", "type": "uuid", "required": true },
+        { "name": "title", "type": "text", "required": true },
+        { "name": "description", "type": "text", "required": false },
+        { "name": "event_type", "type": "enum", "enumValues": ["deadline", "signing_period", "visit", "camp", "showcase", "evaluation", "contact_period", "dead_period"], "required": true },
+        { "name": "start_date", "type": "date", "required": true },
+        { "name": "end_date", "type": "date", "required": false },
+        { "name": "applies_to_divisions", "type": "division[]", "required": false },
+        { "name": "applies_to_zones", "type": "recruiting_zone[]", "required": false },
+        { "name": "applies_to_class_years", "type": "integer[]", "required": false },
+        { "name": "is_ncaa_official", "type": "boolean", "required": false, "default": false },
+        { "name": "ncaa_rule_reference", "type": "text", "required": false },
+        { "name": "is_public", "type": "boolean", "required": false, "default": true },
+        { "name": "created_by", "type": "uuid", "required": false, "references": "profiles.id" }
+      ]
+    },
+    {
+      "name": "class_rankings",
+      "description": "College recruiting class rankings by year",
+      "sourceScreens": [
+        "Class Rankings Widget",
+        "Program Rankings Widget"
+      ],
+      "fields": [
+        { "name": "id", "type": "uuid", "required": true },
+        { "name": "school_name", "type": "text", "required": true },
+        { "name": "division", "type": "enum:division", "required": true },
+        { "name": "conference", "type": "text", "required": false },
+        { "name": "class_year", "type": "integer", "required": true },
+        { "name": "overall_rank", "type": "integer", "required": false },
+        { "name": "conference_rank", "type": "integer", "required": false },
+        { "name": "total_commits", "type": "integer", "required": false, "default": 0 },
+        { "name": "five_stars", "type": "integer", "required": false, "default": 0 },
+        { "name": "four_stars", "type": "integer", "required": false, "default": 0 },
+        { "name": "three_stars", "type": "integer", "required": false, "default": 0 },
+        { "name": "avg_rating", "type": "decimal", "required": false },
+        { "name": "points", "type": "decimal", "required": false },
+        { "name": "ranking_source", "type": "text", "required": false, "default": "repmax" },
+        { "name": "as_of_date", "type": "date", "required": true }
+      ]
+    }
+  ],
+  "apiEndpoints": [
+    { "method": "GET", "path": "/api/analytics/profile-views", "source": "Athlete Profile Analytics Dashboard", "description": "Get profile view analytics for athlete" },
+    { "method": "GET", "path": "/api/analytics/geographic", "source": "Geographic Viewer Analytics Map", "description": "Get geographic viewer distribution" },
+    { "method": "GET", "path": "/api/zone/activity", "source": "Zone Intelligence screens", "description": "Get zone activity metrics" },
+    { "method": "GET", "path": "/api/zone/[zone]", "source": "Zone Intelligence Map Dashboard", "description": "Get specific zone details" },
+    { "method": "GET", "path": "/api/recruiting/events", "source": "Recruiting Calendar Widget", "description": "Get recruiting calendar events" },
+    { "method": "GET", "path": "/api/rankings/class", "source": "Class Rankings Widget", "description": "Get class rankings" },
+    { "method": "GET", "path": "/api/rankings/program", "source": "Program Rankings Widget", "description": "Get program rankings" },
+    { "method": "GET", "path": "/api/film/bookmarks", "source": "Recruiter Film Player", "description": "Get film bookmarks for coach" },
+    { "method": "POST", "path": "/api/film/bookmarks", "source": "Recruiter Film Player", "description": "Create film bookmark" },
+    { "method": "GET", "path": "/api/onboarding/progress", "source": "AI Onboarding Chat", "description": "Get user onboarding progress" },
+    { "method": "PUT", "path": "/api/onboarding/progress", "source": "AI Onboarding Chat", "description": "Update onboarding progress" }
+  ],
+  "summary": {
+    "newTables": 6,
+    "totalFields": 62,
+    "newApiEndpoints": 11,
+    "migrationFile": "supabase/migrations/003_sprint_2b_analytics_film.sql"
+  }
+}
