@@ -15,10 +15,22 @@
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
     "clean": "turbo clean && rm -rf node_modules",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "stitch:convert": "npx tsx scripts/stitch-convert.ts",
+    "stitch:batch": "npx tsx scripts/stitch-batch.ts",
+    "stitch:extract": "npx tsx scripts/stitch-extract.ts",
+    "sandbox:status": "npx tsx C:/Users/info/.claude/scripts/sandbox-runner.ts --status",
+    "sandbox:build": "npx tsx C:/Users/info/.claude/scripts/sandbox-runner.ts --build",
+    "sandbox:lint": "npx tsx C:/Users/info/.claude/scripts/sandbox-runner.ts --lint",
+    "sandbox:typecheck": "npx tsx C:/Users/info/.claude/scripts/sandbox-runner.ts --typecheck",
+    "sandbox:all": "npx tsx C:/Users/info/.claude/scripts/sandbox-runner.ts --all"
   },
   "devDependencies": {
+    "@types/jsdom": "^27.0.0",
+    "jsdom": "^24.1.3",
+    "minimatch": "^9.0.5",
     "prettier": "^3.2.5",
+    "tsx": "^4.21.0",
     "turbo": "^2.3.0",
     "typescript": "^5.7.2"
   },
