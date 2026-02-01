@@ -3,14 +3,16 @@ import Image from "next/image";
 
 // This would typically come from your database
 // For now, this is a static demo page matching the Stitch design
-export default function AthleteCardPage({
+export default async function AthleteCardPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
+
   // Demo data - in production, fetch from Supabase using params.id
   const athlete = {
-    id: params.id,
+    id: id,
     name: "Jaylen Washington",
     school: "Lincoln High School",
     city: "San Diego",
