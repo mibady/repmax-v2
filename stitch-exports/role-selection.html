@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RepMax Role Selection</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&amp;family=Noto+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#edbc1d",
+              "background-dark": "#050505",
+              "surface-dark": "#1F1F22",
+              "surface-hover": "#27272a",
+              "text-secondary": "#A1A1AA",
+            },
+            fontFamily: {
+              "display": ["Lexend", "sans-serif"],
+              "body": ["Noto Sans", "sans-serif"],
+            },
+            borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        /* Custom scrollbar to keep it sleek */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050505; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555; 
+        }
+    </style>
+</head>
+<body class="bg-background-dark text-white font-display min-h-screen flex flex-col items-center antialiased overflow-x-hidden selection:bg-primary selection:text-black">
+<div class="w-full max-w-[600px] flex flex-col min-h-screen px-4 py-8 md:px-8">
+<!-- Logo Header -->
+<header class="flex justify-center mb-8">
+<h2 class="text-primary tracking-tight text-[28px] font-extrabold leading-tight text-center uppercase drop-shadow-sm">
+                REPMAX
+            </h2>
+</header>
+<!-- Progress Indicator -->
+<div class="flex flex-col gap-3 mb-8 w-full">
+<div class="flex justify-between items-center">
+<p class="text-white text-sm font-medium leading-normal">Step 1 of 3: Role Selection</p>
+<span class="text-text-secondary text-xs">Next: Profile Setup</span>
+</div>
+<!-- Progress Bar Container -->
+<div class="flex w-full gap-2">
+<!-- Step 1: Active -->
+<div class="h-1.5 flex-1 rounded-full bg-primary shadow-[0_0_10px_rgba(237,188,29,0.4)]"></div>
+<!-- Step 2: Inactive -->
+<div class="h-1.5 flex-1 rounded-full bg-surface-dark"></div>
+<!-- Step 3: Inactive -->
+<div class="h-1.5 flex-1 rounded-full bg-surface-dark"></div>
+</div>
+</div>
+<!-- Headline -->
+<div class="mb-8 text-center">
+<h1 class="text-white tracking-tight text-[32px] md:text-[36px] font-bold leading-tight">
+                What's Your Role?
+            </h1>
+<p class="text-text-secondary mt-2 text-base font-normal">
+                Choose the profile type that best fits your needs.
+            </p>
+</div>
+<!-- Role Selection Cards -->
+<div class="flex flex-col gap-4 flex-1">
+<!-- Athlete Card (Selected by Default) -->
+<label class="group relative cursor-pointer">
+<input checked="" class="peer sr-only" name="role" type="radio" value="athlete"/>
+<div class="relative flex items-center gap-4 rounded-xl border-2 border-transparent bg-surface-dark p-4 transition-all duration-200 hover:bg-surface-hover peer-checked:border-primary peer-checked:shadow-[0_0_15px_rgba(237,188,29,0.15)] peer-focus:ring-2 peer-focus:ring-primary/50">
+<!-- Icon/Emoji -->
+<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[#2A2A2E] text-2xl group-hover:scale-110 transition-transform duration-200">
+                        🏈
+                    </div>
+<!-- Text Content -->
+<div class="flex grow flex-col">
+<p class="text-white text-base font-bold leading-snug">Athlete</p>
+<p class="text-text-secondary text-sm font-normal leading-normal">I want to get recruited.</p>
+</div>
+<!-- Selection Indicator -->
+<div class="text-transparent transition-colors duration-200 peer-checked:text-primary">
+<span class="material-symbols-outlined filled text-[28px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<!-- Unselected Ring (Absolute positioned to overlap when not checked) -->
+<div class="absolute right-4 top-1/2 -translate-y-1/2 h-7 w-7 rounded-full border-2 border-[#3F3F46] peer-checked:opacity-0 transition-opacity"></div>
+</div>
+</label>
+<!-- Parent Card -->
+<label class="group relative cursor-pointer">
+<input class="peer sr-only" name="role" type="radio" value="parent"/>
+<div class="relative flex items-center gap-4 rounded-xl border-2 border-transparent bg-surface-dark p-4 transition-all duration-200 hover:bg-surface-hover peer-checked:border-primary peer-checked:shadow-[0_0_15px_rgba(237,188,29,0.15)] peer-focus:ring-2 peer-focus:ring-primary/50">
+<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[#2A2A2E] text-2xl group-hover:scale-110 transition-transform duration-200">
+                        👪
+                    </div>
+<div class="flex grow flex-col">
+<p class="text-white text-base font-bold leading-snug">Parent</p>
+<p class="text-text-secondary text-sm font-normal leading-normal">I am managing a player's profile.</p>
+</div>
+<div class="text-transparent transition-colors duration-200 peer-checked:text-primary">
+<span class="material-symbols-outlined filled text-[28px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 h-7 w-7 rounded-full border-2 border-[#3F3F46] peer-checked:opacity-0 transition-opacity"></div>
+</div>
+</label>
+<!-- Coach Card -->
+<label class="group relative cursor-pointer">
+<input class="peer sr-only" name="role" type="radio" value="coach"/>
+<div class="relative flex items-center gap-4 rounded-xl border-2 border-transparent bg-surface-dark p-4 transition-all duration-200 hover:bg-surface-hover peer-checked:border-primary peer-checked:shadow-[0_0_15px_rgba(237,188,29,0.15)] peer-focus:ring-2 peer-focus:ring-primary/50">
+<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[#2A2A2E] text-2xl group-hover:scale-110 transition-transform duration-200">
+                        🧢
+                    </div>
+<div class="flex grow flex-col">
+<p class="text-white text-base font-bold leading-snug">Coach</p>
+<p class="text-text-secondary text-sm font-normal leading-normal">I manage a high school or college team.</p>
+</div>
+<div class="text-transparent transition-colors duration-200 peer-checked:text-primary">
+<span class="material-symbols-outlined filled text-[28px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 h-7 w-7 rounded-full border-2 border-[#3F3F46] peer-checked:opacity-0 transition-opacity"></div>
+</div>
+</label>
+<!-- Recruiter Card -->
+<label class="group relative cursor-pointer">
+<input class="peer sr-only" name="role" type="radio" value="recruiter"/>
+<div class="relative flex items-center gap-4 rounded-xl border-2 border-transparent bg-surface-dark p-4 transition-all duration-200 hover:bg-surface-hover peer-checked:border-primary peer-checked:shadow-[0_0_15px_rgba(237,188,29,0.15)] peer-focus:ring-2 peer-focus:ring-primary/50">
+<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[#2A2A2E] text-2xl group-hover:scale-110 transition-transform duration-200">
+                        👀
+                    </div>
+<div class="flex grow flex-col">
+<p class="text-white text-base font-bold leading-snug">Recruiter</p>
+<p class="text-text-secondary text-sm font-normal leading-normal">I am looking for talent.</p>
+</div>
+<div class="text-transparent transition-colors duration-200 peer-checked:text-primary">
+<span class="material-symbols-outlined filled text-[28px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 h-7 w-7 rounded-full border-2 border-[#3F3F46] peer-checked:opacity-0 transition-opacity"></div>
+</div>
+</label>
+<!-- Club Organizer Card -->
+<label class="group relative cursor-pointer">
+<input class="peer sr-only" name="role" type="radio" value="organizer"/>
+<div class="relative flex items-center gap-4 rounded-xl border-2 border-transparent bg-surface-dark p-4 transition-all duration-200 hover:bg-surface-hover peer-checked:border-primary peer-checked:shadow-[0_0_15px_rgba(237,188,29,0.15)] peer-focus:ring-2 peer-focus:ring-primary/50">
+<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[#2A2A2E] text-2xl group-hover:scale-110 transition-transform duration-200">
+                        📋
+                    </div>
+<div class="flex grow flex-col">
+<p class="text-white text-base font-bold leading-snug">Club Organizer</p>
+<p class="text-text-secondary text-sm font-normal leading-normal">I run a league or club event.</p>
+</div>
+<div class="text-transparent transition-colors duration-200 peer-checked:text-primary">
+<span class="material-symbols-outlined filled text-[28px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 h-7 w-7 rounded-full border-2 border-[#3F3F46] peer-checked:opacity-0 transition-opacity"></div>
+</div>
+</label>
+</div>
+<!-- Footer / Button -->
+<div class="mt-8 pt-4 pb-4 sticky bottom-0 bg-gradient-to-t from-[#050505] to-transparent">
+<button class="w-full cursor-pointer flex items-center justify-center rounded-xl bg-primary h-14 px-5 text-[#221e11] text-lg font-bold leading-normal tracking-wide shadow-lg hover:bg-[#d9ab1b] hover:shadow-primary/20 transition-all active:scale-[0.98]">
+                Continue
+            </button>
+</div>
+</div>
+</body></html>

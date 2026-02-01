@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Compact Zone Map Widget</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Config -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#9156f5",
+                        "primary-glow": "#8B5CF6",
+                        "accent-gold": "#FBBF24",
+                        "widget-bg": "#1F1F22",
+                        "background-light": "#f6f5f8",
+                        "background-dark": "#121212", // Slightly darker than widget for contrast
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem", 
+                        "lg": "0.5rem", 
+                        "xl": "0.75rem", 
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom glow for the active map zone */
+        .active-zone-glow {
+            filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.4));
+        }
+        .map-path {
+            transition: all 0.2s ease-in-out;
+        }
+        .map-path:hover:not(.active-zone) {
+            fill-opacity: 0.15;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen flex items-center justify-center font-display p-8">
+<!-- Widget Container -->
+<div class="w-full max-w-[280px] bg-white dark:bg-widget-bg rounded-lg shadow-lg overflow-hidden border border-gray-200 dark:border-gray-800">
+<!-- Header / Map Area -->
+<div class="p-4 flex flex-col items-center justify-center">
+<!-- Map SVG -->
+<!-- 
+                 Simplified US Map represented by paths. 
+                 West Zone is the left-most large chunk.
+            -->
+<div class="relative w-[240px] h-[160px] flex items-center justify-center">
+<svg class="w-full h-full" fill="none" viewbox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+<!-- Base Inactive Zones (Gray/Neutral) -->
+<!-- North East -->
+<path class="map-path fill-gray-300 dark:fill-gray-700 stroke-white dark:stroke-widget-bg stroke-[2]" d="M600,80 L780,50 L750,200 L620,220 Z"></path>
+<!-- South East -->
+<path class="map-path fill-gray-300 dark:fill-gray-700 stroke-white dark:stroke-widget-bg stroke-[2]" d="M620,220 L750,200 L700,450 L550,450 L580,300 Z"></path>
+<!-- Mid West -->
+<path class="map-path fill-gray-300 dark:fill-gray-700 stroke-white dark:stroke-widget-bg stroke-[2]" d="M450,50 L600,80 L620,220 L580,300 L450,280 Z"></path>
+<!-- South Central -->
+<path class="map-path fill-gray-300 dark:fill-gray-700 stroke-white dark:stroke-widget-bg stroke-[2]" d="M450,280 L580,300 L550,450 L350,420 L380,250 Z"></path>
+<!-- Mountain -->
+<path class="map-path fill-gray-300 dark:fill-gray-700 stroke-white dark:stroke-widget-bg stroke-[2]" d="M250,30 L450,50 L450,280 L380,250 L350,420 L220,380 Z"></path>
+<!-- West Zone (Active) -->
+<!-- Highlighted with fill, stroke and glow -->
+<g class="active-zone-glow group cursor-pointer">
+<path class="active-zone fill-primary/25 stroke-primary stroke-[3]" d="M20,20 L250,30 L220,380 L50,350 Z"></path>
+</g>
+</svg>
+</div>
+</div>
+<!-- Info Area -->
+<div class="px-5 pb-5 pt-1">
+<div class="flex flex-col gap-3">
+<!-- Zone Title & Status -->
+<div class="flex items-center gap-2">
+<span class="relative flex h-2.5 w-2.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary"></span>
+</span>
+<h3 class="text-gray-900 dark:text-white font-bold text-base leading-tight">West Zone</h3>
+</div>
+<!-- Stats -->
+<div class="flex items-center text-sm text-gray-500 dark:text-gray-400 font-medium">
+<span>81 athletes</span>
+<span class="mx-1.5 text-gray-300 dark:text-gray-600">·</span>
+<span>3 events</span>
+</div>
+<!-- Action Link -->
+<a class="mt-2 inline-flex items-center text-sm font-medium text-amber-500 hover:text-amber-400 dark:text-accent-gold dark:hover:text-amber-300 transition-colors group" href="#">
+<span>View Full Map</span>
+<span class="material-symbols-outlined text-[18px] ml-1 transition-transform group-hover:translate-x-1">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</body></html>

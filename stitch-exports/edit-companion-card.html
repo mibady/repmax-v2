@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RepMax - Edit Companion Card Profile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800;900&amp;family=Noto+Sans:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d4af35",
+                        "primary-dark": "#b08d2b",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#050505",
+                        "surface-dark": "#1F1F22",
+                        "input-dark": "#2A2A2E",
+                        "text-secondary": "#c3b998",
+                        "success": "#22c55e",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                        "body": ["Noto Sans", "sans-serif"],
+                    },
+                    borderRadius: {"DEFAULT": "0.375rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for dark theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050505; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #444; 
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden h-screen flex">
+<!-- Side Navigation -->
+<div class="hidden lg:flex w-64 flex-col bg-surface-dark border-r border-[#333] h-full flex-shrink-0">
+<div class="flex h-full flex-col justify-between p-4">
+<div class="flex flex-col gap-6">
+<div class="flex flex-col px-2">
+<h1 class="text-white text-2xl font-black tracking-tighter text-primary">RepMax</h1>
+<p class="text-text-secondary text-xs font-normal uppercase tracking-wider mt-1">Athlete Portal</p>
+</div>
+<div class="flex flex-col gap-2 mt-4">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined text-gray-400 group-hover:text-primary transition-colors">dashboard</span>
+<p class="text-gray-300 text-sm font-medium group-hover:text-white transition-colors">Dashboard</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 border border-primary/20" href="#">
+<span class="material-symbols-outlined text-primary">person</span>
+<p class="text-white text-sm font-medium">Profile</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined text-gray-400 group-hover:text-primary transition-colors">groups</span>
+<p class="text-gray-300 text-sm font-medium group-hover:text-white transition-colors">Team</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined text-gray-400 group-hover:text-primary transition-colors">analytics</span>
+<p class="text-gray-300 text-sm font-medium group-hover:text-white transition-colors">Stats</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined text-gray-400 group-hover:text-primary transition-colors">settings</span>
+<p class="text-gray-300 text-sm font-medium group-hover:text-white transition-colors">Settings</p>
+</a>
+</div>
+</div>
+<div class="px-2 pb-4">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 transition-colors text-gray-400 hover:text-white" href="#">
+<span class="material-symbols-outlined">logout</span>
+<p class="text-sm font-medium">Logout</p>
+</a>
+</div>
+</div>
+</div>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col h-full overflow-hidden relative">
+<!-- Top Navigation Bar -->
+<header class="h-16 flex items-center justify-between border-b border-[#333] bg-surface-dark px-6 flex-shrink-0 z-20">
+<div class="flex items-center gap-4">
+<button class="lg:hidden text-white">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="flex items-center gap-2 text-white">
+<a class="hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">arrow_back</span>
+</a>
+<h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">Edit Profile</h2>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden md:flex items-center gap-2 text-sm text-text-secondary">
+<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    Last saved: Just now
+                </div>
+<button class="flex items-center justify-center overflow-hidden rounded-lg h-9 px-6 bg-primary hover:bg-primary-dark transition-colors text-background-dark text-sm font-bold leading-normal tracking-wide shadow-[0_0_15px_rgba(212,175,53,0.3)]">
+<span class="truncate">Save Changes</span>
+</button>
+<div class="h-8 w-px bg-[#333] mx-2 hidden sm:block"></div>
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-9 border border-[#333] cursor-pointer" data-alt="User profile avatar small" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDfCXpKQoekS1blAibc_CFhNg5LGh5d7chXEGbcNpyxBrzQZK680GyoWCL0G29CWiEKN5LE4hYZfkRtL1kS0ObdxBOS3YTjpTkAVKSIxj6tPR6fzEj2QPC9sR8L1iBSgnOfDyakXUEb13RhEcDyFx6Jr6m0_drH4aZ73hw84rhiKE-5eM0ORRcdG5wWVJIrUoVHXqW9aw2ru4DUDMTOFUTMUbX2h02Y-H9Y5oJEo6vpNh5vtDT4BbKHAjybmtctQp0gAok6Ba7zSfI");'></div>
+</div>
+</header>
+<!-- Main Workspace -->
+<div class="flex flex-1 overflow-hidden">
+<!-- Left Column: Scrollable Form (55%) -->
+<div class="flex-1 overflow-y-auto p-6 lg:p-10 pb-20">
+<div class="max-w-3xl mx-auto space-y-10">
+<!-- Page Heading -->
+<div class="flex flex-col gap-2">
+<h1 class="text-white text-3xl font-black leading-tight tracking-tight">Edit Companion Card</h1>
+<p class="text-text-secondary text-base">Update your stats, academics, and highlights. Your card updates in real-time.</p>
+</div>
+<!-- Photo Upload Section -->
+<div class="bg-surface-dark rounded-xl border border-[#333] p-6 shadow-sm">
+<div class="flex flex-col sm:flex-row gap-6 items-center sm:items-start">
+<div class="relative group">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-32 border-4 border-input-dark shadow-xl" data-alt="Athlete profile picture large" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBpSaDaChvfhNI5L4w8wDJu-gp-MK6iG5KoxOOqhLbLk0uqAdsFwgrof1Dcd8khO0d4Kvq5gDzjSxtDFby1T6EHUHLFl4zIM0As1QSvG9xwWQAhGh8Hjst7UDWyvHX1pxDUeaq7CpDx4bwI-qNiOmNdSeSBFgrFLqar5I9JgnWXvIhS_9APIu6HML28sNdfCFStysI1d3bkfPvZjQdZSgYA2M4lGMbva5NZlR7mR21LO1w3XMwDdJ_sOZjiAUVDGbNCRyIDu5StREQ");'></div>
+<button class="absolute bottom-0 right-0 bg-primary hover:bg-white text-background-dark hover:text-black p-2 rounded-full shadow-lg transition-all transform hover:scale-105">
+<span class="material-symbols-outlined text-xl">edit</span>
+</button>
+</div>
+<div class="flex flex-col gap-3 flex-1 w-full text-center sm:text-left">
+<div>
+<h3 class="text-white text-lg font-bold">Profile Photo</h3>
+<p class="text-text-secondary text-sm mt-1">This will be the main image on your card. High resolution action shots or headshots work best.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-3 mt-2">
+<button class="flex items-center justify-center gap-2 rounded-lg h-10 px-4 bg-input-dark hover:bg-[#333] border border-[#444] text-white text-sm font-medium transition-colors">
+<span class="material-symbols-outlined text-lg">upload</span>
+                                        Upload New
+                                    </button>
+<button class="flex items-center justify-center gap-2 rounded-lg h-10 px-4 bg-transparent hover:bg-white/5 border border-transparent text-text-secondary text-sm font-medium transition-colors">
+                                        Remove
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Basic Info Section -->
+<div class="space-y-4">
+<div class="flex items-center justify-between border-b border-[#333] pb-2">
+<h3 class="text-white text-lg font-bold tracking-tight flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">id_card</span>
+                                Basic Info
+                            </h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">First Name</label>
+<input class="bg-input-dark border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-lg px-4 py-2.5 text-white placeholder-gray-500 font-display transition-all" type="text" value="Marcus"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Last Name</label>
+<input class="bg-input-dark border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-lg px-4 py-2.5 text-white placeholder-gray-500 font-display transition-all" type="text" value="Sterling"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Primary Position</label>
+<select class="bg-input-dark border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-lg px-4 py-2.5 text-white font-display transition-all cursor-pointer">
+<option>Wide Receiver</option>
+<option>Quarterback</option>
+<option>Running Back</option>
+<option>Cornerback</option>
+</select>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Class Year</label>
+<select class="bg-input-dark border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-lg px-4 py-2.5 text-white font-display transition-all cursor-pointer">
+<option>2025</option>
+<option>2026</option>
+<option>2027</option>
+</select>
+</div>
+<div class="flex flex-col gap-1.5 md:col-span-2">
+<label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">High School</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-gray-500 text-lg">school</span>
+<input class="bg-input-dark border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-lg pl-10 pr-4 py-2.5 text-white placeholder-gray-500 font-display w-full transition-all" type="text" value="Oak Ridge High School"/>
+</div>
+</div>
+<div class="flex flex-col gap-1.5 md:col-span-2">
+<label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Bio / Intro</label>
+<textarea class="bg-input-dark border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-lg px-4 py-2.5 text-white placeholder-gray-500 font-display w-full transition-all resize-none text-sm" rows="3">Explosive playmaker with a nose for the endzone. Committed to excellence on and off the field. Team captain 2024.</textarea>
+<p class="text-right text-xs text-gray-500">120/280 chars</p>
+</div>
+</div>
+</div>
+<!-- Measurables Section -->
+<div class="space-y-4">
+<div class="flex items-center justify-between border-b border-[#333] pb-2">
+<h3 class="text-white text-lg font-bold tracking-tight flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">fitness_center</span>
+                                Measurables
+                            </h3>
+<span class="text-xs text-primary bg-primary/10 px-2 py-1 rounded border border-primary/20">Updated 2 days ago</span>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Height</label>
+<div class="relative">
+<input class="bg-input-dark border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-lg px-4 py-2.5 text-white font-mono font-medium w-full text-center transition-all" type="text" value="6'2&quot;"/>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Weight</label>
+<div class="relative">
+<input class="bg-input-dark border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-lg px-4 py-2.5 text-white font-mono font-medium w-full text-center transition-all" type="text" value="195"/>
+<span class="absolute right-3 top-2.5 text-xs text-gray-500 mt-1">lbs</span>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Wingspan</label>
+<input class="bg-input-dark border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-lg px-4 py-2.5 text-white font-mono font-medium w-full text-center transition-all" type="text" value='76"'/>
+</div>
+<div class="flex flex-col gap-1.5 relative">
+<div class="flex items-center justify-between">
+<label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">40-Yard</label>
+<span class="text-[10px] bg-green-900/40 text-green-400 border border-green-800/50 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[10px]">verified</span> Ver
+                                    </span>
+</div>
+<input class="bg-input-dark border-green-900/50 focus:border-green-500 focus:ring-1 focus:ring-green-500 rounded-lg px-4 py-2.5 text-green-400 font-mono font-bold w-full text-center transition-all shadow-[0_0_10px_rgba(34,197,94,0.1)]" type="text" value="4.42"/>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Bench Press (Max)</label>
+<div class="relative">
+<input class="bg-input-dark border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-lg px-4 py-2.5 text-white font-mono font-medium w-full text-center transition-all" type="text" value="285"/>
+<span class="absolute right-3 top-2.5 text-xs text-gray-500 mt-1">lbs</span>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Squat (Max)</label>
+<div class="relative">
+<input class="bg-input-dark border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-lg px-4 py-2.5 text-white font-mono font-medium w-full text-center transition-all" type="text" value="405"/>
+<span class="absolute right-3 top-2.5 text-xs text-gray-500 mt-1">lbs</span>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Vertical</label>
+<div class="relative">
+<input class="bg-input-dark border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-lg px-4 py-2.5 text-white font-mono font-medium w-full text-center transition-all" type="text" value="36.5"/>
+<span class="absolute right-3 top-2.5 text-xs text-gray-500 mt-1">in</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Academics Section -->
+<div class="space-y-4">
+<div class="flex items-center justify-between border-b border-[#333] pb-2">
+<h3 class="text-white text-lg font-bold tracking-tight flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">school</span>
+                                Academics
+                            </h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+<div class="flex flex-col gap-1.5 relative">
+<div class="flex items-center justify-between">
+<label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">GPA</label>
+<span class="text-[10px] bg-green-900/40 text-green-400 border border-green-800/50 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[10px]">verified</span> Ver
+                                    </span>
+</div>
+<input class="bg-input-dark border-green-900/50 focus:border-green-500 focus:ring-1 focus:ring-green-500 rounded-lg px-4 py-2.5 text-green-400 font-mono font-bold w-full transition-all shadow-[0_0_10px_rgba(34,197,94,0.1)]" type="text" value="3.8"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">SAT Score</label>
+<input class="bg-input-dark border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-lg px-4 py-2.5 text-white font-mono font-medium w-full transition-all" type="text" value="1250"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">ACT Score</label>
+<input class="bg-input-dark border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-lg px-4 py-2.5 text-white font-mono font-medium w-full transition-all" placeholder="--" type="text" value="--"/>
+</div>
+<div class="flex flex-col gap-1.5 md:col-span-3">
+<label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Desired Major</label>
+<input class="bg-input-dark border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-lg px-4 py-2.5 text-white font-display w-full transition-all" type="text" value="Kinesiology / Sports Management"/>
+</div>
+</div>
+</div>
+<!-- Film Section -->
+<div class="space-y-4">
+<div class="flex items-center justify-between border-b border-[#333] pb-2">
+<h3 class="text-white text-lg font-bold tracking-tight flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">movie</span>
+                                Film &amp; Highlights
+                            </h3>
+</div>
+<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Hudl / YouTube URL</label>
+<div class="flex gap-2">
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-gray-500 text-lg">link</span>
+<input class="bg-input-dark border-transparent focus:border-primary focus:ring-1 focus:ring-primary rounded-lg pl-10 pr-4 py-2.5 text-white placeholder-gray-500 font-display w-full transition-all text-sm truncate" type="text" value="https://www.hudl.com/video/3/12345678/..."/>
+</div>
+<button class="bg-input-dark hover:bg-[#333] text-white px-4 rounded-lg font-medium text-sm border border-[#444] transition-colors">Test Link</button>
+</div>
+</div>
+<div class="bg-black/40 rounded-lg p-3 border border-[#333] flex gap-4 items-center">
+<div class="w-24 h-14 bg-cover bg-center rounded relative overflow-hidden group cursor-pointer" data-alt="Video highlight thumbnail" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCNPDuy8UE_ksJY3vxHnMAhBZOoPeQWAcwHsTcmNEmoH4hpvorkJGUHKJC0XY6Tqkw6FJPvindXyH9D6ykffqtg7uwqsvb1j-A-nZ7sN3gelO9CFCc2R72mq_sX68zpgruD_dGa_otm6FwsLuNgQk5wC6Sr8h9bQ92eYRFn1z3FBY5008fXRap01pH4GpDWdQoSwfPkCPm2iRN34Q7hxpMJ49GL4T5pDG3BLrAhLmEjXjiW8KTdZHzotSl8Cv_GUag7UTuQruzO1Dk");'>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/20 transition-all">
+<span class="material-symbols-outlined text-white text-2xl drop-shadow-lg">play_circle</span>
+</div>
+</div>
+<div class="flex flex-col">
+<span class="text-white text-sm font-semibold">Junior Year Highlights - Official</span>
+<span class="text-gray-500 text-xs">Source: Hudl • Duration: 4:32</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Sticky Live Preview (45%) -->
+<div class="hidden xl:flex w-[45%] bg-[#0a0a0a] border-l border-[#333] flex-col items-center justify-center relative overflow-hidden p-8">
+<!-- Background Pattern -->
+<div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#d4af35 1px, transparent 1px); background-size: 32px 32px;"></div>
+<!-- Completeness Ring -->
+<div class="flex flex-col items-center gap-4 mb-8 z-10">
+<div class="relative size-16">
+<svg class="size-full rotate-[-90deg]" viewbox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+<circle class="stroke-[#333]" cx="18" cy="18" fill="none" r="16" stroke-width="3"></circle>
+<circle class="stroke-primary" cx="18" cy="18" fill="none" r="16" stroke-dasharray="100" stroke-dashoffset="15" stroke-linecap="round" stroke-width="3"></circle>
+</svg>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-sm font-bold text-white">85%</div>
+</div>
+<p class="text-text-secondary text-sm font-medium tracking-wide">Profile Completeness</p>
+</div>
+<!-- Mobile Card Preview -->
+<div class="relative w-[380px] h-[680px] bg-black rounded-[2.5rem] border-[8px] border-[#222] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col z-10 ring-1 ring-white/10">
+<!-- Card Content (Simulating Mobile View) -->
+<div class="flex-1 overflow-y-auto hide-scrollbar bg-surface-dark relative">
+<!-- Hero Image -->
+<div class="h-64 w-full bg-cover bg-center relative" data-alt="Athlete card hero image" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAI2EQ986gffJo0jha-no4KPYVgNkqZv6zxHXARxGN7AK8vR3WeZEGJKYZ2iXkqwNt_iElVJhPkLKI7IOPXPNc4QtdnPDIKSZAlK66rO8RHGAnt0jpSCqz0ER8zw6BFL2_6hNRW_l2HlrRmiYBw80yViSbvDM4l0o3M-FrT9fEn9st-t-c_neJZPdhJzXfUSEE6wjtTyZYM9COqs6jFbjKkOeznFnEarqkCXqdgCK8dZBo3Fey_Pya-B2gO541CjctvXuB150ldTaw");'>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-dark via-transparent to-transparent"></div>
+<div class="absolute top-4 right-4 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full border border-white/10 flex items-center gap-1">
+<span class="size-2 bg-green-500 rounded-full animate-pulse"></span>
+<span class="text-[10px] text-white font-bold uppercase tracking-wider">Active</span>
+</div>
+</div>
+<!-- Card Body -->
+<div class="px-6 -mt-16 relative">
+<div class="flex justify-between items-end mb-4">
+<div>
+<h2 class="text-3xl font-black text-white leading-none">MARCUS</h2>
+<h2 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#f0d879] leading-tight">STERLING</h2>
+</div>
+<div class="text-right mb-1">
+<div class="text-2xl font-black text-white font-mono">WR</div>
+<div class="text-xs text-gray-400 font-bold uppercase tracking-widest">Pos</div>
+</div>
+</div>
+<div class="bg-[#2A2A2E] rounded-xl p-4 mb-4 border border-[#333] shadow-lg">
+<div class="grid grid-cols-4 gap-2 text-center divide-x divide-[#444]">
+<div>
+<div class="text-[10px] text-gray-400 uppercase font-bold mb-1">HGT</div>
+<div class="text-white font-mono font-bold">6'2"</div>
+</div>
+<div>
+<div class="text-[10px] text-gray-400 uppercase font-bold mb-1">WGT</div>
+<div class="text-white font-mono font-bold">195</div>
+</div>
+<div>
+<div class="text-[10px] text-gray-400 uppercase font-bold mb-1">GPA</div>
+<div class="text-green-400 font-mono font-bold flex items-center justify-center gap-0.5">
+                                            3.8
+                                        </div>
+</div>
+<div>
+<div class="text-[10px] text-gray-400 uppercase font-bold mb-1">Yr</div>
+<div class="text-white font-mono font-bold">25'</div>
+</div>
+</div>
+</div>
+<div class="mb-5">
+<h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Key Stats</h4>
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-black/30 p-3 rounded-lg border border-[#333] flex justify-between items-center">
+<span class="text-xs text-gray-300">40 YD Dash</span>
+<span class="text-green-400 font-mono font-bold text-lg">4.42</span>
+</div>
+<div class="bg-black/30 p-3 rounded-lg border border-[#333] flex justify-between items-center">
+<span class="text-xs text-gray-300">Vertical</span>
+<span class="text-white font-mono font-bold text-lg">36.5"</span>
+</div>
+<div class="bg-black/30 p-3 rounded-lg border border-[#333] flex justify-between items-center">
+<span class="text-xs text-gray-300">Bench</span>
+<span class="text-white font-mono font-bold text-lg">285</span>
+</div>
+<div class="bg-black/30 p-3 rounded-lg border border-[#333] flex justify-between items-center">
+<span class="text-xs text-gray-300">Squat</span>
+<span class="text-white font-mono font-bold text-lg">405</span>
+</div>
+</div>
+</div>
+<div class="mb-6">
+<h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">School</h4>
+<div class="flex items-center gap-3">
+<div class="size-10 rounded bg-white flex items-center justify-center font-bold text-black text-xl">O</div>
+<div>
+<div class="text-white font-bold">Oak Ridge High School</div>
+<div class="text-xs text-gray-400">Orlando, FL</div>
+</div>
+</div>
+</div>
+<!-- Action Button -->
+<button class="w-full bg-primary text-black font-bold py-3 rounded-lg mb-8 uppercase tracking-wide text-sm shadow-[0_0_20px_rgba(212,175,53,0.2)]">
+                                View Full Profile
+                             </button>
+</div>
+</div>
+<!-- Phone Frame Notch -->
+<div class="absolute top-0 left-1/2 -translate-x-1/2 h-6 w-32 bg-[#222] rounded-b-xl z-20"></div>
+</div>
+<div class="mt-6 text-center">
+<p class="text-gray-500 text-xs font-medium">Live Preview Mode</p>
+</div>
+</div>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RepMax Empty State Collection</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d4af35",
+                        "primary-hover": "#c49f25",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#201d12", // Theme dark background
+                        "card-dark": "#121212", // Slightly lighter for cards if needed, or stick to transparent
+                        "icon-bg": "#1A1A1A",
+                        "text-muted": "#A1A1AA",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display min-h-screen flex flex-col">
+<!-- Header / Nav placeholder for context -->
+<header class="w-full border-b border-white/10 bg-background-dark/50 backdrop-blur-sm sticky top-0 z-10">
+<div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-background-dark font-bold">fitness_center</span>
+</div>
+<h1 class="text-white font-bold text-xl tracking-tight">RepMax</h1>
+</div>
+<div class="hidden md:flex gap-6 text-sm font-medium text-text-muted">
+<a class="text-white hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="hover:text-primary transition-colors" href="#">Athletes</a>
+<a class="hover:text-primary transition-colors" href="#">Scouting</a>
+<a class="hover:text-primary transition-colors" href="#">Settings</a>
+</div>
+</div>
+</header>
+<main class="flex-grow flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+<div class="max-w-7xl w-full">
+<div class="text-center mb-16">
+<h2 class="text-3xl font-bold text-white mb-4">Component Library</h2>
+<p class="text-text-muted">Empty state variations for the RepMax platform.</p>
+</div>
+<!-- Grid Container -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16 justify-items-center">
+<!-- 1. New Athlete -->
+<div class="flex flex-col items-center max-w-[360px] w-full text-center group">
+<div class="w-[120px] h-[120px] rounded-full bg-icon-bg flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-300 ring-1 ring-white/5">
+<span class="material-symbols-outlined text-5xl text-white/80">sports_soccer</span>
+</div>
+<h3 class="text-white text-[20px] font-bold leading-tight mb-2">No Athletes Found</h3>
+<p class="text-text-muted text-[14px] leading-relaxed mb-6 px-4">
+                        Get started by adding your first athlete to the system to begin tracking performance.
+                    </p>
+<button class="bg-primary hover:bg-primary-hover text-background-dark font-bold text-sm h-10 px-6 rounded-lg transition-colors w-full sm:w-auto min-w-[140px]">
+                        Add Athlete
+                    </button>
+</div>
+<!-- 2. Empty Roster -->
+<div class="flex flex-col items-center max-w-[360px] w-full text-center group">
+<div class="w-[120px] h-[120px] rounded-full bg-icon-bg flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-300 ring-1 ring-white/5">
+<span class="material-symbols-outlined text-5xl text-white/80">assignment</span>
+</div>
+<h3 class="text-white text-[20px] font-bold leading-tight mb-2">Roster is Empty</h3>
+<p class="text-text-muted text-[14px] leading-relaxed mb-6 px-4">
+                        Build your dream team by scouting new talent or importing existing data.
+                    </p>
+<button class="bg-primary hover:bg-primary-hover text-background-dark font-bold text-sm h-10 px-6 rounded-lg transition-colors w-full sm:w-auto min-w-[140px]">
+                        Create Roster
+                    </button>
+</div>
+<!-- 3. No Search Results -->
+<div class="flex flex-col items-center max-w-[360px] w-full text-center group">
+<div class="w-[120px] h-[120px] rounded-full bg-icon-bg flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-300 ring-1 ring-white/5">
+<span class="material-symbols-outlined text-5xl text-white/80">search_off</span>
+</div>
+<h3 class="text-white text-[20px] font-bold leading-tight mb-2">No Results Found</h3>
+<p class="text-text-muted text-[14px] leading-relaxed mb-6 px-4">
+                        We couldn't find what you searched for. Try adjusting your filters or keywords.
+                    </p>
+<button class="bg-primary hover:bg-primary-hover text-background-dark font-bold text-sm h-10 px-6 rounded-lg transition-colors w-full sm:w-auto min-w-[140px]">
+                        Clear Search
+                    </button>
+</div>
+<!-- 4. No Shortlists -->
+<div class="flex flex-col items-center max-w-[360px] w-full text-center group">
+<div class="w-[120px] h-[120px] rounded-full bg-icon-bg flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-300 ring-1 ring-white/5">
+<span class="material-symbols-outlined text-5xl text-white/80">star</span>
+</div>
+<h3 class="text-white text-[20px] font-bold leading-tight mb-2">No Shortlists Yet</h3>
+<p class="text-text-muted text-[14px] leading-relaxed mb-6 px-4">
+                        Save your favorite prospects here for quick access during recruitment season.
+                    </p>
+<button class="bg-primary hover:bg-primary-hover text-background-dark font-bold text-sm h-10 px-6 rounded-lg transition-colors w-full sm:w-auto min-w-[140px]">
+                        Start Scouting
+                    </button>
+</div>
+<!-- 5. No Tournaments -->
+<div class="flex flex-col items-center max-w-[360px] w-full text-center group">
+<div class="w-[120px] h-[120px] rounded-full bg-icon-bg flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-300 ring-1 ring-white/5">
+<span class="material-symbols-outlined text-5xl text-white/80">emoji_events</span>
+</div>
+<h3 class="text-white text-[20px] font-bold leading-tight mb-2">No Upcoming Tournaments</h3>
+<p class="text-text-muted text-[14px] leading-relaxed mb-6 px-4">
+                        There are no tournaments scheduled for this season. Check back later for updates.
+                    </p>
+<button class="bg-primary hover:bg-primary-hover text-background-dark font-bold text-sm h-10 px-6 rounded-lg transition-colors w-full sm:w-auto min-w-[140px]">
+                        Find Events
+                    </button>
+</div>
+<!-- 6. No Linked Athletes -->
+<div class="flex flex-col items-center max-w-[360px] w-full text-center group">
+<div class="w-[120px] h-[120px] rounded-full bg-icon-bg flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-300 ring-1 ring-white/5">
+<span class="material-symbols-outlined text-5xl text-white/80">diversity_3</span>
+</div>
+<h3 class="text-white text-[20px] font-bold leading-tight mb-2">No Linked Accounts</h3>
+<p class="text-text-muted text-[14px] leading-relaxed mb-6 px-4">
+                        Connect with athlete accounts or family members to share data seamlessly.
+                    </p>
+<button class="bg-primary hover:bg-primary-hover text-background-dark font-bold text-sm h-10 px-6 rounded-lg transition-colors w-full sm:w-auto min-w-[140px]">
+                        Link Account
+                    </button>
+</div>
+</div>
+</div>
+</main>
+</body></html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Recruiter Film Player</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#edbc1d",
+                        "background-light": "#f8f8f6",
+                        "background-dark": "#0f0f0f", 
+                        "surface-dark": "#1A1A1A",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar for better dark mode experience */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1A1A1A; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #444; 
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display antialiased min-h-screen flex flex-col">
+<!-- Top Navigation -->
+<header class="w-full border-b border-[#333] bg-[#141414] px-6 py-3 sticky top-0 z-50">
+<div class="max-w-[1400px] mx-auto flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="size-8 text-primary">
+<svg class="w-full h-full" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 18.4228L42 11.475V34.3663C42 34.7796 41.7457 35.1504 41.3601 35.2992L24 42V18.4228Z" fill="currentColor" fill-rule="evenodd"></path>
+<path clip-rule="evenodd" d="M24 8.18819L33.4123 11.574L24 15.2071L14.5877 11.574L24 8.18819ZM9 15.8487L21 20.4805V37.6263L9 32.9945V15.8487ZM27 37.6263V20.4805L39 15.8487V32.9945L27 37.6263ZM25.354 2.29885C24.4788 1.98402 23.5212 1.98402 22.646 2.29885L4.98454 8.65208C3.7939 9.08038 3 10.2097 3 11.475V34.3663C3 36.0196 4.01719 37.5026 5.55962 38.098L22.9197 44.7987C23.6149 45.0671 24.3851 45.0671 25.0803 44.7987L42.4404 38.098C43.9828 37.5026 45 36.0196 45 34.3663V11.475C45 10.2097 44.2061 9.08038 43.0155 8.65208L25.354 2.29885Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h1 class="text-white text-lg font-bold tracking-tight">RepMax</h1>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium text-gray-300 hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-sm font-medium text-white" href="#">Athletes</a>
+<a class="text-sm font-medium text-gray-300 hover:text-primary transition-colors" href="#">Teams</a>
+<a class="text-sm font-medium text-gray-300 hover:text-primary transition-colors" href="#">Messages</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="text-gray-400 hover:text-white transition-colors relative">
+<span class="material-symbols-outlined text-[24px]">notifications</span>
+<span class="absolute top-0 right-0 size-2 bg-primary rounded-full border-2 border-[#141414]"></span>
+</button>
+<div class="size-9 rounded-full bg-cover bg-center border border-[#333]" data-alt="User profile picture placeholder" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCo8aVNcrO1HQAOFb9up3mWn1yVjnITbYX7gwJtkNmYWTYufKi20BQedCrN9q_Wwh6CebQi8aNr1B3XgsJWkCjTuL9HFeO1nVcvp-pGvH7PMKRPgA2n1dGXpB2vLQG-83zGgVgUJrua6fipmBk7bgKCvEA_4qGzLn_FUFYBM4FPh-WSgPkUf5ecLyQ7NEw44AX6WTyqfv36oAHx9U155u3A0TJGLvRTInwcTuZNQl20tvwzL02QxzrEPJpLuZdZHIzbArATMm0L-28');"></div>
+</div>
+</div>
+</header>
+<!-- Main Layout -->
+<main class="flex-1 w-full max-w-[960px] mx-auto p-4 md:py-8 flex flex-col gap-6">
+<!-- Video Player Component -->
+<div class="group/player relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/10">
+<!-- Video Background Image -->
+<div class="absolute inset-0 bg-cover bg-center opacity-90 transition-opacity duration-300" data-alt="American football player running with ball on green field" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDFayXrbblahT4oD7SrdxrFWbDEhetuf0fu9P9Ae0kUCHLcO43XPxwKx8HnO6ZOSYjM1hnNkng-2mQH_xdnFjVofi9SsUuIfICv7fClVYuU_Zk15k65bZGdP7lUbKAfFurxFML5srmyH_KNjafsNdR_qZy4lJUoC-8ZOJD4DL6C4d10IMcahPsT5kcSfpkYDjJLVNnHwR0-eHhJYwqxi_vCitPBxdbwXaMRWFTraSR1r_G4k6LuplPIJCABQV3nFNDNH2R5T8iTqpE');">
+</div>
+<!-- Video Overlay Gradient -->
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none"></div>
+<!-- Centered Play Button -->
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none group-hover/player:scale-105 transition-transform duration-300">
+<button class="pointer-events-auto flex items-center justify-center size-20 rounded-full bg-primary/90 hover:bg-primary text-[#0f0f0f] shadow-[0_0_30px_rgba(237,188,29,0.3)] transition-all backdrop-blur-sm">
+<span class="material-symbols-outlined text-[40px] ml-1">play_arrow</span>
+</button>
+</div>
+<!-- Top Controls (Title Overlay) -->
+<div class="absolute top-0 left-0 right-0 p-6 flex justify-between items-start opacity-0 group-hover/player:opacity-100 transition-opacity duration-300">
+<div class="flex flex-col">
+<span class="text-white font-bold text-lg drop-shadow-md">Junior Season Highlights</span>
+<span class="text-white/70 text-sm font-mono drop-shadow-md">1080p • 60FPS</span>
+</div>
+<button class="text-white/80 hover:text-white hover:bg-white/10 p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<!-- Bottom Control Bar -->
+<div class="absolute bottom-0 left-0 right-0 bg-[#0f0f0f]/90 backdrop-blur-md px-6 py-4 translate-y-full group-hover/player:translate-y-0 transition-transform duration-300 ease-out">
+<!-- Timeline Scrubber -->
+<div class="relative w-full h-1.5 bg-white/20 rounded-full mb-4 cursor-pointer group/timeline">
+<!-- Progress -->
+<div class="absolute top-0 left-0 h-full w-[25%] bg-primary rounded-full relative">
+<div class="absolute -right-1.5 top-1/2 -translate-y-1/2 size-3 bg-white rounded-full scale-0 group-hover/timeline:scale-100 transition-transform shadow-sm"></div>
+</div>
+<!-- Bookmark Dots on Timeline -->
+<div class="absolute top-1/2 -translate-y-1/2 left-[12%] size-2 bg-primary rounded-full hover:scale-150 transition-transform cursor-pointer ring-2 ring-black/50" title="Great pocket awareness"></div>
+<div class="absolute top-1/2 -translate-y-1/2 left-[48%] size-2 bg-primary rounded-full hover:scale-150 transition-transform cursor-pointer ring-2 ring-black/50" title="50-yard deep ball"></div>
+<div class="absolute top-1/2 -translate-y-1/2 left-[82%] size-2 bg-primary rounded-full hover:scale-150 transition-transform cursor-pointer ring-2 ring-black/50" title="Scramble drill"></div>
+</div>
+<!-- Controls Row -->
+<div class="flex items-center justify-between text-white">
+<div class="flex items-center gap-4">
+<button class="hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[28px]">pause</span>
+</button>
+<button class="hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[24px]">replay_10</span>
+</button>
+<div class="flex items-center gap-2 group/volume">
+<button class="hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[24px]">volume_up</span>
+</button>
+<div class="w-0 overflow-hidden group-hover/volume:w-20 transition-all duration-300">
+<div class="h-1 bg-white/30 rounded-full w-16 ml-2 cursor-pointer">
+<div class="h-full w-[70%] bg-white rounded-full"></div>
+</div>
+</div>
+</div>
+<span class="font-mono text-sm tracking-wide text-white/90">
+<span class="text-primary font-medium">0:37</span> <span class="text-white/40">/</span> 2:23
+                        </span>
+</div>
+<div class="flex items-center gap-4">
+<button class="hover:text-primary transition-colors" title="Settings">
+<span class="material-symbols-outlined text-[24px]">settings</span>
+</button>
+<button class="hover:text-primary transition-colors" title="Fullscreen">
+<span class="material-symbols-outlined text-[24px]">fullscreen</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Video Info & Actions -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-[#333]">
+<div class="flex flex-col gap-1">
+<h2 class="text-2xl font-bold text-white tracking-tight">Junior Season Highlights - QB #12</h2>
+<div class="flex flex-wrap items-center gap-2 text-[#999] text-sm">
+<span class="text-primary font-medium">John Doe</span>
+<span>•</span>
+<span>Class of 2025</span>
+<span>•</span>
+<span>Westlake High</span>
+<span>•</span>
+<span class="bg-[#333] text-xs px-1.5 py-0.5 rounded text-white/80">6'2"</span>
+<span class="bg-[#333] text-xs px-1.5 py-0.5 rounded text-white/80">195 lbs</span>
+</div>
+</div>
+<!-- Primary Action Buttons -->
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#333] hover:bg-[#444] text-white text-sm font-medium transition-colors border border-transparent hover:border-white/10">
+<span class="material-symbols-outlined text-[20px]">file_download</span>
+                    Download
+                </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary hover:bg-[#dcae18] text-[#0f0f0f] text-sm font-bold transition-colors shadow-[0_0_15px_rgba(237,188,29,0.2)]">
+<span class="material-symbols-outlined text-[20px]">mail</span>
+                    Contact Athlete
+                </button>
+</div>
+</div>
+<!-- Secondary Actions & Bookmarks Layout -->
+<div class="grid md:grid-cols-[200px_1fr] gap-8">
+<!-- Quick Actions Toolbar (Left) -->
+<div class="flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-visible py-2 md:py-0">
+<button class="flex md:flex-col items-center gap-2 p-3 rounded-lg hover:bg-[#1A1A1A] text-left md:text-center min-w-max transition-colors group">
+<div class="size-10 rounded-full bg-[#1A1A1A] group-hover:bg-[#333] flex items-center justify-center text-white transition-colors border border-[#333]">
+<span class="material-symbols-outlined text-[20px]">share</span>
+</div>
+<div class="flex flex-col md:items-center">
+<span class="text-sm font-medium text-white">Share</span>
+<span class="text-xs text-gray-500">at 0:37</span>
+</div>
+</button>
+<button class="flex md:flex-col items-center gap-2 p-3 rounded-lg hover:bg-[#1A1A1A] text-left md:text-center min-w-max transition-colors group">
+<div class="size-10 rounded-full bg-[#1A1A1A] group-hover:bg-[#333] flex items-center justify-center text-white transition-colors border border-[#333]">
+<span class="material-symbols-outlined text-[20px]">link</span>
+</div>
+<div class="flex flex-col md:items-center">
+<span class="text-sm font-medium text-white">Copy Link</span>
+<span class="text-xs text-gray-500">to clipboard</span>
+</div>
+</button>
+<button class="flex md:flex-col items-center gap-2 p-3 rounded-lg hover:bg-[#1A1A1A] text-left md:text-center min-w-max transition-colors group">
+<div class="size-10 rounded-full bg-[#1A1A1A] group-hover:bg-[#333] flex items-center justify-center text-white transition-colors border border-[#333]">
+<span class="material-symbols-outlined text-[20px]">flag</span>
+</div>
+<div class="flex flex-col md:items-center">
+<span class="text-sm font-medium text-white">Report</span>
+<span class="text-xs text-gray-500">Video issue</span>
+</div>
+</button>
+</div>
+<!-- Bookmarks Column (Right) -->
+<div class="flex flex-col gap-5">
+<div class="flex items-center justify-between">
+<h3 class="text-lg font-bold text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">bookmark</span>
+                        Recruiter Bookmarks
+                    </h3>
+<button class="text-primary hover:text-[#ffe066] text-sm font-bold flex items-center gap-1 hover:underline underline-offset-4 decoration-primary/50 transition-all">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                        Add Bookmark
+                    </button>
+</div>
+<div class="flex flex-col gap-3">
+<!-- Bookmark Card 1 (Active) -->
+<div class="group relative p-4 rounded-lg bg-surface-dark border border-primary/40 hover:border-primary transition-all duration-200 cursor-pointer shadow-lg shadow-black/20">
+<div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+<button class="text-gray-400 hover:text-white"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+<button class="text-gray-400 hover:text-red-400"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+</div>
+<div class="flex gap-4">
+<div class="flex-shrink-0 w-16 pt-1">
+<span class="inline-flex items-center justify-center px-2 py-1 rounded bg-primary/10 text-primary font-mono text-sm font-medium border border-primary/20 group-hover:bg-primary group-hover:text-black transition-colors">
+                                    0:34
+                                </span>
+</div>
+<div class="flex flex-col gap-1">
+<p class="text-white text-sm font-medium leading-relaxed group-hover:text-primary transition-colors">Great pocket awareness under pressure</p>
+<div class="flex items-center gap-2 mt-1">
+<div class="size-5 rounded-full bg-gray-600 bg-cover" data-alt="Recruiter avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBcvPR01euaqikT5K38tvFLJv0HCE6beAN1YdSlJJHrXSH38kdh7yTZ0HxOfR5u7lW3f7_1A7vwifF5G749t2a6jcM-7jspUzHP_qqQUZafEkzesfMjg1Gosi66KebE6irJCHG8eAIQnjSVuF9JozSiKKfVUtEvnuu_JeU_1rFri48r1rsidNYeWF_IgSKhGoHffkvdcdj-OcT69EJEWSN5hvSoFBHjRQwSP_6FMu30C2cXx9OiYqJtEXYsPqqcIdxUdyXq9EK-fMs');"></div>
+<span class="text-xs text-gray-500">Added by Coach Mike</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bookmark Card 2 -->
+<div class="group relative p-4 rounded-lg bg-surface-dark border border-[#333] hover:border-primary transition-all duration-200 cursor-pointer">
+<div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+<button class="text-gray-400 hover:text-white"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+<button class="text-gray-400 hover:text-red-400"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+</div>
+<div class="flex gap-4">
+<div class="flex-shrink-0 w-16 pt-1">
+<span class="inline-flex items-center justify-center px-2 py-1 rounded bg-[#2a2a2a] text-gray-400 font-mono text-sm font-medium border border-[#333] group-hover:text-black group-hover:bg-primary group-hover:border-primary transition-colors">
+                                    1:12
+                                </span>
+</div>
+<div class="flex flex-col gap-1">
+<p class="text-gray-300 text-sm font-medium leading-relaxed group-hover:text-white transition-colors">50-yard deep ball accuracy - Perfect spiral</p>
+<div class="flex items-center gap-2 mt-1">
+<div class="size-5 rounded-full bg-gray-600 bg-cover" data-alt="Recruiter avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAmhuHHiQWA15fJNmMennsGKjkB20YqtEj0YIob7pCn-M9VHWRUbco_6ktO1TO1kLJYQViGUBgr-i2HZmyWYXvX--0AdogFHDELdQLDi3aH8-SdbXIwVj_QSI1zs4SE1fmZhT_e92crJWsOhtiUtWYXSnFVEByrtHu8vN5Qlve_CtON4O6miD4aToXK8AamQ_0Ckf6qsEJI6_u5O9tkJ5KSDLPsCcD3rgxe52uV__C4dfhJZOEEB7KkNFBEG7KPt1Ga7wAVZc1UNe4');"></div>
+<span class="text-xs text-gray-500">Added by Coach Mike</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bookmark Card 3 -->
+<div class="group relative p-4 rounded-lg bg-surface-dark border border-[#333] hover:border-primary transition-all duration-200 cursor-pointer">
+<div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+<button class="text-gray-400 hover:text-white"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+<button class="text-gray-400 hover:text-red-400"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+</div>
+<div class="flex gap-4">
+<div class="flex-shrink-0 w-16 pt-1">
+<span class="inline-flex items-center justify-center px-2 py-1 rounded bg-[#2a2a2a] text-gray-400 font-mono text-sm font-medium border border-[#333] group-hover:text-black group-hover:bg-primary group-hover:border-primary transition-colors">
+                                    2:05
+                                </span>
+</div>
+<div class="flex flex-col gap-1">
+<p class="text-gray-300 text-sm font-medium leading-relaxed group-hover:text-white transition-colors">Scramble drill - good improvisation</p>
+<div class="flex items-center gap-2 mt-1">
+<div class="size-5 rounded-full bg-gray-600 bg-cover" data-alt="Recruiter avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAc3FZEYXDZozAOGOVYOW6HbImxmdOzYjv1gBb7W64-6FoowappTRj3xo3y1IQDqI3eCj5m_mes5N4atGJKnkr-X6OdwiJ_J7SofkstcIcC7Jilql36uX_xTo2dgrdU5b9niL4hBdyoIioJbEay9YA46wuHCk2HNGdjlH175ZBiLByfg7srVlW8A4mGnDTIThuQFBiRXoOjc0d_0RKt9hy3UM0XQvMUjc88aQkQfnwrNggT2AMnvHuCgrzOJb7QASGwAcKerlI4Fc8');"></div>
+<span class="text-xs text-gray-500">Added by Scout Team A</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="mt-auto border-t border-[#333] py-6 text-center text-gray-600 text-sm">
+<p>© 2024 RepMax. All rights reserved.</p>
+</footer>
+</body></html>

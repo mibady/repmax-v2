@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Zone Pulse Banner West</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#8956f5",
+                        "background-light": "#f6f5f8",
+                        "background-dark": "#161022",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .pulse-dot {
+            box-shadow: 0 0 0 0 rgba(137, 86, 245, 0.7);
+            animation: pulse-purple 2s infinite;
+        }
+        
+        @keyframes pulse-purple {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(137, 86, 245, 0.7);
+            }
+            
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 6px rgba(137, 86, 245, 0);
+            }
+            
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(137, 86, 245, 0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen font-display">
+<!-- Wrapper for presentation layout -->
+<div class="relative flex h-full min-h-screen w-full flex-col p-8 items-center justify-center">
+<!-- Main Component: Zone Pulse Banner West -->
+<div class="w-full max-w-5xl rounded-xl border border-primary/50 bg-gradient-to-br from-[#8956f51f] to-[#1F1F22] p-6 shadow-lg shadow-primary/10 transition-all hover:shadow-primary/20 group">
+<div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+<!-- Left Section: Zone Info -->
+<div class="flex flex-col gap-2 min-w-[200px]">
+<div class="flex items-center gap-3">
+<div class="relative flex h-3 w-3">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-primary pulse-dot"></span>
+</div>
+<h2 class="text-primary text-xl font-bold tracking-tight">West Zone</h2>
+</div>
+<p class="text-slate-400 text-sm font-medium pl-6">CA, NV, OR, WA, UT, CO</p>
+</div>
+<!-- Center Section: Metrics -->
+<div class="flex flex-1 w-full lg:w-auto items-center justify-center gap-8 lg:gap-16 border-y border-white/5 py-4 lg:border-0 lg:py-0">
+<div class="flex flex-col items-center gap-1">
+<span class="font-mono text-3xl font-bold text-white">81</span>
+<span class="text-slate-400 text-xs uppercase tracking-wider font-semibold">Athletes</span>
+</div>
+<div class="h-8 w-px bg-white/10 hidden lg:block"></div>
+<div class="flex flex-col items-center gap-1">
+<span class="font-mono text-3xl font-bold text-white">3</span>
+<span class="text-slate-400 text-xs uppercase tracking-wider font-semibold">Events</span>
+</div>
+</div>
+<!-- Right Section: Status Badges -->
+<div class="flex flex-col sm:flex-row lg:flex-col gap-3 items-end w-full lg:w-auto">
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 w-full sm:w-auto justify-center lg:justify-end">
+<span class="material-symbols-outlined text-emerald-400 text-[18px]">check_circle</span>
+<span class="text-emerald-400 text-sm font-medium whitespace-nowrap">Portal: Open</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 w-full sm:w-auto justify-center lg:justify-end">
+<span class="material-symbols-outlined text-orange-400 text-[18px]">schedule</span>
+<span class="text-orange-400 text-sm font-medium whitespace-nowrap">Signing Day: <span class="font-mono">14d 2h</span></span>
+</div>
+</div>
+</div>
+<!-- Bottom Action -->
+<div class="mt-6 flex justify-center lg:justify-start pt-4 border-t border-white/5">
+<a class="inline-flex items-center gap-1 text-sm text-slate-400 hover:text-primary transition-colors duration-200 group/link" href="#">
+                    View zone details
+                    <span class="material-symbols-outlined text-[16px] transition-transform duration-200 group-hover/link:translate-y-0.5">arrow_downward</span>
+</a>
+</div>
+</div>
+</div>
+</body></html>

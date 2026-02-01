@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Athlete Film Management Dashboard</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d4af35",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#050505",
+                        "card-dark": "#1F1F22",
+                        "accent-gold": "#D4AF37",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display antialiased overflow-hidden selection:bg-primary/30">
+<div class="flex h-screen w-full">
+<!-- Side Navigation -->
+<aside class="w-72 hidden md:flex flex-col border-r border-[#1F1F22] bg-[#050505] p-4 z-20">
+<!-- Brand -->
+<div class="flex items-center gap-3 px-2 py-4 mb-6">
+<div class="bg-primary/20 p-2 rounded-lg">
+<span class="material-symbols-outlined text-primary text-3xl">sports_football</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight text-white">RepMax</h1>
+</div>
+<!-- Navigation Links -->
+<nav class="flex flex-col gap-2 flex-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-[#1F1F22] transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">dashboard</span>
+<span class="font-medium text-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#1F1F22] border-l-4 border-primary text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-primary fill-1">movie</span>
+<span class="font-medium text-sm">Your Highlights</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-[#1F1F22] transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">group</span>
+<span class="font-medium text-sm">Recruiting</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-[#1F1F22] transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">bar_chart</span>
+<span class="font-medium text-sm">Stats</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-[#1F1F22] transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">settings</span>
+<span class="font-medium text-sm">Settings</span>
+</a>
+</nav>
+<!-- User Profile -->
+<div class="mt-auto border-t border-[#1F1F22] pt-4">
+<div class="flex items-center gap-3 px-2">
+<div class="size-10 rounded-full bg-cover bg-center border border-[#333]" data-alt="Profile picture of athlete" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCMdm7aHXQsoKshfDj-jNMrU63va1MmkGH5kLGCwe5fiAdq0UfsdjycypxqrOpGmRHGP1heYjR4QuP-ULkjb7Kj_DzRKEipGrqpIS2YLud8L_e_7kWDs1FyExudflOxTnkZfBv7yfy6mXLH4oQbBFaHV8jFxNp6Dki95seGMBpTVerwHCA2WWKLp2rlrtv3U1KanDYO-BePBG0kE_t0eOmej3B2a2ytfptTKmG8d9iTociLLdWevN8rRbi4u6C1BSdNe-3VZiv-38I');"></div>
+<div class="flex flex-col">
+<p class="text-sm font-semibold text-white">Marcus Johnson</p>
+<p class="text-xs text-gray-400">Class of '25</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col h-full overflow-y-auto bg-background-light dark:bg-background-dark relative">
+<!-- Mobile Header Placeholder (Visible only on small screens) -->
+<div class="md:hidden flex items-center justify-between p-4 border-b border-[#1F1F22] bg-[#050505]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">sports_football</span>
+<span class="font-bold text-white">RepMax</span>
+</div>
+<button class="text-white">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+<div class="max-w-[1280px] w-full mx-auto p-6 md:p-10 flex flex-col gap-8">
+<!-- Page Header -->
+<header class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div class="flex flex-col gap-2">
+<h1 class="text-3xl md:text-4xl font-black text-white tracking-tight">Your Highlights</h1>
+<p class="text-gray-400 text-base">Manage and organize your game film for recruiters</p>
+</div>
+<button class="flex items-center justify-center gap-2 bg-primary hover:bg-[#bfa030] text-black font-bold text-sm px-6 py-3 rounded-lg transition-all shadow-[0_0_15px_rgba(212,175,53,0.2)]">
+<span class="material-symbols-outlined text-xl">upload_file</span>
+<span>Upload Film</span>
+</button>
+</header>
+<!-- Upload Zone -->
+<section class="w-full">
+<div class="group relative flex flex-col items-center justify-center w-full h-48 rounded-xl border-2 border-dashed border-[#333] hover:border-primary/50 bg-[#1F1F22]/50 hover:bg-[#1F1F22] transition-all cursor-pointer">
+<div class="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
+<div class="bg-[#2A2A2E] p-3 rounded-full mb-3 group-hover:scale-110 transition-transform duration-300">
+<span class="material-symbols-outlined text-primary text-3xl">cloud_upload</span>
+</div>
+<p class="mb-1 text-lg font-bold text-white">Upload New Footage</p>
+<p class="mb-2 text-sm text-gray-400">Drag and drop your highlight reels here</p>
+<p class="text-xs font-mono text-primary/80 uppercase tracking-wider bg-primary/10 px-2 py-1 rounded">MP4, MOV up to 2GB</p>
+</div>
+</div>
+</section>
+<!-- Film Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+<!-- Card 1: Featured -->
+<article class="flex flex-col bg-card-dark rounded-xl overflow-hidden border border-primary shadow-[0_0_20px_rgba(212,175,53,0.05)] relative group">
+<!-- Featured Badge -->
+<div class="absolute top-3 left-3 z-10">
+<span class="px-2 py-1 bg-primary text-black text-xs font-bold rounded-md shadow-sm uppercase tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">star</span>
+                                Featured
+                            </span>
+</div>
+<!-- Thumbnail -->
+<div class="relative w-full aspect-video bg-gray-900 group/image cursor-pointer overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover/image:scale-105" data-alt="American football player running with ball during night game" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCc1pWwmt_EE6Eldgef4JvoQVxg8l1UGDzNzhulMxxWEFx_w4zwnoIAReBXOW_bRQSfUVtoOmYXosQiXva7LodZQL45quhCcXsB-LlFjRXWpGifmJHDVt7wIbw1zL3Temz_Ja9XUyyfp6J-aqB395jAkYP1ixNaij_InvgY7b99vIdD1kpk99gfoUsVQe1nBpVMsQRqlkZOmYn0MixbZvCIW1dbuWZq4rxkclpT2ONSVSWtEfD_r791wbaFav4-rkazr_Vhq_VTNnY');"></div>
+<div class="absolute inset-0 bg-black/20 group-hover/image:bg-black/40 transition-colors"></div>
+<!-- Play Button -->
+<div class="absolute inset-0 flex items-center justify-center opacity-90 group-hover/image:opacity-100 transition-opacity">
+<div class="size-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center group-hover/image:scale-110 transition-transform">
+<span class="material-symbols-outlined text-white text-3xl fill-1">play_arrow</span>
+</div>
+</div>
+<!-- Duration -->
+<div class="absolute bottom-3 right-3">
+<span class="px-1.5 py-0.5 bg-black/80 text-white text-xs font-mono rounded font-medium">04:32</span>
+</div>
+</div>
+<!-- Content -->
+<div class="p-4 flex flex-col gap-3">
+<div class="flex justify-between items-start gap-2">
+<h3 class="text-white text-lg font-bold leading-tight group-hover:text-primary transition-colors cursor-pointer">Junior Season Highlights</h3>
+<button class="text-gray-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<div class="flex items-center gap-4 text-xs text-gray-400 font-mono">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">visibility</span>
+                                        1.2k
+                                    </span>
+<span>Oct 12, 2023</span>
+</div>
+<button class="text-primary hover:text-white text-xs font-bold uppercase tracking-wider">Edit</button>
+</div>
+</div>
+</article>
+<!-- Card 2: Standard -->
+<article class="flex flex-col bg-card-dark rounded-xl overflow-hidden border border-transparent hover:border-[#333] transition-all group">
+<!-- Thumbnail -->
+<div class="relative w-full aspect-video bg-gray-900 group/image cursor-pointer overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover/image:scale-105" data-alt="Football team lineup on field during sunset" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDGb2BUQSEaKNvRldkisVEZJfMfQoWr0kwakQ_1ZABymQhj5N24pofCueweymSidyBsJHVF6B6lU80sQArcgrslkyf_NC70XlZ3U8NkXxtGkfx_WEY6O57_YrYT8xSFxdKHR7aQRi2mjnoT6aHyNcJWKMayZSEVj2boFlR3MxCwyi9qIlhZcaIXuO_LKY8OgnCYBO4hCa6DKqsIX_rFj-rgljNAB6GlIyUBwysdW26j0TZ3UbX8Nyux-7inhI0bhNRbsC_4_sUhPcc');"></div>
+<div class="absolute inset-0 bg-black/20 group-hover/image:bg-black/40 transition-colors"></div>
+<!-- Play Button -->
+<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover/image:opacity-100 transition-opacity">
+<div class="size-12 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-3xl fill-1">play_arrow</span>
+</div>
+</div>
+<!-- Duration -->
+<div class="absolute bottom-3 right-3">
+<span class="px-1.5 py-0.5 bg-black/80 text-white text-xs font-mono rounded font-medium">02:15</span>
+</div>
+</div>
+<!-- Content -->
+<div class="p-4 flex flex-col gap-3">
+<div class="flex justify-between items-start gap-2">
+<h3 class="text-white text-lg font-bold leading-tight group-hover:text-primary transition-colors cursor-pointer">vs. State Championship</h3>
+<button class="text-gray-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<div class="flex items-center gap-4 text-xs text-gray-400 font-mono">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">visibility</span>
+                                        450
+                                    </span>
+<span>Sep 28, 2023</span>
+</div>
+</div>
+</div>
+</article>
+<!-- Card 3: Standard -->
+<article class="flex flex-col bg-card-dark rounded-xl overflow-hidden border border-transparent hover:border-[#333] transition-all group">
+<!-- Thumbnail -->
+<div class="relative w-full aspect-video bg-gray-900 group/image cursor-pointer overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover/image:scale-105" data-alt="Athlete running sprint drills on track" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBTe6mrHZ_ZG0vKQ8mQ4i6panEdkawNf4ihSsU7XO6CwoQbizjG_6ayEiebq1ZXICFv0CRQxGavysaXxlJRZ6quCLuGuJI3rQ6yijuCQ_vuWumJttYAXRaMdbtR5Xy7nHNb27B5opD1UqqnzRckdYTOAgiK90lXEbW0ecc8qy7aM12FekIlqRFxM79KsVS_o09PvlrB7uWplQFq13dSCL0AbxCzusr-U_A8FaELmnWpzK21fI_h8QAoF0yDJojBjP2eYDoRuEqT1DY');"></div>
+<div class="absolute inset-0 bg-black/20 group-hover/image:bg-black/40 transition-colors"></div>
+<!-- Play Button -->
+<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover/image:opacity-100 transition-opacity">
+<div class="size-12 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-3xl fill-1">play_arrow</span>
+</div>
+</div>
+<!-- Duration -->
+<div class="absolute bottom-3 right-3">
+<span class="px-1.5 py-0.5 bg-black/80 text-white text-xs font-mono rounded font-medium">00:45</span>
+</div>
+</div>
+<!-- Content -->
+<div class="p-4 flex flex-col gap-3">
+<div class="flex justify-between items-start gap-2">
+<h3 class="text-white text-lg font-bold leading-tight group-hover:text-primary transition-colors cursor-pointer">Combine Drills - 40yd Dash</h3>
+<button class="text-gray-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<div class="flex items-center gap-4 text-xs text-gray-400 font-mono">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">visibility</span>
+                                        89
+                                    </span>
+<span>Aug 15, 2023</span>
+</div>
+</div>
+</div>
+</article>
+<!-- Card 4: Standard (Extra to fill grid) -->
+<article class="flex flex-col bg-card-dark rounded-xl overflow-hidden border border-transparent hover:border-[#333] transition-all group">
+<!-- Thumbnail -->
+<div class="relative w-full aspect-video bg-gray-900 group/image cursor-pointer overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover/image:scale-105" data-alt="Gym workout lifting weights" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDkIG67qTuSgQnhHJbBBLCTHsk2voiHYPuE2Rr1uL1gpP4Qqn4dVJsiJLHv6NElBekFSEHGGJZ1yJ8sHlxltrT7pvNd9QQaKUdATDkHtmkgFGrJp5nSFIH8TNXil7v_M9DHM89iI9VtKoX3UuGB0iQirf36zaRvB0jzaQJLR652Xh9zWQ9bIHOTGJ46ErliXY5KmFHKZuX3hwadOJuLUwsE4ecCnporyaut0AnK5hAydhSEYH679RSCS8GQ8eJC3S7IRUpwula48NA');"></div>
+<div class="absolute inset-0 bg-black/20 group-hover/image:bg-black/40 transition-colors"></div>
+<!-- Play Button -->
+<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover/image:opacity-100 transition-opacity">
+<div class="size-12 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-3xl fill-1">play_arrow</span>
+</div>
+</div>
+<!-- Duration -->
+<div class="absolute bottom-3 right-3">
+<span class="px-1.5 py-0.5 bg-black/80 text-white text-xs font-mono rounded font-medium">01:30</span>
+</div>
+</div>
+<!-- Content -->
+<div class="p-4 flex flex-col gap-3">
+<div class="flex justify-between items-start gap-2">
+<h3 class="text-white text-lg font-bold leading-tight group-hover:text-primary transition-colors cursor-pointer">Weight Room Session</h3>
+<button class="text-gray-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<div class="flex items-center gap-4 text-xs text-gray-400 font-mono">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">visibility</span>
+                                        204
+                                    </span>
+<span>Jul 10, 2023</span>
+</div>
+</div>
+</div>
+</article>
+<!-- Card 5: Standard (Extra to fill grid) -->
+<article class="flex flex-col bg-card-dark rounded-xl overflow-hidden border border-transparent hover:border-[#333] transition-all group">
+<!-- Thumbnail -->
+<div class="relative w-full aspect-video bg-gray-900 group/image cursor-pointer overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover/image:scale-105" data-alt="Football coach reviewing plays on a tablet" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB2tEGdRHZ0Pnc0h2iJFXEyv3ox2q3jbCtjUWItu3xFyESyl21V84rKpd0uqjBTrIcj9r_NUsoFgWBhUdSFEFmWPHApT-nR_aDYtN2m3qcmDR23mhM1_zm9A67ZMh_6g1SRAG0yePxSw7IYoDGQzUH0pj_HeaUN6TaLq6KbsLgM-Qqtx_YfuchQvYVLMiRXOQUODqkR_vH1jbY-cBNLpR85C7RDctvmrq5eI4HcZZthQismLBkz8L1lW0isdb-I_1Yd0_vGlSSszBc');"></div>
+<div class="absolute inset-0 bg-black/20 group-hover/image:bg-black/40 transition-colors"></div>
+<!-- Play Button -->
+<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover/image:opacity-100 transition-opacity">
+<div class="size-12 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-3xl fill-1">play_arrow</span>
+</div>
+</div>
+<!-- Duration -->
+<div class="absolute bottom-3 right-3">
+<span class="px-1.5 py-0.5 bg-black/80 text-white text-xs font-mono rounded font-medium">08:15</span>
+</div>
+</div>
+<!-- Content -->
+<div class="p-4 flex flex-col gap-3">
+<div class="flex justify-between items-start gap-2">
+<h3 class="text-white text-lg font-bold leading-tight group-hover:text-primary transition-colors cursor-pointer">Defensive Plays Breakdown</h3>
+<button class="text-gray-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<div class="flex items-center gap-4 text-xs text-gray-400 font-mono">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">visibility</span>
+                                        56
+                                    </span>
+<span>Jun 02, 2023</span>
+</div>
+</div>
+</div>
+</article>
+</section>
+</div>
+</main>
+</div>
+</body></html>

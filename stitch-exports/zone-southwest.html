@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Southwest Zone Intelligence Panel</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f37c1b",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#221810",
+                        "panel-bg": "#0F0F0F",
+                        "card-bg": "#1A1A1A",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for the panel content */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #444;
+        }
+    </style>
+</head>
+<body class="bg-gray-500 flex justify-center items-center min-h-screen">
+<!-- Main Side Panel Container - Width restricted to 420px as requested -->
+<!-- Added h-[90vh] for presentation purposes within the browser window, in a real app this would likely be h-full fixed right-0 -->
+<div class="relative flex flex-col w-[420px] h-[900px] max-h-screen bg-panel-bg text-white shadow-2xl overflow-hidden border-l-4 border-primary font-display">
+<!-- Sticky Header -->
+<header class="flex-none px-6 py-5 border-b border-[#27272a] bg-panel-bg/95 backdrop-blur-sm z-10">
+<div class="flex items-start justify-between mb-3">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-xl">travel_explore</span>
+<h2 class="text-sm font-bold uppercase tracking-wider text-white">Southwest Zone</h2>
+</div>
+<button class="text-gray-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- State Chips -->
+<div class="flex flex-wrap gap-2">
+<span class="px-2 py-1 bg-card-bg border border-[#27272a] rounded text-xs font-medium text-gray-300">TX</span>
+<span class="px-2 py-1 bg-card-bg border border-[#27272a] rounded text-xs font-medium text-gray-300">AZ</span>
+<span class="px-2 py-1 bg-card-bg border border-[#27272a] rounded text-xs font-medium text-gray-300">NM</span>
+<span class="px-2 py-1 bg-card-bg border border-[#27272a] rounded text-xs font-medium text-gray-300">OK</span>
+<span class="px-2 py-1 bg-card-bg border border-[#27272a] rounded text-xs font-medium text-gray-300">AR</span>
+<span class="px-2 py-1 bg-card-bg border border-[#27272a] rounded text-xs font-medium text-gray-300">LA</span>
+</div>
+</header>
+<!-- Scrollable Content Area -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-8">
+<!-- KPI Grid -->
+<section class="grid grid-cols-2 gap-3">
+<div class="bg-card-bg border border-[#27272a] p-4 rounded-lg flex flex-col justify-between h-24 hover:border-primary/50 transition-colors group">
+<span class="text-gray-400 text-xs font-medium uppercase tracking-wide">Athletes</span>
+<span class="font-mono text-2xl font-bold text-white group-hover:text-primary transition-colors">141</span>
+</div>
+<div class="bg-card-bg border border-[#27272a] p-4 rounded-lg flex flex-col justify-between h-24 hover:border-primary/50 transition-colors group">
+<span class="text-gray-400 text-xs font-medium uppercase tracking-wide">Programs</span>
+<span class="font-mono text-2xl font-bold text-white group-hover:text-primary transition-colors">42</span>
+</div>
+<div class="bg-card-bg border border-[#27272a] p-4 rounded-lg flex flex-col justify-between h-24 hover:border-primary/50 transition-colors group">
+<span class="text-gray-400 text-xs font-medium uppercase tracking-wide">Avg GPA</span>
+<span class="font-mono text-2xl font-bold text-white group-hover:text-primary transition-colors">3.8</span>
+</div>
+<div class="bg-card-bg border border-[#27272a] p-4 rounded-lg flex flex-col justify-between h-24 hover:border-primary/50 transition-colors group">
+<span class="text-gray-400 text-xs font-medium uppercase tracking-wide">Committed</span>
+<span class="font-mono text-2xl font-bold text-white group-hover:text-primary transition-colors">12</span>
+</div>
+</section>
+<!-- Top Uncommitted -->
+<section>
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-white font-bold text-base">Top Uncommitted</h3>
+<button class="text-xs text-primary hover:text-primary/80 font-medium">View All</button>
+</div>
+<div class="space-y-3">
+<!-- Item 1 -->
+<div class="flex items-center gap-3 bg-card-bg border border-[#27272a] p-3 rounded-lg hover:bg-[#222] transition-colors cursor-pointer group">
+<div class="size-12 rounded-full bg-gray-700 overflow-hidden flex-shrink-0" data-alt="Portrait of a young athlete wearing a football jersey" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCB8wKf-yitSYdFEjheExj_c_EG5BPzazhfhemHrItdbtkW2hm2_-YFT_dhmK3reFni_zdEByV-1GfnrfmBJmiD45_YIJI6aKi12Tpx0S3WMSMbgJ3_NIzrxpvU9VRqu-quCbEFhtrgyBDcLmQe7DWyzL3uWF3n9s9Iz1Isbfa-n9TY30djtgaS7tSMsx8Ch7DhYFBsYMRFPmNlqONIhuNWWqymyNLE1WD404PaH2RcsD25M2Seh1MVqRlH4wGv6YbQozbP8F2oE-Y'); background-size: cover; background-position: center;"></div>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-bold text-white truncate">Jalen Milroe</p>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="text-xs text-gray-400 font-mono">QB</span>
+<span class="text-[10px] text-gray-600">•</span>
+<div class="flex text-primary text-[10px]">
+<span class="material-symbols-outlined text-[14px] fill-current" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-current" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-current" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-current" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-current" style="font-variation-settings: 'FILL' 1">star</span>
+</div>
+</div>
+</div>
+<span class="text-[10px] font-bold bg-primary/20 text-primary px-2 py-0.5 rounded uppercase tracking-wide">Top 10</span>
+</div>
+<!-- Item 2 -->
+<div class="flex items-center gap-3 bg-card-bg border border-[#27272a] p-3 rounded-lg hover:bg-[#222] transition-colors cursor-pointer group">
+<div class="size-12 rounded-full bg-gray-700 overflow-hidden flex-shrink-0" data-alt="Portrait of a determined young basketball player" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA7keCt-rafEiO9iHYMsbmLoC1nicOWDbhrRssNO9PEhi-25Dsg1ogrDQtKPELaexifHBIU8Vt4rx-4IRLUafC2rJx_4HdiPoc1L3CmSwASsz1g_XlfgxMxI3xt3q7AVv0QQaNwnEhOHfwLaPGNwSnx_RMEKl3xVRWZ1qDoEL7_i_ROKx51GOnJrv6ESRWFZwX39QGInrXmGc12NeDsBcg98Nj-LHs4dySNZcqCZrPseQV8TLMYlfe4-UBfm9vqbj84_z00rVNMW_E'); background-size: cover; background-position: center;"></div>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-bold text-white truncate">David Hicks</p>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="text-xs text-gray-400 font-mono">DL</span>
+<span class="text-[10px] text-gray-600">•</span>
+<div class="flex text-primary text-[10px]">
+<span class="material-symbols-outlined text-[14px] fill-current" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-current" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-current" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-current" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-[14px] text-gray-600" style="font-variation-settings: 'FILL' 1">star</span>
+</div>
+</div>
+</div>
+<span class="text-[10px] font-bold bg-orange-900/40 text-orange-400 px-2 py-0.5 rounded uppercase tracking-wide">Offer Sent</span>
+</div>
+</div>
+</section>
+<!-- Top Programs -->
+<section>
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-white font-bold text-base">Top Programs</h3>
+</div>
+<div class="space-y-3">
+<div class="bg-card-bg border border-[#27272a] p-3 rounded-lg flex items-center justify-between hover:bg-[#222] transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded bg-gray-800 flex items-center justify-center text-gray-500 font-bold text-xs border border-gray-700">DHS</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-white">Duncanville</span>
+<div class="flex items-center gap-2">
+<span class="text-[10px] bg-gray-700 text-gray-300 px-1.5 rounded">D1</span>
+<span class="text-xs text-gray-400">TX</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<span class="block font-mono text-sm font-bold text-white">14-1</span>
+<span class="text-[10px] text-gray-500 uppercase">Record</span>
+</div>
+</div>
+<div class="bg-card-bg border border-[#27272a] p-3 rounded-lg flex items-center justify-between hover:bg-[#222] transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded bg-gray-800 flex items-center justify-center text-gray-500 font-bold text-xs border border-gray-700">NHS</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-white">North Shore</span>
+<div class="flex items-center gap-2">
+<span class="text-[10px] bg-gray-700 text-gray-300 px-1.5 rounded">D1</span>
+<span class="text-xs text-gray-400">TX</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<span class="block font-mono text-sm font-bold text-white">15-0</span>
+<span class="text-[10px] text-gray-500 uppercase">Record</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Upcoming Events -->
+<section>
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-white font-bold text-base">Upcoming Events</h3>
+</div>
+<div class="bg-card-bg border border-[#27272a] rounded-lg overflow-hidden">
+<div class="p-3 border-b border-[#27272a] flex items-center gap-4 hover:bg-[#222] transition-colors cursor-pointer">
+<div class="flex flex-col items-center justify-center bg-[#27272a] rounded w-12 h-12 flex-shrink-0">
+<span class="text-[10px] text-gray-400 uppercase font-bold">Oct</span>
+<span class="text-lg font-mono font-bold text-white leading-none">12</span>
+</div>
+<div>
+<p class="text-sm font-bold text-white">SW Elite Camp</p>
+<div class="flex items-center gap-1 text-xs text-gray-400 mt-0.5">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+<span>Dallas, TX</span>
+</div>
+</div>
+</div>
+<div class="p-3 flex items-center gap-4 hover:bg-[#222] transition-colors cursor-pointer">
+<div class="flex flex-col items-center justify-center bg-[#27272a] rounded w-12 h-12 flex-shrink-0">
+<span class="text-[10px] text-gray-400 uppercase font-bold">Nov</span>
+<span class="text-lg font-mono font-bold text-white leading-none">04</span>
+</div>
+<div>
+<p class="text-sm font-bold text-white">Regional Combine</p>
+<div class="flex items-center gap-1 text-xs text-gray-400 mt-0.5">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+<span>Phoenix, AZ</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Active Recruiters -->
+<section class="pb-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-white font-bold text-base">Active Recruiters</h3>
+</div>
+<div class="flex flex-col gap-3">
+<div class="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors cursor-pointer">
+<div class="relative">
+<div class="size-10 rounded-full bg-gray-600 overflow-hidden" data-alt="Headshot of a college recruiter smiling" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCdxgd-alNsqp-TAMmPB73rAEGJPBEOeq9y1FyrelPZw0U6MO1UE78U8Ye4o8MvC7JUCnjtDnVljfOKFyEOOhHb9oKr93j3XyIrb9yuW-X9ZsL_hK0JhfSFtbZ-H4DGU1845B9UGZIz2zjobbK54UBH79g9EU9w3NJp2WEOjgi73zsaxdMUYQejME6ChrNRLB-DEr1y_maQIv6CBdVgLY1a55vpZHg1lwplb74UDTK8Hoc3QT86-FRqLrgaOrAHaWVcASzznsnKa0U'); background-size: cover; background-position: center;"></div>
+<div class="absolute bottom-0 right-0 size-2.5 bg-green-500 rounded-full border-2 border-panel-bg"></div>
+</div>
+<div class="flex-1">
+<p class="text-sm font-bold text-white">Coach Williams</p>
+<p class="text-xs text-gray-400">Texas A&amp;M</p>
+</div>
+<span class="text-[10px] text-green-500 font-medium bg-green-900/20 px-2 py-1 rounded-full">Active today</span>
+</div>
+<div class="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors cursor-pointer">
+<div class="relative">
+<div class="size-10 rounded-full bg-gray-600 overflow-hidden" data-alt="Headshot of a female athletic scout" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAqZjc11qM1UpSYStKqcwLFpFULSQakb61f9qBfj7Y6KoCwwdHaJCybCvOZI7qoxesw9ZcARSr8ImBgqDvOClfxpR9kz9HzreIauFx5q4OtZwcBLvsWQz9M95gbAMIMzmvOm5pvJn3q8rCDtL2Nkop81qXlYifhWmB0Mpm86fUBVAj_g3pDHohX44ABpa1J-ylVt3Z5lFkShKUbjaj4iku6BkzXIYdaLB2VNoFvFwdj4GJ7oqMrODT4bPRyAQJmo01N0cOpztStjww'); background-size: cover; background-position: center;"></div>
+<div class="absolute bottom-0 right-0 size-2.5 bg-gray-500 rounded-full border-2 border-panel-bg"></div>
+</div>
+<div class="flex-1">
+<p class="text-sm font-bold text-white">Sarah Jenkins</p>
+<p class="text-xs text-gray-400">Oklahoma State</p>
+</div>
+<span class="text-[10px] text-gray-500 font-medium">2h ago</span>
+</div>
+</div>
+</section>
+</div>
+<!-- Sticky Footer -->
+<div class="flex-none p-6 border-t border-[#27272a] bg-panel-bg/95 backdrop-blur-sm z-10">
+<button class="w-full bg-primary hover:bg-orange-600 text-white font-bold py-3.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-lg shadow-primary/20 group">
+<span>View All Southwest Prospects</span>
+<span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</div>
+</body></html>

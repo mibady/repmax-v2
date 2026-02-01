@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Program Rankings Widget</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d4af35",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#201d12",
+                        "surface-dark": "#1A1A1A",
+                        "surface-dark-hover": "#252525",
+                        "accent-green": "#4ade80",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for clean look if needed */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #201d12;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen flex items-center justify-center p-6 antialiased font-display">
+<!-- Widget Container -->
+<div class="w-full max-w-[400px] flex flex-col gap-4">
+<!-- Header -->
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-3">
+<h2 class="text-white text-lg font-bold leading-tight tracking-tight">🏫 Top Programs — Southwest</h2>
+<span class="relative flex h-2.5 w-2.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-orange-500"></span>
+</span>
+</div>
+</div>
+<!-- Ranking List -->
+<div class="flex flex-col gap-3">
+<!-- Rank #1 -->
+<a class="group flex items-center gap-4 bg-surface-dark hover:bg-surface-dark-hover border border-transparent hover:border-primary/30 transition-all duration-200 rounded-lg p-4" href="#">
+<div class="flex flex-col items-center justify-center w-8 shrink-0">
+<span class="text-primary font-mono text-xl font-bold">#1</span>
+</div>
+<div class="flex flex-col flex-1 gap-1">
+<div class="flex items-baseline gap-2">
+<span class="text-white font-bold text-base">North Shore</span>
+<span class="text-xs font-bold bg-white/10 text-white/70 px-1.5 py-0.5 rounded">TX</span>
+</div>
+<div class="flex items-center gap-3 text-xs">
+<span class="text-accent-green font-mono font-medium">15-1</span>
+<span class="w-1 h-1 rounded-full bg-white/20"></span>
+<span class="text-primary font-mono font-medium">162 D1</span>
+</div>
+</div>
+<div class="shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary group-hover:translate-x-1 transition-transform duration-200">arrow_forward</span>
+</div>
+</a>
+<!-- Rank #2 -->
+<a class="group flex items-center gap-4 bg-surface-dark hover:bg-surface-dark-hover border border-transparent hover:border-primary/30 transition-all duration-200 rounded-lg p-4" href="#">
+<div class="flex flex-col items-center justify-center w-8 shrink-0">
+<span class="text-primary font-mono text-xl font-bold">#2</span>
+</div>
+<div class="flex flex-col flex-1 gap-1">
+<div class="flex items-baseline gap-2">
+<span class="text-white font-bold text-base">Duncanville</span>
+<span class="text-xs font-bold bg-white/10 text-white/70 px-1.5 py-0.5 rounded">TX</span>
+</div>
+<div class="flex items-center gap-3 text-xs">
+<span class="text-accent-green font-mono font-medium">14-1</span>
+<span class="w-1 h-1 rounded-full bg-white/20"></span>
+<span class="text-primary font-mono font-medium">145 D1</span>
+</div>
+</div>
+<div class="shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary group-hover:translate-x-1 transition-transform duration-200">arrow_forward</span>
+</div>
+</a>
+<!-- Rank #3 -->
+<a class="group flex items-center gap-4 bg-surface-dark hover:bg-surface-dark-hover border border-transparent hover:border-primary/30 transition-all duration-200 rounded-lg p-4" href="#">
+<div class="flex flex-col items-center justify-center w-8 shrink-0">
+<span class="text-primary font-mono text-xl font-bold">#3</span>
+</div>
+<div class="flex flex-col flex-1 gap-1">
+<div class="flex items-baseline gap-2">
+<span class="text-white font-bold text-base">Westlake</span>
+<span class="text-xs font-bold bg-white/10 text-white/70 px-1.5 py-0.5 rounded">TX</span>
+</div>
+<div class="flex items-center gap-3 text-xs">
+<span class="text-accent-green font-mono font-medium">13-1</span>
+<span class="w-1 h-1 rounded-full bg-white/20"></span>
+<span class="text-primary font-mono font-medium">98 D1</span>
+</div>
+</div>
+<div class="shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary group-hover:translate-x-1 transition-transform duration-200">arrow_forward</span>
+</div>
+</a>
+<!-- Rank #4 -->
+<a class="group flex items-center gap-4 bg-surface-dark hover:bg-surface-dark-hover border border-transparent hover:border-primary/30 transition-all duration-200 rounded-lg p-4" href="#">
+<div class="flex flex-col items-center justify-center w-8 shrink-0">
+<span class="text-primary font-mono text-xl font-bold">#4</span>
+</div>
+<div class="flex flex-col flex-1 gap-1">
+<div class="flex items-baseline gap-2">
+<span class="text-white font-bold text-base">Bishop Gorman</span>
+<span class="text-xs font-bold bg-white/10 text-white/70 px-1.5 py-0.5 rounded">NV</span>
+</div>
+<div class="flex items-center gap-3 text-xs">
+<span class="text-accent-green font-mono font-medium">12-0</span>
+<span class="w-1 h-1 rounded-full bg-white/20"></span>
+<span class="text-primary font-mono font-medium">110 D1</span>
+</div>
+</div>
+<div class="shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary group-hover:translate-x-1 transition-transform duration-200">arrow_forward</span>
+</div>
+</a>
+</div>
+<!-- Footer -->
+<div class="flex justify-end pt-2">
+<a class="group flex items-center gap-1 text-sm font-medium text-primary hover:text-white transition-colors" href="#">
+                View all zone programs
+                <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_right_alt</span>
+</a>
+</div>
+</div>
+</body></html>
