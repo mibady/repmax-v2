@@ -59,15 +59,25 @@ function generateInsightMessage(zone: ZoneCode, position?: string): string {
       `Winter conditioning reports are in high demand from ${mainConference} coaches.`,
       `Multiple ${mainConference} schools are hosting junior days next month.`,
     ],
-    SOUTH: [
-      `SEC and ACC schools are competing for top talent in your zone.`,
+    SOUTHEAST: [
+      `SEC schools are competing for top talent in your zone.`,
       `${mainConference} spring practices start soon - coaches are finalizing target lists.`,
-      `High activity from Southern programs this recruiting cycle.`,
+      `High activity from SEC programs this recruiting cycle.`,
+    ],
+    SOUTHWEST: [
+      `Texas programs dominate the Southwest recruiting landscape.`,
+      `${mainConference} coaches are evaluating spring game film.`,
+      `Big 12 expansion is creating new opportunities in your zone.`,
     ],
     NORTHEAST: [
       `Ivy League and ${mainConference} programs are actively building their classes.`,
       `Academic showcases are drawing interest from top-tier Northeast schools.`,
       `FCS programs in the Northeast are looking for early commits.`,
+    ],
+    PLAINS: [
+      `Big 12 and SEC schools are battling for Plains talent.`,
+      `${mainConference} coaches are expanding into underrecruited territories.`,
+      `Hidden gems in the Plains are getting more attention this cycle.`,
     ],
   };
 
@@ -120,8 +130,10 @@ function getHotPositionsForZone(zone: ZoneCode): string[] {
   const basePositions: Record<ZoneCode, string[]> = {
     WEST: ["Wide Receiver", "Quarterback", "Defensive Back"],
     MIDWEST: ["Offensive Line", "Linebacker", "Tight End"],
-    SOUTH: ["Running Back", "Defensive Line", "Safety"],
+    SOUTHEAST: ["Running Back", "Defensive Line", "Safety"],
+    SOUTHWEST: ["Quarterback", "Running Back", "Defensive End"],
     NORTHEAST: ["Quarterback", "Wide Receiver", "Cornerback"],
+    PLAINS: ["Offensive Line", "Linebacker", "Running Back"],
   };
   return basePositions[zone];
 }
@@ -175,8 +187,10 @@ function getZoneCity(zone: ZoneCode): string {
   const cities: Record<ZoneCode, string> = {
     WEST: "Los Angeles, CA",
     MIDWEST: "Indianapolis, IN",
-    SOUTH: "Atlanta, GA",
+    SOUTHEAST: "Atlanta, GA",
+    SOUTHWEST: "Dallas, TX",
     NORTHEAST: "Philadelphia, PA",
+    PLAINS: "Kansas City, MO",
   };
   return cities[zone];
 }
@@ -218,17 +232,29 @@ function getTopSchoolsForZone(zone: ZoneCode): ZoneIntel["topSchools"] {
       { name: "Notre Dame", activelyRecruiting: false },
       { name: "Penn State", activelyRecruiting: true },
     ],
-    SOUTH: [
+    SOUTHEAST: [
       { name: "Alabama", activelyRecruiting: true },
       { name: "Georgia", activelyRecruiting: true },
+      { name: "Florida", activelyRecruiting: true },
+      { name: "Tennessee", activelyRecruiting: false },
+    ],
+    SOUTHWEST: [
       { name: "Texas", activelyRecruiting: true },
-      { name: "Florida", activelyRecruiting: false },
+      { name: "Texas A&M", activelyRecruiting: true },
+      { name: "Oklahoma", activelyRecruiting: true },
+      { name: "LSU", activelyRecruiting: false },
     ],
     NORTHEAST: [
       { name: "Penn State", activelyRecruiting: true },
       { name: "Boston College", activelyRecruiting: true },
       { name: "Syracuse", activelyRecruiting: false },
       { name: "Rutgers", activelyRecruiting: true },
+    ],
+    PLAINS: [
+      { name: "Nebraska", activelyRecruiting: true },
+      { name: "Kansas State", activelyRecruiting: true },
+      { name: "Missouri", activelyRecruiting: false },
+      { name: "Arkansas", activelyRecruiting: true },
     ],
   };
   return schools[zone];

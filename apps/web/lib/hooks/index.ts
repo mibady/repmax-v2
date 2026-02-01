@@ -12,3 +12,14 @@ export { useMessages } from "./use-messages";
 
 // Subscriptions
 export { useSubscription, useSubscriptionPlans } from "./use-subscription";
+
+// Recruiting Intelligence
+export {
+  useZones,
+  useZone,
+  useRecruitingCalendar,
+  useClassRankings,
+  type ZoneData,
+  type CalendarData,
+  type ClassRanking,
+} from "./use-recruiting";
