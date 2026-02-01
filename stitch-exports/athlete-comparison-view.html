@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Athlete Comparison - RepMax Recruit</title>
+<!-- Google Fonts: Inter, JetBrains Mono, Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#D4AF37", // Gold
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#050505",
+                        "surface-dark": "#1F1F22",
+                        "border-dark": "#2A2A2E",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for the table container */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 12px;
+            width: 12px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1F1F22;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #2A2A2E; 
+            border-radius: 6px;
+            border: 3px solid #1F1F22;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #45454a; 
+        }
+
+        /* Material Symbols utility */
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Sticky Column Styles */
+        th.sticky-col, td.sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 10;
+        }
+        /* Ensure the sticky column has a background so content doesn't show through */
+        th.sticky-col {
+            z-index: 20; /* Higher z-index for header intersection */
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden h-screen flex flex-col">
+<!-- Top Navigation -->
+<header class="flex-none flex items-center justify-between whitespace-nowrap border-b border-solid border-border-dark bg-surface-dark px-6 py-3">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-white">
+<div class="size-8 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">sports_football</span>
+</div>
+<h2 class="text-white text-lg font-bold leading-tight tracking-tight">RepMax Recruit</h2>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-gray-400 hover:text-white text-sm font-medium transition-colors" href="#">Dashboard</a>
+<a class="text-white text-sm font-medium transition-colors" href="#">Athletes</a>
+<a class="text-gray-400 hover:text-white text-sm font-medium transition-colors" href="#">Teams</a>
+<a class="text-gray-400 hover:text-white text-sm font-medium transition-colors" href="#">Recruiting Board</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</span>
+<input class="block w-full rounded-full border-none bg-[#2A2A2E] py-2 pl-10 pr-4 text-sm text-white placeholder-gray-500 focus:border-primary focus:ring-1 focus:ring-primary sm:w-64" placeholder="Search athletes..." type="text"/>
+</div>
+<div class="h-8 w-8 rounded-full bg-cover bg-center border border-border-dark" data-alt="User profile avatar showing a coach" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDX3pkXdxhFGmeEUMsgTz2EJo3TYjZqvT63a0-xOsihg-1ur6CEXJrd9UImvoD-3JwKKi4j1DIX_1eSyJDhta8U-E6VxGmb4W8n5zKzZsLH0UAqW2fm2-wJXb5np6TsmgAyNryVkvkEF81gJWYCLmtBZRt0UqalLn1C0q5FI7EmG3J-iuY-QLJzD4j78Oz58fv2EbCPGYnhnM9YTk3reJ9sF_tY9pwc143Nx8NekfMeGx64X--1P1tUmVKuR57kglzdRp6KpNEN0pg");'></div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col min-h-0 overflow-hidden">
+<!-- Page Header -->
+<div class="flex-none px-6 py-6 border-b border-border-dark bg-background-dark">
+<div class="max-w-[1400px] mx-auto w-full flex flex-wrap items-center justify-between gap-4">
+<div class="flex flex-col gap-1">
+<h1 class="text-3xl font-black text-white tracking-tight">Compare Athletes</h1>
+<p class="text-gray-400 text-sm">Analyze stats side-by-side to find your next star recruit.</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 rounded-lg border border-border-dark bg-surface-dark px-4 py-2 text-sm font-semibold text-white hover:bg-[#2A2A2E] transition-colors">
+<span class="material-symbols-outlined text-[20px]">download</span>
+                        Export Data
+                    </button>
+<button class="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-[#050505] hover:bg-yellow-500 transition-colors shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                        Add Athlete
+                    </button>
+</div>
+</div>
+</div>
+<!-- Comparison Table Area -->
+<div class="flex-1 overflow-auto custom-scrollbar bg-background-dark p-6">
+<div class="max-w-[1400px] mx-auto w-full">
+<div class="relative rounded-xl border border-border-dark bg-surface-dark overflow-hidden shadow-2xl">
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full border-collapse min-w-[1000px]">
+<thead>
+<tr class="bg-[#151517]">
+<!-- Sticky Corner Header -->
+<th class="sticky-col top-0 left-0 z-30 w-[240px] min-w-[240px] bg-[#151517] p-4 text-left border-b border-r border-border-dark shadow-[4px_0_24px_rgba(0,0,0,0.4)]">
+<div class="text-xs font-bold uppercase tracking-wider text-gray-500">Metrics</div>
+</th>
+<!-- Athlete 1 Header -->
+<th class="w-[280px] min-w-[280px] p-4 border-b border-r border-border-dark align-top bg-surface-dark">
+<div class="flex flex-col items-center gap-3">
+<div class="relative">
+<div class="size-20 rounded-full bg-cover bg-center border-2 border-border-dark" data-alt="Headshot of athlete Marcus Johnson" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAY9fqJm3nb4W-4p1ait_6OM16HxuaJvbGcAlWLk0p3XMhVJcExNb66113rvAq3fvMM8wRi7o3We1d2Syj0rdq3BDywz1avj1PED-42hykb1a6pZY9xKrSDAiNTwoR6WfNd4-TOpWr8qT_VRv2Xb5P-jAKa_bHtRzGbxuLtoz2Z_LrsaQd6qqN1IR3os8-TeKyegIka2DrDJfM3jRHChkBjt_oIrUgPp4-on-Sb0Ih4QZYeRi3tkxLqVVQ6i08s2pbUdKLzZYKZ9QY");'></div>
+<div class="absolute -bottom-1 -right-1 bg-surface-dark rounded-full p-1 border border-border-dark">
+<div class="bg-green-500 size-3 rounded-full"></div>
+</div>
+</div>
+<div class="text-center">
+<h3 class="text-lg font-bold text-white leading-tight">Marcus Johnson</h3>
+<div class="flex items-center justify-center gap-2 mt-1">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#2A2A2E] text-gray-300 uppercase tracking-wide">QB</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#2A2A2E] text-gray-300 uppercase tracking-wide">Senior</span>
+</div>
+<div class="flex items-center justify-center gap-0.5 mt-2 text-primary">
+<span class="material-symbols-outlined icon-filled text-[16px]">star</span>
+<span class="material-symbols-outlined icon-filled text-[16px]">star</span>
+<span class="material-symbols-outlined icon-filled text-[16px]">star</span>
+<span class="material-symbols-outlined icon-filled text-[16px]">star</span>
+<span class="material-symbols-outlined text-[16px]">star_half</span>
+<span class="ml-1 text-xs text-white font-medium">4.5</span>
+</div>
+</div>
+</div>
+</th>
+<!-- Athlete 2 Header -->
+<th class="w-[280px] min-w-[280px] p-4 border-b border-r border-border-dark align-top bg-surface-dark">
+<div class="flex flex-col items-center gap-3">
+<div class="relative">
+<div class="size-20 rounded-full bg-cover bg-center border-2 border-border-dark" data-alt="Headshot of athlete Trey Smith" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAxUoUBKmswXmtNXMVnx0lrwytdSpgwDNaFWmYmAgy3bLoxQhcBefV5rw_pZDsUsMYavzpsrekJapxA4lLlCBzbSkGd9XRNH52BjFHbTCt5318RyUPfvbhf0UPjgxg4UqNxVqGevcw4ZTCQQ8mkk_i6CdPNcDgZ2w40vAs6mqZlnJX6rcY-i9cvnF17BPxI3gjZgr1SXhyOV4GhjhNaDQ2vnPSlaurFYRILsctJnAJozr8wwDChj7uJ1Q85vsk3pkfTxPhc8qe7GKQ");'></div>
+</div>
+<div class="text-center">
+<h3 class="text-lg font-bold text-white leading-tight">Trey Smith</h3>
+<div class="flex items-center justify-center gap-2 mt-1">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#2A2A2E] text-gray-300 uppercase tracking-wide">WR</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#2A2A2E] text-gray-300 uppercase tracking-wide">Junior</span>
+</div>
+<div class="flex items-center justify-center gap-0.5 mt-2 text-primary">
+<span class="material-symbols-outlined icon-filled text-[16px]">star</span>
+<span class="material-symbols-outlined icon-filled text-[16px]">star</span>
+<span class="material-symbols-outlined icon-filled text-[16px]">star</span>
+<span class="material-symbols-outlined icon-filled text-[16px]">star</span>
+<span class="material-symbols-outlined text-[16px]">star_outline</span>
+<span class="ml-1 text-xs text-white font-medium">4.0</span>
+</div>
+</div>
+</div>
+</th>
+<!-- Athlete 3 Header -->
+<th class="w-[280px] min-w-[280px] p-4 border-b border-r border-border-dark align-top bg-surface-dark">
+<div class="flex flex-col items-center gap-3">
+<div class="relative">
+<div class="size-20 rounded-full bg-cover bg-center border-2 border-border-dark" data-alt="Headshot of athlete David O'Connor" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAnYDTRv8_MH7eUN0gKj9YeCjb-sRDmQUchHdKr3Ktsir4AmuSeFUkrVjRFftCIOvItGYoDNmJ2dZb5dFr1d_X8HWk9B4jFSvdc8WNE9oI3j1WVg5Y0s7I2JBnBdIfICOmwis3HkqxCRgbQjdUpES48FQ9qJgHJAzSTawig3AUMSTgE8a5Ta35h08-CTk0_TSAVPUW9-6i4ndpmmCq6nwUIXArMY9FQmacj5-OXZpJp2344AdfKWZ63TWgc49pKtOu2DSkvxJGnf68");'></div>
+</div>
+<div class="text-center">
+<h3 class="text-lg font-bold text-white leading-tight">David O'Connor</h3>
+<div class="flex items-center justify-center gap-2 mt-1">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#2A2A2E] text-gray-300 uppercase tracking-wide">QB</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#2A2A2E] text-gray-300 uppercase tracking-wide">Senior</span>
+</div>
+<div class="flex items-center justify-center gap-0.5 mt-2 text-primary">
+<span class="material-symbols-outlined icon-filled text-[16px]">star</span>
+<span class="material-symbols-outlined icon-filled text-[16px]">star</span>
+<span class="material-symbols-outlined icon-filled text-[16px]">star</span>
+<span class="material-symbols-outlined text-[16px]">star_half</span>
+<span class="material-symbols-outlined text-[16px]">star_outline</span>
+<span class="ml-1 text-xs text-white font-medium">3.5</span>
+</div>
+</div>
+</div>
+</th>
+<!-- Add New Header -->
+<th class="w-[240px] min-w-[240px] p-4 border-b border-border-dark align-middle bg-[#151517]">
+<div class="flex flex-col items-center justify-center h-full min-h-[140px] rounded-lg border-2 border-dashed border-[#2A2A2E] bg-transparent group hover:border-primary/50 hover:bg-surface-dark transition-all cursor-pointer">
+<div class="size-10 rounded-full bg-[#2A2A2E] flex items-center justify-center text-gray-400 group-hover:text-primary transition-colors mb-2">
+<span class="material-symbols-outlined">add</span>
+</div>
+<span class="text-sm font-semibold text-gray-400 group-hover:text-white transition-colors">Add Athlete</span>
+</div>
+</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-dark bg-surface-dark">
+<!-- Section: Physical Attributes -->
+<tr class="bg-[#252529]">
+<td class="sticky-col left-0 z-10 px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider bg-[#252529] border-r border-border-dark shadow-[4px_0_10px_rgba(0,0,0,0.2)]" colspan="5">
+                                        Physical Attributes
+                                    </td>
+</tr>
+<tr class="group hover:bg-[#252529] transition-colors">
+<td class="sticky-col left-0 z-10 p-4 text-sm font-medium text-gray-300 border-r border-border-dark bg-surface-dark group-hover:bg-[#252529] shadow-[4px_0_24px_rgba(0,0,0,0.4)]">Height</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark bg-primary/10 text-primary font-bold">6'3"</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark">6'1"</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark">6'2"</td>
+<td class="p-4 border-l border-dashed border-border-dark bg-[#151517]"></td>
+</tr>
+<tr class="group hover:bg-[#252529] transition-colors">
+<td class="sticky-col left-0 z-10 p-4 text-sm font-medium text-gray-300 border-r border-border-dark bg-surface-dark group-hover:bg-[#252529] shadow-[4px_0_24px_rgba(0,0,0,0.4)]">Weight</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark">220 lbs</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark">195 lbs</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark bg-primary/10 text-primary font-bold">225 lbs</td>
+<td class="p-4 border-l border-dashed border-border-dark bg-[#151517]"></td>
+</tr>
+<tr class="group hover:bg-[#252529] transition-colors">
+<td class="sticky-col left-0 z-10 p-4 text-sm font-medium text-gray-300 border-r border-border-dark bg-surface-dark group-hover:bg-[#252529] shadow-[4px_0_24px_rgba(0,0,0,0.4)]">Wingspan</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark bg-primary/10 text-primary font-bold">78"</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark">74"</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark">76"</td>
+<td class="p-4 border-l border-dashed border-border-dark bg-[#151517]"></td>
+</tr>
+<!-- Section: Combine Stats -->
+<tr class="bg-[#252529]">
+<td class="sticky-col left-0 z-10 px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider bg-[#252529] border-r border-border-dark shadow-[4px_0_10px_rgba(0,0,0,0.2)]" colspan="5">
+                                        Combine Performance
+                                    </td>
+</tr>
+<tr class="group hover:bg-[#252529] transition-colors">
+<td class="sticky-col left-0 z-10 p-4 text-sm font-medium text-gray-300 border-r border-border-dark bg-surface-dark group-hover:bg-[#252529] shadow-[4px_0_24px_rgba(0,0,0,0.4)]">40-Yard Dash</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark">4.65s</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark bg-primary/10 text-primary font-bold">4.42s</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark">4.80s</td>
+<td class="p-4 border-l border-dashed border-border-dark bg-[#151517]"></td>
+</tr>
+<tr class="group hover:bg-[#252529] transition-colors">
+<td class="sticky-col left-0 z-10 p-4 text-sm font-medium text-gray-300 border-r border-border-dark bg-surface-dark group-hover:bg-[#252529] shadow-[4px_0_24px_rgba(0,0,0,0.4)]">Bench Press (225)</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark bg-primary/10 text-primary font-bold">18 reps</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark">12 reps</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark">16 reps</td>
+<td class="p-4 border-l border-dashed border-border-dark bg-[#151517]"></td>
+</tr>
+<tr class="group hover:bg-[#252529] transition-colors">
+<td class="sticky-col left-0 z-10 p-4 text-sm font-medium text-gray-300 border-r border-border-dark bg-surface-dark group-hover:bg-[#252529] shadow-[4px_0_24px_rgba(0,0,0,0.4)]">Vertical Jump</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark">34.5"</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark bg-primary/10 text-primary font-bold">38.0"</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark">32.0"</td>
+<td class="p-4 border-l border-dashed border-border-dark bg-[#151517]"></td>
+</tr>
+<tr class="group hover:bg-[#252529] transition-colors">
+<td class="sticky-col left-0 z-10 p-4 text-sm font-medium text-gray-300 border-r border-border-dark bg-surface-dark group-hover:bg-[#252529] shadow-[4px_0_24px_rgba(0,0,0,0.4)]">Shuttle Run</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark bg-primary/10 text-primary font-bold">4.18s</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark">4.25s</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark">4.30s</td>
+<td class="p-4 border-l border-dashed border-border-dark bg-[#151517]"></td>
+</tr>
+<!-- Section: Academics & Others -->
+<tr class="bg-[#252529]">
+<td class="sticky-col left-0 z-10 px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider bg-[#252529] border-r border-border-dark shadow-[4px_0_10px_rgba(0,0,0,0.2)]" colspan="5">
+                                        Academics &amp; Status
+                                    </td>
+</tr>
+<tr class="group hover:bg-[#252529] transition-colors">
+<td class="sticky-col left-0 z-10 p-4 text-sm font-medium text-gray-300 border-r border-border-dark bg-surface-dark group-hover:bg-[#252529] shadow-[4px_0_24px_rgba(0,0,0,0.4)]">GPA</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark">3.8</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark">3.2</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark bg-primary/10 text-primary font-bold">3.9</td>
+<td class="p-4 border-l border-dashed border-border-dark bg-[#151517]"></td>
+</tr>
+<tr class="group hover:bg-[#252529] transition-colors">
+<td class="sticky-col left-0 z-10 p-4 text-sm font-medium text-gray-300 border-r border-border-dark bg-surface-dark group-hover:bg-[#252529] shadow-[4px_0_24px_rgba(0,0,0,0.4)]">Eligibility</td>
+<td class="p-4 text-center font-mono text-sm text-green-400 border-r border-border-dark">Eligible</td>
+<td class="p-4 text-center font-mono text-sm text-green-400 border-r border-border-dark">Eligible</td>
+<td class="p-4 text-center font-mono text-sm text-yellow-500 border-r border-border-dark">Pending</td>
+<td class="p-4 border-l border-dashed border-border-dark bg-[#151517]"></td>
+</tr>
+<tr class="group hover:bg-[#252529] transition-colors">
+<td class="sticky-col left-0 z-10 p-4 text-sm font-medium text-gray-300 border-r border-border-dark bg-surface-dark group-hover:bg-[#252529] shadow-[4px_0_24px_rgba(0,0,0,0.4)]">State Rank</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark bg-primary/10 text-primary font-bold">#4</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark">#12</td>
+<td class="p-4 text-center font-mono text-sm text-white border-r border-border-dark">#28</td>
+<td class="p-4 border-l border-dashed border-border-dark bg-[#151517]"></td>
+</tr>
+<!-- Empty spacer row for visual bottom padding -->
+<tr class="h-20">
+<td class="sticky-col left-0 z-10 bg-surface-dark border-r border-border-dark shadow-[4px_0_24px_rgba(0,0,0,0.4)]"></td>
+<td class="border-r border-border-dark"></td>
+<td class="border-r border-border-dark"></td>
+<td class="border-r border-border-dark"></td>
+<td class="border-l border-dashed border-border-dark bg-[#151517]"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="mt-8 flex justify-end">
+<p class="text-xs text-gray-500">Last updated: Today at 2:30 PM • Data source: Verified Combine</p>
+</div>
+</div>
+</div>
+</main>
+</body></html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Athlete Document Management Dashboard</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#D4AF37", // Gold accent requested
+                        "primary-hover": "#c4a030",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#050505", // Requested deep black
+                        "surface-dark": "#1F1F22", // Requested card bg
+                        "surface-border": "#2E2E32",
+                        "text-secondary": "#A1A1AA",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.375rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for dark theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050505;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #444;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display min-h-screen flex flex-col antialiased">
+<!-- Top Navigation -->
+<header class="sticky top-0 z-50 w-full border-b border-gray-200 dark:border-white/10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<!-- Logo -->
+<div class="flex items-center gap-2">
+<div class="size-8 flex items-center justify-center rounded bg-primary/20 text-primary">
+<span class="material-symbols-outlined">fitness_center</span>
+</div>
+<h2 class="text-xl font-bold tracking-tight">RepMax</h2>
+</div>
+<!-- Nav Links (Desktop) -->
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Recruiting</a>
+<a class="text-sm font-medium text-primary border-b-2 border-primary pb-0.5" href="#">Documents</a>
+<a class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Settings</a>
+</nav>
+<!-- Profile -->
+<div class="flex items-center gap-4">
+<button class="text-slate-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="size-9 rounded-full bg-surface-dark border border-white/10 overflow-hidden cursor-pointer bg-center bg-cover" data-alt="Profile picture of a young athlete" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAJPYuHzvIM89s6lbjTgAuJx64erhON2uDzVBPnvHYblaDkGwvL5W1I5GoxLQqPS5bnPx5rlknkR7qEzY28P7Atntz1K8waY5FU2Z0HU3dZ4Z8vNDq8R1F9UWPqzQzBUMzgsLMV0VfJOWsSbifvbMu4eVik1nfxXtdJmyE2-TId2x5bDrlIR2-m_taPGgfHffQNOpgI_jxt0SybujhDrYzXoAgps98HEMYpZN5QODimz560stGRAPzO0bSY5lRURQUnCTVc0G_3v0w");'>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Page Header -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+<div>
+<h1 class="text-3xl font-black tracking-tight text-white">Documents</h1>
+<p class="text-text-secondary mt-1">Manage and share your recruiting materials securely.</p>
+</div>
+<button class="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-background-dark font-bold text-sm px-5 py-2.5 rounded-lg transition-all shadow-[0_0_15px_-3px_rgba(212,175,55,0.4)] hover:shadow-[0_0_20px_-3px_rgba(212,175,55,0.6)]">
+<span class="material-symbols-outlined text-[20px]">upload_file</span>
+                Upload Document
+            </button>
+</div>
+<!-- Upload Zone -->
+<div class="mb-10 group relative">
+<div class="absolute -inset-0.5 bg-gradient-to-r from-primary/30 to-primary/10 rounded-xl blur opacity-30 group-hover:opacity-60 transition duration-500"></div>
+<div class="relative flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-white/20 group-hover:border-primary/50 bg-surface-dark/50 hover:bg-surface-dark/80 rounded-xl transition-all cursor-pointer">
+<div class="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
+<div class="p-3 rounded-full bg-white/5 mb-3 group-hover:bg-primary/20 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-3xl">cloud_upload</span>
+</div>
+<p class="mb-1 text-base font-semibold text-white">Click to upload or drag and drop</p>
+<p class="text-sm text-text-secondary">Official transcripts, test scores, letters (PDF, JPG, PNG)</p>
+</div>
+<input class="hidden" id="dropzone-file" type="file"/>
+</div>
+</div>
+<!-- Filters & Sort -->
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xl font-bold text-white">Your Files</h3>
+<div class="flex items-center gap-3">
+<div class="relative hidden sm:block">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 material-symbols-outlined text-[20px]">search</span>
+<input class="bg-surface-dark border border-white/10 text-sm text-white rounded-lg pl-10 pr-4 py-2 focus:ring-1 focus:ring-primary focus:border-primary placeholder-slate-500 w-64 outline-none transition-all" placeholder="Search files..." type="text"/>
+</div>
+<button class="flex items-center gap-2 px-3 py-2 bg-surface-dark border border-white/10 rounded-lg text-sm font-medium hover:bg-white/5 transition-colors text-text-secondary hover:text-white">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+                    Filter
+                </button>
+</div>
+</div>
+<!-- Document Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Card 1: Verified -->
+<div class="group relative bg-surface-dark rounded-xl p-5 border border-white/5 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-black/40">
+<div class="flex items-start justify-between mb-4">
+<div class="size-12 rounded-lg bg-red-500/10 flex items-center justify-center text-red-500">
+<span class="material-symbols-outlined text-3xl">picture_as_pdf</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-green-500/10 text-green-500 border border-green-500/20">
+<span class="material-symbols-outlined text-[14px]">verified</span>
+                        Verified
+                    </span>
+</div>
+<h4 class="text-lg font-bold text-white mb-1 truncate group-hover:text-primary transition-colors">Official Transcript.pdf</h4>
+<div class="flex items-center gap-3 text-xs text-text-secondary mb-6">
+<span>2.4 MB</span>
+<span class="size-1 rounded-full bg-gray-600"></span>
+<span>Uploaded Oct 12, 2023</span>
+</div>
+<div class="pt-4 border-t border-white/5 flex items-center justify-between">
+<div class="flex gap-2">
+<button class="p-2 text-text-secondary hover:text-white hover:bg-white/10 rounded-lg transition-colors" title="View">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+<button class="p-2 text-text-secondary hover:text-white hover:bg-white/10 rounded-lg transition-colors" title="Download">
+<span class="material-symbols-outlined text-[20px]">download</span>
+</button>
+</div>
+<button class="flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">share</span>
+                        Share
+                    </button>
+</div>
+</div>
+<!-- Card 2: Unverified Recommendation -->
+<div class="group relative bg-surface-dark rounded-xl p-5 border border-white/5 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-black/40">
+<div class="flex items-start justify-between mb-4">
+<div class="size-12 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500">
+<span class="material-symbols-outlined text-3xl">description</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
+<span class="material-symbols-outlined text-[14px]">pending</span>
+                        Unverified
+                    </span>
+</div>
+<h4 class="text-lg font-bold text-white mb-1 truncate group-hover:text-primary transition-colors">Coach Recommendation.pdf</h4>
+<div class="flex items-center gap-3 text-xs text-text-secondary mb-6">
+<span>1.1 MB</span>
+<span class="size-1 rounded-full bg-gray-600"></span>
+<span>Uploaded Nov 04, 2023</span>
+</div>
+<div class="pt-4 border-t border-white/5 flex items-center justify-between">
+<div class="flex gap-2">
+<button class="p-2 text-text-secondary hover:text-white hover:bg-white/10 rounded-lg transition-colors" title="View">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+<button class="p-2 text-text-secondary hover:text-white hover:bg-white/10 rounded-lg transition-colors" title="Download">
+<span class="material-symbols-outlined text-[20px]">download</span>
+</button>
+</div>
+<button class="flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">share</span>
+                        Share
+                    </button>
+</div>
+</div>
+<!-- Card 3: Unverified SAT Score -->
+<div class="group relative bg-surface-dark rounded-xl p-5 border border-white/5 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-black/40">
+<div class="flex items-start justify-between mb-4">
+<div class="size-12 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-500">
+<span class="material-symbols-outlined text-3xl">image</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
+<span class="material-symbols-outlined text-[14px]">pending</span>
+                        Unverified
+                    </span>
+</div>
+<h4 class="text-lg font-bold text-white mb-1 truncate group-hover:text-primary transition-colors">SAT Score Report.png</h4>
+<div class="flex items-center gap-3 text-xs text-text-secondary mb-6">
+<span>850 KB</span>
+<span class="size-1 rounded-full bg-gray-600"></span>
+<span>Uploaded Dec 15, 2023</span>
+</div>
+<div class="pt-4 border-t border-white/5 flex items-center justify-between">
+<div class="flex gap-2">
+<button class="p-2 text-text-secondary hover:text-white hover:bg-white/10 rounded-lg transition-colors" title="View">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+<button class="p-2 text-text-secondary hover:text-white hover:bg-white/10 rounded-lg transition-colors" title="Download">
+<span class="material-symbols-outlined text-[20px]">download</span>
+</button>
+</div>
+<button class="flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">share</span>
+                        Share
+                    </button>
+</div>
+</div>
+<!-- Card 4: Additional Example -->
+<div class="group relative bg-surface-dark rounded-xl p-5 border border-white/5 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-black/40">
+<div class="flex items-start justify-between mb-4">
+<div class="size-12 rounded-lg bg-red-500/10 flex items-center justify-center text-red-500">
+<span class="material-symbols-outlined text-3xl">picture_as_pdf</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-green-500/10 text-green-500 border border-green-500/20">
+<span class="material-symbols-outlined text-[14px]">verified</span>
+                        Verified
+                    </span>
+</div>
+<h4 class="text-lg font-bold text-white mb-1 truncate group-hover:text-primary transition-colors">Hudl Highlight Reel Link.pdf</h4>
+<div class="flex items-center gap-3 text-xs text-text-secondary mb-6">
+<span>45 KB</span>
+<span class="size-1 rounded-full bg-gray-600"></span>
+<span>Uploaded Jan 10, 2024</span>
+</div>
+<div class="pt-4 border-t border-white/5 flex items-center justify-between">
+<div class="flex gap-2">
+<button class="p-2 text-text-secondary hover:text-white hover:bg-white/10 rounded-lg transition-colors" title="View">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+<button class="p-2 text-text-secondary hover:text-white hover:bg-white/10 rounded-lg transition-colors" title="Download">
+<span class="material-symbols-outlined text-[20px]">download</span>
+</button>
+</div>
+<button class="flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">share</span>
+                        Share
+                    </button>
+</div>
+</div>
+<!-- Upload More Card (Optional placeholder visual) -->
+<button class="group flex flex-col items-center justify-center p-6 border border-dashed border-white/10 hover:border-primary/50 rounded-xl hover:bg-white/5 transition-all h-full min-h-[220px]">
+<div class="size-12 rounded-full bg-white/5 group-hover:bg-primary/20 flex items-center justify-center text-slate-400 group-hover:text-primary mb-3 transition-colors">
+<span class="material-symbols-outlined text-2xl">add</span>
+</div>
+<span class="text-sm font-medium text-slate-400 group-hover:text-white transition-colors">Upload Another File</span>
+</button>
+</div>
+</main>
+<!-- Footer -->
+<footer class="mt-auto border-t border-white/5 py-8 mt-12 bg-background-dark">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-text-secondary text-sm">© 2024 RepMax. All rights reserved.</p>
+<div class="flex gap-6">
+<a class="text-text-secondary hover:text-primary text-sm" href="#">Privacy</a>
+<a class="text-text-secondary hover:text-primary text-sm" href="#">Terms</a>
+<a class="text-text-secondary hover:text-primary text-sm" href="#">Support</a>
+</div>
+</div>
+</footer>
+</body></html>

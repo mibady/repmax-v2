@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RepMax Admin - Content Moderation</title>
+<!-- Fonts and Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ef4343",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#050505",
+                        "surface-dark": "#121212",
+                        "surface-accent": "#1E1E1E",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.375rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white antialiased overflow-hidden">
+<div class="flex h-screen w-full overflow-hidden">
+<!-- Sidebar -->
+<aside class="hidden md:flex flex-col w-72 h-full border-r border-gray-200 dark:border-white/10 bg-white dark:bg-surface-dark shrink-0">
+<div class="p-6">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-lg bg-gradient-to-br from-primary to-orange-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-primary/20">
+                        R
+                    </div>
+<div class="flex flex-col">
+<h1 class="text-base font-bold leading-none tracking-tight">RepMax</h1>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Admin Panel</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-2">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-primary/10 text-primary rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined fill-1">shield_person</span>
+<span class="text-sm font-medium">Content Moderation</span>
+<span class="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">12</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">group</span>
+<span class="text-sm font-medium">User Management</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">description</span>
+<span class="text-sm font-medium">Reports</span>
+</a>
+<div class="my-2 h-px bg-slate-200 dark:bg-white/10 mx-4"></div>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+</nav>
+<div class="p-4 border-t border-gray-200 dark:border-white/10">
+<div class="flex items-center gap-3 px-2 py-2">
+<div class="h-9 w-9 rounded-full bg-slate-200 dark:bg-white/10 bg-center bg-cover" data-alt="Admin user avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDLCVyRttMuMzb48SR9rRYce9z-cOtsfg5cKwz5_HZZvOTWcPvpQ0OsBC8yWZMRCxLhKwqK4U4XcZOkgivEhxEVscXjf1shf1Xyo9drzlOWGYMxpVfWBqmiEOkkbU-KLgXOog5V5hysgkqaFKJiRV9EOAGRqw1d2GjGedNAhEKBIuvXS4KRPVzwb8QQpztUMDNWdjhNMaXEC0Nf4xpXi2ibuVnUX_OXGwp2rxtHODleLm7BwkaT5HYoCORlVcGRnn3Ve1eCS6yZG7w');"></div>
+<div class="flex flex-col overflow-hidden">
+<p class="text-sm font-medium truncate text-slate-900 dark:text-white">Alex Morgan</p>
+<p class="text-xs text-slate-500 truncate">Super Admin</p>
+</div>
+<button class="ml-auto text-slate-400 hover:text-white">
+<span class="material-symbols-outlined text-xl">logout</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+<!-- Top Header & Filter Bar -->
+<div class="flex flex-col border-b border-gray-200 dark:border-white/10 bg-white/50 dark:bg-background-dark/80 backdrop-blur-md sticky top-0 z-20">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 py-5">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-3">
+<h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Content Moderation</h2>
+<span class="inline-flex items-center gap-1 rounded-full bg-primary/10 border border-primary/20 px-2.5 py-0.5 text-xs font-semibold text-primary">
+<span class="h-1.5 w-1.5 rounded-full bg-primary animate-pulse"></span>
+                                Live Queue
+                            </span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm">Review reported content and take action.</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="bg-red-500/10 border border-red-500/20 text-red-500 px-4 py-2 rounded-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+<span class="text-sm font-bold">12 items flagged</span>
+</div>
+</div>
+</div>
+<!-- Filters -->
+<div class="px-6 pb-4 flex flex-wrap gap-2 items-center">
+<div class="relative group">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined text-[18px]">filter_list</span>
+<select class="pl-9 pr-8 py-2 bg-slate-100 dark:bg-surface-accent border-none rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-primary outline-none appearance-none cursor-pointer">
+<option>All Types</option>
+<option>Photo</option>
+<option>Bio</option>
+<option>Film</option>
+</select>
+<span class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined text-[18px] pointer-events-none">arrow_drop_down</span>
+</div>
+<div class="relative group">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined text-[18px]">schedule</span>
+<select class="pl-9 pr-8 py-2 bg-slate-100 dark:bg-surface-accent border-none rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-primary outline-none appearance-none cursor-pointer">
+<option>Pending Review</option>
+<option>Reviewed</option>
+<option>Archived</option>
+</select>
+<span class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined text-[18px] pointer-events-none">arrow_drop_down</span>
+</div>
+<div class="h-6 w-px bg-gray-300 dark:bg-white/10 mx-2 hidden sm:block"></div>
+<button class="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors ml-auto sm:ml-0">
+<span class="material-symbols-outlined text-[18px]">sort</span>
+<span>Oldest first</span>
+</button>
+</div>
+</div>
+<!-- Content Area (Scrollable) -->
+<div class="flex-1 overflow-y-auto p-6 scroll-smooth">
+<div class="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6 max-w-[1600px] mx-auto pb-10">
+<!-- Card 1: Photo - Nudity Flag -->
+<div class="bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/5 rounded-xl overflow-hidden shadow-sm flex flex-col group hover:border-primary/30 transition-all duration-300">
+<div class="p-4 flex items-start justify-between border-b border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-surface-accent/30">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-full bg-cover bg-center ring-2 ring-white dark:ring-white/10" data-alt="Portrait of Sarah Smith" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBLUaDI0wbk3c4w6PgfEj6X821qS55XpH94pKszab--nPo_oBy8Pnyxj929mgl294JRQog-qYDJD37CPy2PPDeDnd-2iCvfQ13wReU8lSqJrOCpbI0JDkZ8pIHdaVDErrQmcx2X0tBXYJJzCeZ29mZM9OV60Pps6uiHvMXBzoJV4YTIG4mP4fO_fdorJ0262UtIPYOPlm09ks5BHWz-uzHUoH_rtQNWjZlWLEZiKpSDevVEq38E7JwjzEZJz6GF9B6YsqLklwWONUc');"></div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="text-sm font-bold text-slate-900 dark:text-white">Sarah Smith</h3>
+<span class="text-xs text-slate-500 font-mono">ID: #8492</span>
+</div>
+<p class="text-xs text-slate-500">Reported 2 hours ago</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-purple-500/10 text-purple-400 border border-purple-500/20">
+<span class="material-symbols-outlined text-[14px]">image</span>
+                                Photo
+                            </span>
+</div>
+<div class="relative aspect-video bg-black/50 overflow-hidden group/image">
+<!-- Blurred content with overlay -->
+<div class="absolute inset-0 bg-cover bg-center blur-xl scale-110 opacity-60" data-alt="Blurry suggestive photo content" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBfoc6ziEuMURv3ea9_yf3N7IQjRM0V2EskexErDogHA300l4I_nuORYxYMBso1xg669ZFpB-ZvPR2O7zh-DklPKXY2dms-nHh67GQUJVV_PVIJm25w_eoEVekDNIRM_ALacZyASkaVcvYb7q6d0Qko26wRzHV2fmB1VYY21uVYrT8otoQ3LXoB3Rvmdodl8MTVDTEFM0-2eQNimIZZJMpURxp2FnJsWLwhZ7a5HKGAuesJW_n9D0AG3a16vEjpbYF0M5ZnBKmb-6k');"></div>
+<div class="absolute inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm z-10 transition-opacity duration-300 group-hover/image:opacity-0 cursor-pointer">
+<span class="material-symbols-outlined text-white text-4xl mb-2">visibility_off</span>
+<p class="text-white font-medium text-sm">Sensitive Content</p>
+<p class="text-white/60 text-xs">Click to reveal</p>
+</div>
+<div class="absolute bottom-3 left-3 z-20">
+<div class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded flex items-center gap-1 shadow-lg">
+<span class="material-symbols-outlined text-[14px]">flag</span>
+                                    Flagged: Nudity
+                                </div>
+</div>
+</div>
+<div class="p-4 flex items-center gap-2 mt-auto border-t border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-surface-accent/10">
+<button class="flex-1 flex items-center justify-center gap-2 h-10 rounded-lg bg-green-500/10 hover:bg-green-500/20 text-green-600 dark:text-green-400 text-sm font-semibold transition-colors border border-green-500/20" title="Approve (A)">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+                                Approve
+                            </button>
+<button class="h-10 w-10 flex items-center justify-center rounded-lg bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 transition-colors border border-yellow-500/20" title="Warn User (W)">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+</button>
+<button class="flex-1 flex items-center justify-center gap-2 h-10 rounded-lg bg-primary hover:bg-red-600 text-white text-sm font-semibold transition-colors shadow-lg shadow-primary/20" title="Remove (R)">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+                                Remove
+                            </button>
+</div>
+</div>
+<!-- Card 2: Bio - Hate Speech Flag -->
+<div class="bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/5 rounded-xl overflow-hidden shadow-sm flex flex-col group hover:border-primary/30 transition-all duration-300">
+<div class="p-4 flex items-start justify-between border-b border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-surface-accent/30">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-full bg-cover bg-center ring-2 ring-white dark:ring-white/10" data-alt="Portrait of John Doe" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDn9Z39YNKB6HRHJIgnnzVVgmYJxeieRYSjc6HAE3KZn-7DIdEi081bccC4WQax-78udhZ_c7emxDWo6Y3Al3bEsP_nt3l-XBtTIfkoe8s-ozCWBE5puRpui3BR4TYZmtLbUFAvqjBrtPE6KDRQNkM4PxHdgRAPHtHSFEMfQF3NSfihneEUIe_IvpkPdPzn6Ae2TyKLOydNPqZw4N43q4j7HhOkHVGwIomI3_J9G9GjwRN1xJjc4MY3vVefRj1aT9c6Q6P24lvWNEE');"></div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="text-sm font-bold text-slate-900 dark:text-white">John Doe</h3>
+<span class="text-xs text-slate-500 font-mono">ID: #9921</span>
+</div>
+<p class="text-xs text-slate-500">Reported 1 day ago</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">
+<span class="material-symbols-outlined text-[14px]">text_fields</span>
+                                Bio
+                            </span>
+</div>
+<div class="p-6 flex-1 flex flex-col bg-surface-accent/20">
+<div class="mb-3">
+<div class="bg-red-500/10 text-red-500 inline-flex items-center gap-1.5 px-2 py-1 rounded text-xs font-bold border border-red-500/20">
+<span class="material-symbols-outlined text-[14px]">flag</span>
+                                    Flagged: Hate Speech
+                                </div>
+</div>
+<div class="bg-slate-100 dark:bg-surface-accent p-4 rounded-lg border border-slate-200 dark:border-white/5 relative">
+<span class="material-symbols-outlined absolute -top-2 -left-2 text-slate-300 dark:text-white/20 text-3xl bg-surface-accent rounded-full">format_quote</span>
+<p class="text-slate-800 dark:text-slate-200 font-medium italic leading-relaxed">
+                                    "I really hate how this app works and everyone on it... honestly, people from [REDACTED GROUP] shouldn't even be allowed here."
+                                </p>
+</div>
+<p class="text-xs text-slate-400 mt-3 text-right">Match Confidence: 98%</p>
+</div>
+<div class="p-4 flex items-center gap-2 mt-auto border-t border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-surface-accent/10">
+<button class="flex-1 flex items-center justify-center gap-2 h-10 rounded-lg bg-green-500/10 hover:bg-green-500/20 text-green-600 dark:text-green-400 text-sm font-semibold transition-colors border border-green-500/20">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+                                Approve
+                            </button>
+<button class="h-10 w-10 flex items-center justify-center rounded-lg bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 transition-colors border border-yellow-500/20">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+</button>
+<button class="flex-1 flex items-center justify-center gap-2 h-10 rounded-lg bg-primary hover:bg-red-600 text-white text-sm font-semibold transition-colors shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+                                Remove
+                            </button>
+</div>
+</div>
+<!-- Card 3: Film - Copyright Flag -->
+<div class="bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/5 rounded-xl overflow-hidden shadow-sm flex flex-col group hover:border-primary/30 transition-all duration-300">
+<div class="p-4 flex items-start justify-between border-b border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-surface-accent/30">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-full bg-cover bg-center ring-2 ring-white dark:ring-white/10" data-alt="Portrait of Mike Ross" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBWaXXBwZTNSj4rijGYcVbtgyn3lW-Y6oZH2CZf8EGsvTHMtgq6wXk9b0oqM7zGhvSMWz7FtAaLiR3HL5TrpWoPisiFPrg8iR8eEtwKitUaWl2x4gv1g746HMrTPm_7LIlPS2aSvKpC5jk03RZPVIW13Bi6NLKidOr8MgJdV2dPaP6S2UFmkZD3U7AAc2CLWWzq_eQPMxjsFpl34CR8xrCIPqwrjo2xDl9iOdYceyJgxdedcL-9v0fLY1txqkst33iJoSdTs1LQBao');"></div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="text-sm font-bold text-slate-900 dark:text-white">Mike Ross</h3>
+<span class="text-xs text-slate-500 font-mono">ID: #3301</span>
+</div>
+<p class="text-xs text-slate-500">Reported 5 hours ago</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-orange-500/10 text-orange-400 border border-orange-500/20">
+<span class="material-symbols-outlined text-[14px]">movie</span>
+                                Film
+                            </span>
+</div>
+<div class="relative aspect-video bg-black/90 group/video">
+<!-- Video Thumbnail -->
+<div class="absolute inset-0 bg-cover bg-center opacity-80" data-alt="Screenshot from a video clip" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCiKpmbft6SXQsxHnQXgLF3BqHuLA4EKSRurr_v2Yanlp9XhIkiiiLPUcEX6P5ysggBLOEF-bpDrHeHE6DcL8PJL-eakGpcDiLl_T9C1lO_u2jV6mz3_E428AwaoLXBg9_S-qhcVypKKi1q2DJAT0VPx0QxMHbmgotsmiJvckYEzG8a7MpBXPrwV1NSbOfGiMvs7WOEaXnPReQc-4cmvjt319TOMe2ICqjwkOkokMfuqvABILze79BNepVlyZSVTXkAKXwdYv7sefE');"></div>
+<!-- Play Button Overlay -->
+<div class="absolute inset-0 flex items-center justify-center">
+<button class="h-14 w-14 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center hover:scale-110 transition-transform text-white border border-white/30">
+<span class="material-symbols-outlined text-3xl">play_arrow</span>
+</button>
+</div>
+<div class="absolute bottom-3 left-3 z-20">
+<div class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded flex items-center gap-1 shadow-lg">
+<span class="material-symbols-outlined text-[14px]">flag</span>
+                                    Flagged: Copyright
+                                </div>
+</div>
+</div>
+<div class="p-4 flex items-center gap-2 mt-auto border-t border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-surface-accent/10">
+<button class="flex-1 flex items-center justify-center gap-2 h-10 rounded-lg bg-green-500/10 hover:bg-green-500/20 text-green-600 dark:text-green-400 text-sm font-semibold transition-colors border border-green-500/20">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+                                Approve
+                            </button>
+<button class="h-10 w-10 flex items-center justify-center rounded-lg bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 transition-colors border border-yellow-500/20">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+</button>
+<button class="flex-1 flex items-center justify-center gap-2 h-10 rounded-lg bg-primary hover:bg-red-600 text-white text-sm font-semibold transition-colors shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+                                Remove
+                            </button>
+</div>
+</div>
+<!-- Card 4: Photo - Spam Flag -->
+<div class="bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/5 rounded-xl overflow-hidden shadow-sm flex flex-col group hover:border-primary/30 transition-all duration-300">
+<div class="p-4 flex items-start justify-between border-b border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-surface-accent/30">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-full bg-cover bg-center ring-2 ring-white dark:ring-white/10" data-alt="Portrait of User 4" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCi6D4D4wd06IqZ6rShVciX1L1UCVRWSfFAWTX9bNVFWC1OSWtgnqLsmkWgzIV_ycWZUgdesDCOotAT86KxZbjZzkb53_baJ8Q2uSXBI4Zm0oGnpm85GbxO3-0boV0YAIJ9SDGHyosn-9BpfLV1R_tISZTh29kyxhtQskOL5TidSJ0kqPLZxpSvGPOJCI7LCAlXSlCWzfvkYEsH75tYiBzkCX5ZHNumExRJedO5IZkpMEHacVt84YZG4D9SDm07qidIlyfxeBzbqVo');"></div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="text-sm font-bold text-slate-900 dark:text-white">Crypto King</h3>
+<span class="text-xs text-slate-500 font-mono">ID: #1029</span>
+</div>
+<p class="text-xs text-slate-500">Reported 30 mins ago</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-purple-500/10 text-purple-400 border border-purple-500/20">
+<span class="material-symbols-outlined text-[14px]">image</span>
+                                Photo
+                            </span>
+</div>
+<div class="relative aspect-video bg-black/50 overflow-hidden group/image">
+<!-- Normal content -->
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Promotional graphic with text about crypto" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBjZd0REMJRI7cHpNbdjJ9lEf94r2JZhAO3o4urj3PM-oBemw_dKQTP3pd65mNcVG1nS3FKYkjcXbZs8sspDa69XMWD4CzrDlb2vOGB_6T3osIeliWGXg0fXRlDpv2Evm0Ss_ABawUVwR87VyMY2wHf_JvK7DeEai1kK6_IoZq--Wtdo6i0ocBpw8_M9da41riHANaPLAnjX-P7-kYeDjJPNdbWGzAP_mJtlB2OmUHxp7gV-WyjuS8Wdz3i9i_pW0WhHoQb1R8xmiU');"></div>
+<div class="absolute bottom-3 left-3 z-20">
+<div class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded flex items-center gap-1 shadow-lg">
+<span class="material-symbols-outlined text-[14px]">flag</span>
+                                    Flagged: Spam
+                                </div>
+</div>
+</div>
+<div class="p-4 flex items-center gap-2 mt-auto border-t border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-surface-accent/10">
+<button class="flex-1 flex items-center justify-center gap-2 h-10 rounded-lg bg-green-500/10 hover:bg-green-500/20 text-green-600 dark:text-green-400 text-sm font-semibold transition-colors border border-green-500/20">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+                                Approve
+                            </button>
+<button class="h-10 w-10 flex items-center justify-center rounded-lg bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 transition-colors border border-yellow-500/20">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+</button>
+<button class="flex-1 flex items-center justify-center gap-2 h-10 rounded-lg bg-primary hover:bg-red-600 text-white text-sm font-semibold transition-colors shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+                                Remove
+                            </button>
+</div>
+</div>
+<!-- Card 5: Bio - Personal Info Flag -->
+<div class="bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/5 rounded-xl overflow-hidden shadow-sm flex flex-col group hover:border-primary/30 transition-all duration-300">
+<div class="p-4 flex items-start justify-between border-b border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-surface-accent/30">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-full bg-cover bg-center ring-2 ring-white dark:ring-white/10" data-alt="Portrait of User 5" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCd4WcBNCmXWuaM5hwN-E0Iic13IrpAH1eZ-8bJrWUCsNXg87_S0WN6u5J08omyD-OBWYV04PC7WWEhI0sl_6oBR_fZKjJ33_H29oi7RatJozUG2UgTfplxcM-iXuZooDcogJpgIpKCmelhousnmYOxVXjymizpp389_C3KltHBhbPtF-5CEiofN5OSa3woyooSYui9PuTfqhCUjTw_pRiBaUtAmd1rr-tHpCTbzgMSNvY8Wyx5YquNG3mN_F2Dq_RHsNmXcB9PJB4');"></div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="text-sm font-bold text-slate-900 dark:text-white">Jessica L.</h3>
+<span class="text-xs text-slate-500 font-mono">ID: #5512</span>
+</div>
+<p class="text-xs text-slate-500">Reported 6 hours ago</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">
+<span class="material-symbols-outlined text-[14px]">text_fields</span>
+                                Bio
+                            </span>
+</div>
+<div class="p-6 flex-1 flex flex-col bg-surface-accent/20">
+<div class="mb-3">
+<div class="bg-red-500/10 text-red-500 inline-flex items-center gap-1.5 px-2 py-1 rounded text-xs font-bold border border-red-500/20">
+<span class="material-symbols-outlined text-[14px]">flag</span>
+                                    Flagged: PII / Doxing
+                                </div>
+</div>
+<div class="bg-slate-100 dark:bg-surface-accent p-4 rounded-lg border border-slate-200 dark:border-white/5 relative">
+<span class="material-symbols-outlined absolute -top-2 -left-2 text-slate-300 dark:text-white/20 text-3xl bg-surface-accent rounded-full">format_quote</span>
+<p class="text-slate-800 dark:text-slate-200 font-medium leading-relaxed">
+                                    "Call me at 555-0192 if you want to hang out. My address is 123 Maple St..."
+                                </p>
+</div>
+<p class="text-xs text-slate-400 mt-3 text-right">Auto-flagged by system</p>
+</div>
+<div class="p-4 flex items-center gap-2 mt-auto border-t border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-surface-accent/10">
+<button class="flex-1 flex items-center justify-center gap-2 h-10 rounded-lg bg-green-500/10 hover:bg-green-500/20 text-green-600 dark:text-green-400 text-sm font-semibold transition-colors border border-green-500/20">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+                                Approve
+                            </button>
+<button class="h-10 w-10 flex items-center justify-center rounded-lg bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 transition-colors border border-yellow-500/20">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+</button>
+<button class="flex-1 flex items-center justify-center gap-2 h-10 rounded-lg bg-primary hover:bg-red-600 text-white text-sm font-semibold transition-colors shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+                                Remove
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

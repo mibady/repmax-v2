@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RepMax Admin - User Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d26060",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#050505",
+                        "surface-dark": "#121212",
+                        "athlete-gold": "#FFD700",
+                        "coach-green": "#4ADE80",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #050505;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #412a2a;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white min-h-screen flex">
+<!-- SideNavBar -->
+<aside class="w-64 border-r border-zinc-800 dark:bg-background-dark h-screen flex flex-col justify-between p-4 sticky top-0">
+<div class="flex flex-col gap-8">
+<div class="flex gap-3 items-center px-2">
+<div class="bg-primary size-10 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white">shield_person</span>
+</div>
+<div class="flex flex-col">
+<h1 class="text-white text-base font-bold leading-none">RepMax Admin</h1>
+<p class="text-zinc-500 text-xs font-medium mt-1">Management Suite</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<div class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary border border-primary/20">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<p class="text-sm font-semibold">Users</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-zinc-400 hover:text-white hover:bg-zinc-900 rounded-lg transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-[20px]">article</span>
+<p class="text-sm font-medium">Content</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-zinc-400 hover:text-white hover:bg-zinc-900 rounded-lg transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+<p class="text-sm font-medium">Analytics</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-zinc-400 hover:text-white hover:bg-zinc-900 rounded-lg transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-[20px]">flag</span>
+<p class="text-sm font-medium">Feature Flags</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-zinc-400 hover:text-white hover:bg-zinc-900 rounded-lg transition-colors cursor-pointer mt-4 border-t border-zinc-800 pt-6">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<p class="text-sm font-medium">Settings</p>
+</div>
+</nav>
+</div>
+<div class="flex flex-col gap-4">
+<div class="p-3 bg-zinc-900 rounded-lg border border-zinc-800">
+<div class="flex items-center gap-3 mb-3">
+<div class="size-8 rounded-full bg-cover bg-center" data-alt="Admin profile picture" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBP8DhMuB2kO-GGTiN8U7wDZIzsHcycASSg7QjEtyEJDnuWsZ-gZlZISPymGxQ2XKd-wR2wTzG5Z4P3bAEltthmh6CUU0qfegFqTwKB2XZ7fJPYIV20mHsj30VoI9YSOn54L_brQV-UCvE13mT-wadmEpD1pyQo2OxwCEfEYPImgbTqx-qxgFalzNZ8NHkBOQveOWiOWa6Xm2LaYEHtl4QIpJ9PISrAX1DHdm67nlHTA3l00SQnVTyDH59SZH4AitMRptC50LJH3ew')"></div>
+<div class="flex flex-col">
+<p class="text-xs font-bold text-white">Alex Rivera</p>
+<p class="text-[10px] text-zinc-500">Super Admin</p>
+</div>
+</div>
+<button class="w-full bg-primary hover:bg-primary/90 text-white text-xs font-bold py-2 px-4 rounded transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">add</span>
+                    Add User
+                </button>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col min-w-0 bg-background-light dark:bg-background-dark overflow-y-auto custom-scrollbar">
+<!-- Header -->
+<div class="p-8 pb-4">
+<div class="flex flex-wrap justify-between items-end gap-4 mb-8">
+<div class="flex flex-col gap-2">
+<h2 class="text-white text-4xl font-black tracking-tight">User Management</h2>
+<p class="text-zinc-500 text-base">Control platform access, roles, and administrative overrides.</p>
+</div>
+</div>
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+<div class="flex flex-col gap-2 rounded-xl p-6 bg-surface-dark border border-zinc-800">
+<div class="flex justify-between items-start">
+<p class="text-zinc-400 text-sm font-medium">Total Users</p>
+<span class="text-emerald-500 text-xs font-bold bg-emerald-500/10 px-2 py-1 rounded">+12.5%</span>
+</div>
+<p class="text-white tracking-tight text-3xl font-bold">12,842</p>
+</div>
+<div class="flex flex-col gap-2 rounded-xl p-6 bg-surface-dark border border-zinc-800">
+<div class="flex justify-between items-start">
+<p class="text-zinc-400 text-sm font-medium">Active Today</p>
+<span class="text-emerald-500 text-xs font-bold bg-emerald-500/10 px-2 py-1 rounded">+5.2%</span>
+</div>
+<p class="text-white tracking-tight text-3xl font-bold">1,402</p>
+</div>
+<div class="flex flex-col gap-2 rounded-xl p-6 bg-surface-dark border border-zinc-800">
+<div class="flex justify-between items-start">
+<p class="text-zinc-400 text-sm font-medium">New Signups (24h)</p>
+<span class="text-emerald-500 text-xs font-bold bg-emerald-500/10 px-2 py-1 rounded">+8.1%</span>
+</div>
+<p class="text-white tracking-tight text-3xl font-bold">48</p>
+</div>
+</div>
+<!-- Search and Filter Bar -->
+<div class="flex flex-col lg:flex-row gap-4 mb-6">
+<div class="flex-1">
+<div class="relative h-12 w-full">
+<div class="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-500">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="w-full h-full rounded-lg bg-surface-dark border-zinc-800 border focus:border-primary focus:ring-1 focus:ring-primary text-white pl-12 pr-4 text-sm transition-all" placeholder="Search by name, email, or user ID..."/>
+</div>
+</div>
+<div class="flex gap-2 flex-wrap">
+<button class="flex h-12 items-center justify-center gap-2 rounded-lg bg-surface-dark border border-zinc-800 px-4 text-white text-sm font-medium hover:border-zinc-700">
+<span>Role: All</span>
+<span class="material-symbols-outlined text-[20px]">keyboard_arrow_down</span>
+</button>
+<button class="flex h-12 items-center justify-center gap-2 rounded-lg bg-surface-dark border border-zinc-800 px-4 text-white text-sm font-medium hover:border-zinc-700">
+<span>Status: Active</span>
+<span class="material-symbols-outlined text-[20px]">keyboard_arrow_down</span>
+</button>
+<button class="flex h-12 items-center justify-center gap-2 rounded-lg bg-primary/10 border border-primary/30 px-4 text-primary text-sm font-bold">
+<span class="material-symbols-outlined text-[20px]">filter_list</span>
+<span>Advanced Filters</span>
+</button>
+</div>
+</div>
+<!-- High Density Table Area -->
+<div class="bg-surface-dark rounded-xl border border-zinc-800 overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-zinc-800 bg-zinc-900/50">
+<th class="px-6 py-4 text-xs font-bold text-zinc-400 uppercase tracking-wider">Name &amp; Identity</th>
+<th class="px-6 py-4 text-xs font-bold text-zinc-400 uppercase tracking-wider">Role(s)</th>
+<th class="px-6 py-4 text-xs font-bold text-zinc-400 uppercase tracking-wider">Joined Date</th>
+<th class="px-6 py-4 text-xs font-bold text-zinc-400 uppercase tracking-wider">Last Active</th>
+<th class="px-6 py-4 text-xs font-bold text-zinc-400 uppercase tracking-wider text-center">Status</th>
+<th class="px-6 py-4 text-xs font-bold text-zinc-400 uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-zinc-800/50">
+<!-- Table Row 1 -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-6 py-3">
+<div class="flex items-center gap-3">
+<div class="size-9 rounded-full bg-cover bg-center border-2 border-zinc-800" data-alt="User avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAGMRJma_KfsjLnHx-tnlCcWb5OHBvJfDTGs6sy50bgkUvKIgbANip44czgFGmsBAWVDVi0ITHkkt6TvU7LEE8LkGxNy6yFLScfWxB8hUqU-nURuwC9PP0VbT5AYgv75RSAPp-9in58WY_VkBdRN0KHYgKCa20ZO8mkmIN-RAnJn5rL-wi_XKiPTrpz3LFYrOed-aN9KaXAcKwGX0gzn8ZLPAQ8Nzdd7YR4nHmAttfoMGjJ-OryW4Npgr_AKdKu9znL0OYiovIbyR0')"></div>
+<div class="flex flex-col">
+<p class="text-sm font-bold text-white">David Chen</p>
+<p class="text-xs text-zinc-500">david.chen@example.com</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-3">
+<div class="flex gap-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-athlete-gold/10 text-athlete-gold border border-athlete-gold/30">ATHLETE</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-coach-green/10 text-coach-green border border-coach-green/30">COACH</span>
+</div>
+</td>
+<td class="px-6 py-3">
+<p class="text-xs text-zinc-300">Oct 12, 2023</p>
+</td>
+<td class="px-6 py-3">
+<div class="flex items-center gap-2">
+<span class="size-2 rounded-full bg-emerald-500"></span>
+<p class="text-xs text-zinc-300">2 mins ago</p>
+</div>
+</td>
+<td class="px-6 py-3 text-center">
+<span class="px-2 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">ACTIVE</span>
+</td>
+<td class="px-6 py-3 text-right">
+<button class="p-2 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Table Row 2 -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-6 py-3">
+<div class="flex items-center gap-3">
+<div class="size-9 rounded-full bg-cover bg-center border-2 border-zinc-800" data-alt="User avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCrQtlltEaoenGpZD4y4aFojumaiXo7pTa10WbQpSfJKh-A6GBBhwAITpcztkJpUkjsXn-XwWrfqlLqPyJtJe6ReAnRnEHnyd7Y71zUev9l38qaEhH_8EK6LHkVEwYQbpmM9Fg8jwFI-ggn105dI2go_gkxmfEOIMd94EqyXbYuDjf-KC5SrqrSwxegXgWaGNhoWRmt6DJkSCxG41KRLlk7fGDZR5kjIbfjAi2A9mp3FKKR7wi89WE5Pgx6EanhEUSuIE1gyRvL2iA')"></div>
+<div class="flex flex-col">
+<p class="text-sm font-bold text-white">Sarah Jenkins</p>
+<p class="text-xs text-zinc-500">s.jenkins@domain.org</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-3">
+<div class="flex gap-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-athlete-gold/10 text-athlete-gold border border-athlete-gold/30">ATHLETE</span>
+</div>
+</td>
+<td class="px-6 py-3">
+<p class="text-xs text-zinc-300">Jan 05, 2024</p>
+</td>
+<td class="px-6 py-3">
+<div class="flex items-center gap-2">
+<span class="size-2 rounded-full bg-zinc-600"></span>
+<p class="text-xs text-zinc-500">4h ago</p>
+</div>
+</td>
+<td class="px-6 py-3 text-center">
+<span class="px-2 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">ACTIVE</span>
+</td>
+<td class="px-6 py-3 text-right">
+<button class="p-2 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Table Row 3 (Suspended) -->
+<tr class="hover:bg-white/5 transition-colors group bg-primary/5">
+<td class="px-6 py-3">
+<div class="flex items-center gap-3">
+<div class="size-9 rounded-full bg-cover bg-center border-2 border-zinc-800 grayscale" data-alt="User avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCZdVrgQGuypalW6tgj4jjTADCUxJ3NLhKa7UXPNLncl6nZg3kpFFbTbeVkgCbX_39ZqV8-8IKx28fOEU8LLstx78nUrFvmW51CRdH80_oFJFARAKr3Wx-KkfRO945GFLTSXcwpQrSoYpyN3MmG5AxQQLoicjqNVmjOTustCBsx-5XSycSj88SAuiuq_O-TBONChY0m3CGeTlcV5fUUlCkFjeD07TmCM0z3_DYGhOJk2bU3xaX1zlRWEBF_bPNJDLGhkO-rIwa3vvU')"></div>
+<div class="flex flex-col">
+<p class="text-sm font-bold text-white">Mark Thompson</p>
+<p class="text-xs text-zinc-500">m.tom@legacy.com</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-3">
+<div class="flex gap-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-coach-green/10 text-coach-green border border-coach-green/30">COACH</span>
+</div>
+</td>
+<td class="px-6 py-3">
+<p class="text-xs text-zinc-300">Nov 22, 2022</p>
+</td>
+<td class="px-6 py-3">
+<div class="flex items-center gap-2">
+<span class="size-2 rounded-full bg-zinc-600"></span>
+<p class="text-xs text-zinc-500">12 days ago</p>
+</div>
+</td>
+<td class="px-6 py-3 text-center">
+<span class="px-2 py-1 rounded-full text-[10px] font-bold bg-primary/10 text-primary border border-primary/20">SUSPENDED</span>
+</td>
+<td class="px-6 py-3 text-right relative">
+<button class="p-2 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Table Row 4 -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-6 py-3">
+<div class="flex items-center gap-3">
+<div class="size-9 rounded-full bg-cover bg-center border-2 border-zinc-800" data-alt="User avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAlaJwqH_QCiLbIdEN77tWe6xtux5Yi0d2QU1cft4btEj7mRFuZ9h5yeMUSsimMN8XDN1F9gutxc3eQ_kEB8nEySS6C8bNSsxZ9ioo3CUm17NNDSyyUGYHjZxwc8CYvxcJWgqUJpu1tfV5DEbwvQQy_JjEq9umni0Yeb-NYl7AsFLPYFiFFvuVDBAPf_NxZbDkoVo0G25wMKj_xOkTyvmlQALfOscr2ExyCZSLgLO8zbotUPtJ65TQ-xP9hAUW9_DuU6DtT57BM8AM')"></div>
+<div class="flex flex-col">
+<p class="text-sm font-bold text-white">James Wilson</p>
+<p class="text-xs text-zinc-500">jw@cloudcorp.io</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-3">
+<div class="flex gap-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-athlete-gold/10 text-athlete-gold border border-athlete-gold/30">ATHLETE</span>
+</div>
+</td>
+<td class="px-6 py-3">
+<p class="text-xs text-zinc-300">Feb 14, 2024</p>
+</td>
+<td class="px-6 py-3">
+<div class="flex items-center gap-2">
+<span class="size-2 rounded-full bg-emerald-500"></span>
+<p class="text-xs text-zinc-300">Active now</p>
+</div>
+</td>
+<td class="px-6 py-3 text-center">
+<span class="px-2 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">ACTIVE</span>
+</td>
+<td class="px-6 py-3 text-right">
+<button class="p-2 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Table Row 5 -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-6 py-3">
+<div class="flex items-center gap-3">
+<div class="size-9 rounded-full bg-cover bg-center border-2 border-zinc-800" data-alt="User avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCvlEPNZu_YKq02obDc5k0sJi75mtxnMOPRkV8VVF0pTS87mCYIiUD1RuYnO_RtRpV4s_mUT5qiDyZKEkY5tS7Zhb4qOptKBZ8j5Cm6PsCKTtQbgqPbChWCeKvQILR7dkjYC-3G9NMHwcf3ryrwfLJZN0VCCFLRrFNb8X5c8QxrViEybO-61pKwQA8-iEp2jTxOg4vh7vSTHX9N8C3qe4v_AgYVNmfP5-EDwFVRCSqu51pPNZyyQeSJ0YJKcjEVrYGFhEMEb3O1F74')"></div>
+<div class="flex flex-col">
+<p class="text-sm font-bold text-white">Lisa Wong</p>
+<p class="text-xs text-zinc-500">lisa.w@creative.net</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-3">
+<div class="flex gap-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-coach-green/10 text-coach-green border border-coach-green/30">COACH</span>
+</div>
+</td>
+<td class="px-6 py-3">
+<p class="text-xs text-zinc-300">Mar 01, 2024</p>
+</td>
+<td class="px-6 py-3">
+<div class="flex items-center gap-2">
+<span class="size-2 rounded-full bg-zinc-600"></span>
+<p class="text-xs text-zinc-500">1h ago</p>
+</div>
+</td>
+<td class="px-6 py-3 text-center">
+<span class="px-2 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">ACTIVE</span>
+</td>
+<td class="px-6 py-3 text-right">
+<button class="p-2 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Pagination -->
+<div class="px-6 py-4 flex items-center justify-between border-t border-zinc-800 bg-zinc-900/30">
+<p class="text-xs text-zinc-500">Showing <span class="text-white font-bold">1-10</span> of <span class="text-white font-bold">12,842</span> users</p>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 rounded bg-zinc-800 text-zinc-400 text-xs font-bold hover:text-white transition-colors">Previous</button>
+<button class="px-3 py-1.5 rounded bg-zinc-800 text-white text-xs font-bold border border-zinc-700">1</button>
+<button class="px-3 py-1.5 rounded hover:bg-zinc-800 text-zinc-400 text-xs font-bold hover:text-white transition-colors">2</button>
+<button class="px-3 py-1.5 rounded hover:bg-zinc-800 text-zinc-400 text-xs font-bold hover:text-white transition-colors">3</button>
+<button class="px-3 py-1.5 rounded bg-zinc-800 text-zinc-400 text-xs font-bold hover:text-white transition-colors">Next</button>
+</div>
+</div>
+</div>
+<!-- Footer Meta Info -->
+<div class="mt-8 pt-8 border-t border-zinc-900 flex justify-between items-center text-[10px] text-zinc-600 font-medium">
+<p>© 2024 RepMax Performance Systems - Internal Admin Console</p>
+<div class="flex gap-4">
+<a class="hover:text-primary" href="#">System Status: Optimal</a>
+<a class="hover:text-primary" href="#">API Documentation</a>
+<a class="hover:text-primary" href="#">Audit Logs</a>
+</div>
+</div>
+</div>
+</main>
+</body></html>

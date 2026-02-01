@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RepMax Messages</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#D4AF37", // Gold
+                        "background-dark": "#050505", // Deepest Black
+                        "background-panel": "#0a0a0a", // Panel Black
+                        "background-hover": "#1a1a1a",
+                        "border-dark": "#27272a",
+                        "text-secondary": "#9CA3AF",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-dark text-white font-display h-screen w-full overflow-hidden flex selection:bg-primary/30">
+<!-- Pane 1: Global Navigation -->
+<nav class="w-[260px] flex-shrink-0 bg-background-panel border-r border-border-dark flex flex-col justify-between h-full py-6 px-4">
+<div class="flex flex-col gap-8">
+<!-- User Profile / Brand -->
+<div class="flex items-center gap-3 px-2">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border border-white/10" data-alt="Profile picture of an athletic coach" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDhBD68jQ-2UfJklAdIcSNTO03ZX4kjW_EzhJk-P8rhJjThZack2jUG0jpkG7QOWHvSXHaO7GCc9uSGJA-74dwIfpD6HdGCp78Ae018JHtcIoHvFyaZcDTniam9U7yeHu8EiKzYE1wy_0mh83P1MeDmek6A9xosEjhXlwxdKfQ8fPYKsiydUU5yyqXAQtg47-LmNjq_3WhEvzSgGCkA5frSKgfZZzWh_MS61iX71zhGcXK-QB3RevLjLcLVxX2eJwrxHRPZ53pX36U");'>
+</div>
+<div class="flex flex-col">
+<h1 class="text-white text-base font-semibold leading-tight">RepMax</h1>
+<p class="text-primary text-xs font-medium uppercase tracking-wide">Coach Admin</p>
+</div>
+</div>
+<!-- Nav Links -->
+<div class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined text-2xl group-hover:scale-105 transition-transform">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<!-- Active Nav Item -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/20 text-white border-l-2 border-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl fill-1">chat_bubble</span>
+<span class="text-sm font-medium">Messages</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined text-2xl group-hover:scale-105 transition-transform">group</span>
+<span class="text-sm font-medium">Recruiting</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined text-2xl group-hover:scale-105 transition-transform">calendar_month</span>
+<span class="text-sm font-medium">Calendar</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined text-2xl group-hover:scale-105 transition-transform">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+</div>
+</div>
+<!-- Bottom Actions -->
+<div class="px-2">
+<button class="flex items-center gap-3 w-full px-3 py-2 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-2xl">logout</span>
+<span class="text-sm font-medium">Log out</span>
+</button>
+</div>
+</nav>
+<!-- Pane 2: Conversation List -->
+<aside class="w-[360px] flex-shrink-0 bg-background-dark border-r border-border-dark flex flex-col h-full">
+<!-- Header -->
+<div class="p-5 pb-2">
+<h1 class="text-2xl font-bold text-white tracking-tight mb-4">Messages</h1>
+<!-- Search -->
+<label class="flex items-center gap-2 w-full bg-background-hover rounded-lg px-3 h-10 border border-transparent focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/50 transition-all">
+<span class="material-symbols-outlined text-gray-400 text-xl">search</span>
+<input class="bg-transparent border-none text-sm text-white placeholder-gray-500 w-full focus:ring-0 p-0" placeholder="Search conversations..." type="text"/>
+</label>
+</div>
+<!-- Filters -->
+<div class="px-5 py-2 flex gap-2 overflow-x-auto no-scrollbar">
+<button class="px-3 py-1.5 rounded-full bg-primary text-black text-xs font-semibold hover:opacity-90 transition-opacity">All</button>
+<button class="px-3 py-1.5 rounded-full bg-background-hover text-gray-400 text-xs font-medium hover:bg-white/10 hover:text-white transition-colors border border-border-dark">Unread</button>
+<button class="px-3 py-1.5 rounded-full bg-background-hover text-gray-400 text-xs font-medium hover:bg-white/10 hover:text-white transition-colors border border-border-dark">Archived</button>
+</div>
+<!-- List -->
+<div class="flex-1 overflow-y-auto mt-2">
+<!-- Active & Unread Conversation: Coach Williams -->
+<div class="relative group cursor-pointer bg-primary/10 border-l-[3px] border-primary p-4 hover:bg-primary/15 transition-colors">
+<div class="flex gap-3">
+<div class="relative shrink-0">
+<div class="size-12 rounded-full bg-cover bg-center" data-alt="Portrait of Coach Williams wearing a polo shirt" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuACynP_K7BPWr6CD-3XFvL0B1-DzyktXiScA7PcmjvUH_pNE7GdNszoTQHEqj9qFVBTXH52neqlx7jPat5xNzrMZNjuOLPLtKt6os3d_a3az74Bpj5zAFyUdMhQjLF_x29vXQ0W06qry8GvWRZVbLwwXzV-dH8j7C_MzLQ4dBjuTTluD7cB9ZJMT_foWIScSpD2AGkrm-ZaimrGtqq-kTnqgQ1Cy3P3s9cKiSZHOMaT5cYBF1sVNNenM-0QEChzppcpc_bIR6LrdA8");'>
+</div>
+<div class="absolute bottom-0 right-0 size-3 bg-green-500 border-2 border-background-dark rounded-full"></div>
+</div>
+<div class="flex flex-col flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-1">
+<h3 class="text-white text-sm font-semibold truncate pr-2">Coach Williams</h3>
+<span class="text-xs text-primary font-medium shrink-0">10:42 AM</span>
+</div>
+<div class="flex items-center gap-2 mb-1">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-900/40 text-blue-400 border border-blue-800/50">Recruiter</span>
+<span class="text-[10px] text-gray-500">TCU</span>
+</div>
+<p class="text-sm text-gray-300 truncate font-medium">Hey, looking forward to seeing the new stats...</p>
+</div>
+</div>
+</div>
+<!-- Unread Conversation: Mrs. Washington -->
+<div class="relative group cursor-pointer border-l-[3px] border-primary p-4 hover:bg-background-hover transition-colors border-b border-border-dark/50">
+<div class="flex gap-3">
+<div class="relative shrink-0">
+<div class="size-12 rounded-full bg-cover bg-center" data-alt="Portrait of Mrs. Washington smiling" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCygCGhEnf7pyF4ggdDAHpPNXsgJvumQrTtxCNcf3vU7kKGyv6n2wF8lmtRm7lDmA4yMzl4IPtvoaX9GZcpTcnQmhjh6spykgMn-L4qMBwRn-ya1mUL37ZCv1X11BHrGL4ByB73u4gPSoCqsJM8mWkbcvxkbpn3waeECLWWyB0xhBHCEa1fYi2s_xyx8bHzeIdDo-C_xB1uN0mtyTQCWM9-_COJ1sS1xOMMfoay0TJWv6-YLSJaGE-MjSMMWpIqfXCC0Ehj12kABB8");'>
+</div>
+</div>
+<div class="flex flex-col flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-1">
+<h3 class="text-white text-sm font-semibold truncate pr-2">Mrs. Washington</h3>
+<span class="text-xs text-primary font-medium shrink-0">Yesterday</span>
+</div>
+<div class="flex items-center gap-2 mb-1">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-900/40 text-green-400 border border-green-800/50">Parent</span>
+</div>
+<p class="text-sm text-gray-300 truncate font-medium">Can we reschedule the call regarding James?</p>
+</div>
+</div>
+</div>
+<!-- Read Conversation -->
+<div class="relative group cursor-pointer border-l-[3px] border-transparent p-4 hover:bg-background-hover transition-colors border-b border-border-dark/50 opacity-70 hover:opacity-100">
+<div class="flex gap-3">
+<div class="relative shrink-0">
+<div class="size-12 rounded-full bg-cover bg-center" data-alt="Portrait of a young athlete named David" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDu7lKgBp9FkBa3jHDbm5hH-uYpXrH4-vtZ61119_jknL4OF7u0HVrX9pTC0kjXc0VPRGLl6WtmVIUcRuCbivIcXeqiP9oTb303U4vAMPwvDxmZbknsZ-Tyf_SEkgYVjk0KljK9WH-xdY6RvPS50nOIpFjpEbmGBJc4MEjdAmE9xjng3g9kN7cyMaCjAKeyJySGzzqUIBsrmMYBCPHKhVvd30_4JIisOti4zK8Hp5aNzSfCYJFkMJb3Kt1-Fx_J_4j0W6jWa4xsbhY");'>
+</div>
+</div>
+<div class="flex flex-col flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-1">
+<h3 class="text-white text-sm font-medium truncate pr-2">David Miller</h3>
+<span class="text-xs text-gray-500 shrink-0">Tue</span>
+</div>
+<div class="flex items-center gap-2 mb-1">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-purple-900/40 text-purple-400 border border-purple-800/50">Athlete</span>
+</div>
+<p class="text-sm text-gray-500 truncate">Thanks for the update, coach!</p>
+</div>
+</div>
+</div>
+<!-- Read Conversation -->
+<div class="relative group cursor-pointer border-l-[3px] border-transparent p-4 hover:bg-background-hover transition-colors border-b border-border-dark/50 opacity-70 hover:opacity-100">
+<div class="flex gap-3">
+<div class="relative shrink-0">
+<div class="size-12 rounded-full bg-gray-700 flex items-center justify-center text-white text-sm font-bold border border-white/10">
+                           AS
+                        </div>
+</div>
+<div class="flex flex-col flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-1">
+<h3 class="text-white text-sm font-medium truncate pr-2">Alex Smith</h3>
+<span class="text-xs text-gray-500 shrink-0">Mon</span>
+</div>
+<div class="flex items-center gap-2 mb-1">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-900/40 text-blue-400 border border-blue-800/50">Recruiter</span>
+<span class="text-[10px] text-gray-500">Ohio State</span>
+</div>
+<p class="text-sm text-gray-500 truncate">Let me check with the head coach.</p>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Pane 3: Main Content (Empty State) -->
+<main class="flex-1 bg-background-dark flex flex-col items-center justify-center h-full p-8 relative overflow-hidden">
+<!-- Abstract Background Pattern -->
+<div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/5 via-background-dark to-background-dark pointer-events-none"></div>
+<div class="relative z-10 flex flex-col items-center text-center max-w-md">
+<div class="size-24 rounded-full bg-background-panel border border-border-dark flex items-center justify-center mb-6 shadow-2xl shadow-black/50">
+<span class="material-symbols-outlined text-[48px] text-gray-600">mail</span>
+</div>
+<h2 class="text-2xl font-bold text-white mb-2">No conversation selected</h2>
+<p class="text-gray-400 mb-8 leading-relaxed">Choose a conversation from the list on the left to view messages, share player stats, or schedule calls.</p>
+<button class="px-6 py-2.5 bg-primary hover:bg-primary/90 text-background-dark font-bold rounded-lg transition-colors flex items-center gap-2 shadow-[0_0_15px_-3px_rgba(212,175,55,0.3)]">
+<span class="material-symbols-outlined text-xl">add</span>
+                New Message
+            </button>
+</div>
+</main>
+</body></html>

@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RepMax - Recruiter CRM Pipeline</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2cc0d",
+                        "background-light": "#f8f8f5", // Keeping for structure, but main will be custom dark
+                        "background-dark": "#050505",
+                        "surface-dark": "#0a0a0a",
+                        "card-dark": "#141414",
+                        "card-hover": "#1c1c1c",
+                        "repmax-gold": "#f2cc0d",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for dark theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #444; 
+        }
+        .kanban-col-height {
+            height: calc(100vh - 180px);
+        }
+    </style>
+</head>
+<body class="bg-background-dark text-slate-200 font-display overflow-hidden selection:bg-primary/30 selection:text-primary">
+<div class="flex h-screen w-full">
+<!-- SIDEBAR -->
+<div class="w-64 flex-shrink-0 bg-surface-dark border-r border-white/5 flex flex-col justify-between p-4 h-full">
+<div class="flex flex-col gap-6">
+<!-- Brand -->
+<div class="flex gap-3 items-center px-2">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-10 shadow-lg shadow-primary/10 border border-white/10" data-alt="RepMax Logo - Abstract geometric gold shape" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCPTlI6TVLkpVC__zbDXe05kA5gCIReScvpyVg1yvcENONjUHQjuT-8HEXl7H7G02-hqz7wQ5hHqPf32S6SD2pVujHFJHSTMs_C3wVlbfYZRa2zjM9h6nf8jkBXlS1exBFkk80HS1xowjbzVxlE2AE6l2dfcIKYxrRqbg6cPFO-TkNGGfSgxdVGBcz6I9135PxI96WFyKQ06VjmkGFagkiIlXhi-fKt_2K8tbiEFWeMrq2O9q3YMyCgIlwQ-4VORUyE0qEjosURZnI");'></div>
+<div class="flex flex-col">
+<h1 class="text-white text-lg font-bold leading-none tracking-tight">RepMax</h1>
+<p class="text-gray-500 text-xs font-medium uppercase tracking-wider mt-1">Recruiter CRM</p>
+</div>
+</div>
+<!-- Navigation -->
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/5 text-primary border border-white/5 group transition-all" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">view_kanban</span>
+<p class="text-sm font-medium">Pipeline</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">groups</span>
+<p class="text-sm font-medium">Athletes</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">campaign</span>
+<p class="text-sm font-medium">Campaigns</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">chat_bubble</span>
+<p class="text-sm font-medium">Messages</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+<p class="text-sm font-medium">Analytics</p>
+</a>
+</nav>
+</div>
+<div class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<p class="text-sm font-medium">Settings</p>
+</a>
+<div class="flex items-center gap-3 px-3 py-3 mt-2 border-t border-white/5">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-8" data-alt="User profile photo of a recruiter" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBienQDUJ2lwHvQdX-i0917ivF2hfZHcraw8_n3Mj7fSQ2BcuBbK3kwXjUmXogW3FxvN5zr-sCxyRSBTALndg5rNFXLK0F-7snYx7JnK7Mk1yHEJR_FrYAxiG2h9FA0oPXKWTrU7cNotdK2HL6zmys_tpv89ZUvtPySrhq26Yajvx1KMYY6sxcYgjX2ClsdEe_Wf5bdKZWowsRV5GZtJLHfS02iasXrUe3HduIaXFDQzXUmBpZH7aqebEVAtjLNspaLwlP8Cbn6Tg4");'></div>
+<div class="flex flex-col">
+<p class="text-white text-sm font-medium">Coach Taylor</p>
+<p class="text-gray-500 text-xs">Head Recruiter</p>
+</div>
+</div>
+</div>
+</div>
+<!-- MAIN CONTENT -->
+<main class="flex-1 flex flex-col h-full min-w-0">
+<!-- HEADER -->
+<header class="h-16 border-b border-white/5 flex items-center justify-between px-6 bg-surface-dark/50 backdrop-blur-sm sticky top-0 z-20">
+<div class="flex items-center gap-4">
+<h2 class="text-white text-xl font-bold tracking-tight">Pipeline Dashboard</h2>
+<div class="h-4 w-px bg-white/10 mx-2"></div>
+<span class="text-gray-500 text-sm font-mono">NRB-2025-V1</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-gray-500 text-[20px]">search</span>
+</div>
+<input class="block w-64 pl-10 pr-3 py-2 border border-white/5 rounded-lg leading-5 bg-card-dark text-gray-300 placeholder-gray-500 focus:outline-none focus:bg-card-hover focus:ring-1 focus:ring-primary/50 focus:border-primary/50 sm:text-sm transition-colors" placeholder="Search athletes, schools..." type="text"/>
+</div>
+<button class="relative p-2 text-gray-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 size-2 bg-red-500 rounded-full border-2 border-surface-dark"></span>
+</button>
+</div>
+</header>
+<!-- CONTROL BAR -->
+<div class="px-6 py-4 flex flex-wrap items-center justify-between gap-4 bg-background-dark/95 z-10">
+<div class="flex items-center gap-3">
+<!-- Class Filter -->
+<div class="relative">
+<select class="appearance-none bg-card-dark text-white pl-3 pr-10 py-2 rounded-lg text-sm border border-white/10 hover:border-white/20 focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer transition-colors w-40">
+<option>Class of 2025</option>
+<option>Class of 2026</option>
+<option>Class of 2027</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</div>
+</div>
+<!-- Position Filter -->
+<div class="relative">
+<select class="appearance-none bg-card-dark text-white pl-3 pr-10 py-2 rounded-lg text-sm border border-white/10 hover:border-white/20 focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer transition-colors w-40">
+<option>All Positions</option>
+<option>Quarterbacks</option>
+<option>Wide Receivers</option>
+<option>Running Backs</option>
+<option>Defensive Line</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</div>
+</div>
+<!-- Zone Filter -->
+<div class="relative">
+<select class="appearance-none bg-card-dark text-white pl-3 pr-10 py-2 rounded-lg text-sm border border-white/10 hover:border-white/20 focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer transition-colors w-40">
+<option>National Board</option>
+<option>Southeast Zone</option>
+<option>West Coast</option>
+<option>Midwest</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</div>
+</div>
+</div>
+<button class="flex items-center gap-2 bg-primary hover:bg-[#d9b70b] text-background-dark px-4 py-2 rounded-lg font-bold text-sm transition-colors shadow-lg shadow-primary/10">
+<span class="material-symbols-outlined text-[20px] font-bold">add</span>
+                    Add Prospect
+                </button>
+</div>
+<!-- KANBAN BOARD AREA -->
+<div class="flex-1 overflow-x-auto overflow-y-hidden px-6 pb-6">
+<div class="flex h-full gap-4 min-w-[1600px]">
+<!-- 1. IDENTIFIED (Gray) -->
+<div class="flex flex-col w-72 flex-shrink-0 bg-surface-dark rounded-xl border border-white/5 h-full">
+<div class="p-3 border-t-4 border-gray-600 rounded-t-xl bg-surface-dark flex items-center justify-between sticky top-0 z-10">
+<h3 class="font-semibold text-gray-200 text-sm tracking-wide">Identified</h3>
+<span class="bg-gray-500/20 text-gray-300 text-xs font-bold px-2 py-0.5 rounded-full">12</span>
+</div>
+<div class="flex-1 overflow-y-auto p-2 flex flex-col gap-3 custom-scrollbar">
+<!-- Card -->
+<div class="bg-card-dark hover:bg-card-hover border border-white/5 rounded-lg p-3 cursor-pointer group transition-all shadow-sm relative">
+<div class="flex justify-between items-start mb-2">
+<div class="flex flex-col">
+<h4 class="font-bold text-white text-sm">Jalen Carter</h4>
+<p class="text-xs text-gray-500">Apopka High, FL</p>
+</div>
+<div class="flex gap-0.5 text-primary text-[10px]">
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+</div>
+</div>
+<div class="flex items-center gap-3 mt-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-8 border border-white/10" data-alt="Athlete portrait" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBCDLynSyAMQlw-VF2kk-ez47AGNXnTrDcRPIvtMybGgcfPXmPpXp_tU03VH6ECUI5kIBHrHu7mb66ZahyQbCDRFwySHbAAEF6vh3Ew1Q3EVZ_-TXHFenf5lOOCedZcddRqOGKRYgnLofaSlNfMkkNWnZ_7T2SfbxCBUzTqVSQIccoUQ46VRMLV1VCKyHt7K3gz9x23_gvKmA3b4HpqLa2mi7-fyGA02xPGyfVbVPA3alHctxW0Ha2830Z740scS6zgZSiL6MbY2uI");'></div>
+<span class="bg-white/5 text-gray-300 border border-white/5 text-[10px] px-2 py-1 rounded font-medium">DT</span>
+</div>
+<div class="mt-3 pt-3 border-t border-white/5 flex justify-between items-center">
+<span class="font-mono text-[10px] text-gray-500">Last: 3w ago</span>
+</div>
+</div>
+<!-- Card -->
+<div class="bg-card-dark hover:bg-card-hover border border-white/5 rounded-lg p-3 cursor-pointer group transition-all shadow-sm relative">
+<div class="flex justify-between items-start mb-2">
+<div class="flex flex-col">
+<h4 class="font-bold text-white text-sm">Kevin Miller</h4>
+<p class="text-xs text-gray-500"> IMG Academy, FL</p>
+</div>
+<div class="flex gap-0.5 text-primary text-[10px]">
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+</div>
+</div>
+<div class="flex items-center gap-3 mt-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-8 border border-white/10" data-alt="Athlete portrait" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBZmIjpH_H6AmYgC3h4u3lEGLMrIfjxO4zkXuBZGZ6caBQZDtqMOeetk94kZchQKrjqr5gc_kUz4_R4cyh9bKVPzlBmSRL79N-Urj2DESJ7wu2mulaXO63WDXeyCvWtCO-ut79lGU2CCrkRTnK4gShpxQomqxNC_W4MtmMmjIDPnUFePdDI_qCC3vb8tvPn-mjd_HuiBpGPj7sK2rNW3eXqRCzHbtvGlX0ulvAVJE6EyDOzMif-CP9Gcfjv1Q31K2Y_qc3krTiALdw");'></div>
+<span class="bg-white/5 text-gray-300 border border-white/5 text-[10px] px-2 py-1 rounded font-medium">QB</span>
+</div>
+<div class="mt-3 pt-3 border-t border-white/5 flex justify-between items-center">
+<span class="font-mono text-[10px] text-gray-500">Last: 1mo ago</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 2. CONTACTED (Blue) -->
+<div class="flex flex-col w-72 flex-shrink-0 bg-surface-dark rounded-xl border border-white/5 h-full">
+<div class="p-3 border-t-4 border-blue-600 rounded-t-xl bg-surface-dark flex items-center justify-between sticky top-0 z-10">
+<h3 class="font-semibold text-gray-200 text-sm tracking-wide">Contacted</h3>
+<span class="bg-blue-500/20 text-blue-400 text-xs font-bold px-2 py-0.5 rounded-full">8</span>
+</div>
+<div class="flex-1 overflow-y-auto p-2 flex flex-col gap-3 custom-scrollbar">
+<!-- Card with Priority -->
+<div class="bg-card-dark hover:bg-card-hover border border-white/5 hover:border-blue-500/30 rounded-lg p-3 cursor-pointer group transition-all shadow-sm relative">
+<div class="absolute top-3 right-3 size-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]"></div>
+<div class="flex justify-between items-start mb-2 pr-4">
+<div class="flex flex-col">
+<h4 class="font-bold text-white text-sm">Tyrell Johnson</h4>
+<p class="text-xs text-gray-500">Mater Dei, CA</p>
+</div>
+</div>
+<div class="flex gap-0.5 text-primary text-[10px] mb-3">
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-8 border border-white/10" data-alt="Athlete portrait" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBXfa-vdl8h6_3OojgpEslGjWFL6ahHYnrXCbzaIdkysoOuNnivO7XWNvhMWLlogyR0XfPcey0qF3xdMIhHYe99yATXx1epC404KIgT3LbBNTdOyru88DU19e9AgjCbANiCGyZV5SEI2qQmD--ERwKTD5heiCp7BgOG44vUBdGfYTj8H3nYP_NkZiF6o-ygZZOo8OuTuWlE0zHTMhaGbaa7h9Kh4-jg4L-xXFH_i56jRL_1MIQ5PVMXyUndP5rDXK-w_C3krqvJIIo");'></div>
+<span class="bg-white/5 text-gray-300 border border-white/5 text-[10px] px-2 py-1 rounded font-medium">WR</span>
+</div>
+<div class="mt-3 pt-3 border-t border-white/5 flex justify-between items-center">
+<span class="font-mono text-[10px] text-blue-400">DM Sent</span>
+<span class="font-mono text-[10px] text-gray-500">2d ago</span>
+</div>
+</div>
+<!-- Card -->
+<div class="bg-card-dark hover:bg-card-hover border border-white/5 rounded-lg p-3 cursor-pointer group transition-all shadow-sm relative">
+<div class="flex justify-between items-start mb-2">
+<div class="flex flex-col">
+<h4 class="font-bold text-white text-sm">Andre Smith</h4>
+<p class="text-xs text-gray-500">Westlake, TX</p>
+</div>
+<div class="flex gap-0.5 text-primary text-[10px]">
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+</div>
+</div>
+<div class="flex items-center gap-3 mt-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-8 border border-white/10" data-alt="Athlete portrait" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDA-479lnQ66P2DkrzuBGPkIuQaERD5O6kHEJTZ00XBC3Kiimy7N5yX-w9764m5pRgPyrLWnNl5dF6499HvaeG0PFgcZfB4xILTEsjs7lqxHkG3BQUNWvFK9m8rD5x0LKfxxEsRcGt_i644gCoFuQX9CQuMC_gJ7Ka8ADyA-eI-wCIePorqEbV38cYzU1JdJK_g15J-H2e_vRuD9k4OFLnXapHvZoZ6scaZv6P5h1xQ8mpIypOpMvkZmZXEyJyr6i97cB0IPdd_zK4");'></div>
+<span class="bg-white/5 text-gray-300 border border-white/5 text-[10px] px-2 py-1 rounded font-medium">LB</span>
+</div>
+<div class="mt-3 pt-3 border-t border-white/5 flex justify-between items-center">
+<span class="font-mono text-[10px] text-gray-500">Last: 4d ago</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 3. EVALUATING (Purple) -->
+<div class="flex flex-col w-72 flex-shrink-0 bg-surface-dark rounded-xl border border-white/5 h-full">
+<div class="p-3 border-t-4 border-purple-600 rounded-t-xl bg-surface-dark flex items-center justify-between sticky top-0 z-10">
+<h3 class="font-semibold text-gray-200 text-sm tracking-wide">Evaluating</h3>
+<span class="bg-purple-500/20 text-purple-400 text-xs font-bold px-2 py-0.5 rounded-full">5</span>
+</div>
+<div class="flex-1 overflow-y-auto p-2 flex flex-col gap-3 custom-scrollbar">
+<!-- Card -->
+<div class="bg-card-dark hover:bg-card-hover border border-white/5 hover:border-purple-500/30 rounded-lg p-3 cursor-pointer group transition-all shadow-sm relative">
+<div class="flex justify-between items-start mb-2">
+<div class="flex flex-col">
+<h4 class="font-bold text-white text-sm">Davante Adams</h4>
+<p class="text-xs text-gray-500">Palo Alto, CA</p>
+</div>
+<div class="flex gap-0.5 text-primary text-[10px]">
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+</div>
+</div>
+<div class="flex items-center gap-3 mt-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-8 border border-white/10" data-alt="Athlete portrait" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDBYZI4-qufqD1M2io-bBHJcOwcCVC1bg2tQT2nW6vywfZrlnJqnXv61n9uyVIUzJIEPs9CmtWSKTq8PDdh_wtuK1L-xtzwnSmB3onkkX1P5XJZYdp-k5IaAk5st8eROVhEh1k5fLW0G9fPM4USlWT0dV6yydCkaRkDGeAKXCJGDj_UpiMMo5zuQDojFa9hh0ddqsRoS-FjE8sEOPh0FiX0MVaZhT3PJfVzuac16nRz6Q-lX2qemeHIdG796nZgrIrrE7rHoI3sfB4");'></div>
+<span class="bg-white/5 text-gray-300 border border-white/5 text-[10px] px-2 py-1 rounded font-medium">WR</span>
+</div>
+<div class="mt-3 pt-3 border-t border-white/5 flex justify-between items-center">
+<span class="font-mono text-[10px] text-purple-400">Film Review</span>
+<span class="font-mono text-[10px] text-gray-500">1d ago</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 4. VISIT SCHEDULED (Orange) -->
+<div class="flex flex-col w-72 flex-shrink-0 bg-surface-dark rounded-xl border border-white/5 h-full">
+<div class="p-3 border-t-4 border-orange-600 rounded-t-xl bg-surface-dark flex items-center justify-between sticky top-0 z-10">
+<h3 class="font-semibold text-gray-200 text-sm tracking-wide">Visit Scheduled</h3>
+<span class="bg-orange-500/20 text-orange-400 text-xs font-bold px-2 py-0.5 rounded-full">3</span>
+</div>
+<div class="flex-1 overflow-y-auto p-2 flex flex-col gap-3 custom-scrollbar">
+<!-- Card Priority -->
+<div class="bg-card-dark hover:bg-card-hover border border-white/5 hover:border-orange-500/30 rounded-lg p-3 cursor-pointer group transition-all shadow-sm relative">
+<div class="absolute top-3 right-3 size-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]"></div>
+<div class="flex justify-between items-start mb-2 pr-4">
+<div class="flex flex-col">
+<h4 class="font-bold text-white text-sm">Marcus Washington</h4>
+<p class="text-xs text-gray-500">Oak Hill, VA</p>
+</div>
+</div>
+<div class="flex gap-0.5 text-primary text-[10px] mb-3">
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-8 border border-white/10" data-alt="Athlete portrait" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDyefZ907p6alZha3TtnkJJEhaAxrAfltEqFRB4cr_F92ZvdeL6JNEPJ3P9WtOrMULOehBoXkxGW7qm3tg072dGJS5f2IOOseOPGaYP_mHf2-9Tt6bRQHumJhW8lVvUg5M4-V2jewJ_gXp3iUfLwxtVvy0SFelIlHPqHUKWtCofb52dAydDQrfz0V6k5qXFaEAwuQlKt9mgw2LS5ZbiYh6jPUftJTiPWV3fekvX1mi65fV_14iKlg1yhvpusH7Kk7P1icbQsQIonYs");'></div>
+<span class="bg-white/5 text-gray-300 border border-white/5 text-[10px] px-2 py-1 rounded font-medium">S</span>
+</div>
+<div class="mt-3 pt-3 border-t border-white/5 flex justify-between items-center">
+<span class="font-mono text-[10px] text-orange-400">OV: Oct 12</span>
+<span class="font-mono text-[10px] text-gray-500">6h ago</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 5. OFFERED (Gold - Primary) -->
+<div class="flex flex-col w-72 flex-shrink-0 bg-surface-dark rounded-xl border border-white/5 h-full relative overflow-hidden">
+<!-- Subtle gold glow for this column -->
+<div class="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none"></div>
+<div class="p-3 border-t-4 border-primary rounded-t-xl bg-surface-dark flex items-center justify-between sticky top-0 z-10">
+<h3 class="font-bold text-white text-sm tracking-wide">Offered</h3>
+<span class="bg-primary/20 text-primary text-xs font-bold px-2 py-0.5 rounded-full">2</span>
+</div>
+<div class="flex-1 overflow-y-auto p-2 flex flex-col gap-3 custom-scrollbar relative z-10">
+<!-- Card -->
+<div class="bg-card-dark hover:bg-card-hover border border-primary/40 rounded-lg p-3 cursor-pointer group transition-all shadow-[0_0_15px_-5px_rgba(242,204,13,0.15)] relative">
+<div class="flex justify-between items-start mb-2">
+<div class="flex flex-col">
+<h4 class="font-bold text-white text-sm">Caleb Williams</h4>
+<p class="text-xs text-gray-500">Gonzaga, DC</p>
+</div>
+<div class="flex gap-0.5 text-primary text-[10px]">
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+</div>
+</div>
+<div class="flex items-center gap-3 mt-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-8 border border-white/10" data-alt="Athlete portrait" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCL2QZ6vdeFlSgo1Twbm-frHY8J4eRcrYkXmy4TpeekCNfOvw2CHngrPd4QQzbOLGKBZck_hbePLLwCX7l9QL5eklj4VFHxJjmxIRE2Mr4Ruhpo2I9WaQwG1DwUE81Ips_mlK3df3bdlgXruqr1s_yDMX7wTLkT75NVfo8x5npCzKWnFtDQ5WbLMinB_OX2hCY5jApu726YMBdX39rM9bq8YWUTGaOKeqm0Dl1Y_fn-mmbGoDNKHyD5SSL2k01gZfsIrgkB4NIngxY");'></div>
+<span class="bg-white/5 text-gray-300 border border-white/5 text-[10px] px-2 py-1 rounded font-medium">QB</span>
+</div>
+<div class="mt-3 pt-3 border-t border-white/5 flex justify-between items-center">
+<span class="font-mono text-[10px] text-primary">Full Ride</span>
+<span class="font-mono text-[10px] text-gray-500">12h ago</span>
+</div>
+</div>
+<!-- Card -->
+<div class="bg-card-dark hover:bg-card-hover border border-white/5 hover:border-primary/40 rounded-lg p-3 cursor-pointer group transition-all shadow-sm relative">
+<div class="flex justify-between items-start mb-2">
+<div class="flex flex-col">
+<h4 class="font-bold text-white text-sm">Zion Nelson</h4>
+<p class="text-xs text-gray-500">Sumter, SC</p>
+</div>
+<div class="flex gap-0.5 text-primary text-[10px]">
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+</div>
+</div>
+<div class="flex items-center gap-3 mt-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-8 border border-white/10" data-alt="Athlete portrait" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAZtC_mT_BaUF03zRQxFvRVwq-inB9m59thXnrVOV1p82HuISjyRKISEQxltLLaXZnsMetuMNIRz9jEXG_TOMxKBfDJHr0jsZEvKdiYRHa8vPPe0CRodoy_St27c-DqlGTveQGQqzaFMX1mgGGFSZcwISjZKNEiNHjctekFvjS0ctPsgofEkA4EwcvRdkOwtV4S4WzJZe5zg_4SK2OWeOYp53DAEMUazRAU7lQCZ9M9asC6xTPBjo43D3PlOxOYo7u61BwVm00T-nw");'></div>
+<span class="bg-white/5 text-gray-300 border border-white/5 text-[10px] px-2 py-1 rounded font-medium">OT</span>
+</div>
+<div class="mt-3 pt-3 border-t border-white/5 flex justify-between items-center">
+<span class="font-mono text-[10px] text-gray-400">Offer Sent</span>
+<span class="font-mono text-[10px] text-gray-500">3d ago</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 6. COMMITTED (Green) -->
+<div class="flex flex-col w-72 flex-shrink-0 bg-surface-dark rounded-xl border border-white/5 h-full">
+<div class="p-3 border-t-4 border-green-600 rounded-t-xl bg-surface-dark flex items-center justify-between sticky top-0 z-10">
+<h3 class="font-semibold text-gray-200 text-sm tracking-wide">Committed</h3>
+<span class="bg-green-500/20 text-green-400 text-xs font-bold px-2 py-0.5 rounded-full">1</span>
+</div>
+<div class="flex-1 overflow-y-auto p-2 flex flex-col gap-3 custom-scrollbar">
+<!-- Card -->
+<div class="bg-card-dark hover:bg-card-hover border border-green-500/50 rounded-lg p-3 cursor-pointer group transition-all shadow-sm relative opacity-80 hover:opacity-100">
+<div class="flex justify-between items-start mb-2">
+<div class="flex flex-col">
+<h4 class="font-bold text-white text-sm">Mike Saunders</h4>
+<p class="text-xs text-gray-500">North Gwinnett, GA</p>
+</div>
+<div class="flex gap-0.5 text-primary text-[10px]">
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+</div>
+</div>
+<div class="flex items-center gap-3 mt-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-8 border border-white/10" data-alt="Athlete portrait" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBWcCG4RNUDhn8BQ3AdedFn0DAPrc7gnRLk7tYRqjXgTffQ-Xn6l66ieyh5OKiUQ9M2fBo12SHXbNc4i0wkV4qomEAeFXco1d1NGr05kxXV6J-BeywfSTDI3N_WBraJLlWv4cvEfrJC3EEnkN9If707ml9BQUBPOI--jIt14PHct9HIoYfN2Gf-tIo8tkVvn0qxAT4eawSHj-xr5jg94vtfFDTNR62GUVALQYA9UTvS4rKAY2F-UGJNKfX30-xGV-XeFIjF0ka6Ozo");'></div>
+<span class="bg-white/5 text-gray-300 border border-white/5 text-[10px] px-2 py-1 rounded font-medium">RB</span>
+</div>
+<div class="mt-3 pt-3 border-t border-white/5 flex justify-between items-center">
+<div class="flex items-center gap-1 text-green-400">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span class="font-mono text-[10px]">Signed</span>
+</div>
+<span class="font-mono text-[10px] text-gray-500">1mo ago</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

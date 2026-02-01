@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Message Notification Badge States Variant</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#d4af35",
+              "background-light": "#f8f7f6",
+              "background-dark": "#050505", /* Adjusted to user request slightly, staying close to theme intent */
+              "surface-dark": "#121212",
+              "surface-highlight": "#1E1E1E"
+            },
+            fontFamily: {
+              "display": ["Inter", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar for sidebar feel */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#111418] dark:text-white font-display overflow-x-hidden transition-colors duration-200">
+<div class="relative flex min-h-screen flex-col overflow-hidden">
+<!-- Header Section -->
+<header class="w-full border-b border-[#2a2a2a] bg-surface-dark/50 backdrop-blur-md sticky top-0 z-10">
+<div class="layout-container flex flex-col justify-center px-6 md:px-20 lg:px-40 py-6">
+<div class="flex flex-col gap-2 max-w-[960px]">
+<h1 class="text-white tracking-tight text-[32px] font-bold leading-tight">Message Notification Badge</h1>
+<p class="text-[#c3b998] text-sm font-normal leading-normal max-w-2xl">
+                        Component showcase for RepMax navigation states: Unread (Gold Badge) vs Read. 
+                        Demonstrating visual hierarchy for athlete, coach, and recruiter communications.
+                    </p>
+</div>
+</div>
+</header>
+<main class="layout-container flex flex-col grow px-6 md:px-20 lg:px-40 py-10 gap-12">
+<!-- Context 1: Desktop Sidebar -->
+<section class="flex flex-col gap-6 max-w-[960px]">
+<div class="flex flex-col gap-1 border-l-4 border-primary pl-4">
+<h2 class="text-white text-2xl font-bold leading-tight">Desktop Sidebar Context</h2>
+<p class="text-gray-400 text-sm">Navigation items in the sidebar. The unread state features a prominent gold pill badge.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- State 1: Unread -->
+<div class="flex flex-col gap-4">
+<span class="text-xs font-bold uppercase tracking-wider text-[#c3b998]">State 1: Unread (3 Messages)</span>
+<div class="bg-surface-dark rounded-xl p-6 border border-[#2a2a2a] shadow-lg">
+<div class="w-full max-w-[280px] bg-background-dark rounded-lg overflow-hidden border border-[#2a2a2a]">
+<!-- Sidebar Item Mockup -->
+<div class="flex items-center gap-3 px-4 py-3 bg-surface-highlight/30 cursor-pointer hover:bg-surface-highlight/50 transition-colors group">
+<span class="material-symbols-outlined text-white/80 group-hover:text-primary transition-colors">chat_bubble</span>
+<p class="text-white/90 text-sm font-medium flex-1">Messages</p>
+<div class="flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-primary shadow-[0_2px_8px_rgba(212,175,53,0.3)]">
+<span class="text-white text-[10px] font-bold leading-none">3</span>
+</div>
+</div>
+<!-- Other dummy items for context -->
+<div class="flex items-center gap-3 px-4 py-3 cursor-pointer opacity-60 hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-white/80">group</span>
+<p class="text-white/90 text-sm font-medium flex-1">Roster</p>
+</div>
+</div>
+</div>
+</div>
+<!-- State 2: Read -->
+<div class="flex flex-col gap-4">
+<span class="text-xs font-bold uppercase tracking-wider text-gray-500">State 2: Read (No Badge)</span>
+<div class="bg-surface-dark rounded-xl p-6 border border-[#2a2a2a] shadow-lg">
+<div class="w-full max-w-[280px] bg-background-dark rounded-lg overflow-hidden border border-[#2a2a2a]">
+<!-- Sidebar Item Mockup -->
+<div class="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-surface-highlight/50 transition-colors group">
+<span class="material-symbols-outlined text-white/80 group-hover:text-white transition-colors">chat_bubble</span>
+<p class="text-white/90 text-sm font-medium flex-1">Messages</p>
+<!-- No Badge Element Here -->
+</div>
+<!-- Other dummy items for context -->
+<div class="flex items-center gap-3 px-4 py-3 cursor-pointer opacity-60 hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-white/80">group</span>
+<p class="text-white/90 text-sm font-medium flex-1">Roster</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Context 2: Mobile Tab Bar -->
+<section class="flex flex-col gap-6 max-w-[960px]">
+<div class="flex flex-col gap-1 border-l-4 border-primary pl-4">
+<h2 class="text-white text-2xl font-bold leading-tight">Mobile Tab Bar Context</h2>
+<p class="text-gray-400 text-sm">Bottom navigation bar. The badge overlaps the icon to save vertical space.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- State 1: Unread Mobile -->
+<div class="flex flex-col gap-4">
+<span class="text-xs font-bold uppercase tracking-wider text-[#c3b998]">State 1: Unread</span>
+<div class="bg-surface-dark rounded-xl p-8 border border-[#2a2a2a] shadow-lg flex justify-center items-center">
+<!-- Mobile Tab Bar Mockup Segment -->
+<div class="w-full max-w-[320px] h-16 bg-background-dark border-t border-[#2a2a2a] flex items-center justify-around px-2 rounded-b-xl relative">
+<!-- Home Icon -->
+<div class="flex flex-col items-center justify-center gap-1 opacity-50 w-12">
+<span class="material-symbols-outlined text-[24px]">home</span>
+</div>
+<!-- Messages Icon (Active/Unread) -->
+<div class="flex flex-col items-center justify-center gap-1 w-12 relative group cursor-pointer">
+<div class="relative">
+<span class="material-symbols-outlined text-[24px] text-white group-hover:text-primary transition-colors">chat_bubble</span>
+<!-- Overlapping Badge -->
+<div class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full bg-primary shadow-[0_2px_4px_rgba(0,0,0,0.5)] border border-background-dark">
+<span class="text-white text-[9px] font-bold leading-none">3</span>
+</div>
+</div>
+<span class="text-[10px] font-medium text-white mt-0.5">Chat</span>
+</div>
+<!-- Profile Icon -->
+<div class="flex flex-col items-center justify-center gap-1 opacity-50 w-12">
+<span class="material-symbols-outlined text-[24px]">person</span>
+</div>
+</div>
+</div>
+</div>
+<!-- State 2: Read Mobile -->
+<div class="flex flex-col gap-4">
+<span class="text-xs font-bold uppercase tracking-wider text-gray-500">State 2: Read</span>
+<div class="bg-surface-dark rounded-xl p-8 border border-[#2a2a2a] shadow-lg flex justify-center items-center">
+<!-- Mobile Tab Bar Mockup Segment -->
+<div class="w-full max-w-[320px] h-16 bg-background-dark border-t border-[#2a2a2a] flex items-center justify-around px-2 rounded-b-xl">
+<!-- Home Icon -->
+<div class="flex flex-col items-center justify-center gap-1 opacity-50 w-12">
+<span class="material-symbols-outlined text-[24px]">home</span>
+</div>
+<!-- Messages Icon (Read) -->
+<div class="flex flex-col items-center justify-center gap-1 w-12 group cursor-pointer">
+<span class="material-symbols-outlined text-[24px] text-white group-hover:text-white/80 transition-colors">chat_bubble</span>
+<span class="text-[10px] font-medium text-white mt-0.5">Chat</span>
+</div>
+<!-- Profile Icon -->
+<div class="flex flex-col items-center justify-center gap-1 opacity-50 w-12">
+<span class="material-symbols-outlined text-[24px]">person</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Technical Spec Footnote -->
+<section class="mt-8 pt-8 border-t border-[#2a2a2a]">
+<div class="flex flex-col gap-3">
+<h3 class="text-white text-lg font-bold">Specs &amp; Behavior</h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-gray-400">
+<div class="flex flex-col gap-2">
+<span class="text-[#c3b998] font-medium">Badge Colors</span>
+<div class="flex items-center gap-3">
+<div class="size-6 rounded bg-primary shadow-sm"></div>
+<span>Background: #D4AF35</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="size-6 rounded bg-white border border-gray-700"></div>
+<span>Text: #FFFFFF (Bold)</span>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<span class="text-[#c3b998] font-medium">Interaction</span>
+<ul class="list-disc pl-4 space-y-1">
+<li>Badge disappears immediately on click.</li>
+<li>If count &gt; 99, display "99+".</li>
+<li>Badge pulses once on new notification arrival.</li>
+</ul>
+</div>
+<div class="flex flex-col gap-2">
+<span class="text-[#c3b998] font-medium">Dimensions</span>
+<ul class="list-disc pl-4 space-y-1">
+<li>Desktop: 20px height, inline right.</li>
+<li>Mobile: 16px height, absolute top-right overlay.</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+</main>
+</div>
+</body></html>

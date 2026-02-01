@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RepMax - Prospect Detail</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d4af35",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#201d12",
+                        "card-dark": "#2a271d",
+                        "card-dark-lighter": "#363225",
+                        "accent-purple": "#8B5CF6",
+                        "text-secondary": "#c3b998",
+                        "border-dark": "#433d28"
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar for dark theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #201d12; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #433d28; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d4af35; 
+        }
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 1,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+        .icon-sm {
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white overflow-x-hidden min-h-screen flex flex-col">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-border-dark px-6 py-3 bg-background-dark sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-white">
+<div class="size-8 text-primary">
+<svg class="w-full h-full" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 18.4228L42 11.475V34.3663C42 34.7796 41.7457 35.1504 41.3601 35.2992L24 42V18.4228Z" fill="currentColor" fill-rule="evenodd"></path>
+<path clip-rule="evenodd" d="M24 8.18819L33.4123 11.574L24 15.2071L14.5877 11.574L24 8.18819ZM9 15.8487L21 20.4805V37.6263L9 32.9945V15.8487ZM27 37.6263V20.4805L39 15.8487V32.9945L27 37.6263ZM25.354 2.29885C24.4788 1.98402 23.5212 1.98402 22.646 2.29885L4.98454 8.65208C3.7939 9.08038 3 10.2097 3 11.475V34.3663C3 36.0196 4.01719 37.5026 5.55962 38.098L22.9197 44.7987C23.6149 45.0671 24.3851 45.0671 25.0803 44.7987L42.4404 38.098C43.9828 37.5026 45 36.0196 45 34.3663V11.475C45 10.2097 44.2061 9.08038 43.0155 8.65208L25.354 2.29885Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-white text-xl font-bold leading-tight tracking-[-0.015em]">RepMax</h2>
+</div>
+<label class="hidden md:flex flex-col min-w-40 !h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full bg-card-dark border border-border-dark group focus-within:border-primary transition-colors">
+<div class="text-text-secondary flex border-none items-center justify-center pl-4 rounded-l-lg border-r-0">
+<span class="material-symbols-outlined icon-sm">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-0 border-none bg-transparent focus:border-none h-full placeholder:text-text-secondary px-4 rounded-l-none border-l-0 pl-2 text-sm font-normal leading-normal" placeholder="Search athletes..." value=""/>
+</div>
+</label>
+</div>
+<div class="flex flex-1 justify-end gap-6 items-center">
+<div class="hidden lg:flex items-center gap-8 mr-4">
+<a class="text-white text-sm font-medium hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-primary text-sm font-bold" href="#">Prospects</a>
+<a class="text-white text-sm font-medium hover:text-primary transition-colors" href="#">Team</a>
+<a class="text-white text-sm font-medium hover:text-primary transition-colors" href="#">Settings</a>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex flex-col items-end hidden md:flex">
+<span class="text-xs text-text-secondary">Recruiter</span>
+<span class="text-sm font-medium text-white">Alex Coachman</span>
+</div>
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-10 border-2 border-accent-purple/50" data-alt="Recruiter profile avatar showing a smiling man" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBHOYz1K6OySk1AqSOVpHutcauAaqBhsfpnp5cinO8Fh2tOgEa9aS9h6RVI8yxZUCsovVfz1hiI4_LcSbZ4rw24OrP0grNTNiTvB-jKBFsZrkHIEAuJKGokgIfEgcMzsW0efb1ezK_l0xhLw9YwXU2yB5sunih4e_LJG6DboP8N7jWeuKvwU1iY5dlTeTABLCWG6HofO0euVY6qhvS8SKgYDeFa8g6HFej1kPAF4-GOMfnEqzTU1XdHs51bG7OPY4vWnimahGxo-aI");'></div>
+</div>
+</div>
+</header>
+<!-- Main Content Layout -->
+<main class="flex-1 flex justify-center py-6 px-4 md:px-8 lg:px-12 xl:px-20">
+<div class="w-full max-w-[1400px] flex flex-col gap-6">
+<!-- Breadcrumbs -->
+<div class="flex items-center gap-2 text-sm">
+<a class="text-text-secondary hover:text-primary transition-colors" href="#">Prospects</a>
+<span class="text-text-secondary material-symbols-outlined icon-sm">chevron_right</span>
+<span class="text-white font-medium">Jaylen Washington</span>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- Left Column: Athlete Profile (45% -> 5/12 cols) -->
+<div class="lg:col-span-5 flex flex-col gap-6">
+<!-- Companion Card / Main Profile -->
+<div class="bg-card-dark rounded-xl border border-border-dark overflow-hidden">
+<!-- Hero Image & Header -->
+<div class="relative h-48 bg-gradient-to-t from-black/80 to-transparent">
+<div class="absolute inset-0 bg-center bg-cover bg-no-repeat opacity-60" data-alt="Action shot of football player Jaylen Washington throwing a pass" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAlhsu5uM6tvCrKhFmxIgnwMRY7ag08qcV3ttMjeT7gtDKQslh_Ug_mwacNJJiYWMJHnuH_KN4EpY9w9XE4Bi-EVgLlf_pTtpJ_lKTi4z48NJOJVSG0zZfaM0b2iidcZtu3h-FCXI-d0kjy-V6lWhAxnp_239953lmHnIORnlQR7aW1L8TpKHPACI982vPKyi6XdB6gqQlcsqije4Vr8pwTrlvmRdBgITvByBBNiwQ4fTBWqHF_F_6qCi-KY8B5bFXn9K68-I6hUEM");'></div>
+<div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-card-dark via-card-dark/90 to-transparent pt-20">
+<div class="flex justify-between items-end">
+<div>
+<h1 class="text-3xl font-black text-white tracking-tight leading-none mb-1">Jaylen Washington</h1>
+<p class="text-text-secondary text-sm">Lincoln High School, TX | Class of 2024</p>
+</div>
+<div class="flex flex-col items-center bg-card-dark-lighter p-2 rounded-lg border border-border-dark shadow-lg">
+<span class="text-primary font-black text-xl leading-none">#1</span>
+<span class="text-[10px] uppercase tracking-wider text-text-secondary">QB Rank</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Content -->
+<div class="p-6 pt-2 flex flex-col gap-6">
+<!-- Rating & Position -->
+<div class="flex items-center justify-between pb-4 border-b border-border-dark/50">
+<div class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="ml-2 text-white font-bold text-sm">5-Star Recruit</span>
+</div>
+<div class="px-3 py-1 bg-white/10 rounded text-white text-xs font-bold tracking-wide">
+                                    QB
+                                </div>
+</div>
+<!-- Physical Stats -->
+<div class="grid grid-cols-4 gap-2">
+<div class="bg-card-dark-lighter p-3 rounded-lg border border-border-dark text-center">
+<p class="text-text-secondary text-xs uppercase mb-1">Height</p>
+<p class="text-white font-bold">6'2"</p>
+</div>
+<div class="bg-card-dark-lighter p-3 rounded-lg border border-border-dark text-center">
+<p class="text-text-secondary text-xs uppercase mb-1">Weight</p>
+<p class="text-white font-bold">215</p>
+</div>
+<div class="bg-card-dark-lighter p-3 rounded-lg border border-border-dark text-center">
+<p class="text-text-secondary text-xs uppercase mb-1">40 YD</p>
+<p class="text-white font-bold">4.45</p>
+</div>
+<div class="bg-card-dark-lighter p-3 rounded-lg border border-border-dark text-center">
+<p class="text-text-secondary text-xs uppercase mb-1">GPA</p>
+<p class="text-white font-bold">3.8</p>
+</div>
+</div>
+<!-- Highlights -->
+<div>
+<div class="flex justify-between items-center mb-3">
+<h3 class="text-white font-semibold text-sm">Featured Highlight</h3>
+<a class="text-primary text-xs font-medium hover:underline" href="#">View All</a>
+</div>
+<div class="relative w-full aspect-video rounded-lg overflow-hidden border border-border-dark group cursor-pointer">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="Video thumbnail of Jaylen throwing a touchdown pass" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBvgQanpt3PYfrkU-si9UEqkyxPP-1F17DVVri4R81aCYaoDmS15veQlVzFHyweZzl-9qVSbQ581xUaOseXPPZUSYMR7797-vb0jAEpz2CE6NaypynThHFQtU0RuCbr8VgD-kTtfHsP8s3CYmf9ze-MYu3cCyaL4c83Ia4NNJs3W9pfok45bgQdhok9b_7gBGIyeXLYmxiF4_b-KZNNoQvZDZ-WVEPsOb7ZxqEKq-tFSmNOls36dg0FAUtVKmxP_wtBrtWcxsSm64w");'></div>
+<div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+<div class="size-12 rounded-full bg-primary/90 text-background-dark flex items-center justify-center pl-1 shadow-lg group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">play_arrow</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Contact Actions -->
+<div class="grid grid-cols-3 gap-3">
+<button class="flex flex-col items-center justify-center gap-1 p-2 rounded-lg bg-card-dark-lighter hover:bg-card-dark-lighter/80 border border-border-dark transition-colors group">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-primary">call</span>
+<span class="text-[10px] uppercase font-bold text-text-secondary">Call</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-1 p-2 rounded-lg bg-card-dark-lighter hover:bg-card-dark-lighter/80 border border-border-dark transition-colors group">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-primary">mail</span>
+<span class="text-[10px] uppercase font-bold text-text-secondary">Email</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-1 p-2 rounded-lg bg-card-dark-lighter hover:bg-card-dark-lighter/80 border border-border-dark transition-colors group">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-primary">chat</span>
+<span class="text-[10px] uppercase font-bold text-text-secondary">DM</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Personal Details / Stats Grid -->
+<div class="bg-card-dark rounded-xl border border-border-dark p-6">
+<h3 class="text-white font-semibold text-lg mb-4">Quick Stats</h3>
+<div class="grid grid-cols-2 gap-y-4 gap-x-8">
+<div>
+<p class="text-text-secondary text-xs uppercase">Bench Press</p>
+<p class="text-white font-medium">285 lbs</p>
+</div>
+<div>
+<p class="text-text-secondary text-xs uppercase">Squat</p>
+<p class="text-white font-medium">405 lbs</p>
+</div>
+<div>
+<p class="text-text-secondary text-xs uppercase">Vert. Jump</p>
+<p class="text-white font-medium">32 in</p>
+</div>
+<div>
+<p class="text-text-secondary text-xs uppercase">Hand Size</p>
+<p class="text-white font-medium">9.5 in</p>
+</div>
+<div class="col-span-2 pt-2 border-t border-border-dark/50 mt-2">
+<div class="flex justify-between items-center mt-2">
+<span class="text-text-secondary text-sm">Eligibility Status</span>
+<span class="text-green-500 text-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">check_circle</span> Verified
+                                    </span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: CRM (55% -> 7/12 cols) -->
+<div class="lg:col-span-7 flex flex-col gap-6">
+<!-- CRM Control Bar -->
+<div class="bg-card-dark p-4 rounded-xl border border-border-dark flex flex-wrap gap-4 items-center justify-between">
+<div class="flex gap-3 flex-wrap">
+<!-- Stage Dropdown -->
+<div class="relative">
+<select class="appearance-none bg-card-dark-lighter text-white pl-9 pr-8 py-2 rounded-lg border border-border-dark focus:border-primary focus:outline-none text-sm font-medium cursor-pointer min-w-[140px]">
+<option>New Lead</option>
+<option selected="">Evaluating</option>
+<option>Offered</option>
+<option>Committed</option>
+</select>
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-primary icon-sm">manage_search</span>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-text-secondary icon-sm pointer-events-none">expand_more</span>
+</div>
+<!-- Priority Toggle -->
+<div class="flex items-center gap-2 bg-card-dark-lighter px-3 py-2 rounded-lg border border-primary/40 cursor-pointer hover:bg-card-dark-lighter/80">
+<span class="material-symbols-outlined text-primary icon-sm" style="font-variation-settings: 'FILL' 1;">flag</span>
+<span class="text-white text-sm font-medium">High Priority</span>
+</div>
+</div>
+<!-- Assignee -->
+<div class="flex items-center gap-3 pl-4 border-l border-border-dark max-sm:border-l-0 max-sm:pl-0">
+<div class="flex -space-x-2">
+<div class="size-8 rounded-full border-2 border-card-dark bg-cover bg-center" data-alt="Recruiter avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBT6lVP2vMHhhplOqEZXsC1ImBe8R5yLP5nvtKNmoENNRz_c45kd4TxJ_9XM2EhiUTtGKzw-uG7J1j3xj_-Ey4-0AqZpF4QCF1yCZQ9BDsstxzXs1mUbvVbEcmWx6Ttj_Ho2WIXNIuOdW_oRKpWGxur95qhRPQfyXuXgVM7iAdR9LHrqBhKmrsZiQAVOxP0XOg3xAdwP9f9sJFsMX_FZM-jxahpkth70fzjQooTHvVZ-9nD4c2LofRTefzJEzduCw9FelwMs4xDDd4");'></div>
+<div class="size-8 rounded-full border-2 border-card-dark bg-card-dark-lighter flex items-center justify-center text-xs font-medium text-text-secondary hover:bg-primary hover:text-white cursor-pointer transition-colors">+</div>
+</div>
+<span class="text-sm text-text-secondary">Assignee</span>
+</div>
+</div>
+<!-- Next Action Card (Highlighted) -->
+<div class="bg-gradient-to-r from-card-dark to-card-dark-lighter p-1 rounded-xl">
+<div class="bg-card-dark rounded-[10px] border-l-4 border-primary p-5 flex justify-between items-center shadow-lg relative overflow-hidden">
+<!-- Subtle Glow Background -->
+<div class="absolute right-0 top-0 h-full w-1/3 bg-primary/5 -skew-x-12 blur-xl"></div>
+<div class="relative z-10">
+<p class="text-primary text-xs font-bold uppercase tracking-wider mb-1">Next Action Required</p>
+<h3 class="text-white text-lg font-bold">Schedule campus visit</h3>
+<p class="text-text-secondary text-sm mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">event</span> Due by Oct 12, 2023
+                                </p>
+</div>
+<button class="relative z-10 bg-primary hover:bg-primary/90 text-background-dark font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors">
+<span>Complete</span>
+<span class="material-symbols-outlined icon-sm">check</span>
+</button>
+</div>
+</div>
+<!-- Tags & Notes -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Tags -->
+<div class="bg-card-dark p-5 rounded-xl border border-border-dark">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-white font-semibold text-sm">Tags</h3>
+<button class="text-text-secondary hover:text-white"><span class="material-symbols-outlined icon-sm">edit</span></button>
+</div>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-medium border border-primary/20">QB Target</span>
+<span class="px-3 py-1 rounded-full bg-accent-purple/20 text-accent-purple text-xs font-medium border border-accent-purple/20">Class of '24</span>
+<span class="px-3 py-1 rounded-full bg-card-dark-lighter text-text-secondary text-xs font-medium border border-border-dark">In-State</span>
+<button class="px-3 py-1 rounded-full border border-dashed border-text-secondary/50 text-text-secondary text-xs font-medium hover:text-white hover:border-white transition-colors">+ Add</button>
+</div>
+</div>
+<!-- Quick Note -->
+<div class="bg-card-dark p-5 rounded-xl border border-border-dark flex flex-col">
+<div class="flex justify-between items-center mb-2">
+<h3 class="text-white font-semibold text-sm">Latest Note</h3>
+<span class="text-[10px] text-text-secondary">Edited 2h ago</span>
+</div>
+<p class="text-text-secondary text-sm leading-relaxed flex-1">
+                                "Arm strength is elite. Showing great pocket presence in recent games. Need to verify transcript eligibility by next week."
+                            </p>
+<div class="mt-3 flex justify-end">
+<button class="text-primary text-xs font-bold hover:underline">View All Notes</button>
+</div>
+</div>
+</div>
+<!-- Timeline -->
+<div class="bg-card-dark rounded-xl border border-border-dark p-6">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-white font-semibold">Activity Timeline</h3>
+<button class="bg-card-dark-lighter hover:bg-card-dark-lighter/80 text-white text-xs px-3 py-1.5 rounded-lg border border-border-dark transition-colors">Filter</button>
+</div>
+<div class="relative space-y-8 pl-2">
+<!-- Vertical Line -->
+<div class="absolute top-2 bottom-2 left-[19px] w-[2px] bg-border-dark"></div>
+<!-- Item 1 -->
+<div class="relative flex gap-4">
+<div class="relative z-10 size-10 rounded-full bg-card-dark-lighter border border-border-dark flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-sm">visibility</span>
+</div>
+<div class="flex flex-col pt-1 w-full">
+<div class="flex justify-between items-start">
+<p class="text-white text-sm font-medium">Viewed Companion Card</p>
+<span class="text-xs text-text-secondary">2h ago</span>
+</div>
+<p class="text-text-secondary text-xs mt-0.5">Recruiter Alex Coachman viewed profile stats.</p>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="relative flex gap-4">
+<div class="relative z-10 size-10 rounded-full bg-accent-purple/20 border border-accent-purple/30 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-accent-purple text-sm">mail</span>
+</div>
+<div class="flex flex-col pt-1 w-full">
+<div class="flex justify-between items-start">
+<p class="text-white text-sm font-medium">Emailed Coach Smith</p>
+<span class="text-xs text-text-secondary">Yesterday</span>
+</div>
+<p class="text-text-secondary text-xs mt-0.5">Sent intro packet and request for transcripts.</p>
+<div class="mt-2 p-2 bg-card-dark-lighter rounded border border-border-dark max-w-md">
+<div class="flex items-center gap-2 text-xs text-text-secondary">
+<span class="material-symbols-outlined text-sm">attachment</span>
+<span>Intro_Packet_v2.pdf</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="relative flex gap-4">
+<div class="relative z-10 size-10 rounded-full bg-card-dark-lighter border border-border-dark flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-text-secondary text-sm">person_add</span>
+</div>
+<div class="flex flex-col pt-1 w-full">
+<div class="flex justify-between items-start">
+<p class="text-white text-sm font-medium">Added to 'Evaluating'</p>
+<span class="text-xs text-text-secondary">Oct 1</span>
+</div>
+<p class="text-text-secondary text-xs mt-0.5">Moved from New Lead.</p>
+</div>
+</div>
+</div>
+<button class="w-full mt-6 py-2 text-sm text-text-secondary hover:text-white border border-dashed border-border-dark hover:border-text-secondary/50 rounded-lg transition-colors">
+                            Load older activity
+                        </button>
+</div>
+</div>
+</div>
+<!-- Footer: Similar Prospects -->
+<div class="mt-8 mb-12">
+<h3 class="text-white font-bold text-xl mb-4">Similar Prospects</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Card 1 -->
+<div class="bg-card-dark p-4 rounded-xl border border-border-dark hover:border-primary/50 transition-colors group cursor-pointer">
+<div class="flex items-center gap-3 mb-3">
+<div class="size-12 rounded-lg bg-cover bg-center" data-alt="Small avatar of athlete Michael Brown" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBXOw77-WaRGMyt7rfEIrtXuxfyd6QpZIR6cdZEgUcziDoWWTPhVZMBIae7UKP9qDPX6MCfvy1wGxRoadhaBJ8al04Mq1bF6o2fejJ9mxwAOPnfYW2lat-7J5DamGyDk0WCQ8hUE3vjAuVs6qA1lUvg-31TeL6MlolG75kS207lXybZYuKi3pri5ZdpROqQx14TH6ehHWsjXS2xOFM4XE-emH8qFiFb2MkNJnJOJ4O0p6KOYQubsveFf2CJk6G0Da4j1g_kJRu0RtE");'></div>
+<div>
+<h4 class="text-white font-bold text-sm group-hover:text-primary transition-colors">Michael Brown</h4>
+<p class="text-text-secondary text-xs">QB | Class '24</p>
+</div>
+</div>
+<div class="flex justify-between items-center text-xs text-text-secondary border-t border-border-dark pt-3">
+<span>Dallas, TX</span>
+<span class="flex items-center gap-1 text-primary"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span> 4.8</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-card-dark p-4 rounded-xl border border-border-dark hover:border-primary/50 transition-colors group cursor-pointer">
+<div class="flex items-center gap-3 mb-3">
+<div class="size-12 rounded-lg bg-cover bg-center" data-alt="Small avatar of athlete Chris Davis" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCbX49rdby_B7ySEXe2h64cEoawJqU4exXtf1r2qUcKWXFie-7HGweAZg71EuL6UIQmbGuaISnWpAHQJYb1bcsVn4gnNHRFWN-McEuhm_NGHYAA5DReivxRu-xr0qhjbewRm2Y2FBjFFSubZn_jo4KYwkx3k9jQwS-bfwKshJ49Y0gL7oE2iXc96nMtKhnh78q-KA1VzVH-fI8FDBflCLksM7sk2McnC-3gCi3aPuRUo0j5zx6bdEL6S_3G8yQFPQBRBRXbJbmumuE");'></div>
+<div>
+<h4 class="text-white font-bold text-sm group-hover:text-primary transition-colors">Chris Davis</h4>
+<p class="text-text-secondary text-xs">QB | Class '25</p>
+</div>
+</div>
+<div class="flex justify-between items-center text-xs text-text-secondary border-t border-border-dark pt-3">
+<span>Houston, TX</span>
+<span class="flex items-center gap-1 text-primary"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span> 5.0</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-card-dark p-4 rounded-xl border border-border-dark hover:border-primary/50 transition-colors group cursor-pointer">
+<div class="flex items-center gap-3 mb-3">
+<div class="size-12 rounded-lg bg-cover bg-center" data-alt="Small avatar of athlete Marcus Jones" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBkhruovHJ1jejLSWYlYP5_HLW0_BFjk92VBoKQkhHOyT-oSS0WbEtYJVeSJU21v14ON1qOEqbgfdwa03rjG6i8zJ4r5MDX57Z4oVRwoQsJcZcwdXe0ED0M3Cm9U7jK-IfbW9WiqKhip0g7lYY5rg_R69zNIlTcI422ry2jLjWlLVRCM10pBGsl3hQl5N3Z98RVxBjB9ctXswV3Q6eiK23zOArmzoTt1HG5QGF9Mj7jMSSht1dR7Bbp_sRGCItNS4NbVKB_IzLnZj8");'></div>
+<div>
+<h4 class="text-white font-bold text-sm group-hover:text-primary transition-colors">Marcus Jones</h4>
+<p class="text-text-secondary text-xs">QB | Class '24</p>
+</div>
+</div>
+<div class="flex justify-between items-center text-xs text-text-secondary border-t border-border-dark pt-3">
+<span>Austin, TX</span>
+<span class="flex items-center gap-1 text-primary"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span> 4.5</span>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-card-dark p-4 rounded-xl border border-border-dark hover:border-primary/50 transition-colors group cursor-pointer">
+<div class="flex items-center gap-3 mb-3">
+<div class="size-12 rounded-lg bg-cover bg-center" data-alt="Small avatar of athlete Tyrell Johnson" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDgLeWFlsBf1vvWUSsGVpve0mhICIrMkRFkYb3LgCiAYbdZ7SlFnl4f7vyryDJAz8uxN8SIpbvgdMqkJxaCVT22Cxi8566DcRkpdmoXb9hcGy2KXrRXfC-zTZPlvE9PiTJED183dtbboTjqdwFX2GfY0fOmoFdORte24cByI4AIHhtrXbBkY0cFwa1uAtTfVz2ufit--Q2GZrHQaAG_TQ693wvjYtr0fMQkzCrIfyuu12ELosbrObsNErNu7valorvd8MW9G93QaCo");'></div>
+<div>
+<h4 class="text-white font-bold text-sm group-hover:text-primary transition-colors">Tyrell Johnson</h4>
+<p class="text-text-secondary text-xs">QB | Class '24</p>
+</div>
+</div>
+<div class="flex justify-between items-center text-xs text-text-secondary border-t border-border-dark pt-3">
+<span>Miami, FL</span>
+<span class="flex items-center gap-1 text-primary"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span> 4.9</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

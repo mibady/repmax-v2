@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RepMax - Trending Athletes</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;family=Noto+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d4af35",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#201d12",
+                        "card-dark": "#1F1F22",
+                        "row-dark": "#1A1A1A",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white overflow-hidden">
+<div class="relative flex h-screen w-full flex-row overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="flex h-full w-72 flex-col justify-between bg-[#201d13] border-r border-[#433d28]/30 p-4 shrink-0 hidden lg:flex">
+<div class="flex flex-col gap-8">
+<!-- Brand -->
+<div class="flex items-center gap-3 px-2">
+<div class="bg-primary/20 bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 flex items-center justify-center border border-primary/30">
+<span class="material-symbols-outlined text-primary">sports_football</span>
+</div>
+<div class="flex flex-col">
+<h1 class="text-white text-lg font-bold leading-tight tracking-tight">RepMax</h1>
+<p class="text-[#c3b998] text-xs font-normal leading-normal uppercase tracking-wider">Scout Dashboard</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg bg-[#433d28]/50 border border-[#433d28] group transition-all" href="#">
+<span class="material-symbols-outlined text-primary">dashboard</span>
+<p class="text-white text-sm font-medium">Dashboard</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-[#433d28]/30 transition-all group" href="#">
+<span class="material-symbols-outlined text-[#c3b998] group-hover:text-white transition-colors">person</span>
+<p class="text-[#c3b998] group-hover:text-white transition-colors text-sm font-medium">Athletes</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-[#433d28]/30 transition-all group" href="#">
+<span class="material-symbols-outlined text-[#c3b998] group-hover:text-white transition-colors">groups</span>
+<p class="text-[#c3b998] group-hover:text-white transition-colors text-sm font-medium">Teams</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-[#433d28]/30 transition-all group" href="#">
+<span class="material-symbols-outlined text-[#c3b998] group-hover:text-white transition-colors">description</span>
+<p class="text-[#c3b998] group-hover:text-white transition-colors text-sm font-medium">Reports</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-[#433d28]/30 transition-all group" href="#">
+<span class="material-symbols-outlined text-[#c3b998] group-hover:text-white transition-colors">settings</span>
+<p class="text-[#c3b998] group-hover:text-white transition-colors text-sm font-medium">Settings</p>
+</a>
+</div>
+</div>
+<!-- User Profile -->
+<div class="flex items-center gap-3 px-3 py-3 border-t border-[#433d28]/30 mt-auto">
+<div class="size-8 rounded-full bg-slate-600 bg-cover bg-center" data-alt="Profile picture of logged in scout" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDWc7bcuY6m41HQNKT5AgwD3kBiRIcaLcFz59XavYb1J8AOn2NpI7QGZ5tztCYmg3Oozee7M4oHSsRkyL57xpvlaGzKO1U5SJ4malC9ScrEniIXTsvJ38LAjh0mfe_Q4p3859Urla-YlVtHqnqqnYlLpyIqFlufbPLBQjoIBGe4B9U09wKajJJmL2kZ3VpaeZCVLgCe70b9MHoL5vXWdqHxy1bQQx7eEwkyDnQv_EIkNgGQsVposMH0Qrnz5AnA91qkPLelzY6_tnc');"></div>
+<div>
+<p class="text-white text-sm font-medium">Alex Morgan</p>
+<p class="text-[#c3b998] text-xs">Head Scout</p>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark p-4 md:p-10 flex justify-center items-start md:items-center">
+<!-- Widget: Trending Athletes -->
+<div class="w-full max-w-4xl flex flex-col gap-0 bg-[#1F1F22] rounded-2xl shadow-2xl border border-white/5 overflow-hidden">
+<!-- Header -->
+<div class="flex flex-row items-center justify-between p-6 border-b border-white/5 bg-[#1F1F22]">
+<div class="flex items-center gap-2">
+<h2 class="text-white tracking-tight text-xl md:text-2xl font-bold leading-tight">🔥 Trending Athletes</h2>
+</div>
+<!-- Filter Chip -->
+<button class="flex h-9 items-center justify-center gap-x-2 rounded-lg bg-[#2A2A2E] hover:bg-[#333336] transition-colors border border-white/5 pl-4 pr-3 cursor-pointer group">
+<p class="text-zinc-400 group-hover:text-white text-sm font-medium leading-normal transition-colors">This Week</p>
+<span class="material-symbols-outlined text-zinc-500 group-hover:text-white text-xl transition-colors">expand_more</span>
+</button>
+</div>
+<!-- List Container -->
+<div class="flex flex-col gap-3 p-6 bg-[#1F1F22]">
+<!-- Row 1: Top Trending -->
+<div class="group relative flex flex-col md:flex-row items-start md:items-center justify-between gap-4 rounded-xl bg-[#1A1A1A] hover:bg-[#222222] p-4 transition-all duration-300 border border-transparent hover:border-primary/20 shadow-sm">
+<div class="flex items-center gap-4 w-full md:w-auto">
+<!-- Avatar -->
+<div class="relative shrink-0">
+<div class="size-16 rounded-xl bg-cover bg-center shadow-inner" data-alt="Headshot of Marcus Johnson" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD2bMS4mWNS5cGJ_aoxaliwiGtBzuEZDtYufl-RgcuFRtCmpYhQpV8msvKATx5AJ_hgK5y0TNIaaTzkBKvGWUq4IGCJmsPNOrNIBGfacC8aJDX2GlD-UETe-IUIZvtloY5f43dbeLt7krQymjLxiJUHN5SROjJru_5ZDPdGEEpftfQYP6UgTFmc_ozUjlKupZun7yjEHDOpAhn13yLgpAgHtWTWKZUXsrW-RD4AM448NHqWbRPdaufROcypgZhgZ_3Y1kE6MFMA4ZA');"></div>
+<div class="absolute -bottom-2 -right-2 bg-[#1A1A1A] rounded-full p-1">
+<span class="flex items-center justify-center bg-primary text-[#1F1F22] text-[10px] font-bold size-5 rounded-full">1</span>
+</div>
+</div>
+<!-- Info -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2 flex-wrap">
+<span class="inline-flex items-center gap-1 rounded bg-primary/10 px-2 py-0.5 text-xs font-bold text-primary border border-primary/20">
+<span class="material-symbols-outlined text-[14px]">local_fire_department</span>
+                                    +250% views
+                                </span>
+</div>
+<h3 class="text-white text-lg font-bold leading-tight group-hover:text-primary transition-colors">Marcus Johnson</h3>
+<div class="flex items-center gap-2 text-sm text-[#888888]">
+<span class="font-medium text-zinc-300">QB</span>
+<span class="text-zinc-600">•</span>
+<div class="flex items-center text-primary">
+<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1">star</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Stats & Action -->
+<div class="flex flex-row md:flex-col lg:flex-row items-center justify-between w-full md:w-auto gap-4 md:gap-8 border-t md:border-t-0 border-white/5 pt-4 md:pt-0 mt-2 md:mt-0">
+<div class="flex flex-col items-start md:items-end gap-0.5">
+<p class="text-zinc-400 text-sm font-medium">Engagement</p>
+<p class="text-white text-sm"><span class="font-bold">47</span> views <span class="text-zinc-600">·</span> <span class="font-bold">5</span> shortlists</p>
+</div>
+<button class="flex items-center gap-1 text-primary text-sm font-semibold hover:text-white transition-colors group/btn">
+                            View Card 
+                            <span class="material-symbols-outlined text-lg group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Row 2: Rising -->
+<div class="group relative flex flex-col md:flex-row items-start md:items-center justify-between gap-4 rounded-xl bg-[#1A1A1A] hover:bg-[#222222] p-4 transition-all duration-300 border border-transparent hover:border-primary/20 shadow-sm">
+<div class="flex items-center gap-4 w-full md:w-auto">
+<div class="relative shrink-0">
+<div class="size-16 rounded-xl bg-cover bg-center shadow-inner" data-alt="Headshot of David Chen" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDtbJ5Jv6Y2m0Jl4OwIaejAg8MNBbnpbE1A1Ry8IZ7dpOUrHJyneABuLMIUUpu14kQKrmgrva30ZjBF8E02sgl5nKaqMEHlYXXqN1_gXnBRlDkjBzGR_XAUOjG8FRy4sQv737Fbs5BnoEqHYmjgy05Ld9eIKGOJMyBTEkFSS8lXQr14k3b-k6FwraxUZoYGh5nbKuepf4LP1lMlC59D59LEZx8EcQm9piSkeVurZQMB2DNu1q_tJtsyL86_I5gV1URyve03y9eDMLo');"></div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1 rounded bg-zinc-800 px-2 py-0.5 text-xs font-medium text-zinc-300 border border-zinc-700">
+<span class="material-symbols-outlined text-[14px] text-green-400">trending_up</span>
+                                    Trending
+                                </span>
+</div>
+<h3 class="text-white text-lg font-bold leading-tight group-hover:text-primary transition-colors">David Chen</h3>
+<div class="flex items-center gap-2 text-sm text-[#888888]">
+<span class="font-medium text-zinc-300">WR</span>
+<span class="text-zinc-600">•</span>
+<div class="flex items-center text-primary">
+<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-[16px] text-zinc-700">star</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-row md:flex-col lg:flex-row items-center justify-between w-full md:w-auto gap-4 md:gap-8 border-t md:border-t-0 border-white/5 pt-4 md:pt-0 mt-2 md:mt-0">
+<div class="flex flex-col items-start md:items-end gap-0.5">
+<p class="text-zinc-400 text-sm font-medium">Engagement</p>
+<p class="text-white text-sm"><span class="font-bold">32</span> views <span class="text-zinc-600">·</span> <span class="font-bold">2</span> shortlists</p>
+</div>
+<button class="flex items-center gap-1 text-primary text-sm font-semibold hover:text-white transition-colors group/btn">
+                            View Card 
+                            <span class="material-symbols-outlined text-lg group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Row 3: Standard -->
+<div class="group relative flex flex-col md:flex-row items-start md:items-center justify-between gap-4 rounded-xl bg-[#1A1A1A] hover:bg-[#222222] p-4 transition-all duration-300 border border-transparent hover:border-primary/20 shadow-sm">
+<div class="flex items-center gap-4 w-full md:w-auto">
+<div class="relative shrink-0">
+<div class="size-16 rounded-xl bg-cover bg-center shadow-inner" data-alt="Headshot of Sarah Williams" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCHws2fHCbX7hXvivpDIeZe3-cwOcdkvbZNVKo-9TLp-e36Qx8q6gJlcFQxf3FgL_SHzp0JtHhbIq-DOu2impXiJDlrtUOplBLHH1L1Nwid-VTvuAfc6Wm1slXq8A4_5W_hQnOZtEEfFo_5Kai8ab5d-jQi5A8AhnxRah9AB_WVjajr1q-9nwWeWnPdVsNBQ3OiPnbCegCpOjGH5O7cXXQ5xR_FbJy-1p3Fn_mx8RCkhHIkVhIp2eeCloONjoAX-zUVRqHWEtWyOCE');"></div>
+</div>
+<div class="flex flex-col gap-1">
+<!-- Spacer for alignment with badged rows -->
+<div class="h-[22px]"></div>
+<h3 class="text-white text-lg font-bold leading-tight group-hover:text-primary transition-colors">Sarah Williams</h3>
+<div class="flex items-center gap-2 text-sm text-[#888888]">
+<span class="font-medium text-zinc-300">PG</span>
+<span class="text-zinc-600">•</span>
+<div class="flex items-center text-primary">
+<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-[16px] text-zinc-700">star</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-row md:flex-col lg:flex-row items-center justify-between w-full md:w-auto gap-4 md:gap-8 border-t md:border-t-0 border-white/5 pt-4 md:pt-0 mt-2 md:mt-0">
+<div class="flex flex-col items-start md:items-end gap-0.5">
+<p class="text-zinc-400 text-sm font-medium">Engagement</p>
+<p class="text-white text-sm"><span class="font-bold">28</span> views <span class="text-zinc-600">·</span> <span class="font-bold">1</span> shortlist</p>
+</div>
+<button class="flex items-center gap-1 text-primary text-sm font-semibold hover:text-white transition-colors group/btn">
+                            View Card 
+                            <span class="material-symbols-outlined text-lg group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Footer Link -->
+<div class="bg-[#1A1A1A] p-4 text-center border-t border-white/5">
+<a class="text-xs text-zinc-500 hover:text-primary transition-colors font-medium uppercase tracking-widest" href="#">View All Trends</a>
+</div>
+</div>
+</main>
+</div>
+</body></html>

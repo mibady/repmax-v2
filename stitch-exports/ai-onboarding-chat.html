@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RepMax AI Onboarding</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#d4af35",
+              "background-light": "#f8f7f6", // Not used in this dark design but kept for config
+              "background-dark": "#050505",
+              "surface-dark": "#1F1F22",
+              "surface-light": "#2A2A2E",
+              "accent-green": "#4ade80",
+            },
+            fontFamily: {
+              "display": ["Lexend", "sans-serif"],
+              "mono": ["JetBrains Mono", "monospace"],
+            },
+            borderRadius: {
+              "DEFAULT": "0.5rem",
+              "lg": "0.75rem",
+              "xl": "1rem",
+              "2xl": "1.5rem",
+              "full": "9999px"
+            },
+          },
+        },
+      }
+    </script>
+<style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050505; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333; 
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d4af35; 
+        }
+        
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+    </style>
+</head>
+<body class="bg-background-dark text-white font-display overflow-hidden h-screen flex selection:bg-primary selection:text-black">
+<!-- Left Panel: Navigation (SideNavBar adapted) -->
+<aside class="w-20 lg:w-64 flex-shrink-0 border-r border-surface-light/30 bg-[#0a0a0a] flex flex-col justify-between p-4 hidden md:flex">
+<div class="flex flex-col gap-8">
+<!-- Logo Area -->
+<div class="flex items-center gap-3 pl-2">
+<div class="bg-primary/20 p-2 rounded-lg">
+<span class="material-symbols-outlined text-primary text-2xl">sports_football</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight hidden lg:block">RepMax</h1>
+</div>
+<!-- Nav Links -->
+<nav class="flex flex-col gap-2">
+<a class="flex items-center gap-4 px-3 py-3 rounded-xl bg-surface-dark border border-primary/20 text-white group transition-all hover:bg-surface-light" href="#">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">dashboard</span>
+<span class="font-medium text-sm hidden lg:block">Dashboard</span>
+</a>
+<a class="flex items-center gap-4 px-3 py-3 rounded-xl hover:bg-surface-dark/50 text-gray-400 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">check_circle</span>
+<span class="font-medium text-sm hidden lg:block">Onboarding</span>
+</a>
+<a class="flex items-center gap-4 px-3 py-3 rounded-xl hover:bg-surface-dark/50 text-gray-400 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">chat</span>
+<span class="font-medium text-sm hidden lg:block">Messages</span>
+</a>
+<a class="flex items-center gap-4 px-3 py-3 rounded-xl hover:bg-surface-dark/50 text-gray-400 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-medium text-sm hidden lg:block">Stats</span>
+</a>
+</nav>
+</div>
+<!-- Bottom Actions -->
+<div class="flex flex-col gap-2">
+<a class="flex items-center gap-4 px-3 py-3 rounded-xl hover:bg-surface-dark/50 text-gray-400 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-medium text-sm hidden lg:block">Settings</span>
+</a>
+<div class="flex items-center gap-3 mt-4 pt-4 border-t border-surface-light/30">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-8 shrink-0 bg-gray-700" data-alt="User profile avatar placeholder" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAnczF0M2NXEv9PlC9z03IEATa7eRgWPRFrbnCSkXRh6n3Y5_fd4bMGuaN8Z7qWzRkrY41o4tgEAdcumyttk_ZY0rnA6JsAWBaKbxjTpLYb_qg9ParX00OGyYRQi-wvnrj0I96Er-oDzjrXgXrRxKZPdwtCcgrKd7yVBOt9a-Qhj7EtjwIxed7721bErAEvRRSPw_zerJAzcQQzVJV7mkKSuavtaM8zkgnl-j0WaUuvHHfaKD4XnGlaecjgKMP80Izhgvfi-qe3EQo");'></div>
+<div class="hidden lg:flex flex-col">
+<span class="text-sm font-medium leading-none">Jaylen W.</span>
+<span class="text-xs text-gray-500 mt-1">Free Plan</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Center Panel: Chat Interface (60% implied by flex-1 vs w-[400px]) -->
+<main class="flex-1 flex flex-col min-w-0 bg-background-dark relative">
+<!-- Chat Header -->
+<header class="flex items-center justify-between px-6 py-4 border-b border-surface-light/30 bg-background-dark/95 backdrop-blur z-10 sticky top-0">
+<div class="flex items-center gap-3">
+<div class="md:hidden">
+<span class="material-symbols-outlined text-white">menu</span>
+</div>
+<div>
+<h2 class="text-lg font-bold flex items-center gap-2">
+                        RepMax AI
+                        <span class="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full border border-primary/20 uppercase tracking-wider font-bold">Beta</span>
+</h2>
+<p class="text-xs text-gray-400 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                        Live Session
+                    </p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-gray-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</header>
+<!-- Chat Scroll Area -->
+<div class="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-6 scroll-smooth pb-32">
+<!-- Timestamp -->
+<div class="flex justify-center">
+<span class="text-xs font-mono text-gray-600">Today, 10:42 AM</span>
+</div>
+<!-- AI Message -->
+<div class="flex items-start gap-4 max-w-2xl">
+<div class="size-10 rounded-full bg-surface-dark border border-white/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-xl">smart_toy</span>
+</div>
+<div class="flex flex-col gap-2">
+<div class="text-xs text-gray-400 ml-1">RepMax AI</div>
+<div class="bg-surface-dark text-gray-100 px-5 py-4 rounded-xl rounded-tl-none border border-white/5 shadow-sm">
+<p class="leading-relaxed">Welcome to the team, Jaylen. I'm here to build your athletic profile. Let's start with the basics. I've pulled some data from your registration.</p>
+</div>
+</div>
+</div>
+<!-- User Message -->
+<div class="flex items-start gap-4 max-w-2xl self-end flex-row-reverse">
+<div class="size-10 rounded-full bg-center bg-cover shrink-0 border border-primary/30" data-alt="User avatar of Jaylen Washington" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAD58P2J0pEzKQ9hm6uFwxaCHl9at9ExVSAP5uvK-EQ0JzzI36DNyn8WkeMci7uHricjyA7aZIoKKY1mFMoTh9hsLOE1Dn0qhlq0p2svNlLKFqAncXEqNOarhrlBjlY05j0Xzx3YfshjhUY9IKVnfrxJLFU0J11oW2P3U4cDqRaev0e1YjO2SkGrPnSJ79qMCxbtiWXURyAS8chnWtGtZrZltQTIt6QSGhHlGyczcnaaunEf7jHQ0k2-vec4oLXOCL_YWhXPQ7BAmU");'></div>
+<div class="flex flex-col gap-2 items-end">
+<div class="text-xs text-gray-400 mr-1">Jaylen Washington</div>
+<div class="bg-primary/5 text-primary-50 px-5 py-4 rounded-xl rounded-tr-none border-l-[3px] border-primary">
+<p class="leading-relaxed">Sounds good. What do you have on file so far?</p>
+</div>
+</div>
+</div>
+<!-- System: Data Extraction Card -->
+<div class="flex flex-col gap-2 max-w-md ml-14">
+<div class="text-[10px] font-mono text-accent-green uppercase tracking-widest flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-sm">terminal</span>
+                    Data Extraction
+                </div>
+<div class="bg-[#0f0f11] border-l-[3px] border-accent-green rounded-r-xl p-4 font-mono text-sm text-gray-300 shadow-lg relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-2 opacity-50">
+<span class="material-symbols-outlined text-accent-green text-lg">check_circle</span>
+</div>
+<div class="grid grid-cols-[80px_1fr] gap-y-2">
+<span class="text-gray-500">NAME_ID:</span>
+<span class="text-white">Jaylen Washington</span>
+<span class="text-gray-500">SCHOOL:</span>
+<span class="text-white">State University</span>
+<span class="text-gray-500">POS_PRI:</span>
+<span class="text-white bg-white/10 px-1 rounded inline-block w-fit">WR</span>
+<span class="text-gray-500">CLASS:</span>
+<span class="text-white">Junior (2025)</span>
+</div>
+</div>
+</div>
+<!-- AI Message -->
+<div class="flex items-start gap-4 max-w-2xl">
+<div class="size-10 rounded-full bg-surface-dark border border-white/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-xl">smart_toy</span>
+</div>
+<div class="flex flex-col gap-2">
+<div class="text-xs text-gray-400 ml-1">RepMax AI</div>
+<div class="bg-surface-dark text-gray-100 px-5 py-4 rounded-xl rounded-tl-none border border-white/5 shadow-sm">
+<p class="leading-relaxed">I've locked those in. Now, let's talk speed. I see a 40-yard dash time from the regional combine. Can you confirm your latest verified time?</p>
+</div>
+</div>
+</div>
+<!-- User Message -->
+<div class="flex items-start gap-4 max-w-2xl self-end flex-row-reverse">
+<div class="size-10 rounded-full bg-center bg-cover shrink-0 border border-primary/30" data-alt="User avatar of Jaylen Washington" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAbanrfGBumO8J4s9kB92pZI8aTeZxc1e7RCKMByP-tI10SjdyZnvtPUylxMKAsVcWjksttC-7ruXHRNiF_lXFNCZvRSWOu5V3h1cnTmoFXeC9g0A3dSR0G8IgAwE9J3avPtoZXLnwTnyBdKvG85S2YAai1CtJsShNeSSXQdpg0ceiIYlb_-NWaPW9J7xmGswqKaS-JKZUHYoN8mEqpnqCCbqwjCNmBJi3DyfEJbei_ILWwwVu__eZRb7zCmZsVAkKdly4M5OBPSCg");'></div>
+<div class="flex flex-col gap-2 items-end">
+<div class="text-xs text-gray-400 mr-1">Jaylen Washington</div>
+<div class="bg-primary/5 text-primary-50 px-5 py-4 rounded-xl rounded-tr-none border-l-[3px] border-primary">
+<p class="leading-relaxed">Yeah, I ran a 4.52 at the combine last month.</p>
+</div>
+</div>
+</div>
+<!-- System: Stats Validated Card -->
+<div class="flex flex-col gap-2 max-w-md ml-14">
+<div class="text-[10px] font-mono text-primary uppercase tracking-widest flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-sm">verified</span>
+                    Metric Validated
+                </div>
+<div class="bg-[#0f0f11] border-l-[3px] border-primary rounded-r-xl p-0 font-mono text-sm text-gray-300 shadow-lg overflow-hidden flex">
+<div class="p-4 flex-1">
+<div class="text-gray-500 text-xs mb-1">40-YARD DASH</div>
+<div class="text-3xl font-bold text-white font-display tracking-tight">4.52s</div>
+<div class="mt-2 flex items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-primary/20 text-primary text-[10px] font-bold border border-primary/30">VERIFIED</span>
+<span class="text-[10px] text-gray-500">Last updated: 2m ago</span>
+</div>
+</div>
+<div class="w-16 bg-surface-light/30 flex flex-col items-center justify-center border-l border-white/5 gap-1">
+<span class="material-symbols-outlined text-red-500 animate-pulse text-lg">sensors</span>
+<span class="text-[9px] font-bold text-red-500 tracking-wider">LASER</span>
+</div>
+</div>
+</div>
+<!-- AI Message (Waiting) -->
+<div class="flex items-start gap-4 max-w-2xl">
+<div class="size-10 rounded-full bg-surface-dark border border-white/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-xl">smart_toy</span>
+</div>
+<div class="flex flex-col gap-2">
+<div class="text-xs text-gray-400 ml-1">RepMax AI</div>
+<div class="flex gap-1 items-center bg-surface-dark px-4 py-3 rounded-xl rounded-tl-none border border-white/5 w-fit">
+<span class="w-2 h-2 rounded-full bg-gray-500 animate-bounce"></span>
+<span class="w-2 h-2 rounded-full bg-gray-500 animate-bounce delay-75"></span>
+<span class="w-2 h-2 rounded-full bg-gray-500 animate-bounce delay-150"></span>
+</div>
+</div>
+</div>
+</div>
+<!-- Input Area (Fixed Bottom) -->
+<div class="absolute bottom-0 left-0 right-0 bg-background-dark p-4 md:p-6 border-t border-surface-light/30">
+<div class="max-w-4xl mx-auto relative flex items-end gap-2 bg-surface-dark rounded-2xl p-2 border border-surface-light shadow-2xl focus-within:border-primary/50 transition-colors">
+<button class="p-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors shrink-0">
+<span class="material-symbols-outlined">attach_file</span>
+</button>
+<button class="p-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors shrink-0">
+<span class="material-symbols-outlined">photo_camera</span>
+</button>
+<textarea class="w-full bg-transparent border-none text-white placeholder-gray-500 focus:ring-0 resize-none py-3 max-h-32" placeholder="Type your response..." rows="1"></textarea>
+<button class="p-3 bg-primary hover:bg-primary/90 text-background-dark rounded-xl font-bold transition-colors shrink-0 shadow-[0_0_15px_rgba(212,175,53,0.3)]">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Right Panel: Context Sidebar (40%) -->
+<aside class="w-[400px] hidden xl:flex flex-col border-l border-surface-light/30 bg-[#080808]">
+<div class="p-8 flex flex-col h-full gap-8 overflow-y-auto">
+<!-- Progress Section -->
+<div class="flex flex-col items-center justify-center py-4">
+<div class="relative size-40">
+<svg class="size-full" viewbox="0 0 100 100">
+<!-- Background circle -->
+<circle class="text-surface-dark stroke-current" cx="50" cy="50" fill="transparent" r="42" stroke-width="8"></circle>
+<!-- Progress circle -->
+<circle (1="" *="" -="" 0.75)="65.97" 263.89="" class="text-primary progress-ring__circle stroke-current" cx="50" cy="50" fill="transparent" r="42" stroke-dasharray="263.89" stroke-dashoffset="65.97" stroke-linecap="round" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-3xl font-bold text-white">75%</span>
+<span class="text-[10px] uppercase tracking-wider text-gray-500 font-medium">Complete</span>
+</div>
+</div>
+<h3 class="mt-4 text-lg font-medium text-white">Profile Completeness</h3>
+<p class="text-sm text-gray-500 text-center px-4 mt-1">You're almost there! Just a few more stats needed.</p>
+</div>
+<!-- Checklist -->
+<div class="flex flex-col gap-4">
+<h4 class="text-xs font-mono text-gray-500 uppercase tracking-widest mb-2">Onboarding Steps</h4>
+<div class="flex items-center gap-4 p-3 rounded-xl bg-surface-dark/50 border border-primary/20">
+<div class="size-6 rounded-full bg-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-background-dark text-sm font-bold">check</span>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-medium text-white decoration-primary">Personal Info</span>
+<span class="text-[11px] text-gray-500">Completed 10:30 AM</span>
+</div>
+</div>
+<div class="flex items-center gap-4 p-3 rounded-xl bg-surface-dark/50 border border-primary/20">
+<div class="size-6 rounded-full bg-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-background-dark text-sm font-bold">check</span>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-medium text-white">Academic History</span>
+<span class="text-[11px] text-gray-500">Extracted from transcript</span>
+</div>
+</div>
+<div class="flex items-center gap-4 p-3 rounded-xl bg-surface-dark border border-primary relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
+<div class="size-6 rounded-full bg-transparent border-2 border-primary flex items-center justify-center shrink-0">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-medium text-white">Athletic Measurables</span>
+<span class="text-[11px] text-primary">In Progress...</span>
+</div>
+</div>
+<div class="flex items-center gap-4 p-3 rounded-xl opacity-50">
+<div class="size-6 rounded-full border-2 border-gray-700 flex items-center justify-center shrink-0">
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-medium text-gray-400">Highlight Reel</span>
+<span class="text-[11px] text-gray-600">Pending</span>
+</div>
+</div>
+</div>
+<!-- Mini Companion Card Preview -->
+<div class="mt-auto">
+<div class="flex justify-between items-center mb-3">
+<h4 class="text-xs font-mono text-gray-500 uppercase tracking-widest">Live Preview</h4>
+<span class="text-[10px] bg-white/10 px-2 py-0.5 rounded text-gray-300">Recruiter View</span>
+</div>
+<div class="bg-gradient-to-br from-surface-dark to-[#151515] p-5 rounded-2xl border border-white/5 shadow-2xl">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-12 border-2 border-white/10" data-alt="User avatar small" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBGI8Z-NysUcyUgknpkcQG3PptKiHEKzn4AEFLg1RnO5g0g5qF45-DZYCph1G-JL8-7cFI6AeumXm6K_WXd2BuYSz5YKMqb9X7Uue_g7928_E6M7nLXwsFp2XjBMQM-MjAsRd3CrM4OPGLsrC64eUG0Sifub--Qoz3fUS3rbY5tSzxnWdHkY855ihkJYC8K9GPgJ_U8QjtKDF3fXQK-mxduJU714yJi8581NcWktuYkWSsB7npKof1FLUkT_kdLMdwxJ4rPlfBLsVU");'></div>
+<div>
+<h5 class="font-bold text-white text-sm">Jaylen W.</h5>
+<p class="text-[10px] text-gray-400">Class of '25 • WR</p>
+</div>
+</div>
+<div class="bg-primary/20 p-1.5 rounded-lg">
+<span class="material-symbols-outlined text-primary text-sm">star</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<div class="bg-black/30 p-2 rounded-lg border border-white/5">
+<p class="text-[9px] text-gray-500 uppercase">Height</p>
+<p class="text-xs font-mono font-bold">6'1"</p>
+</div>
+<div class="bg-black/30 p-2 rounded-lg border border-white/5">
+<p class="text-[9px] text-gray-500 uppercase">Weight</p>
+<p class="text-xs font-mono font-bold">195 lbs</p>
+</div>
+<div class="bg-black/30 p-2 rounded-lg border border-primary/30 relative overflow-hidden">
+<div class="absolute inset-0 bg-primary/5"></div>
+<p class="text-[9px] text-primary uppercase">40 YD</p>
+<p class="text-xs font-mono font-bold text-white">4.52s</p>
+</div>
+<div class="bg-black/30 p-2 rounded-lg border border-white/5 opacity-50">
+<p class="text-[9px] text-gray-500 uppercase">Vertical</p>
+<p class="text-xs font-mono font-bold text-gray-500">--</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+</body></html>

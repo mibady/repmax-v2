@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Texas Recruiting Intelligence Dashboard</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Theme Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+            extend: {
+                colors: {
+                "primary": "#f97415",
+                "background-light": "#f8f7f5",
+                "background-dark": "#050505", /* Updated to match user request for deep dark */
+                "surface-dark": "#121212",
+                "surface-highlight": "#1A1A1A",
+                "text-secondary": "#9ca3af",
+                },
+                fontFamily: {
+                "display": ["Inter", "sans-serif"]
+                },
+                borderRadius: {
+                    "DEFAULT": "0.375rem", 
+                    "lg": "0.5rem", 
+                    "xl": "0.75rem", 
+                    "full": "9999px"
+                },
+            },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for dark theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050505; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f97415; 
+        }
+        
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 1,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+        
+        /* Map pulsing effect */
+        .pulse-ring {
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 0.8; }
+            80% { transform: scale(2); opacity: 0; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-white overflow-hidden">
+<div class="flex h-screen w-full flex-col overflow-hidden">
+<!-- Header -->
+<header class="flex flex-none items-center justify-between whitespace-nowrap border-b border-white/10 bg-surface-dark px-6 py-3">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-white">
+<div class="size-8 text-primary">
+<span class="material-symbols-outlined text-3xl">sports_football</span>
+</div>
+<h2 class="text-white text-xl font-bold leading-tight tracking-tight">RepMax</h2>
+</div>
+<!-- Search Bar -->
+<div class="flex items-center w-full max-w-md bg-surface-highlight rounded-lg px-3 py-2 border border-white/5 focus-within:border-primary/50 transition-colors">
+<span class="material-symbols-outlined text-text-secondary text-xl">search</span>
+<input class="w-full bg-transparent border-none text-sm text-white focus:ring-0 placeholder:text-text-secondary ml-2" placeholder="Search athletes, schools, or zones..."/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-white text-sm font-medium hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-primary text-sm font-medium border-b-2 border-primary pb-0.5" href="#">Recruiting</a>
+<a class="text-text-secondary text-sm font-medium hover:text-white transition-colors" href="#">Team</a>
+<a class="text-text-secondary text-sm font-medium hover:text-white transition-colors" href="#">Settings</a>
+</nav>
+<div class="h-8 w-px bg-white/10 mx-2"></div>
+<div class="relative group cursor-pointer">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-9 border-2 border-surface-highlight group-hover:border-primary transition-colors" data-alt="User profile avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDLo4UBxxKbLXz1XmeBzikmqnVnf6ylDXRfVg1ah8QlgNgm5QiRHoGuniGdAAotccVp1HbSqt5Voy1yJYDF0w5XKOTSgq2iY7UXa0pt_1Nw79GXdJHVuDWMl3dN7N7LioqfdsV-E-9HXHZ3rDUBQoSGDnB6HsIKV_rIlirHrcf5YrzltUI1L4sVa3bcUdUr7mc1klFI2QbZUWDsXitTBnMYiIOc6RRsUoZJhz4iTLhrAigYCTmF32hAOA7aeq_gRZpSd1J9YL6b_rQ");'></div>
+<div class="absolute bottom-0 right-0 size-2.5 bg-green-500 rounded-full border border-surface-dark"></div>
+</div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<!-- Side Navigation -->
+<aside class="w-64 flex-none flex flex-col bg-surface-dark border-r border-white/10 overflow-y-auto hidden lg:flex">
+<div class="p-4 flex flex-col gap-6">
+<div class="flex flex-col gap-1 px-2">
+<h3 class="text-xs font-bold text-text-secondary uppercase tracking-wider">Intelligence</h3>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2.5 text-text-secondary hover:text-white hover:bg-white/5 rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">grid_view</span>
+<span class="text-sm font-medium">Overview</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-white bg-primary/10 rounded-lg transition-colors border-l-2 border-primary" href="#">
+<span class="material-symbols-outlined text-primary">map</span>
+<span class="text-sm font-medium">Zone Maps</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-text-secondary hover:text-white hover:bg-white/5 rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">groups</span>
+<span class="text-sm font-medium">Athletes</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-text-secondary hover:text-white hover:bg-white/5 rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">school</span>
+<span class="text-sm font-medium">Programs</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-text-secondary hover:text-white hover:bg-white/5 rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">calendar_month</span>
+<span class="text-sm font-medium">Events</span>
+</a>
+</nav>
+<div class="h-px bg-white/10 mx-2"></div>
+<div class="flex flex-col gap-1 px-2">
+<h3 class="text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">My Regions</h3>
+<div class="flex items-center gap-2 px-2 py-1.5 rounded bg-surface-highlight border border-white/5">
+<div class="size-2 rounded-full bg-primary"></div>
+<span class="text-sm text-white">Southwest</span>
+</div>
+<div class="flex items-center gap-2 px-2 py-1.5 text-text-secondary hover:text-white cursor-pointer">
+<div class="size-2 rounded-full bg-blue-500"></div>
+<span class="text-sm">Southeast</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto bg-background-dark p-6 lg:p-10">
+<div class="max-w-7xl mx-auto flex flex-col gap-8">
+<!-- Breadcrumbs & Heading -->
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-2 text-sm text-text-secondary">
+<a class="hover:text-primary transition-colors" href="#">Zone Map</a>
+<span class="material-symbols-outlined text-base">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Southwest</a>
+<span class="material-symbols-outlined text-base">chevron_right</span>
+<span class="text-white font-medium">Texas</span>
+</div>
+<div class="flex flex-wrap items-end justify-between gap-4 border-b border-white/10 pb-6">
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-3">
+<h1 class="text-4xl font-black tracking-tight text-white">Texas Recruiting</h1>
+<span class="px-3 py-1 rounded-full bg-primary/20 border border-primary/30 text-primary text-xs font-bold tracking-wider uppercase">Southwest Zone</span>
+</div>
+<p class="text-text-secondary">Real-time intelligence on prospects, programs, and events in the Lone Star State.</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 py-2 bg-surface-highlight border border-white/10 hover:bg-white/5 text-white rounded-lg text-sm font-bold transition-colors">
+<span class="material-symbols-outlined text-lg">download</span>
+                                    Export PDF
+                                </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg text-sm font-bold transition-colors shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-lg">add</span>
+                                    New Target
+                                </button>
+</div>
+</div>
+</div>
+<!-- Top Section: Map & Stats -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Interactive Map Card -->
+<div class="lg:col-span-2 bg-surface-dark border border-white/10 rounded-xl p-1 relative overflow-hidden group">
+<div class="absolute top-4 left-4 z-10 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10">
+<span class="text-xs font-medium text-white flex items-center gap-2">
+<span class="size-2 rounded-full bg-red-500 animate-pulse"></span>
+                                    Live Heatmap
+                                </span>
+</div>
+<!-- Map Container -->
+<div class="w-full h-[320px] rounded-lg bg-[#18181b] relative overflow-hidden">
+<!-- Abstract CSS Map Representation for Texas -->
+<div class="absolute inset-0 opacity-40" style="background-image: radial-gradient(#333 1px, transparent 1px); background-size: 20px 20px;"></div>
+<!-- Texas Shape Placeholder (Using an image for accurate shape, but styled) -->
+<img class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-[90%] w-auto opacity-20 contrast-200 grayscale invert" data-alt="Stylized dark map of Texas state" data-location="Texas" src="https://lh3.googleusercontent.com/aida-public/AB6AXuADvOG0Hawels_QH9NeBob5E40iKyz1sqY3FynkZt9q1bgFYa7vtlCjSK__88Fa-2bm9-Gb8eYffCHTgrpQj-Eg3zN5RsMKXg04EfNcEeACV4q_pi6SUfpMwuMyDxFG00EdJT4KW2AX5xokiVk0zhVzsn2LdaCOtqiivQobS7WfQlDwSGrIjsIsuSf3YofYAz_mFOwXlnRl2QRDz_SNtCLsJp6nradnq6fM8FRjMHYLjZhQbQnt5qdrEj236brWJcUeIO3UTNbH3fM"/>
+<!-- Metro Hotspots -->
+<!-- DFW -->
+<div class="absolute top-[30%] left-[55%] flex flex-col items-center group cursor-pointer">
+<div class="relative flex items-center justify-center">
+<div class="size-3 bg-primary rounded-full z-10"></div>
+<div class="absolute size-8 rounded-full border border-primary/50 pulse-ring"></div>
+</div>
+<span class="mt-2 text-[10px] font-bold uppercase tracking-widest text-primary opacity-0 group-hover:opacity-100 transition-opacity bg-black/80 px-1 rounded">Dallas</span>
+</div>
+<!-- Houston -->
+<div class="absolute top-[60%] left-[65%] flex flex-col items-center group cursor-pointer">
+<div class="relative flex items-center justify-center">
+<div class="size-3 bg-primary rounded-full z-10"></div>
+<div class="absolute size-8 rounded-full border border-primary/50 pulse-ring" style="animation-delay: 0.5s"></div>
+</div>
+<span class="mt-2 text-[10px] font-bold uppercase tracking-widest text-primary opacity-0 group-hover:opacity-100 transition-opacity bg-black/80 px-1 rounded">Houston</span>
+</div>
+<!-- Austin -->
+<div class="absolute top-[55%] left-[50%] flex flex-col items-center group cursor-pointer">
+<div class="relative flex items-center justify-center">
+<div class="size-2.5 bg-orange-400 rounded-full z-10"></div>
+<div class="absolute size-6 rounded-full border border-orange-400/50 pulse-ring" style="animation-delay: 1s"></div>
+</div>
+<span class="mt-2 text-[10px] font-bold uppercase tracking-widest text-orange-400 opacity-0 group-hover:opacity-100 transition-opacity bg-black/80 px-1 rounded">Austin</span>
+</div>
+<!-- San Antonio -->
+<div class="absolute top-[62%] left-[45%] flex flex-col items-center group cursor-pointer">
+<div class="relative flex items-center justify-center">
+<div class="size-2 bg-orange-300 rounded-full z-10"></div>
+<div class="absolute size-6 rounded-full border border-orange-300/50 pulse-ring" style="animation-delay: 1.5s"></div>
+</div>
+<span class="mt-2 text-[10px] font-bold uppercase tracking-widest text-orange-300 opacity-0 group-hover:opacity-100 transition-opacity bg-black/80 px-1 rounded">San Antonio</span>
+</div>
+</div>
+</div>
+<!-- Quick Stats Sidebar -->
+<div class="flex flex-col gap-4">
+<!-- Stat Card 1 -->
+<div class="flex-1 bg-surface-dark border border-white/10 rounded-xl p-5 flex flex-col justify-center relative overflow-hidden">
+<div class="absolute right-0 top-0 p-4 opacity-5">
+<span class="material-symbols-outlined text-6xl text-primary">groups</span>
+</div>
+<p class="text-text-secondary text-sm font-medium uppercase tracking-wider mb-1">Total Prospects</p>
+<div class="flex items-baseline gap-2">
+<h3 class="text-4xl font-black text-white">1,240</h3>
+<span class="text-green-500 text-sm font-bold flex items-center">
+<span class="material-symbols-outlined text-sm">trending_up</span> +12%
+                                    </span>
+</div>
+</div>
+<!-- Stat Card 2 -->
+<div class="flex-1 bg-surface-dark border border-white/10 rounded-xl p-5 flex flex-col justify-center relative overflow-hidden">
+<div class="absolute right-0 top-0 p-4 opacity-5">
+<span class="material-symbols-outlined text-6xl text-primary">edit_document</span>
+</div>
+<p class="text-text-secondary text-sm font-medium uppercase tracking-wider mb-1">D1 Signees (2024)</p>
+<div class="flex items-baseline gap-2">
+<h3 class="text-4xl font-black text-primary">318</h3>
+<span class="text-text-secondary text-xs">Target: 300</span>
+</div>
+</div>
+<!-- Stat Card 3 -->
+<div class="flex-1 bg-surface-dark border border-white/10 rounded-xl p-5 flex flex-col justify-center relative overflow-hidden">
+<p class="text-text-secondary text-sm font-medium uppercase tracking-wider mb-2">Top Metro Area</p>
+<div class="flex items-center gap-3">
+<div class="size-10 rounded bg-primary/20 flex items-center justify-center text-primary font-bold text-lg">D</div>
+<div>
+<h4 class="text-lg font-bold text-white">DFW Area</h4>
+<p class="text-xs text-text-secondary">482 Active Prospects</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+<!-- Programs Table -->
+<div class="xl:col-span-2 bg-surface-dark border border-white/10 rounded-xl flex flex-col">
+<div class="p-5 border-b border-white/10 flex justify-between items-center">
+<h3 class="text-lg font-bold text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">school</span>
+                                    Top Programs in Texas
+                                </h3>
+<a class="text-sm text-primary font-medium hover:text-white transition-colors" href="#">View All Programs</a>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="text-xs text-text-secondary border-b border-white/5 uppercase tracking-wider">
+<th class="px-6 py-4 font-medium">School Name</th>
+<th class="px-6 py-4 font-medium">City</th>
+<th class="px-6 py-4 font-medium">Record</th>
+<th class="px-6 py-4 font-medium text-right">D1 Prospects</th>
+</tr>
+</thead>
+<tbody class="text-sm divide-y divide-white/5">
+<tr class="hover:bg-white/5 transition-colors group cursor-pointer">
+<td class="px-6 py-4 font-medium text-white group-hover:text-primary transition-colors">Southlake Carroll</td>
+<td class="px-6 py-4 text-text-secondary">Southlake, TX</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1 text-green-500 font-bold bg-green-500/10 px-2 py-0.5 rounded text-xs">
+                                                    12-1
+                                                </span>
+</td>
+<td class="px-6 py-4 text-right font-bold text-amber-400">8</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors group cursor-pointer">
+<td class="px-6 py-4 font-medium text-white group-hover:text-primary transition-colors">North Shore</td>
+<td class="px-6 py-4 text-text-secondary">Houston, TX</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1 text-green-500 font-bold bg-green-500/10 px-2 py-0.5 rounded text-xs">
+                                                    13-0
+                                                </span>
+</td>
+<td class="px-6 py-4 text-right font-bold text-amber-400">12</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors group cursor-pointer">
+<td class="px-6 py-4 font-medium text-white group-hover:text-primary transition-colors">Duncanville</td>
+<td class="px-6 py-4 text-text-secondary">Duncanville, TX</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1 text-green-500 font-bold bg-green-500/10 px-2 py-0.5 rounded text-xs">
+                                                    11-1
+                                                </span>
+</td>
+<td class="px-6 py-4 text-right font-bold text-amber-400">10</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors group cursor-pointer">
+<td class="px-6 py-4 font-medium text-white group-hover:text-primary transition-colors">Westlake</td>
+<td class="px-6 py-4 text-text-secondary">Austin, TX</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1 text-green-500 font-bold bg-green-500/10 px-2 py-0.5 rounded text-xs">
+                                                    10-2
+                                                </span>
+</td>
+<td class="px-6 py-4 text-right font-bold text-amber-400">6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Events Widget -->
+<div class="bg-surface-dark border border-white/10 rounded-xl flex flex-col">
+<div class="p-5 border-b border-white/10 flex justify-between items-center">
+<h3 class="text-lg font-bold text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">calendar_clock</span>
+                                    Upcoming in Texas
+                                </h3>
+</div>
+<div class="p-4 flex flex-col gap-3 h-full overflow-y-auto max-h-[350px]">
+<!-- Event Item -->
+<div class="flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-colors cursor-pointer border border-transparent hover:border-white/10">
+<div class="flex-none w-14 flex flex-col items-center justify-center bg-surface-highlight rounded border border-white/5">
+<span class="text-xs text-primary font-bold uppercase pt-1">NOV</span>
+<span class="text-xl font-black text-white">12</span>
+</div>
+<div class="flex flex-col justify-center">
+<h4 class="font-bold text-sm text-white leading-tight">Texas State 7v7</h4>
+<p class="text-xs text-text-secondary mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[10px]">location_on</span> Austin, TX
+                                        </p>
+</div>
+</div>
+<!-- Event Item -->
+<div class="flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-colors cursor-pointer border border-transparent hover:border-white/10">
+<div class="flex-none w-14 flex flex-col items-center justify-center bg-surface-highlight rounded border border-white/5">
+<span class="text-xs text-primary font-bold uppercase pt-1">NOV</span>
+<span class="text-xl font-black text-white">18</span>
+</div>
+<div class="flex flex-col justify-center">
+<h4 class="font-bold text-sm text-white leading-tight">Regional Combine</h4>
+<p class="text-xs text-text-secondary mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[10px]">location_on</span> Dallas, TX
+                                        </p>
+</div>
+</div>
+<!-- Event Item -->
+<div class="flex gap-4 p-3 rounded-lg hover:bg-white/5 transition-colors cursor-pointer border border-transparent hover:border-white/10">
+<div class="flex-none w-14 flex flex-col items-center justify-center bg-surface-highlight rounded border border-white/5">
+<span class="text-xs text-primary font-bold uppercase pt-1">DEC</span>
+<span class="text-xl font-black text-white">02</span>
+</div>
+<div class="flex flex-col justify-center">
+<h4 class="font-bold text-sm text-white leading-tight">State Championships</h4>
+<p class="text-xs text-text-secondary mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[10px]">location_on</span> Arlington, TX
+                                        </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Athletes Grid Section -->
+<div class="flex flex-col gap-5">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<h3 class="text-2xl font-bold text-white flex items-center gap-2">
+                                Athletes in Texas
+                                <span class="text-sm font-normal text-text-secondary ml-2">(Showing Top 4)</span>
+</h3>
+<!-- Filters -->
+<div class="flex items-center gap-3">
+<div class="relative">
+<select class="appearance-none bg-surface-dark border border-white/10 text-white text-sm rounded-lg pl-3 pr-10 py-2 focus:ring-1 focus:ring-primary focus:border-primary">
+<option>All Positions</option>
+<option>Quarterback</option>
+<option>Wide Receiver</option>
+<option>Linebacker</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-text-secondary">
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</div>
+</div>
+<div class="relative">
+<select class="appearance-none bg-surface-dark border border-white/10 text-white text-sm rounded-lg pl-3 pr-10 py-2 focus:ring-1 focus:ring-primary focus:border-primary">
+<option>5 Stars Only</option>
+<option>4 Stars &amp; Up</option>
+<option>3 Stars &amp; Up</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-text-secondary">
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Athlete Card 1 -->
+<div class="group bg-surface-dark border border-white/10 rounded-xl overflow-hidden hover:border-primary/50 transition-all hover:shadow-[0_0_20px_rgba(249,116,21,0.15)] cursor-pointer">
+<div class="h-48 bg-gray-800 relative bg-cover bg-center" data-alt="Athlete headshot of Jalen Milroe" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCG3PghZiZac4FQuUK1aGmifxMkxNgF1hAUK_uB7QbkbgIHcVc8bs8-_1O4ZIGzP4zSieWxyc9EI4MwtPG1ur8gYt3pXx5Qw0bfH727cDpinc_qnmYAjBTRbFgYNzItEIOFc9yAcKjneC-LXMz5MCVpWy_THHNoPwKOWlc-JWfFjFAqTtrKepcFYrdQho6gxnyKAmRBaaGfu7mQkDSteDGXB6-fq2nNTmnb9JI-Nrs6zO0iiSgE-sYhfycPDpikistnM_CZtjJ2MWM');">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-dark to-transparent"></div>
+<div class="absolute top-3 right-3 bg-black/60 backdrop-blur rounded px-2 py-1 flex items-center gap-1 border border-white/10">
+<span class="text-amber-400 material-symbols-outlined text-sm">star</span>
+<span class="text-white text-xs font-bold">5.0</span>
+</div>
+<div class="absolute bottom-3 left-3">
+<span class="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">QB</span>
+</div>
+</div>
+<div class="p-4">
+<h4 class="text-lg font-bold text-white group-hover:text-primary transition-colors">Jalen Milroe</h4>
+<p class="text-sm text-text-secondary">Tompkins HS</p>
+<div class="mt-4 flex items-center justify-between">
+<span class="text-xs text-text-secondary">Class of 2025</span>
+<span class="text-xs font-medium text-white bg-white/10 px-2 py-1 rounded">Uncommitted</span>
+</div>
+</div>
+</div>
+<!-- Athlete Card 2 -->
+<div class="group bg-surface-dark border border-white/10 rounded-xl overflow-hidden hover:border-primary/50 transition-all hover:shadow-[0_0_20px_rgba(249,116,21,0.15)] cursor-pointer">
+<div class="h-48 bg-gray-800 relative bg-cover bg-center" data-alt="Athlete headshot of Evans Stewart" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCRvn7opEH7VbtgE9HGzBkinux3z4hsQAnhHNvxH4AxVApuIUIIPGSjSeeD46WecW57QHDbG9Mm-uyOSRbxUAg3nPvMzzazqOXVN4LkZPObafu8GuXFpCaDTDyYNbPw_OuaWhku9oLg1L_Bd0mMEw5Haf6o6eEpEQGNEw8IGW2ug8FeRdgvoFuzTwp8bUNXPd6ds06Tzjpo3YVmZBVj3livLY5Ncgy5mg3f0Ar21ZSSvJZ3Fgu61_pv-i8cO8nDd4KU7gCyHvggQ4Q');">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-dark to-transparent"></div>
+<div class="absolute top-3 right-3 bg-black/60 backdrop-blur rounded px-2 py-1 flex items-center gap-1 border border-white/10">
+<span class="text-amber-400 material-symbols-outlined text-sm">star</span>
+<span class="text-white text-xs font-bold">5.0</span>
+</div>
+<div class="absolute bottom-3 left-3">
+<span class="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">WR</span>
+</div>
+</div>
+<div class="p-4">
+<h4 class="text-lg font-bold text-white group-hover:text-primary transition-colors">Evans Stewart</h4>
+<p class="text-sm text-text-secondary">Liberty HS</p>
+<div class="mt-4 flex items-center justify-between">
+<span class="text-xs text-text-secondary">Class of 2025</span>
+<span class="text-xs font-medium text-white bg-white/10 px-2 py-1 rounded">Uncommitted</span>
+</div>
+</div>
+</div>
+<!-- Athlete Card 3 -->
+<div class="group bg-surface-dark border border-white/10 rounded-xl overflow-hidden hover:border-primary/50 transition-all hover:shadow-[0_0_20px_rgba(249,116,21,0.15)] cursor-pointer">
+<div class="h-48 bg-gray-800 relative bg-cover bg-center" data-alt="Athlete headshot of Harold Perkins" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBRWkjpxG77UmZKtAHwiuFnwAPkYwurnvIRed63fBrjsG3_9ymgLJ71qxFZrQOYyL-trVNnagWAFOCNbx7WhuKiDZcKO4-NXFZoeo1mOzYqrLk7OK17kghVBTLQqOCEgPNI13VgQ0-wcg-FxgYyx5KM74q1oFVK5zphX8Iig9jTQ2odcMhPjhRs9VeXGN_c309ZfX3_gxe3zBLC5PYU6MDealv1NC78EU1CT1DnwsuVL4ySs0E9HfnMhZtcmbQ35lP-YMmnMbfaxnE');">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-dark to-transparent"></div>
+<div class="absolute top-3 right-3 bg-black/60 backdrop-blur rounded px-2 py-1 flex items-center gap-1 border border-white/10">
+<span class="text-amber-400 material-symbols-outlined text-sm">star</span>
+<span class="text-white text-xs font-bold">4.8</span>
+</div>
+<div class="absolute bottom-3 left-3">
+<span class="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">LB</span>
+</div>
+</div>
+<div class="p-4">
+<h4 class="text-lg font-bold text-white group-hover:text-primary transition-colors">Harold Perkins</h4>
+<p class="text-sm text-text-secondary">Cy Park HS</p>
+<div class="mt-4 flex items-center justify-between">
+<span class="text-xs text-text-secondary">Class of 2024</span>
+<span class="text-xs font-medium text-green-400 bg-green-400/10 px-2 py-1 rounded">Signed</span>
+</div>
+</div>
+</div>
+<!-- Athlete Card 4 -->
+<div class="group bg-surface-dark border border-white/10 rounded-xl overflow-hidden hover:border-primary/50 transition-all hover:shadow-[0_0_20px_rgba(249,116,21,0.15)] cursor-pointer">
+<div class="h-48 bg-gray-800 relative bg-cover bg-center" data-alt="Athlete headshot of Denver Harris" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDYrapRZOH19379Hmp0G2g0Cb7tIvEKMGUewgY7fUfDZ3FPty6JmkbGYr2txpQJj5Y-6vnbCYH9yeW1_pFMiftCwjDGANPrXQSiN065JcqOOQx76i2qqEAC5cAN33tL0rb8aC160kYzvHI6QCwUUkz8adB0__nODs8MOpXm6vQ4XrROxhIfcHwDTwJbTujuIVGeZGGvVOiLvvCqfhAE1wR8-cbtYSWe-Jpmx8GIQw02wqlw2G9fRVLxgHAhvckqHOCFwP5sgxP5e-A');">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-dark to-transparent"></div>
+<div class="absolute top-3 right-3 bg-black/60 backdrop-blur rounded px-2 py-1 flex items-center gap-1 border border-white/10">
+<span class="text-amber-400 material-symbols-outlined text-sm">star</span>
+<span class="text-white text-xs font-bold">4.5</span>
+</div>
+<div class="absolute bottom-3 left-3">
+<span class="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">CB</span>
+</div>
+</div>
+<div class="p-4">
+<h4 class="text-lg font-bold text-white group-hover:text-primary transition-colors">Denver Harris</h4>
+<p class="text-sm text-text-secondary">North Shore HS</p>
+<div class="mt-4 flex items-center justify-between">
+<span class="text-xs text-text-secondary">Class of 2024</span>
+<span class="text-xs font-medium text-white bg-white/10 px-2 py-1 rounded">Uncommitted</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+<script>
+        // Simple fallback to ensure dark mode class exists (since we set it in HTML but script runs later)
+        if (!document.documentElement.classList.contains('dark')) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+</body></html>

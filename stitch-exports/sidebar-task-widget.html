@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RepMax Sidebar Task Widget</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d4af35",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#201d12",
+                        "card-dark": "#1F1F22",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen flex items-center justify-center p-8 font-display antialiased text-slate-900 dark:text-white">
+<!-- Widget Container: Constrained width to simulate sidebar usage -->
+<div class="w-[280px] flex flex-col gap-4">
+<!-- Widget Card -->
+<div class="flex flex-col w-full bg-[#1F1F22] rounded-xl border border-[#333238] shadow-2xl overflow-hidden">
+<!-- Header -->
+<div class="flex items-center justify-between px-4 py-4 border-b border-[#333238]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-size: 20px;">assignment</span>
+<h2 class="text-sm font-semibold tracking-wide text-white">Tasks</h2>
+<span class="flex items-center justify-center h-5 min-w-[20px] px-1.5 rounded-full bg-[#333238] text-[10px] font-bold text-gray-300">4</span>
+</div>
+<button class="text-xs font-medium text-primary hover:text-[#e5c14d] transition-colors duration-200 flex items-center gap-0.5">
+<span class="material-symbols-outlined" style="font-size: 14px;">add</span>
+                    Add
+                </button>
+</div>
+<!-- Task List -->
+<div class="flex flex-col max-h-[400px] overflow-y-auto custom-scrollbar">
+<!-- Task 1: High Priority -->
+<div class="group flex items-start gap-3 p-3 hover:bg-[#2a2a2e] transition-colors border-b border-[#2a2a2e]/50 cursor-pointer">
+<div class="mt-0.5 relative flex items-center justify-center">
+<input class="peer h-4 w-4 appearance-none rounded-sm border border-[#4a4a50] bg-transparent checked:border-primary checked:bg-primary focus:ring-0 focus:ring-offset-0 hover:border-primary transition-all cursor-pointer" type="checkbox"/>
+<span class="material-symbols-outlined absolute text-black opacity-0 peer-checked:opacity-100 pointer-events-none" style="font-size: 12px; font-weight: 800;">check</span>
+</div>
+<div class="flex flex-col gap-1 w-full">
+<p class="text-[13px] leading-tight text-gray-100 group-hover:text-white font-medium">Review weekly player stats</p>
+<div class="flex items-center justify-between w-full">
+<div class="flex items-center gap-1.5">
+<div class="w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.4)]"></div>
+<span class="text-[10px] text-gray-400 font-medium">High</span>
+</div>
+<span class="text-[10px] font-mono text-red-400 bg-red-500/10 px-1.5 py-0.5 rounded">Today</span>
+</div>
+</div>
+</div>
+<!-- Task 2: Medium Priority -->
+<div class="group flex items-start gap-3 p-3 hover:bg-[#2a2a2e] transition-colors border-b border-[#2a2a2e]/50 cursor-pointer">
+<div class="mt-0.5 relative flex items-center justify-center">
+<input class="peer h-4 w-4 appearance-none rounded-sm border border-[#4a4a50] bg-transparent checked:border-primary checked:bg-primary focus:ring-0 focus:ring-offset-0 hover:border-primary transition-all cursor-pointer" type="checkbox"/>
+<span class="material-symbols-outlined absolute text-black opacity-0 peer-checked:opacity-100 pointer-events-none" style="font-size: 12px; font-weight: 800;">check</span>
+</div>
+<div class="flex flex-col gap-1 w-full">
+<p class="text-[13px] leading-tight text-gray-100 group-hover:text-white font-medium">Schedule physio for Mike</p>
+<div class="flex items-center justify-between w-full">
+<div class="flex items-center gap-1.5">
+<div class="w-1.5 h-1.5 rounded-full bg-yellow-500 shadow-[0_0_6px_rgba(234,179,8,0.4)]"></div>
+<span class="text-[10px] text-gray-400 font-medium">Med</span>
+</div>
+<span class="text-[10px] font-mono text-gray-500">Oct 24</span>
+</div>
+</div>
+</div>
+<!-- Task 3: Low Priority -->
+<div class="group flex items-start gap-3 p-3 hover:bg-[#2a2a2e] transition-colors border-b border-[#2a2a2e]/50 cursor-pointer">
+<div class="mt-0.5 relative flex items-center justify-center">
+<input class="peer h-4 w-4 appearance-none rounded-sm border border-[#4a4a50] bg-transparent checked:border-primary checked:bg-primary focus:ring-0 focus:ring-offset-0 hover:border-primary transition-all cursor-pointer" type="checkbox"/>
+<span class="material-symbols-outlined absolute text-black opacity-0 peer-checked:opacity-100 pointer-events-none" style="font-size: 12px; font-weight: 800;">check</span>
+</div>
+<div class="flex flex-col gap-1 w-full">
+<p class="text-[13px] leading-tight text-gray-100 group-hover:text-white font-medium">Update training cycle PDF</p>
+<div class="flex items-center justify-between w-full">
+<div class="flex items-center gap-1.5">
+<div class="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_6px_rgba(255,255,255,0.4)]"></div>
+<span class="text-[10px] text-gray-400 font-medium">Low</span>
+</div>
+<span class="text-[10px] font-mono text-gray-500">Oct 25</span>
+</div>
+</div>
+</div>
+<!-- Task 4: Completed -->
+<div class="group flex items-start gap-3 p-3 hover:bg-[#2a2a2e] transition-colors cursor-pointer">
+<div class="mt-0.5 relative flex items-center justify-center">
+<input checked="" class="peer h-4 w-4 appearance-none rounded-sm border border-primary bg-primary checked:border-primary checked:bg-primary focus:ring-0 focus:ring-offset-0 transition-all cursor-pointer" type="checkbox"/>
+<span class="material-symbols-outlined absolute text-[#1F1F22] peer-checked:opacity-100 pointer-events-none" style="font-size: 12px; font-weight: 800;">check</span>
+</div>
+<div class="flex flex-col gap-1 w-full opacity-50 group-hover:opacity-75 transition-opacity">
+<p class="text-[13px] leading-tight text-gray-400 font-medium line-through">Call sponsor rep</p>
+<div class="flex items-center justify-between w-full">
+<div class="flex items-center gap-1.5">
+<div class="w-1.5 h-1.5 rounded-full bg-white/50"></div>
+<span class="text-[10px] text-gray-500 font-medium">Done</span>
+</div>
+<span class="text-[10px] font-mono text-gray-600">Done</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer: Add Task Input -->
+<div class="p-3 border-t border-[#333238] bg-[#252529]">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-2 text-gray-500" style="font-size: 16px;">add_circle</span>
+<input class="w-full bg-[#1A1A1D] text-xs text-white placeholder-gray-500 rounded border border-[#333238] pl-8 pr-3 py-2 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all placeholder:font-normal" placeholder="Add a task..." type="text"/>
+</div>
+</div>
+</div>
+</div>
+</body></html>

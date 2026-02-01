@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Recruiter Territory Assignments Dashboard</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#edbc1d",
+                        "background-light": "#f8f8f6",
+                        "background-dark": "#050505",
+                        "surface-dark": "#121212",
+                        "border-dark": "#262626"
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.375rem",
+                        "md": "0.375rem", 
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-dark text-white font-display h-screen flex overflow-hidden selection:bg-primary selection:text-black">
+<!-- Navigation Sidebar -->
+<nav class="w-20 lg:w-64 h-full bg-[#0a0a0a] border-r border-border-dark flex flex-col justify-between shrink-0 z-20">
+<div class="flex flex-col gap-6 p-4">
+<!-- Logo Area -->
+<div class="flex items-center gap-3 px-2">
+<div class="bg-primary/20 bg-center bg-no-repeat bg-cover rounded-lg h-10 w-10 shrink-0 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">api</span>
+</div>
+<div class="hidden lg:flex flex-col">
+<h1 class="text-white text-base font-bold leading-tight">RepMax</h1>
+<p class="text-neutral-500 text-xs font-medium">Admin Console</p>
+</div>
+</div>
+<!-- Nav Links -->
+<div class="flex flex-col gap-2 mt-4">
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-neutral-400 hover:text-white hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">dashboard</span>
+<p class="hidden lg:block text-sm font-medium leading-normal">Dashboard</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg bg-primary/10 text-primary border border-primary/20" href="#">
+<span class="material-symbols-outlined fill-1">map</span>
+<p class="hidden lg:block text-sm font-medium leading-normal">Assignments</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-neutral-400 hover:text-white hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">group</span>
+<p class="hidden lg:block text-sm font-medium leading-normal">Recruiters</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-neutral-400 hover:text-white hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">person_search</span>
+<p class="hidden lg:block text-sm font-medium leading-normal">Candidates</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-neutral-400 hover:text-white hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">settings</span>
+<p class="hidden lg:block text-sm font-medium leading-normal">Settings</p>
+</a>
+</div>
+</div>
+<!-- User Profile -->
+<div class="p-4 border-t border-border-dark">
+<div class="flex items-center gap-3 px-2 py-2">
+<div class="h-8 w-8 rounded-full bg-neutral-700 bg-center bg-cover" data-alt="User profile picture" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCVm-rxx2pnvnotWcBMnVWzRPXic-Axc1CfoDjuIZU0JQo3BWPOxKCSgA0I3bz_br58cEpwIcIaQcasxPGO8vxcEX1Mn85fKhf9mJl_8-fwuOMlPRtCKL9naHxkV3flHXa8X7WlExExf6833mJ4gMtuuq889uAMCFjXtanqEe54fHFJk6jBbOyZ5MyqhELVOMdb06rzxLp1K7Vj3yxiGrQSqeCJyP004ucBqm-GTBkyRMe9ANGBVk4smIbcD1xml0GSrA-KetkpVKU');"></div>
+<div class="hidden lg:flex flex-col">
+<p class="text-white text-sm font-medium leading-none">Admin User</p>
+<p class="text-neutral-500 text-xs mt-1">Logout</p>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content Area (Split View) -->
+<main class="flex flex-1 h-full overflow-hidden">
+<!-- Left Panel: Map Visualization (55%) -->
+<section class="w-[55%] h-full relative bg-[#080808] border-r border-border-dark hidden md:block overflow-hidden group">
+<!-- Map Background -->
+<div class="absolute inset-0 opacity-40 mix-blend-screen pointer-events-none" style="background: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #050505 100%);"></div>
+<!-- Simulated Map Container -->
+<div class="w-full h-full relative flex items-center justify-center p-12">
+<!-- Using a map placeholder image as base -->
+<div class="relative w-full aspect-[4/3] max-w-4xl" data-location="United States" style="">
+<img alt="US Map" class="w-full h-full object-contain opacity-60 grayscale contrast-125 invert-[.9]" data-alt="Dark stylized map of the United States showing geographical zones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDptZvS84mXP2DEGbBqKfWqsjytZeUloJgU8UPwcQQgRndgPO_oIt4v9yOvkEdLLXMEriBE_CSfQi11_U9mrb_1NTfHU5uLq-inlBN7yB5GzkxnERj75KGHfZWLCzBlIWfnPuvlEvbl3i906hs-YYzT19iMHodd0IZRgPeaXkADPWBn_UXVETQQ9byLCLuYqHxQDq6wy403r28ZteJFiJz02vpT8Q3I89bcaz5WUgtHNxVa2zr6w58MDDyOWtSR7fAUlPu867VdyYg"/>
+<!-- Map Overlays / Zones -->
+<!-- Southwest Zone -->
+<div class="absolute bottom-[20%] left-[20%] group/zone cursor-pointer">
+<div class="absolute -inset-4 bg-orange-500/10 rounded-full blur-xl group-hover/zone:bg-orange-500/20 transition-all"></div>
+<div class="relative flex flex-col items-center">
+<div class="h-3 w-3 bg-orange-500 rounded-full shadow-[0_0_15px_rgba(249,115,22,0.5)] animate-pulse"></div>
+<div class="mt-2 bg-surface-dark/90 backdrop-blur-md border border-orange-500/30 px-3 py-1.5 rounded-lg shadow-xl">
+<p class="text-xs font-bold text-orange-400 tracking-wider">SOUTHWEST</p>
+<p class="text-[10px] text-white font-medium">Martinez</p>
+</div>
+</div>
+</div>
+<!-- Pacific Zone -->
+<div class="absolute top-[30%] left-[8%] group/zone cursor-pointer">
+<div class="absolute -inset-4 bg-teal-500/10 rounded-full blur-xl group-hover/zone:bg-teal-500/20 transition-all"></div>
+<div class="relative flex flex-col items-center">
+<div class="h-3 w-3 bg-teal-500 rounded-full shadow-[0_0_15px_rgba(20,184,166,0.5)]"></div>
+<div class="mt-2 bg-surface-dark/90 backdrop-blur-md border border-teal-500/30 px-3 py-1.5 rounded-lg shadow-xl">
+<p class="text-xs font-bold text-teal-400 tracking-wider">PACIFIC</p>
+<p class="text-[10px] text-white font-medium">Jenkins</p>
+</div>
+</div>
+</div>
+<!-- Northeast Zone (Unassigned) -->
+<div class="absolute top-[25%] right-[15%] group/zone cursor-pointer">
+<div class="absolute -inset-4 bg-neutral-500/10 rounded-full blur-xl group-hover/zone:bg-neutral-500/20 transition-all"></div>
+<div class="relative flex flex-col items-center">
+<div class="h-3 w-3 bg-neutral-500 rounded-full border border-neutral-300 shadow-[0_0_15px_rgba(115,115,115,0.3)]"></div>
+<div class="mt-2 bg-surface-dark/90 backdrop-blur-md border border-neutral-700 border-dashed px-3 py-1.5 rounded-lg shadow-xl">
+<p class="text-xs font-bold text-neutral-400 tracking-wider">NORTHEAST</p>
+<p class="text-[10px] text-neutral-500 font-medium italic">Unassigned</p>
+</div>
+</div>
+</div>
+<!-- Midwest Zone (Unassigned) -->
+<div class="absolute top-[35%] right-[35%] group/zone cursor-pointer">
+<div class="absolute -inset-4 bg-neutral-500/10 rounded-full blur-xl group-hover/zone:bg-neutral-500/20 transition-all"></div>
+<div class="relative flex flex-col items-center">
+<div class="h-3 w-3 bg-neutral-500 rounded-full border border-neutral-300 shadow-[0_0_15px_rgba(115,115,115,0.3)]"></div>
+<div class="mt-2 bg-surface-dark/90 backdrop-blur-md border border-neutral-700 border-dashed px-3 py-1.5 rounded-lg shadow-xl">
+<p class="text-xs font-bold text-neutral-400 tracking-wider">MIDWEST</p>
+<p class="text-[10px] text-neutral-500 font-medium italic">Unassigned</p>
+</div>
+</div>
+</div>
+<!-- Southeast Zone -->
+<div class="absolute bottom-[25%] right-[22%] group/zone cursor-pointer">
+<div class="absolute -inset-4 bg-indigo-500/10 rounded-full blur-xl group-hover/zone:bg-indigo-500/20 transition-all"></div>
+<div class="relative flex flex-col items-center">
+<div class="h-3 w-3 bg-indigo-500 rounded-full shadow-[0_0_15px_rgba(99,102,241,0.5)]"></div>
+<div class="mt-2 bg-surface-dark/90 backdrop-blur-md border border-indigo-500/30 px-3 py-1.5 rounded-lg shadow-xl">
+<p class="text-xs font-bold text-indigo-400 tracking-wider">SOUTHEAST</p>
+<p class="text-[10px] text-white font-medium">Cooper</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Map Legend/Controls overlay -->
+<div class="absolute top-6 left-6 flex flex-col gap-2">
+<div class="bg-surface-dark/80 backdrop-blur border border-white/5 rounded-lg p-3 shadow-lg">
+<p class="text-[10px] uppercase tracking-wider text-neutral-500 mb-2 font-semibold">Map Layers</p>
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="text-xs text-neutral-300">Active Zones</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full border border-neutral-500"></div>
+<span class="text-xs text-neutral-300">Unassigned</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Panel: List & Management (45%) -->
+<section class="w-full md:w-[45%] h-full flex flex-col bg-background-dark relative border-l border-transparent md:border-border-dark">
+<!-- Sticky Header -->
+<header class="shrink-0 px-8 pt-8 pb-4 bg-background-dark/95 backdrop-blur z-10 border-b border-white/5">
+<div class="flex flex-col gap-2">
+<h2 class="text-3xl font-black text-white tracking-tight">Territory Assignments</h2>
+<p class="text-neutral-400 text-sm">Distribute recruitment zones for the 2024 season.</p>
+</div>
+<!-- Quick Stats -->
+<div class="flex gap-6 mt-6">
+<div>
+<p class="text-2xl font-bold text-white">3</p>
+<p class="text-xs text-neutral-500 uppercase tracking-wide font-medium">Assigned</p>
+</div>
+<div>
+<p class="text-2xl font-bold text-primary">2</p>
+<p class="text-xs text-neutral-500 uppercase tracking-wide font-medium">Open Zones</p>
+</div>
+<div>
+<p class="text-2xl font-bold text-white">94%</p>
+<p class="text-xs text-neutral-500 uppercase tracking-wide font-medium">Coverage</p>
+</div>
+</div>
+</header>
+<!-- Scrollable List Content -->
+<div class="flex-1 overflow-y-auto px-8 py-6 pb-32">
+<!-- Active Section -->
+<div class="mb-8">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-sm font-bold text-white uppercase tracking-wider">Active Assignments</h3>
+<button class="text-xs text-primary hover:text-primary/80 font-medium">View All</button>
+</div>
+<div class="flex flex-col gap-3">
+<!-- Card 1: Southwest -->
+<div class="group bg-surface-dark rounded-xl border border-white/5 p-4 hover:border-orange-500/30 transition-all duration-200">
+<div class="flex items-start justify-between">
+<div class="flex gap-4">
+<div class="h-12 w-12 rounded-full bg-neutral-800 bg-center bg-cover border border-white/10" data-alt="Portrait of Coach Martinez" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCKMNfqhA3Y4K2Vn2GsO-4YnZUEcLaYlsKsFb6-9RX7cwPs7KHrDDxd1IzNd_rE6oZUFuHtzN0Zm3KuSa2mOsc8JmfSl6SLCg7JttYVwdNmEIWycK_yTAZ3H7d611SQq8mQ3JwdGU3Ge0dXTZcHfhBfV_uu8l94ikNV-Q_JGZ5mi_7MbhPis_48TJzii1S50BzrMcH78FzOm6lgDlJk6ynXlo07YSUjS2TOB8gJW1aze8jeyX5KbWaN5kYVGWcx9GqX2m9jYgJvZBk');"></div>
+<div>
+<div class="flex items-center gap-2 mb-1">
+<h4 class="text-white font-semibold text-base">Coach Martinez</h4>
+<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-400 border border-orange-500/20">SOUTHWEST</span>
+</div>
+<div class="flex flex-wrap gap-1.5 mt-2">
+<span class="text-[10px] font-medium text-orange-300 bg-orange-900/30 border border-orange-500/20 px-2 py-0.5 rounded">TX</span>
+<span class="text-[10px] font-medium text-orange-300 bg-orange-900/30 border border-orange-500/20 px-2 py-0.5 rounded">AZ</span>
+<span class="text-[10px] font-medium text-orange-300 bg-orange-900/30 border border-orange-500/20 px-2 py-0.5 rounded">NM</span>
+<span class="text-[10px] font-medium text-orange-300 bg-orange-900/30 border border-orange-500/20 px-2 py-0.5 rounded">NV</span>
+</div>
+</div>
+</div>
+<div class="opacity-0 group-hover:opacity-100 transition-opacity flex gap-3 text-xs font-medium">
+<button class="text-neutral-400 hover:text-white">Edit</button>
+<button class="text-red-500 hover:text-red-400">Remove</button>
+</div>
+</div>
+</div>
+<!-- Card 2: Pacific -->
+<div class="group bg-surface-dark rounded-xl border border-white/5 p-4 hover:border-teal-500/30 transition-all duration-200">
+<div class="flex items-start justify-between">
+<div class="flex gap-4">
+<div class="h-12 w-12 rounded-full bg-neutral-800 bg-center bg-cover border border-white/10" data-alt="Portrait of Sarah Jenkins" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAjRlwOrXtxqF1rl9lXKlYANtartnTjvfLYqDT7j88FLnbk3s58fB6NaHynF8qJ_f3DIj2RIX20I-REbxJiKkLyQTwPJ-UsCDV2MT9eeDvPy0LmS_tXn1ky8dUlIups6X3obeT0pQ7a9B45apFvSqSxRH-Yxagw37OZ_TaEaiKPG5aIvzsmLFcZAjK7O7urbi8gP-jWhPhloL8aN0J-pO-aM6UT1Ow4evaFr5DadFdKyvwxVX1bmgKUKlIW-kXS89Y3Mun5STiBDGk');"></div>
+<div>
+<div class="flex items-center gap-2 mb-1">
+<h4 class="text-white font-semibold text-base">Sarah Jenkins</h4>
+<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-teal-500/20 text-teal-400 border border-teal-500/20">PACIFIC</span>
+</div>
+<div class="flex flex-wrap gap-1.5 mt-2">
+<span class="text-[10px] font-medium text-teal-300 bg-teal-900/30 border border-teal-500/20 px-2 py-0.5 rounded">CA</span>
+<span class="text-[10px] font-medium text-teal-300 bg-teal-900/30 border border-teal-500/20 px-2 py-0.5 rounded">OR</span>
+<span class="text-[10px] font-medium text-teal-300 bg-teal-900/30 border border-teal-500/20 px-2 py-0.5 rounded">WA</span>
+</div>
+</div>
+</div>
+<div class="opacity-0 group-hover:opacity-100 transition-opacity flex gap-3 text-xs font-medium">
+<button class="text-neutral-400 hover:text-white">Edit</button>
+<button class="text-red-500 hover:text-red-400">Remove</button>
+</div>
+</div>
+</div>
+<!-- Card 3: Southeast -->
+<div class="group bg-surface-dark rounded-xl border border-white/5 p-4 hover:border-indigo-500/30 transition-all duration-200">
+<div class="flex items-start justify-between">
+<div class="flex gap-4">
+<div class="h-12 w-12 rounded-full bg-neutral-800 bg-center bg-cover border border-white/10" data-alt="Portrait of Mark Cooper" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDDgdm8Sgd36Hp-GHBtvczhEJH4wBSZL9mcfIAqIXSFMTCiX9LXzAWonlengRglghwwvSEArAi-3eZmXuvxSDY9o1fI4WJBMokuJUDNDPH-ty4aqZqeQwtIBZrUSTH8OMB3SIivaimgTMWgMc0bqEHiXvaF-kzyWvzfTmvQoz1gR09wO-HjKoL7xpxosNAAKKN_wuWtuZASXqeTprF-54OieQ5nbVhBqdo1QkyS6D6YKqWKs0sOllUf7AINPxGhUpfRa2ydNgaafJg');"></div>
+<div>
+<div class="flex items-center gap-2 mb-1">
+<h4 class="text-white font-semibold text-base">Mark Cooper</h4>
+<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-400 border border-indigo-500/20">SOUTHEAST</span>
+</div>
+<div class="flex flex-wrap gap-1.5 mt-2">
+<span class="text-[10px] font-medium text-indigo-300 bg-indigo-900/30 border border-indigo-500/20 px-2 py-0.5 rounded">FL</span>
+<span class="text-[10px] font-medium text-indigo-300 bg-indigo-900/30 border border-indigo-500/20 px-2 py-0.5 rounded">GA</span>
+<span class="text-[10px] font-medium text-indigo-300 bg-indigo-900/30 border border-indigo-500/20 px-2 py-0.5 rounded">SC</span>
+<span class="text-[10px] font-medium text-indigo-300 bg-indigo-900/30 border border-indigo-500/20 px-2 py-0.5 rounded">NC</span>
+</div>
+</div>
+</div>
+<div class="opacity-0 group-hover:opacity-100 transition-opacity flex gap-3 text-xs font-medium">
+<button class="text-neutral-400 hover:text-white">Edit</button>
+<button class="text-red-500 hover:text-red-400">Remove</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Unassigned Section -->
+<div>
+<h3 class="text-sm font-bold text-white uppercase tracking-wider mb-4">Pending / Unassigned</h3>
+<div class="flex flex-col gap-3">
+<!-- Unassigned Card 1: Northeast -->
+<div class="relative bg-transparent rounded-xl border border-dashed border-neutral-700 p-4 hover:bg-white/[0.02] transition-colors group">
+<div class="flex items-center justify-between">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<h4 class="text-neutral-300 font-medium text-base">Northeast Zone</h4>
+<span class="px-2 py-0.5 rounded-full bg-neutral-800 text-neutral-500 text-[10px] font-bold border border-neutral-700">OPEN</span>
+</div>
+<p class="text-neutral-500 text-xs">Includes NY, MA, PA, NJ, CT</p>
+</div>
+<button class="flex items-center gap-1 text-primary hover:text-white font-semibold text-sm transition-colors pr-2">
+                                    Assign 
+                                    <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Unassigned Card 2: Midwest -->
+<div class="relative bg-transparent rounded-xl border border-dashed border-neutral-700 p-4 hover:bg-white/[0.02] transition-colors group">
+<div class="flex items-center justify-between">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<h4 class="text-neutral-300 font-medium text-base">Midwest Zone</h4>
+<span class="px-2 py-0.5 rounded-full bg-neutral-800 text-neutral-500 text-[10px] font-bold border border-neutral-700">OPEN</span>
+</div>
+<p class="text-neutral-500 text-xs">Includes IL, OH, MI, IN, WI</p>
+</div>
+<button class="flex items-center gap-1 text-primary hover:text-white font-semibold text-sm transition-colors pr-2">
+                                    Assign 
+                                    <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Fixed Action Footer -->
+<div class="absolute bottom-0 left-0 w-full bg-background-dark/80 backdrop-blur-lg border-t border-white/10 p-6 flex justify-between items-center z-20">
+<p class="text-xs text-neutral-500 font-medium hidden sm:block">Last saved: 2 mins ago</p>
+<div class="flex gap-4 w-full sm:w-auto">
+<button class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg text-white font-medium hover:bg-white/5 transition-colors text-sm">Cancel</button>
+<button class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg bg-primary text-black font-bold hover:bg-[#d6aa1a] transition-colors shadow-[0_0_20px_rgba(237,188,29,0.2)] text-sm flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">check</span>
+                        Save Assignments
+                    </button>
+</div>
+</div>
+</section>
+</main>
+</body></html>

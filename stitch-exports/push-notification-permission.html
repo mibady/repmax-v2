@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RepMax Push Notifications</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ecb913",
+                        "background-light": "#f8f8f6",
+                        "background-dark": "#221e10",
+                        "mobile-dark": "#050505",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen flex items-center justify-center p-4 font-display selection:bg-primary selection:text-black">
+<!-- Mobile Screen Container -->
+<div class="relative flex w-full max-w-[390px] flex-col bg-mobile-dark rounded-[32px] shadow-2xl overflow-hidden border border-white/10 h-auto min-h-[800px]">
+<!-- Status Bar Area (Simulated) -->
+<div class="h-12 w-full shrink-0"></div>
+<!-- Content Container -->
+<div class="flex flex-col flex-1 px-6 pb-8">
+<!-- Logo -->
+<div class="flex justify-center items-center gap-2 mb-8">
+<span class="material-symbols-outlined text-primary text-2xl">diamond</span>
+<span class="text-primary font-bold text-lg tracking-wide uppercase">RepMax</span>
+</div>
+<!-- Hero Illustration: Bell with Pulse -->
+<div class="flex flex-col items-center justify-center py-8 relative mb-6">
+<!-- Pulse Rings -->
+<div class="absolute w-32 h-32 rounded-full border border-primary/20 animate-[ping_3s_linear_infinite]"></div>
+<div class="absolute w-40 h-40 rounded-full border border-primary/10 animate-[ping_3s_linear_infinite_1s]"></div>
+<!-- Decorative Dots -->
+<div class="absolute top-4 right-10 w-1.5 h-1.5 bg-primary rounded-full opacity-60"></div>
+<div class="absolute bottom-6 left-12 w-1 h-1 bg-primary rounded-full opacity-40"></div>
+<div class="absolute top-10 left-8 w-2 h-2 bg-primary/30 rounded-full"></div>
+<!-- Main Icon -->
+<div class="relative z-10 text-primary">
+<span class="material-symbols-outlined text-[80px]" style="font-size: 80px;">notifications_active</span>
+</div>
+</div>
+<!-- Headline -->
+<div class="text-center mb-8">
+<h2 class="text-white tracking-tight text-[28px] font-bold leading-tight px-2 pb-3">Stay in the Loop</h2>
+<p class="text-white/60 text-base font-medium leading-normal">Get notified instantly when:</p>
+</div>
+<!-- Value Prop List -->
+<div class="flex flex-col gap-5 mb-auto">
+<!-- Item 1 -->
+<div class="flex items-center gap-4">
+<div class="flex items-center justify-center rounded-xl bg-primary/10 shrink-0 size-12 border border-primary/5">
+<span class="material-symbols-outlined text-primary">visibility</span>
+</div>
+<p class="text-white text-[15px] font-medium leading-normal flex-1">A recruiter views your card</p>
+</div>
+<!-- Item 2 -->
+<div class="flex items-center gap-4">
+<div class="flex items-center justify-center rounded-xl bg-primary/10 shrink-0 size-12 border border-primary/5">
+<span class="material-symbols-outlined text-primary">star</span>
+</div>
+<p class="text-white text-[15px] font-medium leading-normal flex-1">You're added to a shortlist</p>
+</div>
+<!-- Item 3 -->
+<div class="flex items-center gap-4">
+<div class="flex items-center justify-center rounded-xl bg-primary/10 shrink-0 size-12 border border-primary/5">
+<span class="material-symbols-outlined text-primary">schedule</span>
+</div>
+<p class="text-white text-[15px] font-medium leading-normal flex-1">Deadlines are approaching</p>
+</div>
+<!-- Item 4 -->
+<div class="flex items-center gap-4">
+<div class="flex items-center justify-center rounded-xl bg-primary/10 shrink-0 size-12 border border-primary/5">
+<span class="material-symbols-outlined text-primary">chat</span>
+</div>
+<p class="text-white text-[15px] font-medium leading-normal flex-1">You receive a message</p>
+</div>
+</div>
+<!-- Action Area -->
+<div class="flex flex-col gap-4 mt-8 pt-4">
+<button class="w-full h-[52px] bg-primary hover:bg-yellow-500 transition-colors text-black text-base font-bold rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(236,185,19,0.3)]">
+                    Enable Notifications
+                </button>
+<button class="w-full text-center py-2 text-white/50 hover:text-white transition-colors text-sm font-medium">
+                    Not now
+                </button>
+<p class="text-center text-xs text-white/30 mt-2">
+                    You can change this anytime in Settings
+                </p>
+</div>
+</div>
+<!-- Bottom Indicator (Simulated) -->
+<div class="h-1 w-1/3 bg-white/20 rounded-full mx-auto mb-3"></div>
+</div>
+</body></html>

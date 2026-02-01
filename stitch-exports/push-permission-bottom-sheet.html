@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RepMax Push Permission</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d4af35",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#201d12",
+                        "sheet-dark": "#1A1A1A",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .glow-gold {
+            filter: drop-shadow(0 0 12px rgba(212, 175, 53, 0.4));
+        }
+        .ios-sheet-height {
+            max-height: 90vh;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-[#141414] font-display">
+<!-- Overlay Backdrop -->
+<div class="fixed inset-0 bg-black/70 flex items-end justify-center">
+<!-- Bottom Sheet Container (390px mobile-first) -->
+<div class="relative w-full max-w-[390px] bg-sheet-dark rounded-t-2xl border-t border-x border-primary/20 flex flex-col items-stretch overflow-hidden ios-sheet-height">
+<!-- BottomSheetHandle Component -->
+<div class="flex h-6 w-full items-center justify-center pt-2">
+<div class="h-1.5 w-10 rounded-full bg-[#3F3F46]"></div>
+</div>
+<!-- Content Section -->
+<div class="px-6 pt-6 pb-8 flex flex-col items-center">
+<!-- Header Icon with Glow -->
+<div class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 glow-gold">
+<span class="material-symbols-outlined text-primary text-4xl fill-1">notifications_active</span>
+</div>
+<!-- HeadlineText Component -->
+<h1 class="text-white text-[28px] font-bold leading-tight text-center pb-2">Stay in the Loop</h1>
+<!-- BodyText Component -->
+<p class="text-[#A1A1AA] text-base font-normal leading-relaxed text-center pb-6">
+                    Get real-time updates on your recruiting journey and never miss a life-changing opportunity.
+                </p>
+<!-- Checklists Component (Customized for RepMax) -->
+<div class="w-full space-y-4 mb-8">
+<div class="flex items-start gap-3">
+<div class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/20">
+<span class="material-symbols-outlined text-primary text-[16px] font-bold">check</span>
+</div>
+<div>
+<p class="text-white text-sm font-semibold">Profile Views</p>
+<p class="text-[#71717A] text-xs">Know exactly when recruiters are watching</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<div class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/20">
+<span class="material-symbols-outlined text-primary text-[16px] font-bold">check</span>
+</div>
+<div>
+<p class="text-white text-sm font-semibold">Scholarship Offers</p>
+<p class="text-[#71717A] text-xs">Real-time alerts for incoming offers</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<div class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/20">
+<span class="material-symbols-outlined text-primary text-[16px] font-bold">check</span>
+</div>
+<div>
+<p class="text-white text-sm font-semibold">Recruiter Messages</p>
+<p class="text-[#71717A] text-xs">Direct communication with college coaches</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<div class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/20">
+<span class="material-symbols-outlined text-primary text-[16px] font-bold">check</span>
+</div>
+<div>
+<p class="text-white text-sm font-semibold">Critical Deadlines</p>
+<p class="text-[#71717A] text-xs">Never miss a signing or application date</p>
+</div>
+</div>
+</div>
+<!-- Primary Action Button -->
+<button class="w-full bg-primary hover:bg-primary/90 text-black font-bold py-4 rounded-xl transition-colors mb-4 flex items-center justify-center gap-2">
+                    Enable Notifications
+                </button>
+<!-- Secondary Action -->
+<button class="text-[#71717A] text-sm font-medium hover:text-white transition-colors mb-8">
+                    Not Now
+                </button>
+<!-- Footer Text -->
+<p class="text-[#52525B] text-[11px] text-center px-4">
+                    You can manage your notification preferences anytime in your device settings.
+                </p>
+</div>
+<!-- Visual Decoration (Optional) -->
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
+</div>
+</div>
+<!-- Background Mockup Content (Simulating the app behind) -->
+<div class="p-6 opacity-20 pointer-events-none">
+<div class="h-8 w-32 bg-gray-700 rounded mb-8"></div>
+<div class="h-48 w-full bg-gray-800 rounded-xl mb-6"></div>
+<div class="space-y-4">
+<div class="h-4 w-3/4 bg-gray-800 rounded"></div>
+<div class="h-4 w-1/2 bg-gray-800 rounded"></div>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RepMax Photo Review Completion</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;700&amp;family=Noto+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#eec02b",
+                        "background-light": "#f8f8f6",
+                        "background-dark": "#221e10",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"],
+                        "sans": ["Noto Sans", "sans-serif"],
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                    boxShadow: {
+                        "glow": "0 0 20px rgba(238, 192, 43, 0.5)",
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Animation for the completion overlay fade-in */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        
+        /* Loading bar animation */
+        @keyframes load {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+        .animate-load {
+            animation: load 2s ease-in-out forwards;
+        }
+
+        /* Mock interactivity for demonstration purposes - toggle states using checkbox hack or focus-within logic isn't clean without JS, 
+           so we will design the static "Review State" primarily, but visualize the "Completion State" below as a visible overlay for the purpose of the output.
+           However, the prompt asks for a design, I will overlay the completion state on hover of the main container or make it a separate section below for viewing context, 
+           OR better yet, I will design the "Review State" as the main view and place the "Completion State" as a hidden/conditional element code that could be toggled. 
+           
+           Actually, to show "variant 2 of 2" which implies completion, I will render the main Review UI, 
+           and I will create a wrapper that simulates the flow. 
+           Given the prompt description includes both states, I will render the Review State as the active UI, 
+           and put the Completion State code in a way that implies it appears over it.
+           
+           Wait, "variant 2 of 2" in the prompt text usually implies the user wants the second variation of a design, 
+           but the description says "Also features a completion state overlay". 
+           I will structure the HTML so the Review Screen is visible, and the Completion Overlay is present but visually hidden (opacity 0) 
+           until a specific checkbox (CSS hack) is checked to demonstrate the state change without JS.
+        */
+        
+        #toggle-completion:checked ~ .completion-overlay {
+            display: flex;
+        }
+        #toggle-completion:checked ~ .review-content {
+            opacity: 0.2;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#221e11] dark:text-white font-display min-h-screen flex flex-col overflow-x-hidden transition-colors duration-200">
+<!-- CSS Hack to toggle state for demonstration purposes -->
+<input class="peer hidden" id="toggle-completion" type="checkbox"/>
+<!-- Header -->
+<header class="flex items-center justify-between border-b border-solid border-[#e5e5e5] dark:border-[#483f23] px-6 lg:px-10 py-4 bg-white/5 dark:bg-[#221e11]">
+<div class="flex items-center gap-3">
+<div class="size-8 text-primary">
+<svg class="w-full h-full" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 18.4228L42 11.475V34.3663C42 34.7796 41.7457 35.1504 41.3601 35.2992L24 42V18.4228Z" fill="currentColor" fill-rule="evenodd"></path>
+<path clip-rule="evenodd" d="M24 8.18819L33.4123 11.574L24 15.2071L14.5877 11.574L24 8.18819ZM9 15.8487L21 20.4805V37.6263L9 32.9945V15.8487ZM27 37.6263V20.4805L39 15.8487V32.9945L27 37.6263ZM25.354 2.29885C24.4788 1.98402 23.5212 1.98402 22.646 2.29885L4.98454 8.65208C3.7939 9.08038 3 10.2097 3 11.475V34.3663C3 36.0196 4.01719 37.5026 5.55962 38.098L22.9197 44.7987C23.6149 45.0671 24.3851 45.0671 25.0803 44.7987L42.4404 38.098C43.9828 37.5026 45 36.0196 45 34.3663V11.475C45 10.2097 44.2061 9.08038 43.0155 8.65208L25.354 2.29885Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-[#111418] dark:text-white text-xl font-bold leading-tight tracking-[-0.015em]">RepMax</h2>
+</div>
+<!-- Theme aware Material Icon -->
+<button class="text-[#111418] dark:text-white hover:text-primary transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</header>
+<!-- Main Content Container -->
+<main class="flex-grow flex flex-col items-center justify-center p-4 sm:p-6 relative">
+<!-- Review Content Area -->
+<div class="review-content flex flex-col items-center w-full max-w-md transition-opacity duration-300">
+<!-- Avatar Display -->
+<div class="relative group mb-8">
+<!-- Glow Effect -->
+<div class="absolute inset-0 rounded-full bg-primary/30 blur-xl scale-110 group-hover:scale-125 transition-transform duration-500"></div>
+<!-- Avatar Container -->
+<div class="relative w-32 h-32 md:w-40 md:h-40 rounded-full border-[3px] border-primary shadow-glow overflow-hidden z-10 bg-[#2c2718]">
+<div class="w-full h-full bg-center bg-cover" data-alt="Professional headshot of a user smiling confidently" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAZHuZkiOQA3g119CI2K29h6wUSJMCD9hmzuKsYfAga2FSjKFLfMwFenexQCyDZTvCsvYoSgs7sN10GJqjfRtKxvaE2p9cWueVt6ySiNWTd-xC9cT0cvhiAN9noRcNWh9Ezg5fMqFIJZBimkRP_SIFrEh5tXdS9VGi-1GxacsDxGArrCdIfZlutrdeYiup3BYvR5CUHFSWhvFXgZ8u1azmEFD7XafOBrlwR6AwS4gKx1kkUgYnQcGAKYQc7J0iXXGN6uSbwuTATlqo");'>
+</div>
+</div>
+<!-- Status Badge -->
+<div class="absolute bottom-1 right-1 z-20 bg-primary text-[#221e10] rounded-full p-1.5 shadow-lg border-2 border-[#221e10]">
+<span class="material-symbols-outlined text-sm font-bold block">check</span>
+</div>
+</div>
+<!-- Headline -->
+<h1 class="text-[#111418] dark:text-white text-3xl md:text-4xl font-bold text-center leading-tight mb-2">
+                Looking sharp!
+            </h1>
+<p class="text-[#637588] dark:text-[#a09a8c] text-lg text-center mb-10 font-normal">
+                Use this photo for your profile?
+            </p>
+<!-- Action Buttons -->
+<div class="flex flex-col gap-4 w-full px-4 sm:px-12">
+<!-- Use This Photo Button (Triggers State Change via label hack) -->
+<label class="w-full group cursor-pointer" for="toggle-completion">
+<div class="flex w-full items-center justify-center overflow-hidden rounded-full h-14 bg-primary text-[#221e11] hover:bg-[#ffcf3d] active:scale-[0.98] transition-all shadow-lg shadow-primary/20">
+<span class="text-lg font-bold tracking-wide">Use This Photo</span>
+</div>
+</label>
+<!-- Retake Button -->
+<button class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 bg-transparent hover:bg-white/5 text-[#637588] dark:text-[#a09a8c] hover:text-[#111418] dark:hover:text-white transition-colors">
+<span class="material-symbols-outlined mr-2 text-[20px]">refresh</span>
+<span class="text-base font-medium tracking-wide">Retake</span>
+</button>
+</div>
+<!-- Helper text -->
+<p class="mt-8 text-xs text-[#637588] dark:text-[#6b6248] opacity-60">
+                (Click "Use This Photo" to see completion state)
+            </p>
+</div>
+<!-- Completion Overlay (Hidden by default, shown when checkbox is checked) -->
+<div class="completion-overlay hidden absolute inset-0 z-50 flex-col items-center justify-center bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm animate-fade-in p-6">
+<div class="flex flex-col items-center max-w-sm w-full text-center">
+<!-- Large Emoji -->
+<div class="text-[80px] leading-none mb-6 animate-bounce">
+                    🎉
+                </div>
+<!-- Success Text -->
+<h2 class="text-[#111418] dark:text-white text-3xl font-bold mb-3">
+                    Profile Complete!
+                </h2>
+<p class="text-[#637588] dark:text-[#a09a8c] text-lg mb-10">
+                    Redirecting to your dashboard...
+                </p>
+<!-- Progress Bar -->
+<div class="w-full h-2 bg-[#e5e5e5] dark:bg-[#3a3525] rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full animate-load shadow-[0_0_10px_rgba(238,192,43,0.8)]"></div>
+</div>
+<!-- Manual Reset Link for Demo -->
+<label class="mt-8 text-sm text-[#637588] dark:text-[#6b6248] hover:text-primary cursor-pointer underline decoration-dotted underline-offset-4" for="toggle-completion">
+                    Reset demo
+                </label>
+</div>
+</div>
+</main>
+</body></html>

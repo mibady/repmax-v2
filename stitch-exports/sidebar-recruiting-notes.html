@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sidebar Recruiting Notes Widget</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#eec02b",
+                        "background-light": "#f8f8f6",
+                        "background-dark": "#1F1F22", /* Custom base for this widget as per request */
+                        "card-dark": "#1A1A1A",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for better aesthetic in dark mode sidebar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1F1F22; 
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #333; 
+            border-radius: 2px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #444; 
+        }
+    </style>
+</head>
+<body class="bg-black flex items-center justify-center min-h-screen p-8 font-display">
+<!-- Widget Container -->
+<div class="w-full max-w-[280px] bg-[#1F1F22] rounded-xl flex flex-col overflow-hidden shadow-lg border border-[#333]">
+<!-- Header Section -->
+<div class="p-4 border-b border-[#2A2A2E] flex items-center justify-between">
+<h2 class="text-white text-sm font-bold flex items-center gap-2">
+<span class="text-base">📝</span> Notes
+            </h2>
+<a class="text-primary text-xs font-semibold hover:text-white transition-colors flex items-center gap-1" href="#">
+<span class="material-symbols-outlined text-sm font-bold">add</span>
+                New Note
+            </a>
+</div>
+<!-- Notes List -->
+<div class="flex flex-col gap-3 p-4 custom-scrollbar max-h-[600px] overflow-y-auto">
+<!-- Note Item 1 (Pinned) -->
+<div class="bg-[#1A1A1A] p-3 rounded-lg hover:bg-[#252525] transition-colors group cursor-pointer border-l-2 border-primary">
+<div class="flex items-center justify-between mb-2">
+<span class="text-primary text-xs font-bold truncate">Jaylen Washington</span>
+<span class="material-symbols-outlined text-primary text-sm" title="Pinned Note">push_pin</span>
+</div>
+<p class="text-white/90 text-xs leading-relaxed line-clamp-3 mb-3">
+                    Spoke to HS coach. Grades improved significantly in the last semester. Recommend moving him up the board.
+                </p>
+<div class="flex items-center justify-between border-t border-[#333] pt-2">
+<span class="text-[#666] text-[10px] font-mono">Oct 24 • 14:30</span>
+</div>
+</div>
+<!-- Note Item 2 -->
+<div class="bg-[#1A1A1A] p-3 rounded-lg hover:bg-[#252525] transition-colors group cursor-pointer border-l-2 border-transparent hover:border-[#333]">
+<div class="flex items-center justify-between mb-2">
+<span class="text-white/70 text-xs font-semibold truncate">Marcus Johnson</span>
+</div>
+<p class="text-white/80 text-xs leading-relaxed line-clamp-3 mb-3">
+                    Need to schedule a follow-up visit for next week. Family seemed hesitant about the distance.
+                </p>
+<div class="flex items-center justify-between border-t border-[#333] pt-2">
+<span class="text-[#666] text-[10px] font-mono">Oct 23 • 09:15</span>
+</div>
+</div>
+<!-- Note Item 3 -->
+<div class="bg-[#1A1A1A] p-3 rounded-lg hover:bg-[#252525] transition-colors group cursor-pointer border-l-2 border-transparent hover:border-[#333]">
+<div class="flex items-center justify-between mb-2">
+<span class="text-white/70 text-xs font-semibold truncate">Team General</span>
+<span class="material-symbols-outlined text-[#444] text-sm group-hover:text-[#666]">group</span>
+</div>
+<p class="text-white/80 text-xs leading-relaxed line-clamp-3 mb-3">
+                    Defensive line rotation strategy meeting notes. Coach Miller wants more snaps for the rookies.
+                </p>
+<div class="flex items-center justify-between border-t border-[#333] pt-2">
+<span class="text-[#666] text-[10px] font-mono">Oct 22 • 16:45</span>
+</div>
+</div>
+</div>
+<!-- Footer Section -->
+<div class="p-3 border-t border-[#2A2A2E] bg-[#1F1F22]">
+<a class="flex items-center justify-center w-full py-2 rounded text-primary text-xs font-bold hover:bg-[#2A2A2E] transition-colors" href="#">
+                View all 12 notes <span class="material-symbols-outlined text-sm ml-1">arrow_forward</span>
+</a>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RepMax Photo Capture</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d4af35",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#050505", // Adjusted to user request #050505
+                        "surface-dark": "#1a1a1a",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" },
+                    boxShadow: {
+                        'gold-glow': '0 0 20px -5px rgba(212, 175, 53, 0.5)',
+                        'gold-glow-lg': '0 0 30px -5px rgba(212, 175, 53, 0.6)',
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display min-h-screen flex flex-col items-center justify-center text-slate-900 dark:text-white overflow-hidden">
+<!-- Main Container: Constrained to mobile width on desktop -->
+<div class="w-full max-w-md h-full min-h-screen md:h-auto md:min-h-[800px] md:border md:border-white/10 md:rounded-[3rem] bg-background-light dark:bg-background-dark relative flex flex-col shadow-2xl overflow-hidden">
+<!-- Header / Progress -->
+<div class="pt-8 pb-4 px-6 flex flex-col gap-4">
+<!-- Progress Bar -->
+<div class="flex items-center gap-2">
+<div class="flex-1 h-1.5 bg-gray-200 dark:bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-2/3 rounded-full"></div>
+</div>
+<span class="text-xs font-medium text-gray-500 dark:text-gray-400">Step 2 of 3</span>
+</div>
+<!-- Page Heading -->
+<div class="flex flex-col gap-1">
+<h1 class="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Let's Get Your Photo</h1>
+<p class="text-sm text-gray-500 dark:text-[#c3b998]">Position your face within the frame.</p>
+</div>
+</div>
+<!-- Camera Viewfinder Area -->
+<div class="flex-1 relative px-4 flex flex-col items-center justify-center">
+<!-- Viewfinder Container -->
+<div class="relative w-full aspect-[3/4] rounded-3xl overflow-hidden bg-surface-dark group">
+<!-- Camera Feed Simulation (Image) -->
+<div class="absolute inset-0 w-full h-full bg-cover bg-center" data-alt="User selfie portrait centered in frame" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD8BiaTIzn3i5zGQNSUKB1_sUQmUdrw9q_Rjeu8n-1D8OAqBMsuEs_Blz51BAR279I-MbnAmQPqa6zez8pGDlwvCWB9_2QGj2FjmqYJuM4159mcz9NMP3EU36x9bhy3wPdho_hy_Z9y976ucsxnc9oZ0ofg8n5q7HvZ8mZBsUvyCFXP8NAwTeWGvcv6uldXYzqgavMUirxgoj-xzx1U92vKoxmE8TlW_bCVOvRWtYX7c_otAj6ZAoFIXjwqgYNiSHipSigbwLaN9ws');">
+</div>
+<!-- Dark Overlay with Cutout effect simulation -->
+<div class="absolute inset-0 bg-black/30"></div>
+<!-- Face Guide Overlay (Gold Dotted Oval) -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[65%] h-[70%] border-2 border-dashed border-primary/70 rounded-[50%] box-border z-10"></div>
+<!-- Corner Indicators -->
+<div class="absolute top-6 left-6 w-8 h-8 border-t-4 border-l-4 border-white/20 rounded-tl-xl"></div>
+<div class="absolute top-6 right-6 w-8 h-8 border-t-4 border-r-4 border-white/20 rounded-tr-xl"></div>
+<div class="absolute bottom-6 left-6 w-8 h-8 border-b-4 border-l-4 border-white/20 rounded-bl-xl"></div>
+<div class="absolute bottom-6 right-6 w-8 h-8 border-b-4 border-r-4 border-white/20 rounded-br-xl"></div>
+<!-- Chips: Face Detected Feedback -->
+<div class="absolute bottom-6 left-0 right-0 flex justify-center z-20">
+<div class="flex items-center gap-2 px-4 py-2 bg-green-500/90 backdrop-blur-md rounded-full shadow-lg animate-pulse">
+<span class="material-symbols-outlined text-white text-[20px]">check_circle</span>
+<span class="text-white text-sm font-medium">Face detected</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Controls Area -->
+<div class="pt-6 pb-8 px-6 flex flex-col items-center gap-8 bg-gradient-to-t from-background-light dark:from-background-dark via-background-light dark:via-background-dark to-transparent">
+<!-- Main Controls Row -->
+<div class="flex items-center justify-between w-full px-4">
+<!-- Secondary Action (Gallery/Flash) -->
+<button class="p-3 rounded-full hover:bg-white/5 transition-colors text-gray-500 dark:text-gray-400">
+<span class="material-symbols-outlined text-[28px]">photo_library</span>
+</button>
+<!-- Shutter Button -->
+<button class="group relative flex items-center justify-center w-[84px] h-[84px]">
+<!-- Outer Glow -->
+<div class="absolute inset-0 rounded-full bg-primary/20 blur-xl group-hover:bg-primary/40 transition-all duration-300"></div>
+<!-- Outer Ring -->
+<div class="relative w-full h-full rounded-full border-4 border-primary shadow-gold-glow flex items-center justify-center bg-transparent transition-transform transform group-hover:scale-105 group-active:scale-95">
+<!-- Inner Circle -->
+<div class="w-[68px] h-[68px] bg-white rounded-full shadow-inner"></div>
+</div>
+</button>
+<!-- Secondary Action (Switch Camera) -->
+<button class="p-3 rounded-full hover:bg-white/5 transition-colors text-gray-500 dark:text-gray-400">
+<span class="material-symbols-outlined text-[28px]">flip_camera_ios</span>
+</button>
+</div>
+<!-- Footer: Tips & Skip -->
+<div class="flex flex-col items-center gap-4 w-full">
+<!-- Tips Accordion (Simplified as a pill button) -->
+<button class="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors">
+<span class="material-symbols-outlined text-primary text-[20px]">lightbulb</span>
+<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Photo Tips</span>
+<span class="material-symbols-outlined text-gray-500 text-[16px]">expand_more</span>
+</button>
+<!-- Skip Link -->
+<a class="text-sm text-gray-500 hover:text-white transition-colors py-2" href="#">
+                    Skip for now
+                </a>
+</div>
+</div>
+</div>
+</body></html>

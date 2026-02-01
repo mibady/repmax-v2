@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Compose Message Modal</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d4af35",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#201d12",
+                        "modal-bg": "#1F1F22",
+                        "input-bg": "#2A2A2E",
+                        "border-subtle": "#3F3F46",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem", 
+                        "modal": "12px",
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display min-h-screen flex items-center justify-center p-4">
+<!-- Dimming Overlay -->
+<div aria-hidden="true" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"></div>
+<!-- Modal Container -->
+<div class="relative z-50 w-full max-w-[560px] bg-modal-bg rounded-[12px] shadow-2xl flex flex-col max-h-[90vh] overflow-y-auto border border-white/5">
+<!-- Header -->
+<div class="flex items-center justify-between px-6 py-5 border-b border-white/10">
+<h2 class="text-white text-xl font-bold tracking-tight">New Message</h2>
+<button class="text-gray-400 hover:text-white transition-colors rounded-full p-1 hover:bg-white/5">
+<span class="material-symbols-outlined text-[24px]">close</span>
+</button>
+</div>
+<!-- Scrollable Body -->
+<div class="flex flex-col gap-5 p-6">
+<!-- To: Field with Dropdown -->
+<div class="relative z-20">
+<label class="block text-sm font-medium text-gray-300 mb-1.5">To:</label>
+<div class="relative">
+<div class="flex items-center w-full rounded-lg bg-input-bg border border-border-subtle focus-within:border-primary focus-within:ring-1 focus-within:ring-primary overflow-hidden transition-all">
+<span class="material-symbols-outlined text-gray-500 pl-3">search</span>
+<input class="w-full bg-transparent border-none text-white placeholder-gray-500 focus:ring-0 py-3 px-3" placeholder="Search recipient..." type="text" value="Coach W"/>
+</div>
+<!-- Auto-suggest Dropdown -->
+<div class="absolute top-full left-0 right-0 mt-2 bg-[#252529] border border-border-subtle rounded-lg shadow-xl overflow-hidden z-30">
+<div class="py-1">
+<button class="w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-white/5 bg-primary/10 border-l-4 border-primary transition-colors group">
+<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-bold">CW</div>
+<div>
+<p class="text-sm font-medium text-white">Coach Williams</p>
+<p class="text-xs text-gray-400">TCU • Head Coach</p>
+</div>
+<span class="material-symbols-outlined text-primary ml-auto text-[20px]">check</span>
+</button>
+<button class="w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors group">
+<div class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-gray-300 text-xs font-bold">CW</div>
+<div>
+<p class="text-sm font-medium text-gray-200">Coach Wilson</p>
+<p class="text-xs text-gray-500">Duke • Assistant Coach</p>
+</div>
+</button>
+<button class="w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors group">
+<div class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-gray-300 text-xs font-bold">CW</div>
+<div>
+<p class="text-sm font-medium text-gray-200">Coach Willis</p>
+<p class="text-xs text-gray-500">Ohio State • Recruiter</p>
+</div>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- NCAA Compliance Warning -->
+<div class="relative z-10 rounded-lg border border-primary/40 bg-primary/5 p-4 flex gap-4 items-start">
+<div class="flex-shrink-0 text-primary">
+<span class="material-symbols-outlined">warning</span>
+</div>
+<div class="flex flex-col gap-1">
+<p class="text-white text-sm font-bold">NCAA Compliance Check</p>
+<p class="text-gray-300 text-sm leading-snug">Ensure message adheres to recruiting dead period regulations. Direct contact may be restricted.</p>
+</div>
+</div>
+<!-- Subject Field -->
+<div>
+<label class="block text-sm font-medium text-gray-300 mb-1.5">Subject</label>
+<input class="w-full rounded-lg bg-input-bg border border-border-subtle text-white placeholder-gray-500 focus:border-primary focus:ring-1 focus:ring-primary py-3 px-4 transition-all" placeholder="Enter subject line" type="text"/>
+</div>
+<!-- Message Area -->
+<div>
+<label class="block text-sm font-medium text-gray-300 mb-1.5">Message</label>
+<div class="w-full rounded-lg bg-input-bg border border-border-subtle focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all flex flex-col">
+<textarea class="w-full bg-transparent border-none text-white placeholder-gray-500 focus:ring-0 p-4 h-[200px] resize-none" placeholder="Type your message here..."></textarea>
+<!-- Attachment Link -->
+<div class="px-4 pb-4 pt-2 border-t border-white/5">
+<button class="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors text-sm font-medium group">
+<span class="material-symbols-outlined text-[18px] group-hover:scale-110 transition-transform">attach_file</span>
+                            Attach file
+                        </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="flex items-center justify-end gap-3 px-6 pb-6 pt-2">
+<button class="px-6 py-2.5 rounded-lg text-gray-300 hover:text-white hover:bg-white/5 text-sm font-medium transition-colors">
+                Cancel
+            </button>
+<button class="px-6 py-2.5 rounded-lg bg-primary hover:bg-[#bfa030] text-black font-semibold text-sm transition-colors shadow-lg shadow-primary/10 flex items-center gap-2">
+                Send Message
+                <span class="material-symbols-outlined text-[18px]">send</span>
+</button>
+</div>
+</div>
+</body></html>

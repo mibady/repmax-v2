@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RepMax Recruiting Dashboard</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d4af35",
+                        "primary-dark": "#b08d1a",
+                        "background-light": "#f8f7f6", // Kept for config compliance, but largely unused in this specific dark design
+                        "background-dark": "#050505",
+                        "surface-dark": "#1F1F22",
+                        "surface-lighter": "#2A2A2E",
+                        "text-secondary": "#A1A1AA",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "md": "0.375rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar for dark theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050505;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #444;
+        }
+    </style>
+</head>
+<body class="bg-background-dark text-white overflow-x-hidden antialiased">
+<div class="flex min-h-screen w-full">
+<!-- Side Navigation -->
+<aside class="hidden lg:flex w-64 flex-col border-r border-[#333333] bg-background-dark fixed h-full z-20">
+<div class="flex h-16 items-center px-6 border-b border-[#333333]">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-3xl">token</span>
+<span class="text-xl font-bold tracking-tight text-white">RepMax</span>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto py-6 px-3 flex flex-col gap-2">
+<a class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary hover:bg-surface-dark hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-primary">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary hover:bg-surface-dark hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-primary">filter_alt</span>
+<span class="text-sm font-medium">Pipeline</span>
+</a>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary hover:bg-surface-dark hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-primary">groups</span>
+<span class="text-sm font-medium">Recruits</span>
+</a>
+<a class="flex items-center gap-3 rounded-lg bg-surface-dark px-3 py-2.5 text-white transition-colors group border-l-2 border-primary" href="#">
+<span class="material-symbols-outlined text-primary">bar_chart</span>
+<span class="text-sm font-medium">Reports</span>
+</a>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary hover:bg-surface-dark hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-primary">campaign</span>
+<span class="text-sm font-medium">Campaigns</span>
+</a>
+</nav>
+<div class="p-4 border-t border-[#333333]">
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-text-secondary hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+<div class="mt-4 flex items-center gap-3 px-3">
+<div class="size-8 rounded-full bg-cover bg-center border border-surface-lighter" data-alt="User profile picture" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBn-KWLvWSGNb2gaJ0JDoW05oRf64L8JDwmbLMjvEnZHxeE6FWIo5Lmm_0ce2NT_WNhpgQDH-bwBfLvY925yXoA4RrIxd7zA3ZrJZoIh5H02agXIoPl10Bpprl2cw_ZgWEN-quEVaVWvxxQ-NrqB_XziidSpLaTDnsCTf9bWgltUZ268WOiCcpUqlgsAHsClhqu8kEz8Gpp_jvb7wA-HztfESIGOfbNyo1vQwtW0ti-7VNYjlG-NZZaLe4im_HW8yjWA-vqA1RUfmQ');"></div>
+<div class="flex flex-col">
+<p class="text-xs font-medium text-white">Alex Morgan</p>
+<p class="text-[10px] text-text-secondary">Director of Recruiting</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 lg:pl-64 flex flex-col min-h-screen">
+<!-- Top Header -->
+<header class="h-16 border-b border-[#333333] bg-background-dark/95 backdrop-blur-sm sticky top-0 z-10 flex items-center justify-between px-6 lg:px-10">
+<h2 class="text-lg font-semibold text-white">Department Overview</h2>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-text-secondary text-[20px]">search</span>
+<input class="h-9 w-64 rounded-md border-none bg-surface-dark pl-10 pr-4 text-sm text-white placeholder-text-secondary focus:ring-1 focus:ring-primary" placeholder="Search reports..." type="text"/>
+</div>
+<button class="relative rounded-full p-1.5 text-text-secondary hover:bg-surface-dark hover:text-white transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 size-2 rounded-full bg-primary border border-background-dark"></span>
+</button>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="p-6 lg:p-10 space-y-8 max-w-[1600px] mx-auto w-full">
+<!-- Page Heading & Filters -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="space-y-1">
+<h1 class="text-3xl font-bold tracking-tight text-white">Recruiting Reports</h1>
+<p class="text-text-secondary">Pipeline analytics and staff performance metrics</p>
+</div>
+<div class="flex flex-wrap gap-2">
+<button class="flex items-center gap-2 rounded-full border border-surface-lighter bg-surface-dark px-4 py-1.5 text-sm font-medium text-white hover:border-primary/50 transition-colors">
+<span>Class of 2025</span>
+<span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+<button class="flex items-center gap-2 rounded-full border border-surface-lighter bg-surface-dark px-4 py-1.5 text-sm font-medium text-white hover:border-primary/50 transition-colors">
+<span>Varsity Program</span>
+<span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+<button class="flex items-center gap-2 rounded-full border border-surface-lighter bg-surface-dark px-4 py-1.5 text-sm font-medium text-white hover:border-primary/50 transition-colors">
+<span class="material-symbols-outlined text-[16px] text-primary">calendar_today</span>
+<span>This Quarter</span>
+</button>
+</div>
+</div>
+<!-- Pipeline Funnel Visualization -->
+<section class="rounded-xl border border-[#333333] bg-surface-dark p-6 shadow-sm overflow-x-auto">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-lg font-semibold text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">filter_list</span>
+                        Pipeline Funnel
+                    </h3>
+<button class="text-xs text-primary hover:text-white font-medium">View Detail</button>
+</div>
+<div class="min-w-[800px] flex flex-col">
+<!-- Funnel Bars -->
+<div class="flex items-stretch gap-1 h-32 relative">
+<!-- Stage 1 -->
+<div class="flex-1 flex flex-col group relative">
+<div class="flex-1 bg-surface-lighter rounded-l-lg relative border-r border-background-dark overflow-hidden flex items-center justify-center">
+<div class="absolute inset-0 bg-gradient-to-r from-surface-lighter to-surface-lighter/80 group-hover:to-surface-lighter/60 transition-colors"></div>
+<span class="relative z-10 text-2xl font-bold font-mono group-hover:scale-110 transition-transform">1,240</span>
+</div>
+<div class="mt-3 text-center">
+<p class="text-xs font-bold uppercase tracking-wider text-text-secondary mb-1">Identified</p>
+</div>
+</div>
+<!-- Conversion 1-2 -->
+<div class="absolute left-[18%] top-1/2 -translate-y-1/2 z-20 flex flex-col items-center -translate-y-[20px]">
+<div class="bg-background-dark border border-[#333] text-[10px] text-white px-2 py-0.5 rounded-full font-mono shadow-lg">68%</div>
+</div>
+<!-- Stage 2 -->
+<div class="flex-1 flex flex-col group relative">
+<div class="flex-1 bg-surface-lighter/80 relative border-r border-background-dark overflow-hidden flex items-center justify-center">
+<div class="absolute inset-y-4 inset-x-0 bg-[#3a3a3e] group-hover:bg-[#45454a] transition-colors"></div>
+<span class="relative z-10 text-2xl font-bold font-mono text-white/90 group-hover:scale-110 transition-transform">843</span>
+</div>
+<div class="mt-3 text-center">
+<p class="text-xs font-bold uppercase tracking-wider text-text-secondary mb-1">Contacted</p>
+</div>
+</div>
+<!-- Conversion 2-3 -->
+<div class="absolute left-[38%] top-1/2 -translate-y-1/2 z-20 flex flex-col items-center -translate-y-[20px]">
+<div class="bg-background-dark border border-[#333] text-[10px] text-white px-2 py-0.5 rounded-full font-mono shadow-lg">45%</div>
+</div>
+<!-- Stage 3 -->
+<div class="flex-1 flex flex-col group relative">
+<div class="flex-1 bg-surface-lighter/60 relative border-r border-background-dark overflow-hidden flex items-center justify-center">
+<div class="absolute inset-y-8 inset-x-0 bg-[#4a4a4e] group-hover:bg-[#55555a] transition-colors"></div>
+<span class="relative z-10 text-2xl font-bold font-mono text-white/90 group-hover:scale-110 transition-transform">379</span>
+</div>
+<div class="mt-3 text-center">
+<p class="text-xs font-bold uppercase tracking-wider text-text-secondary mb-1">Visited</p>
+</div>
+</div>
+<!-- Conversion 3-4 -->
+<div class="absolute left-[58%] top-1/2 -translate-y-1/2 z-20 flex flex-col items-center -translate-y-[20px]">
+<div class="bg-background-dark border border-[#333] text-[10px] text-white px-2 py-0.5 rounded-full font-mono shadow-lg">32%</div>
+</div>
+<!-- Stage 4 -->
+<div class="flex-1 flex flex-col group relative">
+<div class="flex-1 bg-surface-lighter/40 relative border-r border-background-dark overflow-hidden flex items-center justify-center">
+<div class="absolute inset-y-10 inset-x-0 bg-[#5a5a5e] group-hover:bg-[#65656a] transition-colors"></div>
+<span class="relative z-10 text-2xl font-bold font-mono text-white/90 group-hover:scale-110 transition-transform">121</span>
+</div>
+<div class="mt-3 text-center">
+<p class="text-xs font-bold uppercase tracking-wider text-text-secondary mb-1">Offered</p>
+</div>
+</div>
+<!-- Conversion 4-5 -->
+<div class="absolute left-[78%] top-1/2 -translate-y-1/2 z-20 flex flex-col items-center -translate-y-[20px]">
+<div class="bg-background-dark border border-primary/40 text-primary text-[10px] px-2 py-0.5 rounded-full font-mono shadow-lg shadow-primary/10">75%</div>
+</div>
+<!-- Stage 5 -->
+<div class="flex-1 flex flex-col group relative">
+<div class="flex-1 bg-primary/10 rounded-r-lg relative border-r border-background-dark overflow-hidden flex items-center justify-center border border-primary/20 shadow-[0_0_15px_-5px_rgba(212,175,53,0.3)]">
+<div class="absolute inset-y-12 inset-x-0 bg-primary group-hover:bg-primary-dark transition-colors"></div>
+<span class="relative z-10 text-3xl font-bold font-mono text-white drop-shadow-md group-hover:scale-110 transition-transform">91</span>
+</div>
+<div class="mt-3 text-center">
+<p class="text-xs font-bold uppercase tracking-wider text-primary mb-1">Committed</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Stats Row -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
+<!-- Stat Card 1 -->
+<div class="rounded-xl border border-[#333333] bg-surface-dark p-6 flex flex-col justify-between hover:border-primary/30 transition-colors group">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-text-secondary text-sm font-medium mb-1">Communications</p>
+<p class="text-xs text-text-secondary/60">Calls, Emails, &amp; SMS</p>
+</div>
+<div class="p-2 bg-surface-lighter rounded-lg text-text-secondary group-hover:text-white group-hover:bg-surface-lighter/80 transition-colors">
+<span class="material-symbols-outlined text-[20px]">chat</span>
+</div>
+</div>
+<div class="mt-4 flex items-baseline gap-2">
+<span class="text-4xl font-bold text-white font-mono">87</span>
+<span class="text-xs font-medium text-green-500 flex items-center">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+                            12%
+                        </span>
+</div>
+</div>
+<!-- Stat Card 2 -->
+<div class="rounded-xl border border-[#333333] bg-surface-dark p-6 flex flex-col justify-between hover:border-primary/30 transition-colors group">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-text-secondary text-sm font-medium mb-1">Campus Visits</p>
+<p class="text-xs text-text-secondary/60">Official &amp; Unofficial</p>
+</div>
+<div class="p-2 bg-surface-lighter rounded-lg text-text-secondary group-hover:text-white group-hover:bg-surface-lighter/80 transition-colors">
+<span class="material-symbols-outlined text-[20px]">location_on</span>
+</div>
+</div>
+<div class="mt-4 flex items-baseline gap-2">
+<span class="text-4xl font-bold text-white font-mono">8</span>
+<span class="text-xs font-medium text-text-secondary flex items-center">
+                            vs. 6 last week
+                        </span>
+</div>
+</div>
+<!-- Stat Card 3 -->
+<div class="rounded-xl border border-[#333333] bg-surface-dark p-6 flex flex-col justify-between hover:border-primary/30 transition-colors group">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-text-secondary text-sm font-medium mb-1">Avg Time to Commit</p>
+<p class="text-xs text-text-secondary/60">From Identified Date</p>
+</div>
+<div class="p-2 bg-surface-lighter rounded-lg text-text-secondary group-hover:text-white group-hover:bg-surface-lighter/80 transition-colors">
+<span class="material-symbols-outlined text-[20px]">schedule</span>
+</div>
+</div>
+<div class="mt-4 flex items-baseline gap-2">
+<span class="text-4xl font-bold text-primary font-mono">47d</span>
+<span class="text-xs font-medium text-green-500 flex items-center">
+<span class="material-symbols-outlined text-[14px]">arrow_downward</span>
+                            3 days
+                        </span>
+</div>
+</div>
+</div>
+<!-- Detail Grid: Leaderboard & Chart -->
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+<!-- Staff Activity Table -->
+<div class="rounded-xl border border-[#333333] bg-surface-dark overflow-hidden flex flex-col h-full">
+<div class="p-5 border-b border-[#333333] flex justify-between items-center">
+<h3 class="font-semibold text-white">Staff Activity Leaderboard</h3>
+<button class="text-text-secondary hover:text-white">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+<div class="overflow-x-auto flex-1">
+<table class="w-full text-left text-sm">
+<thead class="bg-surface-lighter/50 text-text-secondary">
+<tr>
+<th class="px-5 py-3 font-medium">Recruiter</th>
+<th class="px-5 py-3 font-medium text-center">Calls</th>
+<th class="px-5 py-3 font-medium text-center">Emails</th>
+<th class="px-5 py-3 font-medium text-center">Visits</th>
+<th class="px-5 py-3 font-medium text-right text-primary">Commits</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#333333]">
+<tr class="hover:bg-surface-lighter/30 transition-colors group cursor-pointer">
+<td class="px-5 py-4">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="size-9 rounded-full bg-cover bg-center" data-alt="Staff avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCyNLexujFhCy-TMljmEGrRUhyFoQYnAgLvxHeW25My0OkhKYAab71UtSWgXert5jWiYoX-lpii-3t80kU78Z-cxMuitdv4tDdXXrzivJm6pGXg7lRAq1LTd-LFQpKzpjRidjQBYJXvNdbReXV-d5L9Yz9Vi7fMHwuM1zkZbZS0XwZru7YNuy71t6dQXTnn72HVOlPw3uO4NorhDolwQP-uRDsKknOMmZEZIEegjhqm075shm0_NZDBpgGmIEaqmDX8fknDXamz7tI');"></div>
+<div class="absolute -top-1 -right-1 bg-primary text-background-dark rounded-full size-4 flex items-center justify-center text-[10px] font-bold border border-surface-dark">1</div>
+</div>
+<div>
+<p class="font-medium text-white">Michael Thompson</p>
+<p class="text-xs text-text-secondary">Midwest Region</p>
+</div>
+</div>
+</td>
+<td class="px-5 py-4 text-center font-mono text-text-secondary group-hover:text-white">142</td>
+<td class="px-5 py-4 text-center font-mono text-text-secondary group-hover:text-white">89</td>
+<td class="px-5 py-4 text-center font-mono text-text-secondary group-hover:text-white">12</td>
+<td class="px-5 py-4 text-right font-bold text-primary font-mono">24</td>
+</tr>
+<tr class="hover:bg-surface-lighter/30 transition-colors group cursor-pointer">
+<td class="px-5 py-4">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="size-9 rounded-full bg-cover bg-center" data-alt="Staff avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCqkieKy6P5Y0WVEERRqdwJiR1i6kz33YF6sCMpOZ3A5mxStgZFFdIdflZQut-UX-qez0lR-FczUi4UOgUzFcA0f_BbD6dZsv9Hl2ni1aIRFbqD1Po6VeTxiWPS3SrVOCleKeRlQsSTcx7dB7fKA7AorSr5N45lClEnzIjhcPRUOW5HR2wAjGz4eDEFap0IBwdrHM1MFalFvVm77_WT_AzQK_t69LyasrtNyH06OoAFrzlNc9BCePpbcELpqQqidmVmxvHPdNRshgs');"></div>
+<div class="absolute -top-1 -right-1 bg-[#C0C0C0] text-background-dark rounded-full size-4 flex items-center justify-center text-[10px] font-bold border border-surface-dark">2</div>
+</div>
+<div>
+<p class="font-medium text-white">Sarah Jenkins</p>
+<p class="text-xs text-text-secondary">West Coast</p>
+</div>
+</div>
+</td>
+<td class="px-5 py-4 text-center font-mono text-text-secondary group-hover:text-white">118</td>
+<td class="px-5 py-4 text-center font-mono text-text-secondary group-hover:text-white">104</td>
+<td class="px-5 py-4 text-center font-mono text-text-secondary group-hover:text-white">9</td>
+<td class="px-5 py-4 text-right font-bold text-primary font-mono">18</td>
+</tr>
+<tr class="hover:bg-surface-lighter/30 transition-colors group cursor-pointer">
+<td class="px-5 py-4">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="size-9 rounded-full bg-cover bg-center" data-alt="Staff avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAz6PmTSU6EfPPCFCJASwdWNG8D6vQvs7MBesHKCTUUX-VKQy846AxlG7puHdHxxxOpqAeVKS6tJs4DRZp51jW-Vl8yJHXf6m-_xoxnJynu7AdBJZOWD_cfkXbHb2LpKg4hwCkWGWq7aXYBLGXQix1WQLDQeGo3mIsszE3CZggV9u8FhAjDO_h-CI36KVVzhLKFr6C3Es6MLzKTPsKMhSlrrm5YpdExbArPkgQgGpQeRzcZL1CicJV47K4nBTqRAhchSxwy4L_PWdo');"></div>
+<div class="absolute -top-1 -right-1 bg-[#CD7F32] text-background-dark rounded-full size-4 flex items-center justify-center text-[10px] font-bold border border-surface-dark">3</div>
+</div>
+<div>
+<p class="font-medium text-white">David Chen</p>
+<p class="text-xs text-text-secondary">Northeast</p>
+</div>
+</div>
+</td>
+<td class="px-5 py-4 text-center font-mono text-text-secondary group-hover:text-white">98</td>
+<td class="px-5 py-4 text-center font-mono text-text-secondary group-hover:text-white">67</td>
+<td class="px-5 py-4 text-center font-mono text-text-secondary group-hover:text-white">15</td>
+<td class="px-5 py-4 text-right font-bold text-primary font-mono">14</td>
+</tr>
+<tr class="hover:bg-surface-lighter/30 transition-colors group cursor-pointer">
+<td class="px-5 py-4">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="size-9 rounded-full bg-cover bg-center" data-alt="Staff avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC1iaTjS5A0jTJsQ4FqHfzgqE1wdxxDj4SdCklyggrjbsacR5JqzQUxXbB2ZXRWQ--Twc5uEZ3EwmxNVPp8hnS2wftKDGcHeR15Q7iw4IEcNyOZ3rWfbQm2iVW9A8L2XWwVBeXeRNm3ppiwewpzizvs-oTwx9eM2kl3h0XuvBYKLkZ2jleqvbWy1JXdO7ysZFTtjuT2imz8BWaySVqP3Xfuqa90ZGcxydORJJKfztg7ZnqytUFIw8Z3gmubP75FF9xZDEIfOoVJYBk');"></div>
+</div>
+<div>
+<p class="font-medium text-white">Robert Fox</p>
+<p class="text-xs text-text-secondary">South</p>
+</div>
+</div>
+</td>
+<td class="px-5 py-4 text-center font-mono text-text-secondary group-hover:text-white">85</td>
+<td class="px-5 py-4 text-center font-mono text-text-secondary group-hover:text-white">92</td>
+<td class="px-5 py-4 text-center font-mono text-text-secondary group-hover:text-white">6</td>
+<td class="px-5 py-4 text-right font-bold text-primary font-mono">11</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-3 border-t border-[#333333] flex justify-center">
+<button class="text-xs font-medium text-text-secondary hover:text-white">View All Staff</button>
+</div>
+</div>
+<!-- Zone Coverage Bar Chart -->
+<div class="rounded-xl border border-[#333333] bg-surface-dark p-6 flex flex-col h-full min-h-[400px]">
+<div class="flex justify-between items-center mb-6">
+<div>
+<h3 class="font-semibold text-white">Zone Coverage</h3>
+<p class="text-xs text-text-secondary">Active prospects distribution</p>
+</div>
+<div class="flex gap-2">
+<span class="size-3 rounded-sm bg-primary block"></span>
+<span class="text-xs text-text-secondary">Prospects</span>
+</div>
+</div>
+<div class="flex-1 flex items-end justify-between gap-4 px-2 pb-2">
+<!-- Y-axis lines would go here in a real chart lib, we simulate bars -->
+<!-- Bar 1 -->
+<div class="flex flex-col items-center gap-2 group w-full">
+<div class="relative w-full bg-surface-lighter/30 rounded-t-sm h-[200px] flex items-end justify-center">
+<div class="w-full mx-2 bg-primary/60 group-hover:bg-primary transition-all rounded-t-sm relative" style="height: 45%;">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-lighter text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">450</div>
+</div>
+</div>
+<span class="text-xs font-medium text-text-secondary">Zone 1</span>
+</div>
+<!-- Bar 2 -->
+<div class="flex flex-col items-center gap-2 group w-full">
+<div class="relative w-full bg-surface-lighter/30 rounded-t-sm h-[200px] flex items-end justify-center">
+<div class="w-full mx-2 bg-primary/60 group-hover:bg-primary transition-all rounded-t-sm relative" style="height: 75%;">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-lighter text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">750</div>
+</div>
+</div>
+<span class="text-xs font-medium text-text-secondary">Zone 2</span>
+</div>
+<!-- Bar 3 -->
+<div class="flex flex-col items-center gap-2 group w-full">
+<div class="relative w-full bg-surface-lighter/30 rounded-t-sm h-[200px] flex items-end justify-center">
+<div class="w-full mx-2 bg-primary/60 group-hover:bg-primary transition-all rounded-t-sm relative" style="height: 30%;">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-lighter text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">300</div>
+</div>
+</div>
+<span class="text-xs font-medium text-text-secondary">Zone 3</span>
+</div>
+<!-- Bar 4 -->
+<div class="flex flex-col items-center gap-2 group w-full">
+<div class="relative w-full bg-surface-lighter/30 rounded-t-sm h-[200px] flex items-end justify-center">
+<div class="w-full mx-2 bg-primary/60 group-hover:bg-primary transition-all rounded-t-sm relative" style="height: 60%;">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-lighter text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">600</div>
+</div>
+</div>
+<span class="text-xs font-medium text-text-secondary">Zone 4</span>
+</div>
+<!-- Bar 5 -->
+<div class="flex flex-col items-center gap-2 group w-full">
+<div class="relative w-full bg-surface-lighter/30 rounded-t-sm h-[200px] flex items-end justify-center">
+<div class="w-full mx-2 bg-primary/60 group-hover:bg-primary transition-all rounded-t-sm relative" style="height: 85%;">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-lighter text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">850</div>
+</div>
+</div>
+<span class="text-xs font-medium text-text-secondary">Zone 5</span>
+</div>
+<!-- Bar 6 -->
+<div class="flex flex-col items-center gap-2 group w-full">
+<div class="relative w-full bg-surface-lighter/30 rounded-t-sm h-[200px] flex items-end justify-center">
+<div class="w-full mx-2 bg-primary/60 group-hover:bg-primary transition-all rounded-t-sm relative" style="height: 40%;">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-lighter text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">400</div>
+</div>
+</div>
+<span class="text-xs font-medium text-text-secondary">Zone 6</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

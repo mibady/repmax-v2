@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Notification Settings - RepMax</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d4af35",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#0a0a0a",
+                        "card-dark": "#1A1A1A",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-nav {
+            background-color: #d4af35;
+            color: #0a0a0a;
+        }
+        .active-nav .material-symbols-outlined {
+            color: #0a0a0a;
+            font-variation-settings: 'FILL' 1;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a2a2a;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #333;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="sticky top-0 z-50 w-full border-b border-white/10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-3 flex items-center justify-between">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3">
+<div class="size-8 bg-primary rounded flex items-center justify-center text-background-dark">
+<span class="material-symbols-outlined text-2xl font-bold">sports_football</span>
+</div>
+<h2 class="text-xl font-black tracking-tighter uppercase italic">RepMax</h2>
+</div>
+<div class="hidden md:flex items-center">
+<div class="relative group">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500 group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm">search</span>
+</span>
+<input class="w-64 bg-slate-100 dark:bg-card-dark border-none focus:ring-1 focus:ring-primary rounded-lg py-2 pl-10 pr-4 text-sm transition-all" placeholder="Search recruits, teams, or scouts..."/>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-white/5 transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-primary rounded-full border-2 border-background-dark"></span>
+</button>
+<div class="h-8 w-[1px] bg-white/10 mx-2"></div>
+<div class="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity">
+<div class="text-right hidden sm:block">
+<p class="text-xs font-bold">Coach Harrison</p>
+<p class="text-[10px] text-slate-500 uppercase tracking-widest">Director of Personnel</p>
+</div>
+<div class="size-10 rounded-full bg-primary/20 border border-primary/40 p-0.5">
+<div class="size-full rounded-full bg-cover bg-center" data-alt="User profile avatar of Coach Harrison" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBDvNL4E_Q5y5KSx5qt23VVqvehU0W_1Fjw9niCEvScfjSwiRddf5aEtey1EmTiMQ4YDkmsVstTmqv2NvUswr1CNMGvn2HEdmhjRwu-rRpKsZYOxZ9ymm-GIInOSfLUnbwvxMdOnyssYXoUOKxeEfypKpgND_-MmDmwOzLDfQygzTR2FMd-SAPpMHe18orcBm7zGR-lK_MklQscMRJ1UYXKtXUB3Abhhhm08RUgCpzvoDbg08HV_cAUXhtMvAdfEuR5BaBP5TkWBWc");'></div>
+</div>
+</div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<!-- SideNavBar -->
+<aside class="w-72 hidden lg:flex flex-col border-r border-white/5 bg-background-light dark:bg-background-dark p-6 gap-8 overflow-y-auto">
+<div>
+<p class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-4">Recruiting Suite</p>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-semibold">Intelligence Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="text-sm font-semibold">Team Management</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined">person_search</span>
+<span class="text-sm font-semibold">Scouting Reports</span>
+</a>
+</nav>
+</div>
+<div>
+<p class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-4">Settings</p>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-sm font-semibold">Account Profile</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg active-nav shadow-lg shadow-primary/20 transition-all" href="#">
+<span class="material-symbols-outlined">notifications_active</span>
+<span class="text-sm font-bold">Notification Preferences</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined">security</span>
+<span class="text-sm font-semibold">Security &amp; Privacy</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-sm font-semibold">Billing &amp; Plans</span>
+</a>
+</nav>
+</div>
+<div class="mt-auto">
+<div class="bg-gradient-to-br from-primary/20 to-transparent border border-primary/20 p-4 rounded-xl">
+<p class="text-xs font-bold text-primary mb-1">PRO PLAN</p>
+<p class="text-[10px] text-slate-400 mb-3">Your subscription renews on Oct 12, 2024.</p>
+<button class="w-full py-2 bg-primary text-background-dark text-[10px] font-black uppercase tracking-widest rounded hover:bg-primary/90 transition-all">Upgrade Account</button>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto pb-32">
+<div class="max-w-4xl mx-auto px-6 py-10 flex flex-col gap-10">
+<!-- PageHeading -->
+<div class="flex flex-col gap-2">
+<h1 class="text-4xl font-black tracking-tight text-slate-900 dark:text-white">Notification Settings</h1>
+<p class="text-slate-500 dark:text-slate-400 max-w-2xl text-lg">Customize your intelligence flow. Choose how and when you receive critical recruiting alerts, offers, and scout updates.</p>
+</div>
+<div class="grid gap-12">
+<!-- Push Notifications Section -->
+<section>
+<div class="flex items-center gap-2 mb-6 px-1">
+<span class="material-symbols-outlined text-primary">app_badging</span>
+<h2 class="text-xl font-bold tracking-tight">Push Notifications</h2>
+</div>
+<div class="grid gap-px bg-slate-200 dark:bg-white/10 rounded-xl overflow-hidden border border-slate-200 dark:border-white/10">
+<!-- Toggle Card Item -->
+<div class="flex items-center justify-between p-6 bg-white dark:bg-card-dark hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
+<div class="flex flex-col gap-1">
+<p class="text-base font-bold">Profile Views</p>
+<p class="text-sm text-slate-500">Notify when a scout or coach views a prospect profile.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-12 h-6 bg-slate-300 dark:bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between p-6 bg-white dark:bg-card-dark hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
+<div class="flex flex-col gap-1">
+<p class="text-base font-bold">New Offers</p>
+<p class="text-sm text-slate-500">Instant alerts when an athlete in your watchlist receives a scholarship offer.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-12 h-6 bg-slate-300 dark:bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between p-6 bg-white dark:bg-card-dark hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
+<div class="flex flex-col gap-1">
+<p class="text-base font-bold">Shortlist Activity</p>
+<p class="text-sm text-slate-500">Updates on movement within your recruitment shortlist.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-12 h-6 bg-slate-300 dark:bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between p-6 bg-white dark:bg-card-dark hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
+<div class="flex flex-col gap-1">
+<p class="text-base font-bold">Messages</p>
+<p class="text-sm text-slate-500">Direct notifications for internal staff messages.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-12 h-6 bg-slate-300 dark:bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between p-6 bg-white dark:bg-card-dark hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
+<div class="flex flex-col gap-1">
+<p class="text-base font-bold">Calendar Reminders</p>
+<p class="text-sm text-slate-500">Alerts for scheduled visits, calls, and evaluation deadlines.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-12 h-6 bg-slate-300 dark:bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</section>
+<!-- Email Notifications Section -->
+<section>
+<div class="flex items-center gap-2 mb-6 px-1">
+<span class="material-symbols-outlined text-primary">mail</span>
+<h2 class="text-xl font-bold tracking-tight">Email Notifications</h2>
+</div>
+<div class="grid gap-px bg-slate-200 dark:bg-white/10 rounded-xl overflow-hidden border border-slate-200 dark:border-white/10">
+<!-- Weekly Digest with Dropdown -->
+<div class="flex flex-col @[480px]:flex-row @[480px]:items-center justify-between p-6 bg-white dark:bg-card-dark gap-4">
+<div class="flex flex-col gap-1">
+<p class="text-base font-bold">Recruiting Intelligence Digest</p>
+<p class="text-sm text-slate-500">A summarized report of all recruiting activity.</p>
+</div>
+<div class="flex items-center gap-4">
+<select class="bg-slate-100 dark:bg-white/5 border border-white/10 text-sm rounded-lg py-2 px-3 focus:ring-primary focus:border-primary">
+<option>Daily</option>
+<option selected="">Weekly</option>
+<option>Monthly</option>
+<option>Never</option>
+</select>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-12 h-6 bg-slate-300 dark:bg-white/10 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+<div class="flex items-center justify-between p-6 bg-white dark:bg-card-dark">
+<div class="flex flex-col gap-1">
+<p class="text-base font-bold">Important Deadlines</p>
+<p class="text-sm text-slate-500">Emails regarding NCAA compliance periods and dead periods.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-12 h-6 bg-slate-300 dark:bg-white/10 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between p-6 bg-white dark:bg-card-dark">
+<div class="flex flex-col gap-1">
+<p class="text-base font-bold">Marketing &amp; Tips</p>
+<p class="text-sm text-slate-500">Occasional updates about new RepMax features and recruiting best practices.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-12 h-6 bg-slate-300 dark:bg-white/10 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</section>
+<!-- In-App Notifications Section -->
+<section>
+<div class="flex items-center gap-2 mb-6 px-1">
+<span class="material-symbols-outlined text-primary">view_quilt</span>
+<h2 class="text-xl font-bold tracking-tight">In-App Notifications</h2>
+</div>
+<div class="grid gap-px bg-slate-200 dark:bg-white/10 rounded-xl overflow-hidden border border-slate-200 dark:border-white/10">
+<div class="flex items-center justify-between p-6 bg-white dark:bg-card-dark">
+<div class="flex flex-col gap-1">
+<p class="text-base font-bold">Badge Count</p>
+<p class="text-sm text-slate-500">Show notification count on the sidebar and app icon.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-12 h-6 bg-slate-300 dark:bg-white/10 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between p-6 bg-white dark:bg-card-dark">
+<div class="flex flex-col gap-1">
+<p class="text-base font-bold">System Sounds</p>
+<p class="text-sm text-slate-500">Play a subtle sound when a new alert arrives while the app is open.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-12 h-6 bg-slate-300 dark:bg-white/10 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</section>
+<!-- Quiet Hours Section -->
+<section class="mb-12">
+<div class="flex items-center gap-2 mb-6 px-1">
+<span class="material-symbols-outlined text-primary">do_not_disturb_on</span>
+<h2 class="text-xl font-bold tracking-tight">Quiet Hours</h2>
+</div>
+<div class="p-6 bg-white dark:bg-card-dark rounded-xl border border-slate-200 dark:border-white/10">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+<div class="flex flex-col gap-1 max-w-md">
+<p class="text-base font-bold">Schedule Downtime</p>
+<p class="text-sm text-slate-500">Automatically silence all notifications during these hours to minimize distractions.</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex flex-col gap-1">
+<label class="text-[10px] uppercase font-bold text-slate-500">From</label>
+<input class="bg-slate-100 dark:bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-sm focus:ring-primary focus:border-primary" type="time" value="22:00"/>
+</div>
+<div class="text-slate-500 mt-5">—</div>
+<div class="flex flex-col gap-1">
+<label class="text-[10px] uppercase font-bold text-slate-500">To</label>
+<input class="bg-slate-100 dark:bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-sm focus:ring-primary focus:border-primary" type="time" value="07:00"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+</div>
+<!-- Fixed Bottom Action Bar -->
+<div class="fixed bottom-0 left-0 right-0 z-50 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-xl border-t border-white/10 p-4 md:pl-72 flex justify-center">
+<div class="max-w-4xl w-full flex items-center justify-between px-6">
+<div class="hidden md:block">
+<p class="text-sm text-slate-500">Unsaved changes detected</p>
+</div>
+<div class="flex items-center gap-4 w-full md:w-auto">
+<button class="flex-1 md:flex-none px-6 py-2.5 rounded-lg text-sm font-bold border border-slate-300 dark:border-white/10 hover:bg-white/5 transition-colors">Discard</button>
+<button class="flex-1 md:flex-none px-8 py-2.5 rounded-lg text-sm font-black bg-primary text-background-dark hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20 uppercase tracking-widest">Save Changes</button>
+</div>
+</div>
+</div>
+</body></html>

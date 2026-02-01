@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Active Chat Thread View</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d4af35",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#201d12",
+                        "chat-bg": "#0F0F10",
+                        "bubble-incoming": "#1F1F22",
+                        "input-bg": "#1A1A1A",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #141415; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333; 
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #444; 
+        }
+    </style>
+</head>
+<body class="bg-chat-bg h-screen w-full flex flex-col font-display antialiased overflow-hidden text-white">
+<!-- Header -->
+<header class="flex items-center justify-between px-6 py-4 bg-[#141415] border-b border-[#2A2A2E] shadow-sm z-10 shrink-0">
+<div class="flex items-center gap-4">
+<!-- Avatar -->
+<div class="relative">
+<div class="h-12 w-12 rounded-full bg-cover bg-center bg-no-repeat ring-2 ring-[#2A2A2E]" data-alt="Coach Williams profile picture" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDaIghdZECc8rCzkQOGeOyxi4UGPr0Q1r2zaBOg_94TuCiX4j71-0pr6e7LSZc1mI8d8d8NfO4ddzyhfK8Xvy3gFxqeJzyGjx6YPYnu4mSPVjQql3h8de864zIy61vbiXWDOJtdOK5vLaRThgLH8bbS-MVhCDv1A6L9PBfQFa6JxjyUF7Jr5GvIu4VmI-wxj8rc3DCRTJTP7fLWIQE8jiE_Fy1AD6EmkyMB4AoghjylO3F33QpamRcB73QjK4OV5eCh3QqmN6EQreE');">
+</div>
+<div class="absolute bottom-0 right-0 h-3 w-3 bg-green-500 rounded-full border-2 border-[#141415]"></div>
+</div>
+<!-- Info -->
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<h1 class="text-white text-lg font-bold tracking-tight">Coach Williams</h1>
+<span class="bg-blue-600/20 text-blue-400 text-[11px] font-semibold px-2 py-0.5 rounded-full border border-blue-500/30">TCU Recruiter</span>
+</div>
+<div class="flex items-center gap-1 group cursor-pointer w-fit">
+<span class="material-symbols-outlined text-primary text-sm">person</span>
+<span class="text-primary text-sm font-medium group-hover:underline">View Profile</span>
+</div>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-2 text-gray-400">
+<button aria-label="Search" class="p-2 hover:bg-[#2A2A2E] rounded-full transition-colors">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button aria-label="Options" class="p-2 hover:bg-[#2A2A2E] rounded-full transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</header>
+<!-- Message Area -->
+<main class="flex-1 overflow-y-auto px-6 py-6 bg-chat-bg relative">
+<div class="max-w-4xl mx-auto flex flex-col gap-6">
+<!-- Date Separator -->
+<div class="flex justify-center my-2">
+<div class="bg-[#1F1F22] px-4 py-1 rounded-full text-xs font-medium text-gray-400 border border-[#2A2A2E]">
+                    Today
+                </div>
+</div>
+<!-- Message 1: Incoming -->
+<div class="flex items-end gap-3 group">
+<div class="h-8 w-8 rounded-full bg-cover bg-center shrink-0 mb-1 opacity-80" data-alt="Coach Williams small avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCHGVMmleRvfIoCcAjTkMct0BZjKEWtbKOwi0CvDbxuf1CQsu17RTdZufJOhAlmt82HDtqJRnsgQFNcu6rKtzKPZziy0hb7EyXAqVv9Gux4i1FmZdmZjE0NXRmfiR1AmvADVHVfbs2m6TPprzdDVGSjr9cvLFzUuI8ZwqKmbVbhAerob8PgDSUzmrnJTIhbzbjRzCFI8nNCtm1ptJqv4qg13M9unOsWrSmaOoBJOJ6g2E30BpYIojR4MjyJyx-h0MPKNYEdpUX_XvE');">
+</div>
+<div class="flex flex-col gap-1 max-w-[70%]">
+<div class="flex items-baseline gap-2 pl-1 mb-0.5">
+<span class="text-xs font-medium text-gray-400">Coach Williams</span>
+<span class="font-mono text-[10px] text-gray-600">10:30 AM</span>
+</div>
+<div class="bg-bubble-incoming px-5 py-3 rounded-2xl rounded-tl-sm text-white text-[13px] leading-relaxed shadow-sm">
+                        Hey! I reviewed your tape. Impressive speed off the line.
+                    </div>
+</div>
+</div>
+<!-- Message 2: Outgoing (Me) -->
+<div class="flex items-end gap-3 justify-end group">
+<div class="flex flex-col gap-1 items-end max-w-[70%]">
+<div class="flex items-baseline gap-2 pr-1 mb-0.5">
+<span class="font-mono text-[10px] text-gray-600">10:42 AM</span>
+<span class="text-xs font-medium text-gray-400">Me</span>
+</div>
+<div class="bg-primary/10 border-l-2 border-primary px-5 py-3 rounded-2xl rounded-tr-sm text-white text-[13px] leading-relaxed relative">
+                        Thanks Coach! I've been working specifically on my first step this off-season.
+                    </div>
+<div class="flex items-center gap-1 mt-0.5 pr-1">
+<span class="text-[10px] text-primary/60">Read</span>
+<span class="material-symbols-outlined text-[14px] text-primary">done_all</span>
+</div>
+</div>
+</div>
+<!-- Message 3: Incoming -->
+<div class="flex items-end gap-3 group">
+<div class="h-8 w-8 rounded-full bg-cover bg-center shrink-0 mb-1 opacity-80" data-alt="Coach Williams small avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDVnugBfUte2mFmXSuSf77o-utjjm6KHJfHAt7T34elHhyqlvXTT14iY2WNVNXx-IA80tKWI5d7H0NUdvUhDJPWYO1k_x7J34vKPuR8fM9ptKxNK3PLOvG77QZhbmKBmrXYnxYAc4z0gJtK5Kb86__n1LTTz0eq1fFdo1jHuGhkAFHzyvD0F1_0vNccwxr_DWfrs_dRyF0bIhpDXVEeYpKFjwW1YcN9Tb3fhQVN9AvgRxiakXHW4JnHY5Vxx7H6ziAbuzTdMjObHd4');">
+</div>
+<div class="flex flex-col gap-1 max-w-[70%]">
+<div class="flex items-baseline gap-2 pl-1 mb-0.5">
+<span class="text-xs font-medium text-gray-400">Coach Williams</span>
+<span class="font-mono text-[10px] text-gray-600">10:45 AM</span>
+</div>
+<div class="bg-bubble-incoming px-5 py-3 rounded-2xl rounded-tl-sm text-white text-[13px] leading-relaxed shadow-sm">
+                        It shows. When are you free for a quick call?
+                    </div>
+</div>
+</div>
+<!-- Typing Indicator -->
+<div class="flex items-end gap-3 mt-2 pl-11">
+<div class="flex items-center gap-2">
+<span class="text-xs text-gray-500 italic">Coach Williams is typing...</span>
+<div class="flex gap-1 items-center bg-[#1F1F22] px-2 py-1.5 rounded-full h-6 w-10 justify-center">
+<div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-pulse"></div>
+<div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-pulse delay-75"></div>
+<div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-pulse delay-150"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Input Bar -->
+<footer class="bg-input-bg border-t border-[#2A2A2E] p-4 shrink-0 z-10">
+<div class="max-w-4xl mx-auto">
+<div class="flex items-end gap-3">
+<!-- Utilities -->
+<button aria-label="Add attachment" class="text-gray-400 hover:text-white p-2 rounded-full hover:bg-[#2A2A2E] transition-colors h-10 w-10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+<button aria-label="Add emoji" class="text-gray-400 hover:text-white p-2 rounded-full hover:bg-[#2A2A2E] transition-colors h-10 w-10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined">sentiment_satisfied</span>
+</button>
+<!-- Input Field -->
+<div class="flex-1 relative">
+<textarea class="w-full bg-[#0F0F10] text-white text-sm placeholder-gray-500 rounded-xl px-4 py-3 border border-[#2A2A2E] focus:border-primary/50 focus:ring-1 focus:ring-primary/50 focus:outline-none resize-none overflow-hidden min-h-[44px]" placeholder="Type a message..." rows="1" style="height: 44px;"></textarea>
+</div>
+<!-- Send Button -->
+<button aria-label="Send message" class="bg-primary hover:bg-yellow-500 text-background-dark h-11 w-11 rounded-full flex items-center justify-center shadow-lg transition-colors shrink-0">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">send</span>
+</button>
+</div>
+<div class="flex justify-center mt-2">
+<p class="text-[10px] text-gray-600">Press Enter to send, Shift + Enter for new line</p>
+</div>
+</div>
+</footer>
+</body></html>
