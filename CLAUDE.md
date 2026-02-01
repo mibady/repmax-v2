@@ -1,0 +1,188 @@
+# RepMax v2 - Project Guide
+
+## Overview
+
+RepMax is a data-driven recruiting intelligence platform connecting elite football talent with top-tier college programs. Built with Next.js 15, Supabase, and Stripe.
+
+## Quick Start
+
+```bash
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Run in E2B sandbox (recommended for testing)
+npm run sandbox:build
+```
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Framework | Next.js 15.3.6 (App Router) |
+| Language | TypeScript 5.7 |
+| Database | Supabase (PostgreSQL) |
+| Auth | Supabase Auth |
+| Payments | Stripe |
+| Styling | Tailwind CSS 3.4 |
+| Validation | Zod |
+| Testing | E2B Cloud Sandbox |
+
+## Project Structure
+
+```
+repmax-v2/
+├── app/                          # Next.js App Router pages
+│   ├── (auth)/                   # Auth routes (login, signup, callback)
+│   ├── (app)/                    # Protected app routes
+│   │   └── dashboard/            # User dashboard
+│   ├── api/                      # API routes
+│   │   ├── athletes/             # Athletes CRUD
+│   │   ├── messages/             # NCAA-compliant messaging
+│   │   ├── shortlists/           # Coach shortlists
+│   │   └── webhooks/stripe/      # Stripe webhooks
+│   ├── card/[id]/                # Public athlete profile card
+│   ├── pricing/                  # Pricing page
+│   └── page.tsx                  # Landing page
+├── lib/
+│   ├── supabase/                 # Supabase clients
+│   ├── actions/                  # Server actions
+│   └── hooks/                    # React hooks
+├── types/                        # TypeScript types
+├── supabase/migrations/          # Database migrations
+└── stitch-exports/               # Stitch design exports
+```
+
+## Key Features
+
+### For Athletes
+- Create verified profile with measurables and academics
+- Upload highlight videos
+- Receive and manage college offers
+- NCAA-compliant messaging with coaches
+
+### For Coaches/Recruiters
+- Search and filter athlete database
+- Create shortlists with priority levels
+- Message athletes directly
+- Export data for analysis
+
+### Subscription Plans
+| Plan | Price | Features |
+|------|-------|----------|
+| Starter | Free | Basic access, 10 searches/day |
+| Pro | $9.99/mo | Full database, unlimited search, export |
+| Team | $29.99/mo | 5 seats, collaboration, shared lists |
+| Scout | Custom | API access, custom reporting |
+
+## Database Schema
+
+9 tables with RLS policies:
+- `profiles` - Base user profiles
+- `athletes` - Athlete-specific data (measurables, academics)
+- `coaches` - Coach/recruiter profiles
+- `highlights` - Athlete video highlights
+- `shortlists` - Coach shortlists
+- `messages` - NCAA-compliant messaging
+- `subscription_plans` - Available plans
+- `subscriptions` - User subscriptions
+- `offers` - College offers
+
+## Environment Variables
+
+Required in `.env.local`:
+```bash
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+STRIPE_PRO_PRICE_ID=
+STRIPE_TEAM_PRICE_ID=
+E2B_API_KEY=
+```
+
+## Testing
+
+Use E2B sandbox for isolated testing:
+```bash
+npm run sandbox:status    # Check configuration
+npm run sandbox:build     # Test build
+npm run sandbox:lint      # Run linter
+npm run sandbox:typecheck # Type check
+npm run sandbox:all       # Run all gates
+```
+
+## Common Tasks
+
+### Add New API Endpoint
+1. Create route in `app/api/[endpoint]/route.ts`
+2. Add Zod schema for validation
+3. Use `createClient()` for authenticated requests
+4. Add to middleware if protected
+
+### Add New Page
+1. Create `page.tsx` in `app/[route]/`
+2. Use server components for data fetching
+3. Add `'use client'` only when using hooks
+4. Import hooks from `@/lib/hooks`
+
+### Update Database Schema
+1. Modify `supabase/migrations/`
+2. Run `npm run db:push`
+3. Regenerate types: `npm run db:generate`
+
+## Code Patterns
+
+### Server Actions
+```typescript
+'use server';
+import { createClient } from '@/lib/supabase/server';
+
+export async function myAction(formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  // ... implementation
+}
+```
+
+### Protected Routes
+The middleware at `middleware.ts` handles:
+- Auth state refresh
+- Route protection
+- Redirect logic
+
+### Data Fetching Hooks
+```typescript
+import { useAthletes, useShortlist, useMessages } from '@/lib/hooks';
+
+const { athletes, isLoading, error } = useAthletes({ position: 'QB' });
+```
+
+## Deployment
+
+Deployed on Vercel. Push to main triggers automatic deployment.
+
+```bash
+vercel --prod  # Manual production deploy
+```
+
+## Known Issues
+
+1. Font-display warning in layout.tsx (cosmetic, non-blocking)
+2. Next.js 15.3.6 has a known security issue - consider upgrading
+
+## Resources
+
+- [Stitch Design Exports](./stitch-exports/)
+- [Database Schema](./supabase/migrations/001_initial_schema.sql)
+- [API Routes](./app/api/)
+
+---
+
+Generated by Claude Code | Last updated: 2026-02-01

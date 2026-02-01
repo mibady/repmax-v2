@@ -10,7 +10,13 @@
     "db:generate": "supabase gen types typescript --local > types/database.ts",
     "db:push": "supabase db push",
     "db:reset": "supabase db reset",
-    "db:migrate": "supabase migration up"
+    "db:migrate": "supabase migration up",
+    "sandbox:test": "npx tsx C:/Users/info/.claude/scripts/sandbox-runner.ts --test",
+    "sandbox:build": "npx tsx C:/Users/info/.claude/scripts/sandbox-runner.ts --build",
+    "sandbox:lint": "npx tsx C:/Users/info/.claude/scripts/sandbox-runner.ts --lint",
+    "sandbox:typecheck": "npx tsx C:/Users/info/.claude/scripts/sandbox-runner.ts --typecheck",
+    "sandbox:all": "npx tsx C:/Users/info/.claude/scripts/sandbox-runner.ts --all",
+    "sandbox:status": "npx tsx C:/Users/info/.claude/scripts/sandbox-runner.ts --status"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",
