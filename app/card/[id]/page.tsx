@@ -1,45 +1,78 @@
-import Link from "next/link";
 import Image from "next/image";
+import { notFound } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import type { Tables } from "@/types/database";
 
-// This would typically come from your database
-// For now, this is a static demo page matching the Stitch design
+type AthleteWithProfile = Tables<"athletes"> & {
+  profile: Tables<"profiles"> | null;
+  highlights: Tables<"highlights">[];
+};
+
+function formatHeight(inches: number | null): string {
+  if (!inches) return "--";
+  const feet = Math.floor(inches / 12);
+  const remaining = inches % 12;
+  return `${feet}'${remaining}"`;
+}
+
 export default async function AthleteCardPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const supabase = await createClient();
 
-  // Demo data - in production, fetch from Supabase using params.id
+  // Fetch athlete data from Supabase
+  const { data: athleteData } = await supabase
+    .from("athletes")
+    .select(`
+      *,
+      profile:profiles(*),
+      highlights(*)
+    `)
+    .eq("id", id)
+    .single();
+
+  if (!athleteData) {
+    notFound();
+  }
+
+  const typedAthlete = athleteData as AthleteWithProfile;
+
+  // Map to display format
   const athlete = {
-    id: id,
-    name: "Jaylen Washington",
-    school: "Lincoln High School",
-    city: "San Diego",
-    state: "CA",
-    zone: "West Zone",
-    classYear: 2025,
-    primaryPosition: "QB",
-    secondaryPosition: "S",
-    starRating: 3,
-    verified: true,
-    avatarUrl:
+    id: typedAthlete.id,
+    name: typedAthlete.profile?.full_name || "Unknown Athlete",
+    school: typedAthlete.high_school,
+    city: typedAthlete.city,
+    state: typedAthlete.state,
+    zone: typedAthlete.zone ? `${typedAthlete.zone} Zone` : "Unknown Zone",
+    classYear: typedAthlete.class_year,
+    primaryPosition: typedAthlete.primary_position,
+    secondaryPosition: typedAthlete.secondary_position,
+    starRating: typedAthlete.star_rating || 0,
+    verified: typedAthlete.verified,
+    avatarUrl: typedAthlete.profile?.avatar_url ||
       "https://lh3.googleusercontent.com/aida-public/AB6AXuCz5tdm2iqfJ4HWNltYdzZxqDD6zvFqQFxnt8XAnlYNU5PepMx3HTwvhTH-esYE5zA4sgEvuLBo7PxEdcvYiBbXA7_loyZ49uw3KPhiG5s0H5PLQFYekJM4E6nKivPokKcEDg4l0cDCyg2eEJgsZz5FpYskvM5EYz5PCbDeWUyiB3r5lrztrr53ZUGsJ_FoaDdS7b0wv4EQuoJAgbTNAo_2LBmejJ7qGoSIDGQnEPDBLujfO4I48IZ12Yfa4lE-S6jUgG40lXh2rnQ",
     measurables: {
-      height: "6'2\"",
-      weight: 195,
-      fortyYard: 4.52,
-      vertical: 32,
+      height: formatHeight(typedAthlete.height_inches),
+      weight: typedAthlete.weight_lbs || 0,
+      fortyYard: typedAthlete.forty_yard_time || 0,
+      vertical: typedAthlete.vertical_inches || 0,
     },
     academics: {
-      gpa: 3.8,
-      sat: 1250,
-      ncaaCleared: true,
+      gpa: typedAthlete.gpa || 0,
+      sat: typedAthlete.sat_score || 0,
+      ncaaCleared: typedAthlete.ncaa_cleared || false,
     },
-    highlightVideo: {
-      thumbnail:
+    highlightVideo: typedAthlete.highlights?.[0] ? {
+      thumbnail: typedAthlete.highlights[0].thumbnail_url ||
         "https://lh3.googleusercontent.com/aida-public/AB6AXuD0kL36A2BWxzFzDUEhlWJflUxzoToTl3AVBx8LzI8iXl6P_Z2w19x4UrmKu2VUVyUBN16sRxKirK-0xo1Q3OEi-cm8wO11Ss4uNOiRuWCTvioea_8BO16HCcKknhuyrRjhmh0AB2SG28LVgZu0kgYmiqig0zn4MTbOoRAf5NbTSu-kU5DvK6uoxxTYuIRZU9QWNLIHWpwN_G6Pd7A38-TGI-yTko6oAGBpneHDt5iI0UzinakkTymm-Gr4TeQk9oco8CsaakatJMs",
-      title: "Mid-Season Highlights 2024",
+      title: typedAthlete.highlights[0].title,
+    } : {
+      thumbnail: "https://lh3.googleusercontent.com/aida-public/AB6AXuD0kL36A2BWxzFzDUEhlWJflUxzoToTl3AVBx8LzI8iXl6P_Z2w19x4UrmKu2VUVyUBN16sRxKirK-0xo1Q3OEi-cm8wO11Ss4uNOiRuWCTvioea_8BO16HCcKknhuyrRjhmh0AB2SG28LVgZu0kgYmiqig0zn4MTbOoRAf5NbTSu-kU5DvK6uoxxTYuIRZU9QWNLIHWpwN_G6Pd7A38-TGI-yTko6oAGBpneHDt5iI0UzinakkTymm-Gr4TeQk9oco8CsaakatJMs",
+      title: "No highlights uploaded yet",
     },
   };
 
@@ -216,7 +249,7 @@ export default async function AthleteCardPage({
                   Vertical
                 </span>
                 <span className="text-2xl text-white font-bold font-mono">
-                  {athlete.measurables.vertical}"
+                  {athlete.measurables.vertical}&quot;
                 </span>
               </div>
             </div>

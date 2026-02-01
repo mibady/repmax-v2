@@ -64,6 +64,9 @@ export default async function DashboardPage() {
     coachData = data as CoachData;
   }
 
+  // Use coachData for future features (e.g., shortlist count, messages)
+  void coachData;
+
   return (
     <div className="min-h-screen bg-background-dark">
       {/* Header */}
