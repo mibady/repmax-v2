@@ -24,22 +24,30 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
+  // Cast profile to expected type for build
+  const typedProfile = profile as {
+    id: string;
+    role: "athlete" | "coach" | "recruiter" | "admin";
+    full_name: string;
+    avatar_url?: string;
+  };
+
   // Get role-specific data
   let athleteData = null;
   let coachData = null;
 
-  if (profile.role === "athlete") {
+  if (typedProfile.role === "athlete") {
     const { data } = await supabase
       .from("athletes")
       .select("*, offers(*)")
-      .eq("profile_id", profile.id)
+      .eq("profile_id", typedProfile.id)
       .single();
     athleteData = data;
-  } else if (profile.role === "coach" || profile.role === "recruiter") {
+  } else if (typedProfile.role === "coach" || typedProfile.role === "recruiter") {
     const { data } = await supabase
       .from("coaches")
       .select("*")
-      .eq("profile_id", profile.id)
+      .eq("profile_id", typedProfile.id)
       .single();
     coachData = data;
   }
@@ -62,7 +70,7 @@ export default async function DashboardPage() {
             >
               Dashboard
             </Link>
-            {(profile.role === "coach" || profile.role === "recruiter") && (
+            {(typedProfile.role === "coach" || typedProfile.role === "recruiter") && (
               <>
                 <Link
                   href="/athletes"
@@ -94,10 +102,10 @@ export default async function DashboardPage() {
       <main className="mx-auto max-w-7xl px-6 py-12">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white">
-            Welcome back, {profile.full_name}
+            Welcome back, {typedProfile.full_name}
           </h1>
           <p className="text-text-grey mt-1">
-            {profile.role === "athlete"
+            {typedProfile.role === "athlete"
               ? "Manage your recruiting profile and track your offers."
               : "Discover and recruit top talent."}
           </p>
@@ -105,7 +113,7 @@ export default async function DashboardPage() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          {profile.role === "athlete" && athleteData && (
+          {typedProfile.role === "athlete" && athleteData && (
             <>
               <div className="rounded-xl bg-surface-dark border border-white/10 p-6">
                 <p className="text-sm text-text-grey mb-2">RepMax Score</p>
@@ -139,7 +147,7 @@ export default async function DashboardPage() {
             </>
           )}
 
-          {(profile.role === "coach" || profile.role === "recruiter") && (
+          {(typedProfile.role === "coach" || typedProfile.role === "recruiter") && (
             <>
               <div className="rounded-xl bg-surface-dark border border-white/10 p-6">
                 <p className="text-sm text-text-grey mb-2">Athletes in Database</p>
@@ -161,7 +169,7 @@ export default async function DashboardPage() {
         <div className="mb-8">
           <h2 className="text-xl font-bold text-white mb-4">Quick Actions</h2>
           <div className="flex flex-wrap gap-4">
-            {profile.role === "athlete" && !athleteData && (
+            {typedProfile.role === "athlete" && !athleteData && (
               <Link
                 href="/profile/setup"
                 className="px-6 py-3 rounded-lg bg-primary text-black font-bold hover:bg-primary-hover transition-colors"
@@ -169,7 +177,7 @@ export default async function DashboardPage() {
                 Complete Your Profile
               </Link>
             )}
-            {(profile.role === "coach" || profile.role === "recruiter") && (
+            {(typedProfile.role === "coach" || typedProfile.role === "recruiter") && (
               <>
                 <Link
                   href="/athletes"
