@@ -1,0 +1,65 @@
+{
+  "projectId": "1682419891237734469",
+  "sprint": "2A",
+  "exportDate": "2026-02-01",
+  "screens": {
+    "notifications": [
+      {
+        "id": "a9c7484afbc24205b927f3e16d9bd3c3",
+        "title": "Dashboard Notification Panel",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzNiZmVjNDA5NzBlNTQ1MGRhMzE1MGNkM2Q4YTMxZTJkEgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "components/notifications/NotificationCenter.tsx"
+      },
+      {
+        "id": "bb67b81e3212435d9f6d79b87c765b94",
+        "title": "Notification Preferences Settings",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2I1NGEyNmQ0M2I3MDQ5ODJhMzg1MmNkMjBlYmQxZGEzEgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "app/settings/notifications/page.tsx"
+      },
+      {
+        "id": "fe86bafac4894a38b164302cf25d850f",
+        "title": "Push Notification Permission Screen",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2E3MTc5ZDIwMmY0MDQzYTg5NDkyNzZiYjA4Y2E0ODUwEgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "apps/mobile/components/PushPermissionPrompt.tsx"
+      },
+      {
+        "id": "a8c15a22931a48fa820fe07e2f9505cb",
+        "title": "RepMax Email Notification Templates",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzI0ZjFhODUzOTFmZDRjN2U5NGE2ZWYwYWQ4OGJhZGNmEgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "emails/"
+      }
+    ],
+    "messages": [
+      {
+        "id": "7bdc78071aff44d4b7bab4646f875690",
+        "title": "RepMax Messages Inbox",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzEwOGNhZTBkZGZmZDQ5MjFiODc4MWQyOWQxMDEyODQ5EgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "app/dashboard/messages/page.tsx"
+      },
+      {
+        "id": "c8efbdb2378f4322aa08a0cde1a3522c",
+        "title": "Compose Message Modal",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzVlZTU0YzI3MTY5YTRmYWM5NzZhNDFkYmZjZjA4MzIzEgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "components/messages/ComposeModal.tsx"
+      },
+      {
+        "id": "b90e3578fdb3434798165533efa424ba",
+        "title": "Active Chat Thread View",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2QyZTE4ZDBjNzUzNDQxNjQ4MGEzNmRjYmJjNzFjYzE3EgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "components/messages/MessageThread.tsx"
+      },
+      {
+        "id": "877ee57a8de245e59d949328623be965",
+        "title": "Message Notification Badge States",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2VmMWExYjAzMmNiNTQyMmU4ZjMyNzU1ODM2ZDM4YWQ1EgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "components/messages/MessageBadge.tsx"
+      },
+      {
+        "id": "4d500f5ebf644a8e837dba92914146e5",
+        "title": "Mobile Messages Inbox",
+        "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzIzMWRiNzI4ODVlMTQzNmFiOThjNTMyNmM2Yjc3MDE2EgsSBxDL9OPGuQIYAZIBIwoKcHJvamVjdF9pZBIVQhMxNjgyNDE5ODkxMjM3NzM0NDY5",
+        "output": "apps/mobile/app/(tabs)/messages.tsx"
+      }
+    ]
+  }
+}
