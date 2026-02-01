@@ -1,6 +1,6 @@
 "use client";
 
-import { createClient } from "@/lib/supabase/client";
+import { createClient } from "@repmax/shared/supabase";
 import { useEffect, useState } from "react";
 import type { Tables } from "@/types/database";
 

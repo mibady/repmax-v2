@@ -10,12 +10,29 @@ coverage
 .next/
 out/
 
+# expo
+.expo/
+dist/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
 # production
 build
+
+# turbo
+.turbo/
 
 # misc
 .DS_Store
 *.pem
+*.png
+*.jpg
+*.jpeg
+Thumbs.db
 
 # debug
 npm-debug.log*
@@ -35,3 +52,13 @@ next-env.d.ts
 
 # claude code
 .claude/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Desktop.ini
