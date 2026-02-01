@@ -1,0 +1,52 @@
+{
+  "projectId": "1682419891237734469",
+  "projectTitle": "repmax-v2",
+  "exportDate": "2026-01-31",
+  "screens": [
+    {
+      "id": "ac14a566831c4cdeb0f9cf88b638550c",
+      "title": "RepMax Landing Page",
+      "file": "landing-page.html",
+      "route": "/",
+      "deviceType": "DESKTOP",
+      "width": 2560,
+      "height": 8202
+    },
+    {
+      "id": "a9cb7a1de2674f2e88ca5c2ac73e1a10",
+      "title": "RepMax Landing Page Variant",
+      "file": "landing-page-variant.html",
+      "route": "/alt",
+      "deviceType": "DESKTOP",
+      "width": 2560,
+      "height": 7478
+    },
+    {
+      "id": "cae6782cb6714ecbaaf0fcbde8632844",
+      "title": "RepMax Pricing Page",
+      "file": "pricing-page.html",
+      "route": "/pricing",
+      "deviceType": "DESKTOP",
+      "width": 2560,
+      "height": 3348
+    },
+    {
+      "id": "173aa857aae142809f027138172706b0",
+      "title": "Athlete Companion Card Profile",
+      "file": "athlete-profile.html",
+      "route": "/athlete/[id]",
+      "deviceType": "DESKTOP",
+      "width": 2560,
+      "height": 2668
+    },
+    {
+      "id": "e82637f5a17142b599780680b5eecc99",
+      "title": "RepMax 404 Error Page",
+      "file": "404-page.html",
+      "route": "/not-found",
+      "deviceType": "DESKTOP",
+      "width": 2560,
+      "height": 2048
+    }
+  ]
+}

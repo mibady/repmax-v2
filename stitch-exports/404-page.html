@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RepMax 404 - Wrong Route</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#f2c40d",
+                "background-light": "#f8f8f5",
+                "background-dark": "#050505", // Overriding default #221e10 to match user request #050505
+                "text-secondary": "#A1A1AA",
+              },
+              fontFamily: {
+                "display": ["Lexend", "sans-serif"]
+              },
+              borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display min-h-screen flex flex-col overflow-hidden relative selection:bg-primary selection:text-black">
+<!-- Background 404 Watermark -->
+<div class="absolute inset-0 flex items-center justify-center select-none pointer-events-none z-0 overflow-hidden">
+<span class="text-[30vw] font-black leading-none text-primary opacity-5 dark:opacity-10 tracking-tighter transform translate-y-4">
+            404
+        </span>
+</div>
+<!-- Main Content Container -->
+<main class="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 relative z-10 w-full max-w-7xl mx-auto h-full min-h-[80vh]">
+<div class="flex flex-col items-center text-center space-y-8 max-w-lg mx-auto animate-fade-in-up">
+<!-- Icon/Graphic (Optional, but adds to the empty state feel) -->
+<div class="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center mb-2 ring-1 ring-primary/30">
+<span class="material-symbols-outlined text-primary text-5xl">sports_football</span>
+</div>
+<!-- Text Content -->
+<div class="space-y-4">
+<h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-slate-900 dark:text-white">
+                    Wrong Route
+                </h1>
+<p class="text-lg text-slate-600 dark:text-text-secondary max-w-md mx-auto leading-relaxed">
+                    Looks like this play got called back. The page you're looking for doesn't exist on our playbook.
+                </p>
+</div>
+<!-- Actions -->
+<div class="flex flex-col items-center gap-6 w-full pt-4">
+<a class="group relative inline-flex items-center justify-center px-8 py-3.5 text-sm font-bold text-black transition-all duration-200 bg-primary font-display rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary hover:bg-yellow-400 w-full sm:w-auto min-w-[200px] shadow-[0_0_20px_rgba(242,196,13,0.3)] hover:shadow-[0_0_30px_rgba(242,196,13,0.5)]" href="#">
+<span class="material-symbols-outlined mr-2 text-[20px]">home</span>
+                    Back to Home
+                </a>
+<a class="inline-flex items-center text-primary hover:text-yellow-300 font-medium transition-colors text-sm group" href="#">
+<span class="material-symbols-outlined mr-2 text-[20px]">search</span>
+                    Search Athletes
+                    <span class="ml-1 transition-transform group-hover:translate-x-1">→</span>
+</a>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-8 relative z-10">
+<div class="container mx-auto px-4 flex justify-center">
+<div class="flex flex-col items-center gap-2">
+<p class="text-primary text-base font-bold tracking-[0.15em] opacity-80">REPMAX</p>
+<div class="h-0.5 w-8 bg-primary/30 rounded-full"></div>
+</div>
+</div>
+</footer>
+</body></html>

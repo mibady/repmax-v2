@@ -1,0 +1,202 @@
+{
+  "extractedFrom": "stitch-exports/*.html",
+  "extractedAt": "2026-01-31",
+  "entities": [
+    {
+      "name": "profiles",
+      "description": "User profiles for athletes and recruiters",
+      "fields": [
+        { "name": "id", "type": "uuid", "required": true, "primary": true },
+        { "name": "user_id", "type": "uuid", "required": true, "references": "auth.users" },
+        { "name": "role", "type": "enum", "enumValues": ["athlete", "coach", "recruiter", "admin"], "required": true },
+        { "name": "full_name", "type": "string", "required": true },
+        { "name": "avatar_url", "type": "string", "required": false },
+        { "name": "created_at", "type": "timestamp", "required": true, "default": "now()" },
+        { "name": "updated_at", "type": "timestamp", "required": true, "default": "now()" }
+      ],
+      "source_screens": ["landing-page", "athlete-profile"]
+    },
+    {
+      "name": "athletes",
+      "description": "Athlete-specific profile data with measurables and academics",
+      "fields": [
+        { "name": "id", "type": "uuid", "required": true, "primary": true },
+        { "name": "profile_id", "type": "uuid", "required": true, "references": "profiles" },
+        { "name": "high_school", "type": "string", "required": true },
+        { "name": "city", "type": "string", "required": true },
+        { "name": "state", "type": "string", "required": true },
+        { "name": "zone", "type": "enum", "enumValues": ["West", "Southwest", "Midwest", "Southeast", "Northeast", "Mid-Atlantic"], "required": false },
+        { "name": "class_year", "type": "integer", "required": true },
+        { "name": "primary_position", "type": "string", "required": true },
+        { "name": "secondary_position", "type": "string", "required": false },
+        { "name": "height_inches", "type": "integer", "required": false },
+        { "name": "weight_lbs", "type": "integer", "required": false },
+        { "name": "forty_yard_time", "type": "decimal", "required": false },
+        { "name": "vertical_inches", "type": "integer", "required": false },
+        { "name": "gpa", "type": "decimal", "required": false },
+        { "name": "sat_score", "type": "integer", "required": false },
+        { "name": "act_score", "type": "integer", "required": false },
+        { "name": "ncaa_id", "type": "string", "required": false },
+        { "name": "ncaa_cleared", "type": "boolean", "required": false, "default": false },
+        { "name": "star_rating", "type": "integer", "required": false, "min": 1, "max": 5 },
+        { "name": "repmax_score", "type": "integer", "required": false, "min": 0, "max": 100 },
+        { "name": "verified", "type": "boolean", "required": true, "default": false },
+        { "name": "offers_count", "type": "integer", "required": false, "default": 0 },
+        { "name": "created_at", "type": "timestamp", "required": true, "default": "now()" },
+        { "name": "updated_at", "type": "timestamp", "required": true, "default": "now()" }
+      ],
+      "source_screens": ["landing-page", "athlete-profile"]
+    },
+    {
+      "name": "coaches",
+      "description": "Coach/Recruiter-specific profile data",
+      "fields": [
+        { "name": "id", "type": "uuid", "required": true, "primary": true },
+        { "name": "profile_id", "type": "uuid", "required": true, "references": "profiles" },
+        { "name": "school_name", "type": "string", "required": true },
+        { "name": "division", "type": "enum", "enumValues": ["D1", "D2", "D3", "NAIA", "JUCO"], "required": true },
+        { "name": "conference", "type": "string", "required": false },
+        { "name": "title", "type": "string", "required": false },
+        { "name": "verified", "type": "boolean", "required": true, "default": false },
+        { "name": "created_at", "type": "timestamp", "required": true, "default": "now()" },
+        { "name": "updated_at", "type": "timestamp", "required": true, "default": "now()" }
+      ],
+      "source_screens": ["landing-page"]
+    },
+    {
+      "name": "highlights",
+      "description": "Athlete video highlights and game tape",
+      "fields": [
+        { "name": "id", "type": "uuid", "required": true, "primary": true },
+        { "name": "athlete_id", "type": "uuid", "required": true, "references": "athletes" },
+        { "name": "title", "type": "string", "required": true },
+        { "name": "description", "type": "text", "required": false },
+        { "name": "video_url", "type": "string", "required": true },
+        { "name": "thumbnail_url", "type": "string", "required": false },
+        { "name": "duration_seconds", "type": "integer", "required": false },
+        { "name": "view_count", "type": "integer", "required": false, "default": 0 },
+        { "name": "ai_analyzed", "type": "boolean", "required": false, "default": false },
+        { "name": "ai_tags", "type": "jsonb", "required": false },
+        { "name": "created_at", "type": "timestamp", "required": true, "default": "now()" }
+      ],
+      "source_screens": ["athlete-profile"]
+    },
+    {
+      "name": "shortlists",
+      "description": "Coach shortlists of athletes they're interested in",
+      "fields": [
+        { "name": "id", "type": "uuid", "required": true, "primary": true },
+        { "name": "coach_id", "type": "uuid", "required": true, "references": "coaches" },
+        { "name": "athlete_id", "type": "uuid", "required": true, "references": "athletes" },
+        { "name": "notes", "type": "text", "required": false },
+        { "name": "priority", "type": "enum", "enumValues": ["low", "medium", "high", "top"], "required": false, "default": "medium" },
+        { "name": "created_at", "type": "timestamp", "required": true, "default": "now()" }
+      ],
+      "source_screens": ["athlete-profile"]
+    },
+    {
+      "name": "messages",
+      "description": "NCAA-compliant messaging between coaches and athletes",
+      "fields": [
+        { "name": "id", "type": "uuid", "required": true, "primary": true },
+        { "name": "sender_id", "type": "uuid", "required": true, "references": "profiles" },
+        { "name": "recipient_id", "type": "uuid", "required": true, "references": "profiles" },
+        { "name": "subject", "type": "string", "required": false },
+        { "name": "body", "type": "text", "required": true },
+        { "name": "read", "type": "boolean", "required": true, "default": false },
+        { "name": "created_at", "type": "timestamp", "required": true, "default": "now()" }
+      ],
+      "source_screens": ["athlete-profile", "landing-page"]
+    },
+    {
+      "name": "subscription_plans",
+      "description": "Available subscription plans",
+      "fields": [
+        { "name": "id", "type": "uuid", "required": true, "primary": true },
+        { "name": "name", "type": "string", "required": true },
+        { "name": "slug", "type": "string", "required": true, "unique": true },
+        { "name": "price_cents", "type": "integer", "required": true },
+        { "name": "billing_period", "type": "enum", "enumValues": ["monthly", "yearly"], "required": true },
+        { "name": "features", "type": "jsonb", "required": true },
+        { "name": "max_team_seats", "type": "integer", "required": false },
+        { "name": "max_searches_per_day", "type": "integer", "required": false },
+        { "name": "has_api_access", "type": "boolean", "required": false, "default": false },
+        { "name": "has_export", "type": "boolean", "required": false, "default": false },
+        { "name": "active", "type": "boolean", "required": true, "default": true },
+        { "name": "created_at", "type": "timestamp", "required": true, "default": "now()" }
+      ],
+      "source_screens": ["pricing-page"]
+    },
+    {
+      "name": "subscriptions",
+      "description": "User subscriptions to plans",
+      "fields": [
+        { "name": "id", "type": "uuid", "required": true, "primary": true },
+        { "name": "profile_id", "type": "uuid", "required": true, "references": "profiles" },
+        { "name": "plan_id", "type": "uuid", "required": true, "references": "subscription_plans" },
+        { "name": "stripe_subscription_id", "type": "string", "required": false },
+        { "name": "status", "type": "enum", "enumValues": ["active", "canceled", "past_due", "trialing"], "required": true },
+        { "name": "current_period_start", "type": "timestamp", "required": true },
+        { "name": "current_period_end", "type": "timestamp", "required": true },
+        { "name": "canceled_at", "type": "timestamp", "required": false },
+        { "name": "created_at", "type": "timestamp", "required": true, "default": "now()" }
+      ],
+      "source_screens": ["pricing-page"]
+    },
+    {
+      "name": "offers",
+      "description": "College offers received by athletes",
+      "fields": [
+        { "name": "id", "type": "uuid", "required": true, "primary": true },
+        { "name": "athlete_id", "type": "uuid", "required": true, "references": "athletes" },
+        { "name": "school_name", "type": "string", "required": true },
+        { "name": "division", "type": "enum", "enumValues": ["D1", "D2", "D3", "NAIA", "JUCO"], "required": true },
+        { "name": "scholarship_type", "type": "enum", "enumValues": ["full", "partial", "walk-on", "preferred-walk-on"], "required": false },
+        { "name": "offer_date", "type": "date", "required": true },
+        { "name": "committed", "type": "boolean", "required": false, "default": false },
+        { "name": "created_at", "type": "timestamp", "required": true, "default": "now()" }
+      ],
+      "source_screens": ["landing-page", "athlete-profile"]
+    }
+  ],
+  "api_endpoints": [
+    { "method": "GET", "path": "/api/athletes", "description": "List athletes with filtering", "source": "landing-page dashboard" },
+    { "method": "GET", "path": "/api/athletes/:id", "description": "Get single athlete profile", "source": "athlete-profile" },
+    { "method": "POST", "path": "/api/athletes", "description": "Create athlete profile", "source": "landing-page CTA" },
+    { "method": "PUT", "path": "/api/athletes/:id", "description": "Update athlete profile", "source": "athlete-profile" },
+    { "method": "GET", "path": "/api/athletes/:id/highlights", "description": "Get athlete highlights", "source": "athlete-profile" },
+    { "method": "POST", "path": "/api/athletes/:id/highlights", "description": "Upload highlight video", "source": "athlete-profile" },
+    { "method": "POST", "path": "/api/shortlists", "description": "Add athlete to shortlist", "source": "athlete-profile Add to Shortlist button" },
+    { "method": "DELETE", "path": "/api/shortlists/:id", "description": "Remove from shortlist", "source": "athlete-profile" },
+    { "method": "GET", "path": "/api/shortlists", "description": "Get coach's shortlist", "source": "landing-page dashboard" },
+    { "method": "POST", "path": "/api/messages", "description": "Send message to coach/athlete", "source": "athlete-profile Contact Coach button" },
+    { "method": "GET", "path": "/api/messages", "description": "Get user's messages", "source": "landing-page" },
+    { "method": "GET", "path": "/api/plans", "description": "List subscription plans", "source": "pricing-page" },
+    { "method": "POST", "path": "/api/subscriptions", "description": "Create subscription", "source": "pricing-page CTA buttons" },
+    { "method": "PUT", "path": "/api/subscriptions/:id", "description": "Update/cancel subscription", "source": "pricing-page" },
+    { "method": "POST", "path": "/api/auth/signup", "description": "Create account", "source": "landing-page CTA" },
+    { "method": "POST", "path": "/api/auth/login", "description": "Login", "source": "navbar Login link" }
+  ],
+  "enums": [
+    { "name": "user_role", "values": ["athlete", "coach", "recruiter", "admin"] },
+    { "name": "zone", "values": ["West", "Southwest", "Midwest", "Southeast", "Northeast", "Mid-Atlantic"] },
+    { "name": "division", "values": ["D1", "D2", "D3", "NAIA", "JUCO"] },
+    { "name": "priority", "values": ["low", "medium", "high", "top"] },
+    { "name": "subscription_status", "values": ["active", "canceled", "past_due", "trialing"] },
+    { "name": "billing_period", "values": ["monthly", "yearly"] },
+    { "name": "scholarship_type", "values": ["full", "partial", "walk-on", "preferred-walk-on"] }
+  ],
+  "relationships": [
+    { "from": "profiles", "to": "auth.users", "type": "one-to-one", "on": "user_id" },
+    { "from": "athletes", "to": "profiles", "type": "one-to-one", "on": "profile_id" },
+    { "from": "coaches", "to": "profiles", "type": "one-to-one", "on": "profile_id" },
+    { "from": "highlights", "to": "athletes", "type": "many-to-one", "on": "athlete_id" },
+    { "from": "shortlists", "to": "coaches", "type": "many-to-one", "on": "coach_id" },
+    { "from": "shortlists", "to": "athletes", "type": "many-to-one", "on": "athlete_id" },
+    { "from": "messages", "to": "profiles", "type": "many-to-one", "on": "sender_id" },
+    { "from": "messages", "to": "profiles", "type": "many-to-one", "on": "recipient_id" },
+    { "from": "subscriptions", "to": "profiles", "type": "many-to-one", "on": "profile_id" },
+    { "from": "subscriptions", "to": "subscription_plans", "type": "many-to-one", "on": "plan_id" },
+    { "from": "offers", "to": "athletes", "type": "many-to-one", "on": "athlete_id" }
+  ]
+}
