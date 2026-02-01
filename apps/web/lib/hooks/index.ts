@@ -24,13 +24,59 @@ export {
 // Subscriptions
 export { useSubscription, useSubscriptionPlans } from "./use-subscription";
 
-// Recruiting Intelligence
+// Recruiting Intelligence (Legacy)
 export {
   useZones,
   useZone,
   useRecruitingCalendar,
-  useClassRankings,
+  useClassRankings as useClassRankingsLegacy,
   type ZoneData,
   type CalendarData,
-  type ClassRanking,
+  type ClassRanking as ClassRankingLegacy,
 } from "./use-recruiting";
+
+// Sprint 2B: Profile Analytics
+export {
+  useProfileViews,
+  useGeographicViews,
+  type ProfileViewSummary,
+  type ProfileView,
+} from "./use-profile-views";
+
+// Sprint 2B: Zone Activity (Enhanced)
+export {
+  useZoneActivity,
+  useZoneDetail,
+  type ZoneActivity,
+  type ZoneDetail,
+  type RecruitingZone,
+  type ActivityLevel,
+} from "./use-zone-activity";
+
+// Sprint 2B: Film Bookmarks
+export {
+  useFilmBookmarks,
+  useCreateFilmBookmark,
+  type FilmBookmark,
+} from "./use-film-bookmarks";
+
+// Sprint 2B: Onboarding
+export {
+  useOnboarding,
+  type OnboardingProgress,
+} from "./use-onboarding";
+
+// Sprint 2B: Class & Program Rankings (Enhanced)
+export {
+  useClassRankings,
+  useProgramRankings,
+  type ClassRanking,
+  type ProgramRanking,
+} from "./use-class-rankings";
+
+// Sprint 2B: Recruiting Events
+export {
+  useRecruitingEvents,
+  type RecruitingEvent,
+  type EventType,
+} from "./use-recruiting-events";
