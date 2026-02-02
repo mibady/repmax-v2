@@ -1,64 +1,146 @@
 'use client';
 
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useHighlightDetail } from '@/lib/hooks';
+import { useState } from 'react';
+import { Loader2 } from 'lucide-react';
 
-interface Bookmark {
-  id: string;
+interface AddBookmarkModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (data: { notes: string; label?: string }) => void;
   timestamp: string;
-  note: string;
-  addedBy: string;
-  avatar: string;
-  isActive?: boolean;
 }
 
-interface AthleteInfo {
-  name: string;
-  classYear: string;
-  school: string;
-  height: string;
-  weight: string;
+function AddBookmarkModal({ isOpen, onClose, onSubmit, timestamp }: AddBookmarkModalProps) {
+  const [notes, setNotes] = useState('');
+  const [label, setLabel] = useState('');
+
+  if (!isOpen) return null;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit({ notes, label: label || undefined });
+    setNotes('');
+    setLabel('');
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+      <div className="bg-[#1a1a1a] rounded-xl border border-[#333] w-full max-w-md p-6 shadow-2xl">
+        <h3 className="text-lg font-bold text-white mb-4">Add Bookmark at {timestamp}</h3>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Label (optional)</label>
+            <input
+              type="text"
+              value={label}
+              onChange={(e) => setLabel(e.target.value)}
+              placeholder="e.g., Great throw"
+              className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#333] rounded-lg text-white placeholder:text-gray-500 focus:border-primary focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Notes</label>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Add your observations..."
+              rows={3}
+              className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#333] rounded-lg text-white placeholder:text-gray-500 focus:border-primary focus:outline-none resize-none"
+            />
+          </div>
+          <div className="flex gap-3 justify-end">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-primary text-[#0f0f0f] font-medium rounded-lg hover:bg-[#dcae18] transition-colors"
+            >
+              Add Bookmark
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 }
-
-const athlete: AthleteInfo = {
-  name: 'John Doe',
-  classYear: 'Class of 2025',
-  school: 'Westlake High',
-  height: '6\'2"',
-  weight: '195 lbs',
-};
-
-const bookmarks: Bookmark[] = [
-  {
-    id: '1',
-    timestamp: '0:34',
-    note: 'Great pocket awareness under pressure',
-    addedBy: 'Coach Mike',
-    avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBcvPR01euaqikT5K38tvFLJv0HCE6beAN1YdSlJJHrXSH38kdh7yTZ0HxOfR5u7lW3f7_1A7vwifF5G749t2a6jcM-7jspUzHP_qqQUZafEkzesfMjg1Gosi66KebE6irJCHG8eAIQnjSVuF9JozSiKKfVUtEvnuu_JeU_1rFri48r1rsidNYeWF_IgSKhGoHffkvdcdj-OcT69EJEWSN5hvSoFBHjRQwSP_6FMu30C2cXx9OiYqJtEXYsPqqcIdxUdyXq9EK-fMs',
-    isActive: true,
-  },
-  {
-    id: '2',
-    timestamp: '1:12',
-    note: '50-yard deep ball accuracy - Perfect spiral',
-    addedBy: 'Coach Mike',
-    avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAmhuHHiQWA15fJNmMennsGKjkB20YqtEj0YIob7pCn-M9VHWRUbco_6ktO1TO1kLJYQViGUBgr-i2HZmyWYXvX--0AdogFHDELdQLDi3aH8-SdbXIwVj_QSI1zs4SE1fmZhT_e92crJWsOhtiUtWYXSnFVEByrtHu8vN5Qlve_CtON4O6miD4aToXK8AamQ_0Ckf6qsEJI6_u5O9tkJ5KSDLPsCcD3rgxe52uV__C4dfhJZOEEB7KkNFBEG7KPt1Ga7wAVZc1UNe4',
-  },
-  {
-    id: '3',
-    timestamp: '2:05',
-    note: 'Scramble drill - good improvisation',
-    addedBy: 'Scout Team A',
-    avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAc3FZEYXDZozAOGOVYOW6HbImxmdOzYjv1gBb7W64-6FoowappTRj3xo3y1IQDqI3eCj5m_mes5N4atGJKnkr-X6OdwiJ_J7SofkstcIcC7Jilql36uX_xTo2dgrdU5b9niL4hBdyoIioJbEay9YA46wuHCk2HNGdjlH175ZBiLByfg7srVlW8A4mGnDTIThuQFBiRXoOjc0d_0RKt9hy3UM0XQvMUjc88aQkQfnwrNggT2AMnvHuCgrzOJb7QASGwAcKerlI4Fc8',
-  },
-];
-
-const timelineMarkers = [
-  { position: 12, title: 'Great pocket awareness' },
-  { position: 48, title: '50-yard deep ball' },
-  { position: 82, title: 'Scramble drill' },
-];
 
 export default function RecruiterFilmPlayerPage() {
+  const params = useParams();
+  const router = useRouter();
+  const highlightId = params.id as string;
+
+  const { highlight, bookmarks, isLoading, error, formatTimestamp, formatHeight, createBookmark } =
+    useHighlightDetail(highlightId);
+
+  const [currentTime, _setCurrentTime] = useState(0); // eslint-disable-line @typescript-eslint/no-unused-vars
+  const [showAddBookmark, setShowAddBookmark] = useState(false);
+  const [isCreatingBookmark, setIsCreatingBookmark] = useState(false);
+
+  const handleAddBookmark = async (data: { notes: string; label?: string }) => {
+    setIsCreatingBookmark(true);
+    try {
+      await createBookmark({
+        timestamp_seconds: currentTime,
+        notes: data.notes,
+        label: data.label,
+      });
+    } catch (err) {
+      console.error('Failed to create bookmark:', err);
+    } finally {
+      setIsCreatingBookmark(false);
+    }
+  };
+
+  // Calculate timeline markers from bookmarks
+  const timelineMarkers = bookmarks.map((b) => ({
+    position: highlight?.duration_seconds
+      ? (b.timestamp_seconds / highlight.duration_seconds) * 100
+      : 0,
+    title: b.notes || b.label || 'Bookmark',
+  }));
+
+  if (isLoading) {
+    return (
+      <div className="bg-[#0f0f0f] min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      </div>
+    );
+  }
+
+  if (error || !highlight) {
+    return (
+      <div className="bg-[#0f0f0f] min-h-screen flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4">
+            <span className="material-symbols-outlined text-red-500 text-3xl">error</span>
+          </div>
+          <h2 className="text-xl font-semibold text-white mb-2">Highlight not found</h2>
+          <p className="text-gray-500 mb-6">
+            {error?.message || 'The highlight you are looking for could not be found.'}
+          </p>
+          <button
+            onClick={() => router.back()}
+            className="px-4 py-2 bg-primary text-[#0f0f0f] font-medium rounded-lg hover:bg-[#dcae18] transition-colors"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const athlete = highlight.athlete;
+  const duration = highlight.duration_seconds || 0;
+
   return (
     <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display antialiased min-h-screen flex flex-col">
       {/* Top Navigation */}
@@ -74,20 +156,16 @@ export default function RecruiterFilmPlayerPage() {
             <h1 className="text-white text-lg font-bold tracking-tight">RepMax</h1>
           </div>
           <nav className="hidden md:flex items-center gap-8">
-            <Link className="text-sm font-medium text-gray-300 hover:text-primary transition-colors" href="#">Dashboard</Link>
-            <Link className="text-sm font-medium text-white" href="#">Athletes</Link>
-            <Link className="text-sm font-medium text-gray-300 hover:text-primary transition-colors" href="#">Teams</Link>
-            <Link className="text-sm font-medium text-gray-300 hover:text-primary transition-colors" href="#">Messages</Link>
+            <Link className="text-sm font-medium text-gray-300 hover:text-primary transition-colors" href="/dashboard/recruiter">Dashboard</Link>
+            <Link className="text-sm font-medium text-white" href="/dashboard/recruiter/prospects">Athletes</Link>
+            <Link className="text-sm font-medium text-gray-300 hover:text-primary transition-colors" href="/dashboard/recruiter/pipeline">Pipeline</Link>
+            <Link className="text-sm font-medium text-gray-300 hover:text-primary transition-colors" href="/dashboard/messages">Messages</Link>
           </nav>
           <div className="flex items-center gap-4">
             <button className="text-gray-400 hover:text-white transition-colors relative">
               <span className="material-symbols-outlined text-[24px]">notifications</span>
-              <span className="absolute top-0 right-0 size-2 bg-primary rounded-full border-2 border-[#141414]"></span>
             </button>
-            <div
-              className="size-9 rounded-full bg-cover bg-center border border-[#333]"
-              style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuCo8aVNcrO1HQAOFb9up3mWn1yVjnITbYX7gwJtkNmYWTYufKi20BQedCrN9q_Wwh6CebQi8aNr1B3XgsJWkCjTuL9HFeO1nVcvp-pGvH7PMKRPgA2n1dGXpB2vLQG-83zGgVgUJrua6fipmBk7bgKCvEA_4qGzLn_FUFYBM4FPh-WSgPkUf5ecLyQ7NEw44AX6WTyqfv36oAHx9U155u3A0TJGLvRTInwcTuZNQl20tvwzL02QxzrEPJpLuZdZHIzbArATMm0L-28')" }}
-            ></div>
+            <div className="size-9 rounded-full bg-[#333] border border-[#333]"></div>
           </div>
         </div>
       </header>
@@ -96,11 +174,17 @@ export default function RecruiterFilmPlayerPage() {
       <main className="flex-1 w-full max-w-[960px] mx-auto p-4 md:py-8 flex flex-col gap-6">
         {/* Video Player Component */}
         <div className="group/player relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/10">
-          {/* Video Background Image */}
-          <div
-            className="absolute inset-0 bg-cover bg-center opacity-90 transition-opacity duration-300"
-            style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDFayXrbblahT4oD7SrdxrFWbDEhetuf0fu9P9Ae0kUCHLcO43XPxwKx8HnO6ZOSYjM1hnNkng-2mQH_xdnFjVofi9SsUuIfICv7fClVYuU_Zk15k65bZGdP7lUbKAfFurxFML5srmyH_KNjafsNdR_qZy4lJUoC-8ZOJD4DL6C4d10IMcahPsT5kcSfpkYDjJLVNnHwR0-eHhJYwqxi_vCitPBxdbwXaMRWFTraSR1r_G4k6LuplPIJCABQV3nFNDNH2R5T8iTqpE')" }}
-          ></div>
+          {/* Video/Thumbnail */}
+          {highlight.thumbnail_url ? (
+            <div
+              className="absolute inset-0 bg-cover bg-center opacity-90 transition-opacity duration-300"
+              style={{ backgroundImage: `url('${highlight.thumbnail_url}')` }}
+            ></div>
+          ) : (
+            <div className="absolute inset-0 bg-[#1a1a1a] flex items-center justify-center">
+              <span className="material-symbols-outlined text-6xl text-gray-600">movie</span>
+            </div>
+          )}
           {/* Video Overlay Gradient */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none"></div>
 
@@ -114,8 +198,10 @@ export default function RecruiterFilmPlayerPage() {
           {/* Top Controls (Title Overlay) */}
           <div className="absolute top-0 left-0 right-0 p-6 flex justify-between items-start opacity-0 group-hover/player:opacity-100 transition-opacity duration-300">
             <div className="flex flex-col">
-              <span className="text-white font-bold text-lg drop-shadow-md">Junior Season Highlights</span>
-              <span className="text-white/70 text-sm font-mono drop-shadow-md">1080p • 60FPS</span>
+              <span className="text-white font-bold text-lg drop-shadow-md">{highlight.title}</span>
+              <span className="text-white/70 text-sm font-mono drop-shadow-md">
+                {highlight.view_count} views
+              </span>
             </div>
             <button className="text-white/80 hover:text-white hover:bg-white/10 p-2 rounded-full transition-colors">
               <span className="material-symbols-outlined">more_vert</span>
@@ -154,14 +240,10 @@ export default function RecruiterFilmPlayerPage() {
                   <button className="hover:text-primary transition-colors">
                     <span className="material-symbols-outlined text-[24px]">volume_up</span>
                   </button>
-                  <div className="w-0 overflow-hidden group-hover/volume:w-20 transition-all duration-300">
-                    <div className="h-1 bg-white/30 rounded-full w-16 ml-2 cursor-pointer">
-                      <div className="h-full w-[70%] bg-white rounded-full"></div>
-                    </div>
-                  </div>
                 </div>
                 <span className="font-mono text-sm tracking-wide text-white/90">
-                  <span className="text-primary font-medium">0:37</span> <span className="text-white/40">/</span> 2:23
+                  <span className="text-primary font-medium">{formatTimestamp(currentTime)}</span>{' '}
+                  <span className="text-white/40">/</span> {formatTimestamp(duration)}
                 </span>
               </div>
               <div className="flex items-center gap-4">
@@ -179,16 +261,29 @@ export default function RecruiterFilmPlayerPage() {
         {/* Video Info & Actions */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-[#333]">
           <div className="flex flex-col gap-1">
-            <h2 className="text-2xl font-bold text-white tracking-tight">Junior Season Highlights - QB #12</h2>
+            <h2 className="text-2xl font-bold text-white tracking-tight">
+              {highlight.title}
+              {athlete?.position && ` - ${athlete.position}`}
+            </h2>
             <div className="flex flex-wrap items-center gap-2 text-[#999] text-sm">
-              <span className="text-primary font-medium">{athlete.name}</span>
-              <span>•</span>
-              <span>{athlete.classYear}</span>
-              <span>•</span>
-              <span>{athlete.school}</span>
-              <span>•</span>
-              <span className="bg-[#333] text-xs px-1.5 py-0.5 rounded text-white/80">{athlete.height}</span>
-              <span className="bg-[#333] text-xs px-1.5 py-0.5 rounded text-white/80">{athlete.weight}</span>
+              {athlete && (
+                <>
+                  <span className="text-primary font-medium">{athlete.name}</span>
+                  <span>•</span>
+                  <span>Class of {athlete.classYear}</span>
+                  <span>•</span>
+                  <span>{athlete.school}</span>
+                  <span>•</span>
+                  <span className="bg-[#333] text-xs px-1.5 py-0.5 rounded text-white/80">
+                    {formatHeight(athlete.heightInches)}
+                  </span>
+                  {athlete.weightLbs && (
+                    <span className="bg-[#333] text-xs px-1.5 py-0.5 rounded text-white/80">
+                      {athlete.weightLbs} lbs
+                    </span>
+                  )}
+                </>
+              )}
             </div>
           </div>
           {/* Primary Action Buttons */}
@@ -197,10 +292,15 @@ export default function RecruiterFilmPlayerPage() {
               <span className="material-symbols-outlined text-[20px]">file_download</span>
               Download
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary hover:bg-[#dcae18] text-[#0f0f0f] text-sm font-bold transition-colors shadow-[0_0_15px_rgba(237,188,29,0.2)]">
-              <span className="material-symbols-outlined text-[20px]">mail</span>
-              Contact Athlete
-            </button>
+            {athlete && (
+              <Link
+                href={`/dashboard/messages?compose=${athlete.id}`}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary hover:bg-[#dcae18] text-[#0f0f0f] text-sm font-bold transition-colors shadow-[0_0_15px_rgba(237,188,29,0.2)]"
+              >
+                <span className="material-symbols-outlined text-[20px]">mail</span>
+                Contact Athlete
+              </Link>
+            )}
           </div>
         </div>
 
@@ -214,7 +314,7 @@ export default function RecruiterFilmPlayerPage() {
               </div>
               <div className="flex flex-col md:items-center">
                 <span className="text-sm font-medium text-white">Share</span>
-                <span className="text-xs text-gray-500">at 0:37</span>
+                <span className="text-xs text-gray-500">at {formatTimestamp(currentTime)}</span>
               </div>
             </button>
             <button className="flex md:flex-col items-center gap-2 p-3 rounded-lg hover:bg-[#1A1A1A] text-left md:text-center min-w-max transition-colors group">
@@ -244,62 +344,88 @@ export default function RecruiterFilmPlayerPage() {
                 <span className="material-symbols-outlined text-primary">bookmark</span>
                 Recruiter Bookmarks
               </h3>
-              <button className="text-primary hover:text-[#ffe066] text-sm font-bold flex items-center gap-1 hover:underline underline-offset-4 decoration-primary/50 transition-all">
-                <span className="material-symbols-outlined text-[18px]">add</span>
+              <button
+                onClick={() => setShowAddBookmark(true)}
+                disabled={isCreatingBookmark}
+                className="text-primary hover:text-[#ffe066] text-sm font-bold flex items-center gap-1 hover:underline underline-offset-4 decoration-primary/50 transition-all disabled:opacity-50"
+              >
+                {isCreatingBookmark ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <span className="material-symbols-outlined text-[18px]">add</span>
+                )}
                 Add Bookmark
               </button>
             </div>
 
-            <div className="flex flex-col gap-3">
-              {bookmarks.map((bookmark) => (
-                <div
-                  key={bookmark.id}
-                  className={`group relative p-4 rounded-lg bg-surface-dark border transition-all duration-200 cursor-pointer ${
-                    bookmark.isActive
-                      ? 'border-primary/40 hover:border-primary shadow-lg shadow-black/20'
-                      : 'border-[#333] hover:border-primary'
-                  }`}
-                >
-                  <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
-                    <button className="text-gray-400 hover:text-white">
-                      <span className="material-symbols-outlined text-[18px]">edit</span>
-                    </button>
-                    <button className="text-gray-400 hover:text-red-400">
-                      <span className="material-symbols-outlined text-[18px]">delete</span>
-                    </button>
-                  </div>
-                  <div className="flex gap-4">
-                    <div className="flex-shrink-0 w-16 pt-1">
-                      <span
-                        className={`inline-flex items-center justify-center px-2 py-1 rounded font-mono text-sm font-medium border transition-colors ${
-                          bookmark.isActive
-                            ? 'bg-primary/10 text-primary border-primary/20 group-hover:bg-primary group-hover:text-black'
-                            : 'bg-[#2a2a2a] text-gray-400 border-[#333] group-hover:text-black group-hover:bg-primary group-hover:border-primary'
-                        }`}
-                      >
-                        {bookmark.timestamp}
-                      </span>
+            {bookmarks.length === 0 ? (
+              <div className="p-8 text-center bg-[#1a1a1a] rounded-lg border border-[#333]">
+                <span className="material-symbols-outlined text-4xl text-gray-600 mb-2">bookmark_border</span>
+                <p className="text-gray-500">No bookmarks yet. Add one to track key moments.</p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {bookmarks.map((bookmark, index) => (
+                  <div
+                    key={bookmark.id}
+                    className={`group relative p-4 rounded-lg bg-surface-dark border transition-all duration-200 cursor-pointer ${
+                      index === 0
+                        ? 'border-primary/40 hover:border-primary shadow-lg shadow-black/20'
+                        : 'border-[#333] hover:border-primary'
+                    }`}
+                  >
+                    <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+                      <button className="text-gray-400 hover:text-white">
+                        <span className="material-symbols-outlined text-[18px]">edit</span>
+                      </button>
+                      <button className="text-gray-400 hover:text-red-400">
+                        <span className="material-symbols-outlined text-[18px]">delete</span>
+                      </button>
                     </div>
-                    <div className="flex flex-col gap-1">
-                      <p
-                        className={`text-sm font-medium leading-relaxed transition-colors ${
-                          bookmark.isActive ? 'text-white group-hover:text-primary' : 'text-gray-300 group-hover:text-white'
-                        }`}
-                      >
-                        {bookmark.note}
-                      </p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <div
-                          className="size-5 rounded-full bg-gray-600 bg-cover"
-                          style={{ backgroundImage: `url('${bookmark.avatar}')` }}
-                        ></div>
-                        <span className="text-xs text-gray-500">Added by {bookmark.addedBy}</span>
+                    <div className="flex gap-4">
+                      <div className="flex-shrink-0 w-16 pt-1">
+                        <span
+                          className={`inline-flex items-center justify-center px-2 py-1 rounded font-mono text-sm font-medium border transition-colors ${
+                            index === 0
+                              ? 'bg-primary/10 text-primary border-primary/20 group-hover:bg-primary group-hover:text-black'
+                              : 'bg-[#2a2a2a] text-gray-400 border-[#333] group-hover:text-black group-hover:bg-primary group-hover:border-primary'
+                          }`}
+                        >
+                          {formatTimestamp(bookmark.timestamp_seconds)}
+                        </span>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <p
+                          className={`text-sm font-medium leading-relaxed transition-colors ${
+                            index === 0 ? 'text-white group-hover:text-primary' : 'text-gray-300 group-hover:text-white'
+                          }`}
+                        >
+                          {bookmark.notes || bookmark.label || 'Bookmark'}
+                        </p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <div className="size-5 rounded-full bg-gray-600"></div>
+                          <span className="text-xs text-gray-500">
+                            Added {new Date(bookmark.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                        {bookmark.tags && bookmark.tags.length > 0 && (
+                          <div className="flex gap-1 mt-2">
+                            {bookmark.tags.map((tag, i) => (
+                              <span
+                                key={i}
+                                className="px-2 py-0.5 bg-[#2a2a2a] text-xs text-gray-400 rounded"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </main>
@@ -307,6 +433,14 @@ export default function RecruiterFilmPlayerPage() {
       <footer className="mt-auto border-t border-[#333] py-6 text-center text-gray-600 text-sm">
         <p>© 2024 RepMax. All rights reserved.</p>
       </footer>
+
+      {/* Add Bookmark Modal */}
+      <AddBookmarkModal
+        isOpen={showAddBookmark}
+        onClose={() => setShowAddBookmark(false)}
+        onSubmit={handleAddBookmark}
+        timestamp={formatTimestamp(currentTime)}
+      />
     </div>
   );
 }

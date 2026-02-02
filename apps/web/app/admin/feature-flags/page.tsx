@@ -1,26 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import Link from 'next/link';
-
-interface FeatureFlag {
-  id: string;
-  name: string;
-  key: string;
-  status: 'enabled' | 'beta' | 'disabled' | 'canary';
-  scope: string;
-  rollout?: string;
-  isNew?: boolean;
-  icon: string;
-  iconColor: string;
-}
-
-const mockFlags: FeatureFlag[] = [
-  { id: '1', name: 'Messaging', key: 'feat_messaging_v1', status: 'enabled', scope: 'All Users', icon: 'chat', iconColor: 'text-green-500 bg-green-500/10' },
-  { id: '2', name: 'Film Upload', key: 'feat_vid_upload_beta', status: 'beta', scope: 'Pro & Team', icon: 'video_library', iconColor: 'text-yellow-500 bg-yellow-500/10' },
-  { id: '3', name: 'AI Scouting Reports', key: 'feat_ai_reports_gen', status: 'disabled', scope: 'Staff Only', icon: 'psychology', iconColor: 'text-red-500 bg-red-500/10' },
-  { id: '4', name: 'Zone Map v2', key: 'feat_zone_map_canary', status: 'canary', scope: 'Percentage Rollout', rollout: '15%', isNew: true, icon: 'map', iconColor: 'text-blue-500 bg-blue-500/10' },
-];
+import {
+  useFeatureFlags,
+  isFlagActive,
+  type FlagScope,
+  type FeatureFlagsFilter,
+} from '@/lib/hooks';
 
 function getStatusStyles(status: string) {
   switch (status) {
@@ -37,17 +24,91 @@ function getStatusStyles(status: string) {
   }
 }
 
-export default function FeatureFlagsPage() {
-  const [flags, setFlags] = useState(mockFlags);
+// Loading skeleton for table rows
+function TableRowSkeleton() {
+  return (
+    <tr className="animate-pulse">
+      <td className="px-6 py-4">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-gray-700 w-10 h-10"></div>
+          <div>
+            <div className="h-4 bg-gray-700 rounded w-24 mb-2"></div>
+            <div className="h-3 bg-gray-800 rounded w-32"></div>
+          </div>
+        </div>
+      </td>
+      <td className="px-6 py-4">
+        <div className="h-6 bg-gray-700 rounded-full w-20"></div>
+      </td>
+      <td className="px-6 py-4">
+        <div className="h-8 bg-gray-700 rounded w-28"></div>
+      </td>
+      <td className="px-6 py-4">
+        <div className="h-6 bg-gray-700 rounded w-16"></div>
+      </td>
+      <td className="px-6 py-4 text-right">
+        <div className="h-6 bg-gray-700 rounded-full w-11 ml-auto"></div>
+      </td>
+    </tr>
+  );
+}
 
-  const toggleFlag = (id: string) => {
-    setFlags(flags.map(flag => {
-      if (flag.id === id) {
-        const newStatus = flag.status === 'enabled' || flag.status === 'beta' || flag.status === 'canary' ? 'disabled' : 'enabled';
-        return { ...flag, status: newStatus as 'enabled' | 'disabled' };
+export default function FeatureFlagsPage() {
+  const {
+    flags,
+    total,
+    filtered,
+    isLoading,
+    isUpdating,
+    error,
+    filter,
+    setFilter,
+    toggleFlag,
+    updateFlagScope,
+    updateRolloutPercentage,
+  } = useFeatureFlags();
+
+  const [searchValue, setSearchValue] = useState('');
+
+  // Debounced search
+  const handleSearchChange = useCallback((value: string) => {
+    setSearchValue(value);
+    // Simple debounce using setTimeout
+    const timeoutId = setTimeout(() => {
+      setFilter({ ...filter, search: value });
+    }, 300);
+    return () => clearTimeout(timeoutId);
+  }, [filter, setFilter]);
+
+  const handleFilterChange = (status: FeatureFlagsFilter['status']) => {
+    setFilter({ ...filter, status });
+  };
+
+  const handleScopeChange = async (flagId: string, newScope: string) => {
+    try {
+      await updateFlagScope(flagId, newScope as FlagScope);
+    } catch {
+      // Error is handled by the hook
+    }
+  };
+
+  const handleRolloutChange = async (flagId: string, percentage: string) => {
+    try {
+      const numValue = parseInt(percentage.replace('%', ''), 10);
+      if (!isNaN(numValue)) {
+        await updateRolloutPercentage(flagId, numValue);
       }
-      return flag;
-    }));
+    } catch {
+      // Error is handled by the hook
+    }
+  };
+
+  const handleToggle = async (flagId: string) => {
+    try {
+      await toggleFlag(flagId);
+    } catch {
+      // Error is handled by the hook
+    }
   };
 
   return (
@@ -136,6 +197,14 @@ export default function FeatureFlagsPage() {
                 </button>
               </div>
 
+              {/* Error Banner */}
+              {error && (
+                <div className="bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-3 flex items-center gap-3">
+                  <span className="material-symbols-outlined text-red-500">error</span>
+                  <span className="text-red-400 text-sm">{error.message}</span>
+                </div>
+              )}
+
               {/* Search & Filter Bar */}
               <div className="flex flex-col lg:flex-row gap-4 justify-between items-center bg-[#121212] p-2 rounded-xl border border-[#27272a]">
                 {/* Search */}
@@ -146,6 +215,8 @@ export default function FeatureFlagsPage() {
                   <input
                     type="text"
                     placeholder="Search features by name, key, or tag..."
+                    value={searchValue}
+                    onChange={(e) => handleSearchChange(e.target.value)}
                     className="block w-full pl-10 pr-3 py-2.5 border-none rounded-lg bg-[#0a0a0a] text-gray-200 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-[#ef4343]/50 sm:text-sm"
                   />
                 </div>
@@ -153,19 +224,43 @@ export default function FeatureFlagsPage() {
                 {/* Segmented Controls */}
                 <div className="flex p-1 bg-[#0a0a0a] rounded-lg w-full lg:w-auto overflow-x-auto">
                   <label className="cursor-pointer">
-                    <input type="radio" name="filter" className="peer sr-only" defaultChecked />
+                    <input
+                      type="radio"
+                      name="filter"
+                      className="peer sr-only"
+                      checked={filter.status === 'all'}
+                      onChange={() => handleFilterChange('all')}
+                    />
                     <span className="block px-4 py-1.5 rounded-md text-sm font-medium text-gray-400 peer-checked:bg-[#121212] peer-checked:text-white peer-checked:shadow transition-all whitespace-nowrap">All Features</span>
                   </label>
                   <label className="cursor-pointer">
-                    <input type="radio" name="filter" className="peer sr-only" />
+                    <input
+                      type="radio"
+                      name="filter"
+                      className="peer sr-only"
+                      checked={filter.status === 'active'}
+                      onChange={() => handleFilterChange('active')}
+                    />
                     <span className="block px-4 py-1.5 rounded-md text-sm font-medium text-gray-400 peer-checked:bg-[#121212] peer-checked:text-white peer-checked:shadow transition-all whitespace-nowrap">Active</span>
                   </label>
                   <label className="cursor-pointer">
-                    <input type="radio" name="filter" className="peer sr-only" />
+                    <input
+                      type="radio"
+                      name="filter"
+                      className="peer sr-only"
+                      checked={filter.status === 'beta'}
+                      onChange={() => handleFilterChange('beta')}
+                    />
                     <span className="block px-4 py-1.5 rounded-md text-sm font-medium text-gray-400 peer-checked:bg-[#121212] peer-checked:text-white peer-checked:shadow transition-all whitespace-nowrap">Beta</span>
                   </label>
                   <label className="cursor-pointer">
-                    <input type="radio" name="filter" className="peer sr-only" />
+                    <input
+                      type="radio"
+                      name="filter"
+                      className="peer sr-only"
+                      checked={filter.status === 'deprecated'}
+                      onChange={() => handleFilterChange('deprecated')}
+                    />
                     <span className="block px-4 py-1.5 rounded-md text-sm font-medium text-gray-400 peer-checked:bg-[#121212] peer-checked:text-white peer-checked:shadow transition-all whitespace-nowrap">Deprecated</span>
                   </label>
                 </div>
@@ -185,78 +280,124 @@ export default function FeatureFlagsPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[#27272a]">
-                      {flags.map((flag) => {
-                        const statusStyles = getStatusStyles(flag.status);
-                        const isEnabled = flag.status === 'enabled' || flag.status === 'beta' || flag.status === 'canary';
-                        return (
-                          <tr key={flag.id} className={`group hover:bg-[#1a1a1a] transition-colors ${flag.isNew ? 'bg-gradient-to-r from-transparent to-[#ef4343]/5' : ''}`}>
-                            <td className="px-6 py-4">
-                              <div className="flex items-center gap-3">
-                                <div className={`p-2 rounded-lg ${flag.iconColor}`}>
-                                  <span className="material-symbols-outlined">{flag.icon}</span>
-                                </div>
-                                <div>
-                                  <div className="flex items-center gap-2">
-                                    <p className="font-bold text-white text-sm">{flag.name}</p>
-                                    {flag.isNew && <span className="px-1.5 py-0.5 rounded text-[10px] bg-blue-500 text-white font-bold">NEW</span>}
-                                  </div>
-                                  <p className="text-xs text-gray-500 font-mono mt-0.5">{flag.key}</p>
-                                </div>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4">
-                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${statusStyles.classes}`}>
-                                <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${statusStyles.dotClass}`}></span>
-                                {statusStyles.label}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4">
-                              <div className="relative">
-                                <select className="block w-full pl-3 pr-8 py-1.5 text-xs bg-[#0a0a0a] border border-[#27272a] text-white rounded-md focus:outline-none focus:ring-1 focus:ring-[#ef4343] focus:border-[#ef4343] appearance-none cursor-pointer hover:border-gray-600 transition-colors">
-                                  <option>{flag.scope}</option>
-                                  <option>All Users</option>
-                                  <option>Pro & Team</option>
-                                  <option>Staff Only</option>
-                                </select>
-                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
-                                  <span className="material-symbols-outlined text-[16px]">expand_more</span>
-                                </div>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4">
-                              {flag.rollout ? (
-                                <div className="flex items-center gap-2">
-                                  <div className="relative w-24">
-                                    <select className="block w-full pl-2 pr-6 py-1 text-xs bg-[#222] border border-[#ef4343]/40 text-white rounded focus:outline-none focus:border-[#ef4343] appearance-none cursor-pointer">
-                                      <option>10%</option>
-                                      <option>{flag.rollout}</option>
-                                      <option>25%</option>
-                                      <option>50%</option>
-                                    </select>
-                                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 text-gray-400">
-                                      <span className="material-symbols-outlined text-[14px]">unfold_more</span>
-                                    </div>
-                                  </div>
-                                  <span className="text-[10px] text-gray-500">Traffic</span>
-                                </div>
-                              ) : (
-                                <span className="text-gray-600 text-xs italic">{flag.status === 'enabled' ? '100% rollout' : 'N/A'}</span>
+                      {isLoading ? (
+                        // Loading skeletons
+                        <>
+                          <TableRowSkeleton />
+                          <TableRowSkeleton />
+                          <TableRowSkeleton />
+                          <TableRowSkeleton />
+                        </>
+                      ) : flags.length === 0 ? (
+                        // Empty state
+                        <tr>
+                          <td colSpan={5} className="px-6 py-12 text-center">
+                            <div className="flex flex-col items-center gap-3">
+                              <span className="material-symbols-outlined text-4xl text-gray-600">flag</span>
+                              <p className="text-gray-400">No feature flags found</p>
+                              {filter.search && (
+                                <p className="text-sm text-gray-500">Try adjusting your search or filter criteria</p>
                               )}
-                            </td>
-                            <td className="px-6 py-4 text-right">
-                              <label className="inline-flex relative items-center cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  checked={isEnabled}
-                                  onChange={() => toggleFlag(flag.id)}
-                                  className="sr-only peer"
-                                />
-                                <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#eab308] shadow-inner"></div>
-                              </label>
-                            </td>
-                          </tr>
-                        );
-                      })}
+                            </div>
+                          </td>
+                        </tr>
+                      ) : (
+                        // Data rows
+                        flags.map((flag) => {
+                          const statusStyles = getStatusStyles(flag.status);
+                          const isEnabled = isFlagActive(flag);
+                          const isFlagUpdating = isUpdating === flag.id;
+                          return (
+                            <tr key={flag.id} className={`group hover:bg-[#1a1a1a] transition-colors ${flag.isNew ? 'bg-gradient-to-r from-transparent to-[#ef4343]/5' : ''} ${isFlagUpdating ? 'opacity-70' : ''}`}>
+                              <td className="px-6 py-4">
+                                <div className="flex items-center gap-3">
+                                  <div className={`p-2 rounded-lg ${flag.iconColor}`}>
+                                    <span className="material-symbols-outlined">{flag.icon}</span>
+                                  </div>
+                                  <div>
+                                    <div className="flex items-center gap-2">
+                                      <p className="font-bold text-white text-sm">{flag.name}</p>
+                                      {flag.isNew && <span className="px-1.5 py-0.5 rounded text-[10px] bg-blue-500 text-white font-bold">NEW</span>}
+                                    </div>
+                                    <p className="text-xs text-gray-500 font-mono mt-0.5">{flag.key}</p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4">
+                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${statusStyles.classes}`}>
+                                  <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${statusStyles.dotClass}`}></span>
+                                  {statusStyles.label}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4">
+                                <div className="relative">
+                                  <select
+                                    value={flag.scope}
+                                    onChange={(e) => handleScopeChange(flag.id, e.target.value)}
+                                    disabled={isFlagUpdating}
+                                    className="block w-full pl-3 pr-8 py-1.5 text-xs bg-[#0a0a0a] border border-[#27272a] text-white rounded-md focus:outline-none focus:ring-1 focus:ring-[#ef4343] focus:border-[#ef4343] appearance-none cursor-pointer hover:border-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                  >
+                                    <option value="all">All Users</option>
+                                    <option value="pro_team">Pro & Team</option>
+                                    <option value="staff">Staff Only</option>
+                                    <option value="percentage">Percentage Rollout</option>
+                                  </select>
+                                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+                                    <span className="material-symbols-outlined text-[16px]">expand_more</span>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4">
+                                {flag.scope === 'percentage' || flag.status === 'canary' ? (
+                                  <div className="flex items-center gap-2">
+                                    <div className="relative w-24">
+                                      <select
+                                        value={`${flag.rolloutPercentage}%`}
+                                        onChange={(e) => handleRolloutChange(flag.id, e.target.value)}
+                                        disabled={isFlagUpdating}
+                                        className="block w-full pl-2 pr-6 py-1 text-xs bg-[#222] border border-[#ef4343]/40 text-white rounded focus:outline-none focus:border-[#ef4343] appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                                      >
+                                        <option value="5%">5%</option>
+                                        <option value="10%">10%</option>
+                                        <option value="15%">15%</option>
+                                        <option value="25%">25%</option>
+                                        <option value="50%">50%</option>
+                                        <option value="75%">75%</option>
+                                        <option value="100%">100%</option>
+                                      </select>
+                                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 text-gray-400">
+                                        <span className="material-symbols-outlined text-[14px]">unfold_more</span>
+                                      </div>
+                                    </div>
+                                    <span className="text-[10px] text-gray-500">Traffic</span>
+                                  </div>
+                                ) : (
+                                  <span className="text-gray-600 text-xs italic">
+                                    {flag.status === 'enabled' ? '100% rollout' : 'N/A'}
+                                  </span>
+                                )}
+                              </td>
+                              <td className="px-6 py-4 text-right">
+                                <label className={`inline-flex relative items-center ${isFlagUpdating ? 'cursor-wait' : 'cursor-pointer'}`}>
+                                  <input
+                                    type="checkbox"
+                                    checked={isEnabled}
+                                    onChange={() => handleToggle(flag.id)}
+                                    disabled={isFlagUpdating}
+                                    className="sr-only peer"
+                                  />
+                                  <div className={`w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#eab308] shadow-inner ${isFlagUpdating ? 'opacity-50' : ''}`}></div>
+                                  {isFlagUpdating && (
+                                    <span className="absolute inset-0 flex items-center justify-center">
+                                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                                    </span>
+                                  )}
+                                </label>
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -264,7 +405,13 @@ export default function FeatureFlagsPage() {
                 {/* Pagination */}
                 <div className="px-6 py-4 border-t border-[#27272a] bg-[#121212] flex items-center justify-between text-xs text-gray-500">
                   <div>
-                    Showing <span className="text-white font-medium">1-4</span> of <span className="text-white font-medium">12</span> flags
+                    {isLoading ? (
+                      <span className="animate-pulse bg-gray-700 rounded h-4 w-32 inline-block"></span>
+                    ) : (
+                      <>
+                        Showing <span className="text-white font-medium">{filtered}</span> of <span className="text-white font-medium">{total}</span> flags
+                      </>
+                    )}
                   </div>
                   <div className="flex gap-2">
                     <button className="px-3 py-1 rounded bg-[#0a0a0a] border border-[#27272a] hover:text-white hover:border-gray-500 disabled:opacity-50" disabled>Previous</button>

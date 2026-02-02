@@ -1,77 +1,30 @@
 'use client';
 
-import { useState } from 'react';
-
-interface NotificationSetting {
-  id: string;
-  title: string;
-  description: string;
-  enabled: boolean;
-  frequency?: 'daily' | 'weekly' | 'monthly' | 'never';
-}
-
-interface NotificationSection {
-  id: string;
-  title: string;
-  icon: string;
-  settings: NotificationSetting[];
-}
-
-const initialSections: NotificationSection[] = [
-  {
-    id: 'push',
-    title: 'Push Notifications',
-    icon: 'app_badging',
-    settings: [
-      { id: 'profile-views', title: 'Profile Views', description: 'Notify when a scout or coach views a prospect profile.', enabled: true },
-      { id: 'new-offers', title: 'New Offers', description: 'Instant alerts when an athlete in your watchlist receives a scholarship offer.', enabled: true },
-      { id: 'shortlist', title: 'Shortlist Activity', description: 'Updates on movement within your recruitment shortlist.', enabled: false },
-      { id: 'messages', title: 'Messages', description: 'Direct notifications for internal staff messages.', enabled: true },
-      { id: 'calendar', title: 'Calendar Reminders', description: 'Alerts for scheduled visits, calls, and evaluation deadlines.', enabled: true },
-    ],
-  },
-  {
-    id: 'email',
-    title: 'Email Notifications',
-    icon: 'mail',
-    settings: [
-      { id: 'digest', title: 'Recruiting Intelligence Digest', description: 'A summarized report of all recruiting activity.', enabled: true, frequency: 'weekly' },
-      { id: 'deadlines', title: 'Important Deadlines', description: 'Emails regarding NCAA compliance periods and dead periods.', enabled: true },
-      { id: 'marketing', title: 'Marketing & Tips', description: 'Occasional updates about new RepMax features and recruiting best practices.', enabled: false },
-    ],
-  },
-  {
-    id: 'inapp',
-    title: 'In-App Notifications',
-    icon: 'view_quilt',
-    settings: [
-      { id: 'badge', title: 'Badge Count', description: 'Show notification count on the sidebar and app icon.', enabled: true },
-      { id: 'sounds', title: 'System Sounds', description: 'Play a subtle sound when a new alert arrives while the app is open.', enabled: false },
-    ],
-  },
-];
+import { useNotificationPreferences } from '@/lib/hooks';
+import { Loader2 } from 'lucide-react';
 
 const sidebarNavRecruitingSuite = [
-  { icon: 'dashboard', label: 'Intelligence Dashboard' },
-  { icon: 'groups', label: 'Team Management' },
-  { icon: 'person_search', label: 'Scouting Reports' },
+  { icon: 'dashboard', label: 'Intelligence Dashboard', href: '/dashboard/recruiter' },
+  { icon: 'groups', label: 'Team Management', href: '/dashboard/recruiter/pipeline' },
+  { icon: 'person_search', label: 'Scouting Reports', href: '/dashboard/recruiter/prospects' },
 ];
 
 const sidebarNavSettings = [
-  { icon: 'person', label: 'Account Profile' },
-  { icon: 'notifications_active', label: 'Notification Preferences', active: true },
-  { icon: 'security', label: 'Security & Privacy' },
-  { icon: 'payments', label: 'Billing & Plans' },
+  { icon: 'person', label: 'Account Profile', href: '/dashboard/settings' },
+  { icon: 'notifications_active', label: 'Notification Preferences', href: '/dashboard/settings/notifications', active: true },
+  { icon: 'security', label: 'Security & Privacy', href: '/dashboard/settings/security' },
+  { icon: 'payments', label: 'Billing & Plans', href: '/dashboard/settings/billing' },
 ];
 
-function ToggleSwitch({ checked, onChange }: { checked: boolean; onChange: (checked: boolean) => void }) {
+function ToggleSwitch({ checked, onChange, disabled }: { checked: boolean; onChange: (checked: boolean) => void; disabled?: boolean }) {
   return (
-    <label className="relative inline-flex items-center cursor-pointer">
+    <label className={`relative inline-flex items-center ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}>
       <input
         type="checkbox"
         className="sr-only peer"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
+        disabled={disabled}
       />
       <div className="w-12 h-6 bg-slate-300 dark:bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
     </label>
@@ -79,44 +32,32 @@ function ToggleSwitch({ checked, onChange }: { checked: boolean; onChange: (chec
 }
 
 export default function NotificationSettingsPage() {
-  const [sections, setSections] = useState(initialSections);
-  const [quietHoursFrom, setQuietHoursFrom] = useState('22:00');
-  const [quietHoursTo, setQuietHoursTo] = useState('07:00');
-  const [hasChanges, setHasChanges] = useState(true);
+  const {
+    preferences,
+    isLoading,
+    isSaving,
+    error,
+    hasChanges,
+    updatePreference,
+    savePreferences,
+    discardChanges,
+  } = useNotificationPreferences();
 
-  const handleToggle = (sectionId: string, settingId: string, enabled: boolean) => {
-    setSections((prev) =>
-      prev.map((section) =>
-        section.id === sectionId
-          ? {
-              ...section,
-              settings: section.settings.map((setting) =>
-                setting.id === settingId ? { ...setting, enabled } : setting
-              ),
-            }
-          : section
-      )
-    );
-    setHasChanges(true);
+  const handleSave = async () => {
+    try {
+      await savePreferences();
+    } catch (err) {
+      console.error('Failed to save preferences:', err);
+    }
   };
 
-  const handleFrequencyChange = (sectionId: string, settingId: string, frequency: string) => {
-    setSections((prev) =>
-      prev.map((section) =>
-        section.id === sectionId
-          ? {
-              ...section,
-              settings: section.settings.map((setting) =>
-                setting.id === settingId
-                  ? { ...setting, frequency: frequency as NotificationSetting['frequency'] }
-                  : setting
-              ),
-            }
-          : section
-      )
+  if (isLoading) {
+    return (
+      <div className="bg-slate-100 dark:bg-[#0a0a0a] min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      </div>
     );
-    setHasChanges(true);
-  };
+  }
 
   return (
     <div className="bg-slate-100 dark:bg-[#0a0a0a] font-sans text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
@@ -144,22 +85,15 @@ export default function NotificationSettingsPage() {
         <div className="flex items-center gap-4">
           <button className="p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-white/5 transition-colors relative">
             <span className="material-symbols-outlined">notifications</span>
-            <span className="absolute top-2 right-2 size-2 bg-primary rounded-full border-2 border-[#0a0a0a]"></span>
           </button>
           <div className="h-8 w-[1px] bg-white/10 mx-2"></div>
           <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity">
             <div className="text-right hidden sm:block">
-              <p className="text-xs font-bold">Coach Harrison</p>
-              <p className="text-[10px] text-slate-500 uppercase tracking-widest">Director of Personnel</p>
+              <p className="text-xs font-bold">Settings</p>
+              <p className="text-[10px] text-slate-500 uppercase tracking-widest">Notifications</p>
             </div>
             <div className="size-10 rounded-full bg-primary/20 border border-primary/40 p-0.5">
-              <div
-                className="size-full rounded-full bg-cover bg-center"
-                style={{
-                  backgroundImage:
-                    'url("https://lh3.googleusercontent.com/aida-public/AB6AXuBDvNL4E_Q5y5KSx5qt23VVqvehU0W_1Fjw9niCEvScfjSwiRddf5aEtey1EmTiMQ4YDkmsVstTmqv2NvUswr1CNMGvn2HEdmhjRwu-rRpKsZYOxZ9ymm-GIInOSfLUnbwvxMdOnyssYXoUOKxeEfypKpgND_-MmDmwOzLDfQygzTR2FMd-SAPpMHe18orcBm7zGR-lK_MklQscMRJ1UYXKtXUB3Abhhhm08RUgCpzvoDbg08HV_cAUXhtMvAdfEuR5BaBP5TkWBWc")',
-                }}
-              />
+              <div className="size-full rounded-full bg-[#333]"></div>
             </div>
           </div>
         </div>
@@ -174,7 +108,7 @@ export default function NotificationSettingsPage() {
               {sidebarNavRecruitingSuite.map((item) => (
                 <a
                   key={item.label}
-                  href="#"
+                  href={item.href}
                   className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-all"
                 >
                   <span className="material-symbols-outlined">{item.icon}</span>
@@ -189,7 +123,7 @@ export default function NotificationSettingsPage() {
               {sidebarNavSettings.map((item) => (
                 <a
                   key={item.label}
-                  href="#"
+                  href={item.href}
                   className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                     item.active
                       ? 'bg-primary text-[#0a0a0a] shadow-lg shadow-primary/20'
@@ -207,15 +141,6 @@ export default function NotificationSettingsPage() {
               ))}
             </nav>
           </div>
-          <div className="mt-auto">
-            <div className="bg-gradient-to-br from-primary/20 to-transparent border border-primary/20 p-4 rounded-xl">
-              <p className="text-xs font-bold text-primary mb-1">PRO PLAN</p>
-              <p className="text-[10px] text-slate-400 mb-3">Your subscription renews on Oct 12, 2024.</p>
-              <button className="w-full py-2 bg-primary text-[#0a0a0a] text-[10px] font-black uppercase tracking-widest rounded hover:bg-primary/90 transition-all">
-                Upgrade Account
-              </button>
-            </div>
-          </div>
         </aside>
 
         {/* Main Content Area */}
@@ -230,48 +155,153 @@ export default function NotificationSettingsPage() {
                 Customize your intelligence flow. Choose how and when you receive critical recruiting alerts, offers,
                 and scout updates.
               </p>
+              {error && (
+                <p className="text-red-500 text-sm mt-2">Error: {error.message}</p>
+              )}
             </div>
 
             <div className="grid gap-12">
-              {sections.map((section) => (
-                <section key={section.id}>
-                  <div className="flex items-center gap-2 mb-6 px-1">
-                    <span className="material-symbols-outlined text-primary">{section.icon}</span>
-                    <h2 className="text-xl font-bold tracking-tight">{section.title}</h2>
+              {/* Push Notifications */}
+              <section>
+                <div className="flex items-center gap-2 mb-6 px-1">
+                  <span className="material-symbols-outlined text-primary">app_badging</span>
+                  <h2 className="text-xl font-bold tracking-tight">Push Notifications</h2>
+                </div>
+                <div className="grid gap-px bg-slate-200 dark:bg-white/10 rounded-xl overflow-hidden border border-slate-200 dark:border-white/10">
+                  <div className="flex items-center justify-between p-6 bg-white dark:bg-[#1A1A1A] hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors gap-4">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-base font-bold">Profile Views</p>
+                      <p className="text-sm text-slate-500">Notify when a scout or coach views a prospect profile.</p>
+                    </div>
+                    <ToggleSwitch
+                      checked={preferences.push.profileViews}
+                      onChange={(v) => updatePreference('push', 'profileViews', v)}
+                    />
                   </div>
-                  <div className="grid gap-px bg-slate-200 dark:bg-white/10 rounded-xl overflow-hidden border border-slate-200 dark:border-white/10">
-                    {section.settings.map((setting) => (
-                      <div
-                        key={setting.id}
-                        className={`flex ${setting.frequency ? 'flex-col @[480px]:flex-row @[480px]:items-center' : 'items-center'} justify-between p-6 bg-white dark:bg-[#1A1A1A] hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors gap-4`}
+                  <div className="flex items-center justify-between p-6 bg-white dark:bg-[#1A1A1A] hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors gap-4">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-base font-bold">New Offers</p>
+                      <p className="text-sm text-slate-500">Instant alerts when an athlete in your watchlist receives a scholarship offer.</p>
+                    </div>
+                    <ToggleSwitch
+                      checked={preferences.push.newOffers}
+                      onChange={(v) => updatePreference('push', 'newOffers', v)}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between p-6 bg-white dark:bg-[#1A1A1A] hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors gap-4">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-base font-bold">Shortlist Activity</p>
+                      <p className="text-sm text-slate-500">Updates on movement within your recruitment shortlist.</p>
+                    </div>
+                    <ToggleSwitch
+                      checked={preferences.push.shortlist}
+                      onChange={(v) => updatePreference('push', 'shortlist', v)}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between p-6 bg-white dark:bg-[#1A1A1A] hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors gap-4">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-base font-bold">Messages</p>
+                      <p className="text-sm text-slate-500">Direct notifications for internal staff messages.</p>
+                    </div>
+                    <ToggleSwitch
+                      checked={preferences.push.messages}
+                      onChange={(v) => updatePreference('push', 'messages', v)}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between p-6 bg-white dark:bg-[#1A1A1A] hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors gap-4">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-base font-bold">Calendar Reminders</p>
+                      <p className="text-sm text-slate-500">Alerts for scheduled visits, calls, and evaluation deadlines.</p>
+                    </div>
+                    <ToggleSwitch
+                      checked={preferences.push.calendar}
+                      onChange={(v) => updatePreference('push', 'calendar', v)}
+                    />
+                  </div>
+                </div>
+              </section>
+
+              {/* Email Notifications */}
+              <section>
+                <div className="flex items-center gap-2 mb-6 px-1">
+                  <span className="material-symbols-outlined text-primary">mail</span>
+                  <h2 className="text-xl font-bold tracking-tight">Email Notifications</h2>
+                </div>
+                <div className="grid gap-px bg-slate-200 dark:bg-white/10 rounded-xl overflow-hidden border border-slate-200 dark:border-white/10">
+                  <div className="flex flex-col @[480px]:flex-row @[480px]:items-center justify-between p-6 bg-white dark:bg-[#1A1A1A] hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors gap-4">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-base font-bold">Recruiting Intelligence Digest</p>
+                      <p className="text-sm text-slate-500">A summarized report of all recruiting activity.</p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <select
+                        className="bg-slate-100 dark:bg-white/5 border border-white/10 text-sm rounded-lg py-2 px-3 focus:ring-primary focus:border-primary"
+                        value={preferences.email.digestFrequency}
+                        onChange={(e) => updatePreference('email', 'digestFrequency', e.target.value as 'daily' | 'weekly' | 'monthly' | 'never')}
                       >
-                        <div className="flex flex-col gap-1">
-                          <p className="text-base font-bold">{setting.title}</p>
-                          <p className="text-sm text-slate-500">{setting.description}</p>
-                        </div>
-                        <div className="flex items-center gap-4">
-                          {setting.frequency !== undefined && (
-                            <select
-                              className="bg-slate-100 dark:bg-white/5 border border-white/10 text-sm rounded-lg py-2 px-3 focus:ring-primary focus:border-primary"
-                              value={setting.frequency}
-                              onChange={(e) => handleFrequencyChange(section.id, setting.id, e.target.value)}
-                            >
-                              <option value="daily">Daily</option>
-                              <option value="weekly">Weekly</option>
-                              <option value="monthly">Monthly</option>
-                              <option value="never">Never</option>
-                            </select>
-                          )}
-                          <ToggleSwitch
-                            checked={setting.enabled}
-                            onChange={(enabled) => handleToggle(section.id, setting.id, enabled)}
-                          />
-                        </div>
-                      </div>
-                    ))}
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="never">Never</option>
+                      </select>
+                      <ToggleSwitch
+                        checked={preferences.email.digest}
+                        onChange={(v) => updatePreference('email', 'digest', v)}
+                      />
+                    </div>
                   </div>
-                </section>
-              ))}
+                  <div className="flex items-center justify-between p-6 bg-white dark:bg-[#1A1A1A] hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors gap-4">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-base font-bold">Important Deadlines</p>
+                      <p className="text-sm text-slate-500">Emails regarding NCAA compliance periods and dead periods.</p>
+                    </div>
+                    <ToggleSwitch
+                      checked={preferences.email.deadlines}
+                      onChange={(v) => updatePreference('email', 'deadlines', v)}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between p-6 bg-white dark:bg-[#1A1A1A] hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors gap-4">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-base font-bold">Marketing & Tips</p>
+                      <p className="text-sm text-slate-500">Occasional updates about new RepMax features and recruiting best practices.</p>
+                    </div>
+                    <ToggleSwitch
+                      checked={preferences.email.marketing}
+                      onChange={(v) => updatePreference('email', 'marketing', v)}
+                    />
+                  </div>
+                </div>
+              </section>
+
+              {/* In-App Notifications */}
+              <section>
+                <div className="flex items-center gap-2 mb-6 px-1">
+                  <span className="material-symbols-outlined text-primary">view_quilt</span>
+                  <h2 className="text-xl font-bold tracking-tight">In-App Notifications</h2>
+                </div>
+                <div className="grid gap-px bg-slate-200 dark:bg-white/10 rounded-xl overflow-hidden border border-slate-200 dark:border-white/10">
+                  <div className="flex items-center justify-between p-6 bg-white dark:bg-[#1A1A1A] hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors gap-4">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-base font-bold">Badge Count</p>
+                      <p className="text-sm text-slate-500">Show notification count on the sidebar and app icon.</p>
+                    </div>
+                    <ToggleSwitch
+                      checked={preferences.inApp.badge}
+                      onChange={(v) => updatePreference('inApp', 'badge', v)}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between p-6 bg-white dark:bg-[#1A1A1A] hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors gap-4">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-base font-bold">System Sounds</p>
+                      <p className="text-sm text-slate-500">Play a subtle sound when a new alert arrives while the app is open.</p>
+                    </div>
+                    <ToggleSwitch
+                      checked={preferences.inApp.sounds}
+                      onChange={(v) => updatePreference('inApp', 'sounds', v)}
+                    />
+                  </div>
+                </div>
+              </section>
 
               {/* Quiet Hours Section */}
               <section className="mb-12">
@@ -282,7 +312,13 @@ export default function NotificationSettingsPage() {
                 <div className="p-6 bg-white dark:bg-[#1A1A1A] rounded-xl border border-slate-200 dark:border-white/10">
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="flex flex-col gap-1 max-w-md">
-                      <p className="text-base font-bold">Schedule Downtime</p>
+                      <div className="flex items-center gap-3">
+                        <p className="text-base font-bold">Schedule Downtime</p>
+                        <ToggleSwitch
+                          checked={preferences.quietHours.enabled}
+                          onChange={(v) => updatePreference('quietHours', 'enabled', v)}
+                        />
+                      </div>
                       <p className="text-sm text-slate-500">
                         Automatically silence all notifications during these hours to minimize distractions.
                       </p>
@@ -291,26 +327,22 @@ export default function NotificationSettingsPage() {
                       <div className="flex flex-col gap-1">
                         <label className="text-[10px] uppercase font-bold text-slate-500">From</label>
                         <input
-                          className="bg-slate-100 dark:bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-sm focus:ring-primary focus:border-primary"
+                          className="bg-slate-100 dark:bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-sm focus:ring-primary focus:border-primary disabled:opacity-50"
                           type="time"
-                          value={quietHoursFrom}
-                          onChange={(e) => {
-                            setQuietHoursFrom(e.target.value);
-                            setHasChanges(true);
-                          }}
+                          value={preferences.quietHours.from}
+                          onChange={(e) => updatePreference('quietHours', 'from', e.target.value)}
+                          disabled={!preferences.quietHours.enabled}
                         />
                       </div>
                       <div className="text-slate-500 mt-5">—</div>
                       <div className="flex flex-col gap-1">
                         <label className="text-[10px] uppercase font-bold text-slate-500">To</label>
                         <input
-                          className="bg-slate-100 dark:bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-sm focus:ring-primary focus:border-primary"
+                          className="bg-slate-100 dark:bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-sm focus:ring-primary focus:border-primary disabled:opacity-50"
                           type="time"
-                          value={quietHoursTo}
-                          onChange={(e) => {
-                            setQuietHoursTo(e.target.value);
-                            setHasChanges(true);
-                          }}
+                          value={preferences.quietHours.to}
+                          onChange={(e) => updatePreference('quietHours', 'to', e.target.value)}
+                          disabled={!preferences.quietHours.enabled}
                         />
                       </div>
                     </div>
@@ -331,15 +363,18 @@ export default function NotificationSettingsPage() {
             </div>
             <div className="flex items-center gap-4 w-full md:w-auto">
               <button
-                className="flex-1 md:flex-none px-6 py-2.5 rounded-lg text-sm font-bold border border-slate-300 dark:border-white/10 hover:bg-white/5 transition-colors"
-                onClick={() => setHasChanges(false)}
+                className="flex-1 md:flex-none px-6 py-2.5 rounded-lg text-sm font-bold border border-slate-300 dark:border-white/10 hover:bg-white/5 transition-colors disabled:opacity-50"
+                onClick={discardChanges}
+                disabled={isSaving}
               >
                 Discard
               </button>
               <button
-                className="flex-1 md:flex-none px-8 py-2.5 rounded-lg text-sm font-black bg-primary text-[#0a0a0a] hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20 uppercase tracking-widest"
-                onClick={() => setHasChanges(false)}
+                className="flex-1 md:flex-none px-8 py-2.5 rounded-lg text-sm font-black bg-primary text-[#0a0a0a] hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20 uppercase tracking-widest disabled:opacity-50 flex items-center justify-center gap-2"
+                onClick={handleSave}
+                disabled={isSaving}
               >
+                {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
                 Save Changes
               </button>
             </div>

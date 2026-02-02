@@ -1,9 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Search, Plus, Mail } from 'lucide-react';
 import { MessageThread } from '@/components/messages/MessageThread';
 import { ComposeModal } from '@/components/messages/ComposeModal';
+import { useMessages, useConversation } from '@/lib/hooks';
+import type { Tables } from '@/types/database';
 
 type MessageRole = 'recruiter' | 'parent' | 'athlete' | 'coach';
 type FilterTab = 'all' | 'unread' | 'archived';
@@ -18,6 +20,7 @@ interface Conversation {
   timestamp: string;
   unread: boolean;
   archived: boolean;
+  recipientId: string;
 }
 
 const ROLE_COLORS: Record<MessageRole, { bg: string; text: string }> = {
@@ -27,63 +30,92 @@ const ROLE_COLORS: Record<MessageRole, { bg: string; text: string }> = {
   coach: { bg: 'bg-[#d4af35]/20', text: 'text-[#d4af35]' },
 };
 
-const MOCK_CONVERSATIONS: Conversation[] = [
-  {
-    id: '1',
-    contactName: 'Coach Williams',
-    role: 'recruiter',
-    organization: 'TCU',
-    lastMessage: "Hey, looking forward to seeing the new highlight reel you mentioned. When can we schedule a call?",
-    timestamp: '10:42 AM',
-    unread: true,
-    archived: false,
-  },
-  {
-    id: '2',
-    contactName: 'Mrs. Washington',
-    role: 'parent',
-    lastMessage: "Just wanted to check in about Marcus's upcoming campus visit. Do you need any additional documentation?",
-    timestamp: 'Yesterday',
-    unread: true,
-    archived: false,
-  },
-  {
-    id: '3',
-    contactName: 'Coach Martinez',
-    role: 'coach',
-    organization: 'Oklahoma State',
-    lastMessage: "Great game last Friday! Our staff was impressed with your performance. Let's talk soon.",
-    timestamp: 'Yesterday',
-    unread: false,
-    archived: false,
-  },
-  {
-    id: '4',
-    contactName: 'David Chen',
-    role: 'athlete',
-    lastMessage: "Thanks for connecting! Would love to hear about your experience with the recruiting process.",
-    timestamp: 'Dec 28',
-    unread: false,
-    archived: false,
-  },
-  {
-    id: '5',
-    contactName: 'Coach Thompson',
-    role: 'recruiter',
-    organization: 'Baylor',
-    lastMessage: "Following up on our conversation. Have you made any decisions about official visits?",
-    timestamp: 'Dec 27',
-    unread: false,
-    archived: true,
-  },
-];
+function formatTimestamp(dateString: string): string {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) {
+    return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  } else if (diffDays === 1) {
+    return 'Yesterday';
+  } else if (diffDays < 7) {
+    return date.toLocaleDateString('en-US', { weekday: 'short' });
+  } else {
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+}
+
+// Group messages by sender/recipient into conversations
+function groupMessagesIntoConversations(
+  messages: Array<Tables<"messages"> & {
+    sender: Pick<Tables<"profiles">, "id" | "full_name" | "avatar_url"> | null;
+    recipient: Pick<Tables<"profiles">, "id" | "full_name" | "avatar_url"> | null;
+  }>,
+  currentUserId?: string
+): Conversation[] {
+  const conversationMap = new Map<string, Conversation>();
+
+  messages.forEach((msg) => {
+    // Determine the other party in the conversation
+    const isIncoming = msg.recipient?.id === currentUserId;
+    const otherParty = isIncoming ? msg.sender : msg.recipient;
+    if (!otherParty) return;
+
+    const existingConv = conversationMap.get(otherParty.id);
+    const msgDate = new Date(msg.created_at);
+
+    if (!existingConv || new Date(existingConv.timestamp) < msgDate) {
+      conversationMap.set(otherParty.id, {
+        id: otherParty.id,
+        contactName: otherParty.full_name || 'Unknown',
+        contactAvatar: otherParty.avatar_url || undefined,
+        role: 'coach', // Default role, would need to come from profile in real app
+        lastMessage: msg.body,
+        timestamp: formatTimestamp(msg.created_at),
+        unread: isIncoming && !msg.read,
+        archived: false,
+        recipientId: otherParty.id,
+      });
+    }
+  });
+
+  return Array.from(conversationMap.values()).sort((a, b) => {
+    // Sort by timestamp (most recent first)
+    return b.timestamp.localeCompare(a.timestamp);
+  });
+}
+
+function LoadingSkeleton() {
+  return (
+    <div className="divide-y divide-[#27272a]">
+      {[1, 2, 3, 4].map((i) => (
+        <div key={i} className="p-4 animate-pulse">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-full bg-gray-700"></div>
+            <div className="flex-1">
+              <div className="h-4 w-32 bg-gray-700 rounded mb-2"></div>
+              <div className="h-3 w-48 bg-gray-700 rounded"></div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default function MessagesPage() {
-  const [conversations] = useState(MOCK_CONVERSATIONS);
+  const { messages, unreadCount, isLoading, sendMessage } = useMessages();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all');
   const [isComposeOpen, setIsComposeOpen] = useState(false);
+
+  // Convert messages to conversations
+  const conversations = useMemo(() => {
+    return groupMessagesIntoConversations(messages);
+  }, [messages]);
 
   const filteredConversations = conversations.filter((conv) => {
     // Search filter
@@ -98,7 +130,27 @@ export default function MessagesPage() {
   });
 
   const selectedConversation = conversations.find((c) => c.id === selectedId);
-  const unreadCount = conversations.filter((c) => c.unread && !c.archived).length;
+
+  // Fetch conversation thread for selected contact
+  const {
+    messages: threadMessages,
+    isLoading: isThreadLoading,
+    sendMessage: sendThreadMessage,
+  } = useConversation(selectedId);
+
+  const handleSendMessage = async (message: { recipientId: string; subject: string; body: string; attachments: File[] }) => {
+    try {
+      await sendMessage(message.recipientId, message.body, message.subject);
+      setIsComposeOpen(false);
+    } catch (error) {
+      console.error('Failed to send message:', error);
+    }
+  };
+
+  const handleSendThreadMessage = async (body: string) => {
+    if (!selectedId) return;
+    await sendThreadMessage(body);
+  };
 
   return (
     <div className="min-h-screen bg-[#050505] flex">
@@ -151,10 +203,17 @@ export default function MessagesPage() {
 
         {/* Conversation List */}
         <div className="flex-1 overflow-y-auto">
-          {filteredConversations.length === 0 ? (
+          {isLoading ? (
+            <LoadingSkeleton />
+          ) : filteredConversations.length === 0 ? (
             <div className="p-8 text-center">
               <Mail className="w-10 h-10 text-gray-600 mx-auto mb-2" />
-              <p className="text-gray-500 text-sm">No conversations found</p>
+              <p className="text-gray-500 text-sm">
+                {conversations.length === 0
+                  ? 'No messages yet. Start a conversation!'
+                  : 'No conversations found'
+                }
+              </p>
             </div>
           ) : (
             <div className="divide-y divide-[#27272a]">
@@ -170,15 +229,22 @@ export default function MessagesPage() {
                   >
                     <div className="flex items-start gap-3">
                       {/* Avatar */}
-                      <div className="w-10 h-10 rounded-full bg-[#1a1a1a] flex items-center justify-center flex-shrink-0">
-                        <span className="text-white font-medium text-sm">
-                          {conversation.contactName
-                            .split(' ')
-                            .map((n) => n[0])
-                            .join('')
-                            .slice(0, 2)}
-                        </span>
-                      </div>
+                      {conversation.contactAvatar ? (
+                        <div
+                          className="w-10 h-10 rounded-full bg-cover bg-center flex-shrink-0"
+                          style={{ backgroundImage: `url("${conversation.contactAvatar}")` }}
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-[#1a1a1a] flex items-center justify-center flex-shrink-0">
+                          <span className="text-white font-medium text-sm">
+                            {conversation.contactName
+                              .split(' ')
+                              .map((n) => n[0])
+                              .join('')
+                              .slice(0, 2)}
+                          </span>
+                        </div>
+                      )}
 
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
@@ -234,7 +300,10 @@ export default function MessagesPage() {
         {selectedConversation ? (
           <MessageThread
             conversation={selectedConversation}
+            messages={threadMessages}
+            isLoading={isThreadLoading}
             onBack={() => setSelectedId(null)}
+            onSendMessage={handleSendThreadMessage}
           />
         ) : (
           <div className="flex-1 flex items-center justify-center">
@@ -258,10 +327,7 @@ export default function MessagesPage() {
       <ComposeModal
         isOpen={isComposeOpen}
         onClose={() => setIsComposeOpen(false)}
-        onSend={(message) => {
-          console.log('Send message:', message);
-          setIsComposeOpen(false);
-        }}
+        onSend={handleSendMessage}
       />
     </div>
   );

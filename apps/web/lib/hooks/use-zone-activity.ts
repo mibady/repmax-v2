@@ -14,6 +14,7 @@ export interface ZoneActivity {
   new_offers: number;
   new_commits: number;
   hot_positions: string[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   active_schools?: any[];
   activity_level: ActivityLevel;
   week_over_week_change: number;

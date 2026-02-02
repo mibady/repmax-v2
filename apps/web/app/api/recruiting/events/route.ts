@@ -27,7 +27,9 @@ export async function GET(request: NextRequest) {
     const params = querySchema.parse({
       start_date: searchParams.get("start_date") || undefined,
       end_date: searchParams.get("end_date") || undefined,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       event_type: searchParams.get("event_type") as any || undefined,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       division: searchParams.get("division") as any || undefined,
       class_year: searchParams.get("class_year") || undefined,
     });

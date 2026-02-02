@@ -204,7 +204,9 @@ export type Database = {
           athlete_id: string;
           notes: string | null;
           priority: "low" | "medium" | "high" | "top";
+          pipeline_status: "identified" | "contacted" | "evaluating" | "visit_scheduled" | "offered" | "committed";
           created_at: string;
+          updated_at: string;
         };
         Insert: {
           id?: string;
@@ -212,7 +214,9 @@ export type Database = {
           athlete_id: string;
           notes?: string | null;
           priority?: "low" | "medium" | "high" | "top";
+          pipeline_status?: "identified" | "contacted" | "evaluating" | "visit_scheduled" | "offered" | "committed";
           created_at?: string;
+          updated_at?: string;
         };
         Update: {
           id?: string;
@@ -220,7 +224,9 @@ export type Database = {
           athlete_id?: string;
           notes?: string | null;
           priority?: "low" | "medium" | "high" | "top";
+          pipeline_status?: "identified" | "contacted" | "evaluating" | "visit_scheduled" | "offered" | "committed";
           created_at?: string;
+          updated_at?: string;
         };
       };
       messages: {
@@ -371,6 +377,7 @@ export type Database = {
       recruiting_zone: "West" | "Southwest" | "Midwest" | "Southeast" | "Northeast" | "Mid-Atlantic";
       division: "D1" | "D2" | "D3" | "NAIA" | "JUCO";
       priority_level: "low" | "medium" | "high" | "top";
+      pipeline_status: "identified" | "contacted" | "evaluating" | "visit_scheduled" | "offered" | "committed";
       subscription_status: "active" | "canceled" | "past_due" | "trialing";
       billing_period: "monthly" | "yearly";
       scholarship_type: "full" | "partial" | "walk-on" | "preferred-walk-on";

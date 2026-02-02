@@ -12,15 +12,9 @@ import {
   Send,
   Check,
   CheckCheck,
+  Loader2,
 } from 'lucide-react';
-
-interface Message {
-  id: string;
-  senderId: string;
-  content: string;
-  timestamp: string;
-  status: 'sent' | 'delivered' | 'read';
-}
+import type { ThreadMessage } from '@/lib/hooks';
 
 interface Conversation {
   id: string;
@@ -28,50 +22,24 @@ interface Conversation {
   contactAvatar?: string;
   role: string;
   organization?: string;
+  recipientId: string;
 }
 
 interface MessageThreadProps {
   conversation: Conversation;
+  messages?: ThreadMessage[];
+  isLoading?: boolean;
   onBack?: () => void;
+  onSendMessage?: (body: string) => Promise<void>;
 }
 
-const MOCK_MESSAGES: Message[] = [
-  {
-    id: '1',
-    senderId: 'other',
-    content:
-      "Hey! I saw your highlight reel from last Friday's game. Really impressive footwork on that third-down conversion.",
-    timestamp: '10:30 AM',
-    status: 'read',
-  },
-  {
-    id: '2',
-    senderId: 'me',
-    content:
-      "Thank you, Coach! I've been working hard on my route running this season. My position coach has been drilling me on those quick cuts.",
-    timestamp: '10:35 AM',
-    status: 'read',
-  },
-  {
-    id: '3',
-    senderId: 'other',
-    content:
-      "It definitely shows. I'd love to talk more about your recruiting process. When would be a good time for a call this week?",
-    timestamp: '10:38 AM',
-    status: 'read',
-  },
-  {
-    id: '4',
-    senderId: 'me',
-    content:
-      "I'm available Thursday or Friday afternoon after practice. Usually done by 5pm CST. Would either of those work for you?",
-    timestamp: '10:42 AM',
-    status: 'delivered',
-  },
-];
-
-export function MessageThread({ conversation, onBack }: MessageThreadProps) {
-  const [messages, setMessages] = useState(MOCK_MESSAGES);
+export function MessageThread({
+  conversation,
+  messages = [],
+  isLoading = false,
+  onBack,
+  onSendMessage,
+}: MessageThreadProps) {
   const [newMessage, setNewMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -85,26 +53,16 @@ export function MessageThread({ conversation, onBack }: MessageThreadProps) {
     if (!newMessage.trim() || isSending) return;
 
     setIsSending(true);
-    const message: Message = {
-      id: Date.now().toString(),
-      senderId: 'me',
-      content: newMessage.trim(),
-      timestamp: new Date().toLocaleTimeString([], {
-        hour: 'numeric',
-        minute: '2-digit',
-      }),
-      status: 'sent',
-    };
-
-    setMessages((prev) => [...prev, message]);
-    setNewMessage('');
-
-    // Simulate send delay
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    setMessages((prev) =>
-      prev.map((m) => (m.id === message.id ? { ...m, status: 'delivered' } : m))
-    );
-    setIsSending(false);
+    try {
+      if (onSendMessage) {
+        await onSendMessage(newMessage.trim());
+      }
+      setNewMessage('');
+    } catch (err) {
+      console.error('Failed to send message:', err);
+    } finally {
+      setIsSending(false);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -114,7 +72,7 @@ export function MessageThread({ conversation, onBack }: MessageThreadProps) {
     }
   };
 
-  const getStatusIcon = (status: Message['status']) => {
+  const getStatusIcon = (status: ThreadMessage['status']) => {
     switch (status) {
       case 'sent':
         return <Check className="w-3.5 h-3.5 text-gray-500" />;
@@ -122,6 +80,35 @@ export function MessageThread({ conversation, onBack }: MessageThreadProps) {
         return <CheckCheck className="w-3.5 h-3.5 text-gray-500" />;
       case 'read':
         return <CheckCheck className="w-3.5 h-3.5 text-[#d4af35]" />;
+    }
+  };
+
+  // Group messages by date
+  const groupedMessages = messages.reduce((groups, message) => {
+    const date = new Date(message.createdAt).toLocaleDateString();
+    if (!groups[date]) {
+      groups[date] = [];
+    }
+    groups[date].push(message);
+    return groups;
+  }, {} as Record<string, ThreadMessage[]>);
+
+  const formatDateHeader = (dateStr: string) => {
+    const date = new Date(dateStr);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (date.toDateString() === today.toDateString()) {
+      return 'Today';
+    } else if (date.toDateString() === yesterday.toDateString()) {
+      return 'Yesterday';
+    } else {
+      return date.toLocaleDateString('en-US', {
+        weekday: 'long',
+        month: 'short',
+        day: 'numeric',
+      });
     }
   };
 
@@ -185,57 +172,74 @@ export function MessageThread({ conversation, onBack }: MessageThreadProps) {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
-        {/* Date Separator */}
-        <div className="flex items-center justify-center">
-          <span className="px-3 py-1 bg-[#1a1a1a] rounded-full text-xs text-gray-500">
-            Today
-          </span>
-        </div>
-
-        {messages.map((message) => {
-          const isMe = message.senderId === 'me';
-          return (
-            <div
-              key={message.id}
-              className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}
-            >
-              <div
-                className={`max-w-[70%] ${
-                  isMe ? 'order-2' : 'order-1'
-                }`}
-              >
-                <div
-                  className={`px-4 py-3 rounded-2xl ${
-                    isMe
-                      ? 'bg-[#d4af35] text-[#201d12] rounded-br-md'
-                      : 'bg-[#1F1F22] text-white rounded-bl-md'
-                  }`}
-                >
-                  <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                    {message.content}
-                  </p>
-                </div>
-                <div
-                  className={`flex items-center gap-1.5 mt-1 ${
-                    isMe ? 'justify-end' : 'justify-start'
-                  }`}
-                >
-                  <span className="text-xs text-gray-500">
-                    {message.timestamp}
-                  </span>
-                  {isMe && (
-                    <span className="flex items-center gap-0.5">
-                      {getStatusIcon(message.status)}
-                      {message.status === 'read' && (
-                        <span className="text-xs text-[#d4af35]">Read</span>
-                      )}
-                    </span>
-                  )}
-                </div>
-              </div>
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full">
+            <Loader2 className="w-8 h-8 text-[#d4af35] animate-spin" />
+          </div>
+        ) : messages.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full text-center">
+            <div className="w-16 h-16 rounded-full bg-[#1a1a1a] flex items-center justify-center mb-4">
+              <Send className="w-8 h-8 text-gray-600" />
             </div>
-          );
-        })}
+            <h3 className="text-white font-medium mb-2">No messages yet</h3>
+            <p className="text-gray-500 text-sm max-w-xs">
+              Start the conversation by sending a message to{' '}
+              {conversation.contactName}.
+            </p>
+          </div>
+        ) : (
+          Object.entries(groupedMessages).map(([date, dateMessages]) => (
+            <div key={date}>
+              {/* Date Separator */}
+              <div className="flex items-center justify-center mb-4">
+                <span className="px-3 py-1 bg-[#1a1a1a] rounded-full text-xs text-gray-500">
+                  {formatDateHeader(date)}
+                </span>
+              </div>
+
+              {dateMessages.map((message) => {
+                const isMe = message.senderId === 'me';
+                return (
+                  <div
+                    key={message.id}
+                    className={`flex mb-4 ${isMe ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div className={`max-w-[70%] ${isMe ? 'order-2' : 'order-1'}`}>
+                      <div
+                        className={`px-4 py-3 rounded-2xl ${
+                          isMe
+                            ? 'bg-[#d4af35] text-[#201d12] rounded-br-md'
+                            : 'bg-[#1F1F22] text-white rounded-bl-md'
+                        }`}
+                      >
+                        <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                          {message.content}
+                        </p>
+                      </div>
+                      <div
+                        className={`flex items-center gap-1.5 mt-1 ${
+                          isMe ? 'justify-end' : 'justify-start'
+                        }`}
+                      >
+                        <span className="text-xs text-gray-500">
+                          {message.timestamp}
+                        </span>
+                        {isMe && (
+                          <span className="flex items-center gap-0.5">
+                            {getStatusIcon(message.status)}
+                            {message.status === 'read' && (
+                              <span className="text-xs text-[#d4af35]">Read</span>
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ))
+        )}
         <div ref={messagesEndRef} />
       </div>
 
@@ -265,7 +269,11 @@ export function MessageThread({ conversation, onBack }: MessageThreadProps) {
             disabled={!newMessage.trim() || isSending}
             className="p-3 bg-[#d4af35] hover:bg-[#e5c246] rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <Send className="w-5 h-5 text-[#201d12]" />
+            {isSending ? (
+              <Loader2 className="w-5 h-5 text-[#201d12] animate-spin" />
+            ) : (
+              <Send className="w-5 h-5 text-[#201d12]" />
+            )}
           </button>
         </div>
       </div>

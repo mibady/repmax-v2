@@ -6,6 +6,8 @@ import {
   addToShortlist,
   removeFromShortlist,
   updateShortlistPriority,
+  updateShortlistStatus,
+  type PipelineStatus,
 } from "@/lib/actions/shortlist-actions";
 import type { Tables } from "@/types/database";
 
@@ -70,6 +72,19 @@ export function useShortlist() {
     [fetchShortlist]
   );
 
+  const updateStatus = useCallback(
+    async (athleteId: string, status: PipelineStatus) => {
+      const result = await updateShortlistStatus(athleteId, status);
+      if (!result.error) {
+        startTransition(() => {
+          fetchShortlist();
+        });
+      }
+      return result;
+    },
+    [fetchShortlist]
+  );
+
   const isInShortlist = useCallback(
     (athleteId: string) => {
       return shortlist.some((item) => item.athlete_id === athleteId);
@@ -84,7 +99,10 @@ export function useShortlist() {
     add,
     remove,
     updatePriority,
+    updateStatus,
     isInShortlist,
     refetch: fetchShortlist,
   };
 }
+
+export type { PipelineStatus };

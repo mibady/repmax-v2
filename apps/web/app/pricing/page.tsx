@@ -187,7 +187,7 @@ export default function Page() {
 <span className="material-symbols-outlined transition-transform duration-300 group-open:rotate-180 text-gray-400">expand_more</span>
 </summary>
 <div className="px-6 pb-6 text-gray-400 text-sm leading-relaxed">
-                        Yes, the Starter plan is completely free and always will be. It gives you basic access to public profiles and a limited number of search queries per day, perfect for casual fans keeping up with their team's recruiting class.
+                        Yes, the Starter plan is completely free and always will be. It gives you basic access to public profiles and a limited number of search queries per day, perfect for casual fans keeping up with their team&apos;s recruiting class.
                     </div>
 </details>
 {/*  Question 2  */}

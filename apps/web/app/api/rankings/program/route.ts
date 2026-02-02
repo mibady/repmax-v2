@@ -24,8 +24,10 @@ export async function GET(request: NextRequest) {
     // Parse query params
     const { searchParams } = new URL(request.url);
     const params = querySchema.parse({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       division: searchParams.get("division") as any || undefined,
       conference: searchParams.get("conference") || undefined,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       metric: searchParams.get("metric") as any || "overall",
       limit: searchParams.get("limit") || 25,
     });

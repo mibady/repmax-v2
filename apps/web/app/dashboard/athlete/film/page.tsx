@@ -1,46 +1,163 @@
 'use client';
 
 import Link from 'next/link';
+import { useHighlights, type Highlight } from '@/lib/hooks';
 
-interface FilmHighlight {
-  id: string;
-  title: string;
-  thumbnailUrl: string;
-  duration: string;
-  views: number;
-  date: string;
-  isFeatured?: boolean;
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
 }
 
-const sampleHighlights: FilmHighlight[] = [
-  {
-    id: '1',
-    title: 'Junior Season Highlights',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1566577134770-3d85bb3a9cc4?w=600&h=340&fit=crop',
-    duration: '04:32',
-    views: 1200,
-    date: 'Oct 12, 2023',
-    isFeatured: true,
-  },
-  {
-    id: '2',
-    title: 'vs. State Championship',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=600&h=340&fit=crop',
-    duration: '02:15',
-    views: 450,
-    date: 'Sep 28, 2023',
-  },
-  {
-    id: '3',
-    title: 'Training Camp Cuts',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=600&h=340&fit=crop',
-    duration: '01:45',
-    views: 320,
-    date: 'Aug 15, 2023',
-  },
-];
+function HighlightCard({
+  highlight,
+  formatDuration,
+  formatViews,
+  isFeatured,
+}: {
+  highlight: Highlight;
+  formatDuration: (seconds: number | null) => string;
+  formatViews: (views: number) => string;
+  isFeatured: boolean;
+}) {
+  const thumbnailUrl =
+    highlight.thumbnail_url ||
+    'https://images.unsplash.com/photo-1566577134770-3d85bb3a9cc4?w=600&h=340&fit=crop';
+
+  return (
+    <article
+      className={`flex flex-col bg-[#1F1F22] rounded-xl overflow-hidden border transition-all group ${
+        isFeatured
+          ? 'border-primary shadow-[0_0_20px_rgba(212,175,53,0.05)]'
+          : 'border-transparent hover:border-[#333]'
+      } relative`}
+    >
+      {/* Featured Badge */}
+      {isFeatured && (
+        <div className="absolute top-3 left-3 z-10">
+          <span className="px-2 py-1 bg-primary text-black text-xs font-bold rounded-md shadow-sm uppercase tracking-wider flex items-center gap-1">
+            <span className="material-symbols-outlined text-[14px]">star</span>
+            Featured
+          </span>
+        </div>
+      )}
+
+      {/* AI Analyzed Badge */}
+      {highlight.ai_analyzed && (
+        <div className="absolute top-3 right-3 z-10">
+          <span className="px-2 py-1 bg-purple-600/80 text-white text-xs font-bold rounded-md shadow-sm uppercase tracking-wider flex items-center gap-1">
+            <span className="material-symbols-outlined text-[14px]">smart_toy</span>
+            AI
+          </span>
+        </div>
+      )}
+
+      {/* Thumbnail */}
+      <div className="relative w-full aspect-video bg-gray-900 group/image cursor-pointer overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+          style={{ backgroundImage: `url('${thumbnailUrl}')` }}
+        ></div>
+        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"></div>
+
+        {/* Play Button */}
+        <a
+          href={highlight.video_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`absolute inset-0 flex items-center justify-center transition-opacity ${
+            isFeatured ? 'opacity-90 group-hover:opacity-100' : 'opacity-0 group-hover:opacity-100'
+          }`}
+        >
+          <div className="size-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <span className="material-symbols-outlined text-white text-3xl">play_arrow</span>
+          </div>
+        </a>
+
+        {/* Duration */}
+        <div className="absolute bottom-3 right-3">
+          <span className="px-1.5 py-0.5 bg-black/80 text-white text-xs font-mono rounded font-medium">
+            {formatDuration(highlight.duration_seconds)}
+          </span>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="p-4 flex flex-col gap-3">
+        <div className="flex justify-between items-start gap-2">
+          <h3 className="text-white text-lg font-bold leading-tight group-hover:text-primary transition-colors cursor-pointer">
+            {highlight.title}
+          </h3>
+          <button className="text-gray-500 hover:text-white transition-colors">
+            <span className="material-symbols-outlined">more_vert</span>
+          </button>
+        </div>
+        {highlight.description && (
+          <p className="text-gray-400 text-sm line-clamp-2">{highlight.description}</p>
+        )}
+        <div className="flex items-center justify-between mt-auto">
+          <div className="flex items-center gap-4 text-xs text-gray-400 font-mono">
+            <span className="flex items-center gap-1">
+              <span className="material-symbols-outlined text-[14px]">visibility</span>
+              {formatViews(highlight.view_count)}
+            </span>
+            <span>{formatDate(highlight.created_at)}</span>
+          </div>
+          <button className="text-primary hover:text-white text-xs font-bold uppercase tracking-wider">
+            Edit
+          </button>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function LoadingSkeleton() {
+  return (
+    <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      {[...Array(6)].map((_, i) => (
+        <div
+          key={i}
+          className="flex flex-col bg-[#1F1F22] rounded-xl overflow-hidden border border-transparent animate-pulse"
+        >
+          <div className="w-full aspect-video bg-gray-700"></div>
+          <div className="p-4 flex flex-col gap-3">
+            <div className="h-5 bg-gray-700 rounded w-3/4"></div>
+            <div className="flex items-center justify-between">
+              <div className="h-3 bg-gray-700 rounded w-24"></div>
+              <div className="h-3 bg-gray-700 rounded w-12"></div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+function EmptyState() {
+  return (
+    <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+      <div className="bg-[#2A2A2E] p-4 rounded-full mb-4">
+        <span className="material-symbols-outlined text-primary text-4xl">movie</span>
+      </div>
+      <h3 className="text-white text-xl font-bold mb-2">No highlights yet</h3>
+      <p className="text-gray-400 mb-6 max-w-md">
+        Upload your first highlight reel to start showcasing your skills to college recruiters.
+      </p>
+      <button className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-black font-bold text-sm px-6 py-3 rounded-lg transition-all">
+        <span className="material-symbols-outlined text-xl">upload_file</span>
+        <span>Upload Your First Highlight</span>
+      </button>
+    </div>
+  );
+}
 
 export default function FilmManagementPage() {
+  const { highlights, isLoading, error, formatDuration, formatViews, refetch } = useHighlights();
+
   return (
     <div className="flex h-screen w-full bg-background-dark">
       {/* Side Navigation */}
@@ -98,7 +215,7 @@ export default function FilmManagementPage() {
             <div className="size-10 rounded-full bg-gray-700 border border-[#333]"></div>
             <div className="flex flex-col">
               <p className="text-sm font-semibold text-white">Marcus Johnson</p>
-              <p className="text-xs text-gray-400">Class of '25</p>
+              <p className="text-xs text-gray-400">Class of &apos;25</p>
             </div>
           </div>
         </div>
@@ -122,7 +239,11 @@ export default function FilmManagementPage() {
           <header className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div className="flex flex-col gap-2">
               <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight">Your Highlights</h1>
-              <p className="text-gray-400 text-base">Manage and organize your game film for recruiters</p>
+              <p className="text-gray-400 text-base">
+                {highlights.length > 0
+                  ? `${highlights.length} highlight${highlights.length === 1 ? '' : 's'} • ${highlights.reduce((acc, h) => acc + h.view_count, 0).toLocaleString()} total views`
+                  : 'Manage and organize your game film for recruiters'}
+              </p>
             </div>
             <button className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-black font-bold text-sm px-6 py-3 rounded-lg transition-all shadow-[0_0_15px_rgba(212,175,53,0.2)]">
               <span className="material-symbols-outlined text-xl">upload_file</span>
@@ -146,82 +267,38 @@ export default function FilmManagementPage() {
             </div>
           </section>
 
-          {/* Film Grid */}
-          <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {sampleHighlights.map((highlight) => (
-              <article
-                key={highlight.id}
-                className={`flex flex-col bg-[#1F1F22] rounded-xl overflow-hidden border transition-all group ${
-                  highlight.isFeatured
-                    ? 'border-primary shadow-[0_0_20px_rgba(212,175,53,0.05)]'
-                    : 'border-transparent hover:border-[#333]'
-                } relative`}
+          {/* Error State */}
+          {error && (
+            <div className="text-center py-8">
+              <span className="material-symbols-outlined text-4xl text-red-500 mb-2">error</span>
+              <p className="text-red-400 mb-4">{error.message}</p>
+              <button
+                onClick={() => refetch()}
+                className="text-primary hover:underline"
               >
-                {/* Featured Badge */}
-                {highlight.isFeatured && (
-                  <div className="absolute top-3 left-3 z-10">
-                    <span className="px-2 py-1 bg-primary text-black text-xs font-bold rounded-md shadow-sm uppercase tracking-wider flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[14px]">star</span>
-                      Featured
-                    </span>
-                  </div>
-                )}
+                Try Again
+              </button>
+            </div>
+          )}
 
-                {/* Thumbnail */}
-                <div className="relative w-full aspect-video bg-gray-900 group/image cursor-pointer overflow-hidden">
-                  <div
-                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                    style={{ backgroundImage: `url('${highlight.thumbnailUrl}')` }}
-                  ></div>
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"></div>
-
-                  {/* Play Button */}
-                  <div
-                    className={`absolute inset-0 flex items-center justify-center transition-opacity ${
-                      highlight.isFeatured ? 'opacity-90 group-hover:opacity-100' : 'opacity-0 group-hover:opacity-100'
-                    }`}
-                  >
-                    <div className="size-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <span className="material-symbols-outlined text-white text-3xl">play_arrow</span>
-                    </div>
-                  </div>
-
-                  {/* Duration */}
-                  <div className="absolute bottom-3 right-3">
-                    <span className="px-1.5 py-0.5 bg-black/80 text-white text-xs font-mono rounded font-medium">
-                      {highlight.duration}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="p-4 flex flex-col gap-3">
-                  <div className="flex justify-between items-start gap-2">
-                    <h3 className="text-white text-lg font-bold leading-tight group-hover:text-primary transition-colors cursor-pointer">
-                      {highlight.title}
-                    </h3>
-                    <button className="text-gray-500 hover:text-white transition-colors">
-                      <span className="material-symbols-outlined">more_vert</span>
-                    </button>
-                  </div>
-                  <div className="flex items-center justify-between mt-auto">
-                    <div className="flex items-center gap-4 text-xs text-gray-400 font-mono">
-                      <span className="flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[14px]">visibility</span>
-                        {highlight.views >= 1000
-                          ? `${(highlight.views / 1000).toFixed(1)}k`
-                          : highlight.views}
-                      </span>
-                      <span>{highlight.date}</span>
-                    </div>
-                    <button className="text-primary hover:text-white text-xs font-bold uppercase tracking-wider">
-                      Edit
-                    </button>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </section>
+          {/* Film Grid */}
+          {isLoading ? (
+            <LoadingSkeleton />
+          ) : highlights.length === 0 ? (
+            <EmptyState />
+          ) : (
+            <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {highlights.map((highlight, index) => (
+                <HighlightCard
+                  key={highlight.id}
+                  highlight={highlight}
+                  formatDuration={formatDuration}
+                  formatViews={formatViews}
+                  isFeatured={index === 0}
+                />
+              ))}
+            </section>
+          )}
         </div>
       </main>
     </div>

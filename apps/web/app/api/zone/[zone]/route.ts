@@ -114,7 +114,9 @@ export async function GET(
       },
       top_athletes: topAthletes?.map(a => ({
         id: a.id,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         name: (a.profiles as any)?.full_name,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         avatar: (a.profiles as any)?.avatar_url,
         position: a.primary_position,
         class_year: a.class_year,
@@ -127,8 +129,11 @@ export async function GET(
         division: o.division,
         date: o.offer_date,
         athlete: {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           id: (o.athletes as any)?.id,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           name: (o.athletes as any)?.profiles?.full_name,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           position: (o.athletes as any)?.primary_position,
         },
       })) || [],

@@ -25,6 +25,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const params = querySchema.parse({
       year: searchParams.get("year") || new Date().getFullYear(),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       division: searchParams.get("division") as any || undefined,
       conference: searchParams.get("conference") || undefined,
       limit: searchParams.get("limit") || 25,

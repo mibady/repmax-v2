@@ -149,6 +149,56 @@ export async function updateShortlistPriority(
   return { success: true };
 }
 
+export type PipelineStatus = "identified" | "contacted" | "evaluating" | "visit_scheduled" | "offered" | "committed";
+
+export async function updateShortlistStatus(
+  athleteId: string,
+  pipelineStatus: PipelineStatus
+) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  // Get profile
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("user_id", user.id)
+    .single();
+
+  // Get coach ID
+  const { data: coach } = await supabase
+    .from("coaches")
+    .select("id")
+    .eq("profile_id", profile?.id)
+    .single();
+
+  if (!coach) {
+    return { error: "Only coaches can update shortlists" };
+  }
+
+  const { error } = await supabase
+    .from("shortlists")
+    .update({ pipeline_status: pipelineStatus })
+    .eq("coach_id", coach.id)
+    .eq("athlete_id", athleteId);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/dashboard/recruiter/pipeline");
+  revalidatePath("/shortlist");
+
+  return { success: true };
+}
+
 export async function getShortlist() {
   const supabase = await createClient();
 
@@ -190,7 +240,7 @@ export async function getShortlist() {
     `
     )
     .eq("coach_id", coach.id)
-    .order("priority", { ascending: false });
+    .order("updated_at", { ascending: false });
 
   return data || [];
 }

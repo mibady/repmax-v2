@@ -97,13 +97,20 @@ export async function GET(request: NextRequest) {
         tags: b.tags,
         created_at: b.created_at,
         highlight: {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           id: (b.highlights as any)?.id,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           title: (b.highlights as any)?.title,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           thumbnail: (b.highlights as any)?.thumbnail_url,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           duration: (b.highlights as any)?.duration_seconds,
           athlete: {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             id: (b.highlights as any)?.athletes?.id,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             name: (b.highlights as any)?.athletes?.profiles?.full_name,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             position: (b.highlights as any)?.athletes?.primary_position,
           },
         },

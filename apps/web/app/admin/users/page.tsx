@@ -1,74 +1,9 @@
+'use client';
+
+import { useState } from 'react';
 import Link from 'next/link';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  roles: ('athlete' | 'coach' | 'recruiter' | 'admin')[];
-  joinedDate: string;
-  lastActive: string;
-  isOnlineNow: boolean;
-  status: 'active' | 'suspended' | 'pending';
-  imageUrl: string;
-}
-
-const mockUsers: User[] = [
-  {
-    id: '1',
-    name: 'David Chen',
-    email: 'david.chen@example.com',
-    roles: ['athlete', 'coach'],
-    joinedDate: 'Oct 12, 2023',
-    lastActive: '2 mins ago',
-    isOnlineNow: true,
-    status: 'active',
-    imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAGMRJma_KfsjLnHx-tnlCcWb5OHBvJfDTGs6sy50bgkUvKIgbANip44czgFGmsBAWVDVi0ITHkkt6TvU7LEE8LkGxNy6yFLScfWxB8hUqU-nURuwC9PP0VbT5AYgv75RSAPp-9in58WY_VkBdRN0KHYgKCa20ZO8mkmIN-RAnJn5rL-wi_XKiPTrpz3LFYrOed-aN9KaXAcKwGX0gzn8ZLPAQ8Nzdd7YR4nHmAttfoMGjJ-OryW4Npgr_AKdKu9znL0OYiovIbyR0',
-  },
-  {
-    id: '2',
-    name: 'Sarah Jenkins',
-    email: 's.jenkins@domain.org',
-    roles: ['athlete'],
-    joinedDate: 'Jan 05, 2024',
-    lastActive: '4h ago',
-    isOnlineNow: false,
-    status: 'active',
-    imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCrQtlltEaoenGpZD4y4aFojumaiXo7pTa10WbQpSfJKh-A6GBBhwAITpcztkJpUkjsXn-XwWrfqlLqPyJtJe6ReAnRnEHnyd7Y71zUev9l38qaEhH_8EK6LHkVEwYQbpmM9Fg8jwFI-ggn105dI2go_gkxmfEOIMd94EqyXbYuDjf-KC5SrqrSwxegXgWaGNhoWRmt6DJkSCxG41KRLlk7fGDZR5kjIbfjAi2A9mp3FKKR7wi89WE5Pgx6EanhEUSuIE1gyRvL2iA',
-  },
-  {
-    id: '3',
-    name: 'Mark Thompson',
-    email: 'm.tom@legacy.com',
-    roles: ['coach'],
-    joinedDate: 'Nov 22, 2022',
-    lastActive: '12 days ago',
-    isOnlineNow: false,
-    status: 'suspended',
-    imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCZdVrgQGuypalW6tgj4jjTADCUxJ3NLhKa7UXPNLncl6nZg3kpFFbTbeVkgCbX_39ZqV8-8IKx28fOEU8LLstx78nUrFvmW51CRdH80_oFJFARAKr3Wx-KkfRO945GFLTSXcwpQrSoYpyN3MmG5AxQQLoicjqNVmjOTustCBsx-5XSycSj88SAuiuq_O-TBONChY0m3CGeTlcV5fUUlCkFjeD07TmCM0z3_DYGhOJk2bU3xaX1zlRWEBF_bPNJDLGhkO-rIwa3vvU',
-  },
-  {
-    id: '4',
-    name: 'James Wilson',
-    email: 'jw@cloudcorp.io',
-    roles: ['athlete'],
-    joinedDate: 'Feb 14, 2024',
-    lastActive: 'Active now',
-    isOnlineNow: true,
-    status: 'active',
-    imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAlaJwqH_QCiLbIdEN77tWe6xtux5Yi0d2QU1cft4btEj7mRFuZ9h5yeMUSsimMN8XDN1F9gutxc3eQ_kEB8nEySS6C8bNSsxZ9ioo3CUm17NNDSyyUGYHjZxwc8CYvxcJWgqUJpu1tfV5DEbwvQQy_JjEq9umni0Yeb-NYl7AsFLPYFiFFvuVDBAPf_NxZbDkoVo0G25wMKj_xOkTyvmlQALfOscr2ExyCZSLgLO8zbotUPtJ65TQ-xP9hAUW9_DuU6DtT57BM8AM',
-  },
-  {
-    id: '5',
-    name: 'Lisa Wong',
-    email: 'lisa.w@creative.net',
-    roles: ['coach'],
-    joinedDate: 'Mar 01, 2024',
-    lastActive: '1h ago',
-    isOnlineNow: false,
-    status: 'active',
-    imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCvlEPNZu_YKq02obDc5k0sJi75mtxnMOPRkV8VVF0pTS87mCYIiUD1RuYnO_RtRpV4s_mUT5qiDyZKEkY5tS7Zhb4qOptKBZ8j5Cm6PsCKTtQbgqPbChWCeKvQILR7dkjYC-3G9NMHwcf3ryrwfLJZN0VCCFLRrFNb8X5c8QxrViEybO-61pKwQA8-iEp2jTxOg4vh7vSTHX9N8C3qe4v_AgYVNmfP5-EDwFVRCSqu51pPNZyyQeSJ0YJKcjEVrYGFhEMEb3O1F74',
-  },
-];
+import { Loader2 } from 'lucide-react';
+import { useAdminUsers } from '@/lib/hooks/use-admin-users';
 
 function getRoleStyles(role: string) {
   switch (role) {
@@ -99,6 +34,77 @@ function getStatusStyles(status: string) {
 }
 
 export default function UserManagementPage() {
+  const [search, setSearch] = useState('');
+  const [role, setRole] = useState('all');
+  const [status, setStatus] = useState('all');
+  const [page, setPage] = useState(1);
+  const [roleDropdownOpen, setRoleDropdownOpen] = useState(false);
+  const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
+
+  const { users, stats, pagination, isLoading, error } = useAdminUsers({
+    search,
+    role,
+    status,
+    page,
+    limit: 10,
+  });
+
+  const roleOptions = [
+    { value: 'all', label: 'All' },
+    { value: 'athlete', label: 'Athlete' },
+    { value: 'coach', label: 'Coach' },
+    { value: 'recruiter', label: 'Recruiter' },
+    { value: 'admin', label: 'Admin' },
+  ];
+
+  const statusOptions = [
+    { value: 'all', label: 'All' },
+    { value: 'active', label: 'Active' },
+    { value: 'suspended', label: 'Suspended' },
+    { value: 'pending', label: 'Pending' },
+  ];
+
+  const handleRoleSelect = (value: string) => {
+    setRole(value);
+    setPage(1);
+    setRoleDropdownOpen(false);
+  };
+
+  const handleStatusSelect = (value: string) => {
+    setStatus(value);
+    setPage(1);
+    setStatusDropdownOpen(false);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    setPage(1);
+  };
+
+  const totalPages = pagination?.totalPages || 1;
+  const currentPage = pagination?.page || 1;
+  const total = pagination?.total || 0;
+  const limit = pagination?.limit || 10;
+  const startItem = (currentPage - 1) * limit + 1;
+  const endItem = Math.min(currentPage * limit, total);
+
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const pages: number[] = [];
+    const maxVisible = 3;
+    let start = Math.max(1, currentPage - 1);
+    const end = Math.min(totalPages, start + maxVisible - 1);
+
+    if (end - start + 1 < maxVisible) {
+      start = Math.max(1, end - maxVisible + 1);
+    }
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    return pages;
+  };
+
   return (
     <div className="min-h-screen bg-[#050505] text-white flex">
       {/* SideNavBar */}
@@ -173,21 +179,27 @@ export default function UserManagementPage() {
                 <p className="text-zinc-400 text-sm font-medium">Total Users</p>
                 <span className="text-emerald-500 text-xs font-bold bg-emerald-500/10 px-2 py-1 rounded">+12.5%</span>
               </div>
-              <p className="text-white tracking-tight text-3xl font-bold">12,842</p>
+              <p className="text-white tracking-tight text-3xl font-bold">
+                {isLoading ? <Loader2 className="h-8 w-8 animate-spin" /> : (stats?.totalUsers?.toLocaleString() || '0')}
+              </p>
             </div>
             <div className="flex flex-col gap-2 rounded-xl p-6 bg-[#121212] border border-zinc-800">
               <div className="flex justify-between items-start">
                 <p className="text-zinc-400 text-sm font-medium">Active Today</p>
                 <span className="text-emerald-500 text-xs font-bold bg-emerald-500/10 px-2 py-1 rounded">+5.2%</span>
               </div>
-              <p className="text-white tracking-tight text-3xl font-bold">1,402</p>
+              <p className="text-white tracking-tight text-3xl font-bold">
+                {isLoading ? <Loader2 className="h-8 w-8 animate-spin" /> : (stats?.activeToday?.toLocaleString() || '0')}
+              </p>
             </div>
             <div className="flex flex-col gap-2 rounded-xl p-6 bg-[#121212] border border-zinc-800">
               <div className="flex justify-between items-start">
                 <p className="text-zinc-400 text-sm font-medium">New Signups (24h)</p>
                 <span className="text-emerald-500 text-xs font-bold bg-emerald-500/10 px-2 py-1 rounded">+8.1%</span>
               </div>
-              <p className="text-white tracking-tight text-3xl font-bold">48</p>
+              <p className="text-white tracking-tight text-3xl font-bold">
+                {isLoading ? <Loader2 className="h-8 w-8 animate-spin" /> : (stats?.newSignups?.toLocaleString() || '0')}
+              </p>
             </div>
           </div>
 
@@ -201,19 +213,71 @@ export default function UserManagementPage() {
                 <input
                   type="text"
                   placeholder="Search by name, email, or user ID..."
+                  value={search}
+                  onChange={handleSearchChange}
                   className="w-full h-full rounded-lg bg-[#121212] border-zinc-800 border focus:border-[#d26060] focus:ring-1 focus:ring-[#d26060] text-white pl-12 pr-4 text-sm transition-all"
                 />
               </div>
             </div>
             <div className="flex gap-2 flex-wrap">
-              <button className="flex h-12 items-center justify-center gap-2 rounded-lg bg-[#121212] border border-zinc-800 px-4 text-white text-sm font-medium hover:border-zinc-700">
-                <span>Role: All</span>
-                <span className="material-symbols-outlined text-[20px]">keyboard_arrow_down</span>
-              </button>
-              <button className="flex h-12 items-center justify-center gap-2 rounded-lg bg-[#121212] border border-zinc-800 px-4 text-white text-sm font-medium hover:border-zinc-700">
-                <span>Status: Active</span>
-                <span className="material-symbols-outlined text-[20px]">keyboard_arrow_down</span>
-              </button>
+              {/* Role Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => {
+                    setRoleDropdownOpen(!roleDropdownOpen);
+                    setStatusDropdownOpen(false);
+                  }}
+                  className="flex h-12 items-center justify-center gap-2 rounded-lg bg-[#121212] border border-zinc-800 px-4 text-white text-sm font-medium hover:border-zinc-700"
+                >
+                  <span>Role: {roleOptions.find(r => r.value === role)?.label || 'All'}</span>
+                  <span className="material-symbols-outlined text-[20px]">keyboard_arrow_down</span>
+                </button>
+                {roleDropdownOpen && (
+                  <div className="absolute top-full left-0 mt-1 w-40 bg-[#121212] border border-zinc-800 rounded-lg shadow-lg z-10">
+                    {roleOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => handleRoleSelect(option.value)}
+                        className={`w-full px-4 py-2 text-left text-sm hover:bg-zinc-800 transition-colors first:rounded-t-lg last:rounded-b-lg ${
+                          role === option.value ? 'text-[#d26060] font-semibold' : 'text-white'
+                        }`}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Status Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => {
+                    setStatusDropdownOpen(!statusDropdownOpen);
+                    setRoleDropdownOpen(false);
+                  }}
+                  className="flex h-12 items-center justify-center gap-2 rounded-lg bg-[#121212] border border-zinc-800 px-4 text-white text-sm font-medium hover:border-zinc-700"
+                >
+                  <span>Status: {statusOptions.find(s => s.value === status)?.label || 'All'}</span>
+                  <span className="material-symbols-outlined text-[20px]">keyboard_arrow_down</span>
+                </button>
+                {statusDropdownOpen && (
+                  <div className="absolute top-full left-0 mt-1 w-40 bg-[#121212] border border-zinc-800 rounded-lg shadow-lg z-10">
+                    {statusOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => handleStatusSelect(option.value)}
+                        className={`w-full px-4 py-2 text-left text-sm hover:bg-zinc-800 transition-colors first:rounded-t-lg last:rounded-b-lg ${
+                          status === option.value ? 'text-[#d26060] font-semibold' : 'text-white'
+                        }`}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <button className="flex h-12 items-center justify-center gap-2 rounded-lg bg-[#d26060]/10 border border-[#d26060]/30 px-4 text-[#d26060] text-sm font-bold">
                 <span className="material-symbols-outlined text-[20px]">filter_list</span>
                 <span>Advanced Filters</span>
@@ -223,76 +287,133 @@ export default function UserManagementPage() {
 
           {/* High Density Table Area */}
           <div className="bg-[#121212] rounded-xl border border-zinc-800 overflow-hidden">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-zinc-800 bg-zinc-900/50">
-                  <th className="px-6 py-4 text-xs font-bold text-zinc-400 uppercase tracking-wider">Name & Identity</th>
-                  <th className="px-6 py-4 text-xs font-bold text-zinc-400 uppercase tracking-wider">Role(s)</th>
-                  <th className="px-6 py-4 text-xs font-bold text-zinc-400 uppercase tracking-wider">Joined Date</th>
-                  <th className="px-6 py-4 text-xs font-bold text-zinc-400 uppercase tracking-wider">Last Active</th>
-                  <th className="px-6 py-4 text-xs font-bold text-zinc-400 uppercase tracking-wider text-center">Status</th>
-                  <th className="px-6 py-4 text-xs font-bold text-zinc-400 uppercase tracking-wider text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-800/50">
-                {mockUsers.map((user) => (
-                  <tr key={user.id} className={`hover:bg-white/5 transition-colors group ${user.status === 'suspended' ? 'bg-[#d26060]/5' : ''}`}>
-                    <td className="px-6 py-3">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`size-9 rounded-full bg-cover bg-center border-2 border-zinc-800 ${user.status === 'suspended' ? 'grayscale' : ''}`}
-                          style={{ backgroundImage: `url('${user.imageUrl}')` }}
-                        ></div>
-                        <div className="flex flex-col">
-                          <p className="text-sm font-bold text-white">{user.name}</p>
-                          <p className="text-xs text-zinc-500">{user.email}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-3">
-                      <div className="flex gap-2">
-                        {user.roles.map((role) => (
-                          <span key={role} className={`px-2 py-0.5 rounded text-[10px] font-bold border uppercase ${getRoleStyles(role)}`}>
-                            {role}
-                          </span>
-                        ))}
-                      </div>
-                    </td>
-                    <td className="px-6 py-3">
-                      <p className="text-xs text-zinc-300">{user.joinedDate}</p>
-                    </td>
-                    <td className="px-6 py-3">
-                      <div className="flex items-center gap-2">
-                        <span className={`size-2 rounded-full ${user.isOnlineNow ? 'bg-emerald-500' : 'bg-zinc-600'}`}></span>
-                        <p className={`text-xs ${user.isOnlineNow ? 'text-zinc-300' : 'text-zinc-500'}`}>{user.lastActive}</p>
-                      </div>
-                    </td>
-                    <td className="px-6 py-3 text-center">
-                      <span className={`px-2 py-1 rounded-full text-[10px] font-bold border uppercase ${getStatusStyles(user.status)}`}>
-                        {user.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-3 text-right">
-                      <button className="p-2 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-white transition-colors">
-                        <span className="material-symbols-outlined">more_horiz</span>
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {/* Pagination */}
-            <div className="px-6 py-4 flex items-center justify-between border-t border-zinc-800 bg-zinc-900/30">
-              <p className="text-xs text-zinc-500">Showing <span className="text-white font-bold">1-10</span> of <span className="text-white font-bold">12,842</span> users</p>
-              <div className="flex gap-2">
-                <button className="px-3 py-1.5 rounded bg-zinc-800 text-zinc-400 text-xs font-bold hover:text-white transition-colors">Previous</button>
-                <button className="px-3 py-1.5 rounded bg-zinc-800 text-white text-xs font-bold border border-zinc-700">1</button>
-                <button className="px-3 py-1.5 rounded hover:bg-zinc-800 text-zinc-400 text-xs font-bold hover:text-white transition-colors">2</button>
-                <button className="px-3 py-1.5 rounded hover:bg-zinc-800 text-zinc-400 text-xs font-bold hover:text-white transition-colors">3</button>
-                <button className="px-3 py-1.5 rounded bg-zinc-800 text-zinc-400 text-xs font-bold hover:text-white transition-colors">Next</button>
+            {/* Error State */}
+            {error && (
+              <div className="p-8 text-center">
+                <p className="text-red-500 mb-2">Error loading users</p>
+                <p className="text-zinc-500 text-sm">{error.message}</p>
               </div>
-            </div>
+            )}
+
+            {/* Loading State */}
+            {isLoading && !error && (
+              <div className="p-8 flex items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-[#d26060]" />
+                <span className="ml-3 text-zinc-400">Loading users...</span>
+              </div>
+            )}
+
+            {/* Table */}
+            {!isLoading && !error && (
+              <>
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-zinc-800 bg-zinc-900/50">
+                      <th className="px-6 py-4 text-xs font-bold text-zinc-400 uppercase tracking-wider">Name & Identity</th>
+                      <th className="px-6 py-4 text-xs font-bold text-zinc-400 uppercase tracking-wider">Role(s)</th>
+                      <th className="px-6 py-4 text-xs font-bold text-zinc-400 uppercase tracking-wider">Joined Date</th>
+                      <th className="px-6 py-4 text-xs font-bold text-zinc-400 uppercase tracking-wider">Last Active</th>
+                      <th className="px-6 py-4 text-xs font-bold text-zinc-400 uppercase tracking-wider text-center">Status</th>
+                      <th className="px-6 py-4 text-xs font-bold text-zinc-400 uppercase tracking-wider text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-800/50">
+                    {users.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="px-6 py-8 text-center text-zinc-500">
+                          No users found
+                        </td>
+                      </tr>
+                    ) : (
+                      users.map((user) => (
+                        <tr key={user.id} className={`hover:bg-white/5 transition-colors group ${user.status === 'suspended' ? 'bg-[#d26060]/5' : ''}`}>
+                          <td className="px-6 py-3">
+                            <div className="flex items-center gap-3">
+                              <div
+                                className={`size-9 rounded-full bg-cover bg-center border-2 border-zinc-800 ${user.status === 'suspended' ? 'grayscale' : ''} ${!user.imageUrl ? 'bg-zinc-700' : ''}`}
+                                style={user.imageUrl ? { backgroundImage: `url('${user.imageUrl}')` } : {}}
+                              ></div>
+                              <div className="flex flex-col">
+                                <p className="text-sm font-bold text-white">{user.name}</p>
+                                <p className="text-xs text-zinc-500">{user.email}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-3">
+                            <div className="flex gap-2">
+                              {user.roles.map((userRole) => (
+                                <span key={userRole} className={`px-2 py-0.5 rounded text-[10px] font-bold border uppercase ${getRoleStyles(userRole)}`}>
+                                  {userRole}
+                                </span>
+                              ))}
+                            </div>
+                          </td>
+                          <td className="px-6 py-3">
+                            <p className="text-xs text-zinc-300">{user.joinedDate}</p>
+                          </td>
+                          <td className="px-6 py-3">
+                            <div className="flex items-center gap-2">
+                              <span className={`size-2 rounded-full ${user.isOnlineNow ? 'bg-emerald-500' : 'bg-zinc-600'}`}></span>
+                              <p className={`text-xs ${user.isOnlineNow ? 'text-zinc-300' : 'text-zinc-500'}`}>{user.lastActive}</p>
+                            </div>
+                          </td>
+                          <td className="px-6 py-3 text-center">
+                            <span className={`px-2 py-1 rounded-full text-[10px] font-bold border uppercase ${getStatusStyles(user.status)}`}>
+                              {user.status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-3 text-right">
+                            <button className="p-2 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-white transition-colors">
+                              <span className="material-symbols-outlined">more_horiz</span>
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+
+                {/* Pagination */}
+                <div className="px-6 py-4 flex items-center justify-between border-t border-zinc-800 bg-zinc-900/30">
+                  <p className="text-xs text-zinc-500">
+                    Showing <span className="text-white font-bold">{total > 0 ? `${startItem}-${endItem}` : '0'}</span> of <span className="text-white font-bold">{total.toLocaleString()}</span> users
+                  </p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setPage(Math.max(1, page - 1))}
+                      disabled={page === 1}
+                      className={`px-3 py-1.5 rounded bg-zinc-800 text-xs font-bold transition-colors ${
+                        page === 1 ? 'text-zinc-600 cursor-not-allowed' : 'text-zinc-400 hover:text-white'
+                      }`}
+                    >
+                      Previous
+                    </button>
+                    {getPageNumbers().map((pageNum) => (
+                      <button
+                        key={pageNum}
+                        onClick={() => setPage(pageNum)}
+                        className={`px-3 py-1.5 rounded text-xs font-bold transition-colors ${
+                          pageNum === currentPage
+                            ? 'bg-zinc-800 text-white border border-zinc-700'
+                            : 'hover:bg-zinc-800 text-zinc-400 hover:text-white'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => setPage(Math.min(totalPages, page + 1))}
+                      disabled={page >= totalPages}
+                      className={`px-3 py-1.5 rounded bg-zinc-800 text-xs font-bold transition-colors ${
+                        page >= totalPages ? 'text-zinc-600 cursor-not-allowed' : 'text-zinc-400 hover:text-white'
+                      }`}
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Footer Meta Info */}

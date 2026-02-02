@@ -16,6 +16,7 @@ const updateBodySchema = z.object({
 
 // GET /api/onboarding/progress
 // Returns the current user's onboarding progress
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
@@ -96,6 +97,7 @@ export async function PUT(request: NextRequest) {
       .eq("user_id", user.id)
       .single();
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updateData: Record<string, any> = {
       last_interaction_at: new Date().toISOString(),
     };

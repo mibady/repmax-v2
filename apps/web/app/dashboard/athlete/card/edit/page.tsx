@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { Loader2 } from "lucide-react";
 import { useImageUpload, useDropzone } from "@/hooks/useImageUpload";
+import { useAthleteCardEditor } from "@/lib/hooks";
 
 // Form sections
 const positions = [
@@ -26,42 +28,24 @@ const DEFAULT_AVATAR =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuCpFOEUz_rfWWSVZf8V8mFWpvSX0XbEvnGhfEPVxD3mYrqKA6J94E78iBa_bR1caG28xt4BCjjnmdpZ8gfWL2lqcqVjfRncL7V0MxJBJxQQLl315vZyu2h6k9L5D4eNTwqVSBKB6cji7NJkO3WIoWyV4PeQrLPwNIgFa36RdDTOOR035pkGUVlwoADx0noxixr0W7lVDf9paHXe5l3fXR4SoKoRwegF0Uejyfdrq-vkbtjy7k-3snSTmQeCc6x5BHmksTTT1Aer9Qo";
 
 export default function EditCardPage() {
-  const [profileCompletion, setProfileCompletion] = useState(85);
-  const [profileImage, setProfileImage] = useState(DEFAULT_AVATAR);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const {
+    data: formData,
+    isLoading,
+    isSaving,
+    error,
+    saveError,
+    updateField,
+    save,
+    profileCompletion,
+  } = useAthleteCardEditor();
 
-  const [formData, setFormData] = useState({
-    // Basic Info
-    name: "Marcus Sterling",
-    position: "Wide Receiver",
-    secondaryPosition: "Cornerback",
-    classYear: 2025,
-    highSchool: "Lincoln High School",
-    city: "Los Angeles",
-    state: "CA",
-    bio: "",
-    // Measurables
-    height: "6'1\"",
-    weight: "185",
-    wingspan: "74",
-    fortyYard: "4.52",
-    benchPress: "225",
-    squat: "405",
-    vertical: "36",
-    // Academics
-    gpa: "3.8",
-    sat: "1280",
-    act: "28",
-    major: "Business Administration",
-    // Film
-    hudlLink: "",
-    youtubeLink: "",
-  });
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { isUploading, progress, error: uploadError, upload } = useImageUpload({
     type: "profile",
     onSuccess: (url) => {
-      setProfileImage(url);
+      updateField("avatarUrl", url);
     },
   });
 
@@ -79,11 +63,9 @@ export default function EditCardPage() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    // Update completion based on filled fields
-    const filled = Object.values({ ...formData, [name]: value }).filter(Boolean).length;
-    const total = Object.keys(formData).length;
-    setProfileCompletion(Math.round((filled / total) * 100));
+    if (formData) {
+      updateField(name as keyof typeof formData, value);
+    }
   };
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,6 +74,42 @@ export default function EditCardPage() {
       handleFileSelect(file);
     }
   };
+
+  const handleSave = async () => {
+    setSaveSuccess(false);
+    const success = await save();
+    if (success) {
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background-dark flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error && !formData) {
+    return (
+      <div className="min-h-screen bg-background-dark flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">{error.message}</p>
+          <Link href="/dashboard/athlete" className="text-primary hover:underline">
+            Return to dashboard
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (!formData) {
+    return null;
+  }
+
+  const profileImage = formData.avatarUrl || DEFAULT_AVATAR;
 
   return (
     <div className="min-h-screen bg-background-dark text-white">
@@ -126,8 +144,22 @@ export default function EditCardPage() {
               </div>
               <span className="text-sm text-text-grey">{profileCompletion}% Complete</span>
             </div>
-            <button className="px-4 py-2 rounded-lg bg-primary text-black font-bold text-sm hover:bg-primary-hover transition-colors">
-              Save Changes
+            {saveSuccess && (
+              <span className="text-sm text-green-500 flex items-center gap-1">
+                <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                Saved!
+              </span>
+            )}
+            {saveError && (
+              <span className="text-sm text-red-500">{saveError.message}</span>
+            )}
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="px-4 py-2 rounded-lg bg-primary text-black font-bold text-sm hover:bg-primary-hover transition-colors disabled:opacity-50 flex items-center gap-2"
+            >
+              {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
+              {isSaving ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </div>
@@ -227,6 +259,7 @@ export default function EditCardPage() {
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:border-primary focus:outline-none transition-colors"
                   >
+                    <option value="" className="bg-surface-dark">Select position</option>
                     {positions.map((pos) => (
                       <option key={pos} value={pos} className="bg-surface-dark">
                         {pos}
@@ -498,7 +531,7 @@ export default function EditCardPage() {
                 {/* Preview Header */}
                 <div className="relative h-24 bg-gradient-to-br from-primary/30 to-purple-900/30">
                   <div className="absolute top-3 right-3 px-2 py-1 rounded bg-purple-900/80 border border-purple-500/30">
-                    <span className="text-[10px] font-bold text-purple-200">WEST ZONE</span>
+                    <span className="text-[10px] font-bold text-purple-200">{formData.zone || "ZONE"}</span>
                   </div>
                 </div>
 
@@ -518,7 +551,7 @@ export default function EditCardPage() {
                       <h4 className="font-bold text-white text-lg">
                         {formData.name || "Your Name"}
                       </h4>
-                      <p className="text-xs text-text-grey">{formData.position}</p>
+                      <p className="text-xs text-text-grey">{formData.position || "Position"}</p>
                       <div className="flex gap-1 mt-1">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <span
@@ -555,7 +588,7 @@ export default function EditCardPage() {
                   </div>
 
                   <div className="text-xs text-text-grey text-center">
-                    {formData.highSchool}, {formData.city}, {formData.state}
+                    {formData.highSchool || "School"}, {formData.city || "City"}, {formData.state || "ST"}
                   </div>
                 </div>
               </div>

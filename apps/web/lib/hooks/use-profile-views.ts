@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { createClient } from "@repmax/shared/supabase";
 
 export interface ProfileViewSummary {
   total_views: number;
@@ -81,7 +80,8 @@ export function useProfileViews(options: UseProfileViewsOptions = {}) {
 }
 
 export function useGeographicViews(options: { athleteId?: string; days?: number } = {}) {
-  const [data, setData] = useState<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+const [data, setData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 

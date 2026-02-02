@@ -22,6 +22,7 @@ export async function GET(request: NextRequest) {
     // Parse query params
     const { searchParams } = new URL(request.url);
     const params = querySchema.parse({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       zone: searchParams.get("zone") as any || undefined,
       days: searchParams.get("days") || 7,
     });

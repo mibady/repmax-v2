@@ -1,54 +1,54 @@
 'use client';
 
-interface KpiCard {
-  id: string;
-  label: string;
-  value: string;
-  change: number;
-  isPositive: boolean;
-}
-
-interface ProfileBucket {
-  range: string;
-  percentage: number;
-}
-
-interface RoleDistribution {
-  role: string;
-  percentage: number;
-  color: string;
-}
-
-const kpiData: KpiCard[] = [
-  { id: '1', label: 'DAU', value: '142', change: 5.2, isPositive: true },
-  { id: '2', label: 'WAU', value: '487', change: 2.1, isPositive: true },
-  { id: '3', label: 'MAU', value: '688', change: 0.5, isPositive: false },
-  { id: '4', label: 'Daily Signups', value: '12', change: 12, isPositive: true },
-];
-
-const profileCompleteness: ProfileBucket[] = [
-  { range: '75% - 100%', percentage: 42 },
-  { range: '50% - 75%', percentage: 28 },
-  { range: '25% - 50%', percentage: 18 },
-  { range: '0% - 25%', percentage: 12 },
-];
-
-const roleDistribution: RoleDistribution[] = [
-  { role: 'Athletes', percentage: 72, color: 'bg-[#ef4343]' },
-  { role: 'Coaches', percentage: 13, color: 'bg-blue-500' },
-  { role: 'Recruiters', percentage: 5, color: 'bg-emerald-500' },
-  { role: 'Others', percentage: 10, color: 'bg-gray-500' },
-];
+import Link from 'next/link';
+import { useAdminAnalytics } from '@/lib/hooks/use-admin-analytics';
+import { Loader2 } from 'lucide-react';
 
 const navItems = [
-  { icon: 'dashboard', label: 'Dashboard', active: true },
-  { icon: 'group', label: 'User Management', active: false },
-  { icon: 'trending_up', label: 'Engagement', active: false },
-  { icon: 'gavel', label: 'Moderation', active: false },
-  { icon: 'settings', label: 'Settings', active: false },
+  { icon: 'dashboard', label: 'Dashboard', href: '/admin/analytics', active: true },
+  { icon: 'group', label: 'User Management', href: '/admin/users', active: false },
+  { icon: 'trending_up', label: 'Engagement', href: '/admin/analytics', active: false },
+  { icon: 'gavel', label: 'Moderation', href: '/admin/moderation', active: false },
+  { icon: 'toggle_on', label: 'Feature Flags', href: '/admin/feature-flags', active: false },
 ];
 
 export default function AdminPlatformAnalyticsPage() {
+  const { data, isLoading, error, refresh } = useAdminAnalytics();
+
+  if (isLoading) {
+    return (
+      <div className="bg-[#f8f6f6] dark:bg-[#050505] min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-[#ef4343]" />
+          <p className="text-slate-500">Loading analytics...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-[#f8f6f6] dark:bg-[#050505] min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <span className="material-symbols-outlined text-4xl text-red-500">error</span>
+          <p className="text-slate-500">Failed to load analytics</p>
+          <p className="text-sm text-red-400">{error.message}</p>
+          <button
+            onClick={refresh}
+            className="px-4 py-2 bg-[#ef4343] text-white rounded-lg hover:bg-[#ef4343]/90"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const kpiData = data?.kpiData || [];
+  const profileCompleteness = data?.profileCompleteness || [];
+  const roleDistribution = data?.roleDistribution || [];
+  const totalUsers = data?.totalUsers || 0;
+
   return (
     <div className="bg-[#f8f6f6] dark:bg-[#050505] text-slate-900 dark:text-slate-100 min-h-screen">
       <div className="flex h-screen overflow-hidden">
@@ -66,8 +66,9 @@ export default function AdminPlatformAnalyticsPage() {
 
           <nav className="flex-1 px-4 space-y-1">
             {navItems.map((item) => (
-              <div
+              <Link
                 key={item.label}
+                href={item.href}
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors cursor-pointer group ${
                   item.active
                     ? 'bg-[#ef4343]/10 text-[#ef4343] border border-[#ef4343]/20'
@@ -78,7 +79,7 @@ export default function AdminPlatformAnalyticsPage() {
                   {item.icon}
                 </span>
                 <p className={`text-sm ${item.active ? 'font-semibold' : 'font-medium'}`}>{item.label}</p>
-              </div>
+              </Link>
             ))}
           </nav>
 
@@ -106,11 +107,15 @@ export default function AdminPlatformAnalyticsPage() {
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <button className="size-9 rounded-lg bg-slate-100 dark:bg-[#121212] flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-[#ef4343]">
-                <span className="material-symbols-outlined text-[20px]">notifications</span>
+              <button
+                onClick={refresh}
+                className="size-9 rounded-lg bg-slate-100 dark:bg-[#121212] flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-[#ef4343]"
+                title="Refresh data"
+              >
+                <span className="material-symbols-outlined text-[20px]">refresh</span>
               </button>
               <button className="size-9 rounded-lg bg-slate-100 dark:bg-[#121212] flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-[#ef4343]">
-                <span className="material-symbols-outlined text-[20px]">chat_bubble</span>
+                <span className="material-symbols-outlined text-[20px]">notifications</span>
               </button>
               <div className="h-8 w-[1px] bg-slate-200 dark:border-[#262626] mx-1"></div>
               <div className="flex items-center gap-3">
@@ -118,10 +123,9 @@ export default function AdminPlatformAnalyticsPage() {
                   <p className="text-xs font-bold">Admin User</p>
                   <p className="text-[10px] text-slate-500">Super Admin</p>
                 </div>
-                <div
-                  className="size-9 rounded-full bg-cover bg-center border-2 border-[#ef4343]/20"
-                  style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBMGpRJ9o_Tz4Owb61hokXCvt6jMzBuAd8mdKjw-umfjmJ3gpIfJqThxZU33kgrBft8rJbjUlMuPuWq0D7mGcVBK-500ZCoWNStrUGasnw2ZGKerJXLrm2Dv9xfW1-PVt5lD0PzGbRNRr1cUF4zYqyvXjLVz90yYsVSe2jhNDXDP5wSpnXLrIcLF8drnu4uVch6UKYHvrwwQ8Lg2g20mTKu_fDwacjb1v9HKt9uZXjnRDbF_-XURD_sBBLl97CD_JCZkHurrO3rV34')" }}
-                />
+                <div className="size-9 rounded-full bg-[#ef4343] flex items-center justify-center text-white font-bold">
+                  A
+                </div>
               </div>
             </div>
           </header>
@@ -236,7 +240,7 @@ export default function AdminPlatformAnalyticsPage() {
                       </div>
                       <div className="h-2 w-full bg-slate-200 dark:bg-[#262626] rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-[#ef4343] rounded-full"
+                          className="h-full bg-[#ef4343] rounded-full transition-all duration-500"
                           style={{
                             width: `${bucket.percentage}%`,
                             opacity: 1 - index * 0.2,
@@ -255,49 +259,53 @@ export default function AdminPlatformAnalyticsPage() {
                   <div className="relative size-40 mb-6">
                     {/* Simulated Pie Chart with SVGs */}
                     <svg className="size-full" viewBox="0 0 100 100">
-                      <circle
-                        cx="50"
-                        cy="50"
-                        fill="transparent"
-                        r="40"
-                        stroke="#ef4343"
-                        strokeDasharray="180.9 251.3"
-                        strokeWidth="20"
-                        transform="rotate(-90 50 50)"
-                      />
-                      <circle
-                        cx="50"
-                        cy="50"
-                        fill="transparent"
-                        r="40"
-                        stroke="#3b82f6"
-                        strokeDasharray="32.7 251.3"
-                        strokeWidth="20"
-                        transform="rotate(169 50 50)"
-                      />
-                      <circle
-                        cx="50"
-                        cy="50"
-                        fill="transparent"
-                        r="40"
-                        stroke="#10b981"
-                        strokeDasharray="12.5 251.3"
-                        strokeWidth="20"
-                        transform="rotate(216 50 50)"
-                      />
-                      <circle
-                        cx="50"
-                        cy="50"
-                        fill="transparent"
-                        r="40"
-                        stroke="#6b7280"
-                        strokeDasharray="25.1 251.3"
-                        strokeWidth="20"
-                        transform="rotate(234 50 50)"
-                      />
+                      {roleDistribution.length > 0 && (
+                        <>
+                          <circle
+                            cx="50"
+                            cy="50"
+                            fill="transparent"
+                            r="40"
+                            stroke="#ef4343"
+                            strokeDasharray={`${(roleDistribution[0]?.percentage || 0) * 2.513} 251.3`}
+                            strokeWidth="20"
+                            transform="rotate(-90 50 50)"
+                          />
+                          <circle
+                            cx="50"
+                            cy="50"
+                            fill="transparent"
+                            r="40"
+                            stroke="#3b82f6"
+                            strokeDasharray={`${(roleDistribution[1]?.percentage || 0) * 2.513} 251.3`}
+                            strokeWidth="20"
+                            transform={`rotate(${-90 + (roleDistribution[0]?.percentage || 0) * 3.6} 50 50)`}
+                          />
+                          <circle
+                            cx="50"
+                            cy="50"
+                            fill="transparent"
+                            r="40"
+                            stroke="#10b981"
+                            strokeDasharray={`${(roleDistribution[2]?.percentage || 0) * 2.513} 251.3`}
+                            strokeWidth="20"
+                            transform={`rotate(${-90 + ((roleDistribution[0]?.percentage || 0) + (roleDistribution[1]?.percentage || 0)) * 3.6} 50 50)`}
+                          />
+                          <circle
+                            cx="50"
+                            cy="50"
+                            fill="transparent"
+                            r="40"
+                            stroke="#6b7280"
+                            strokeDasharray={`${(roleDistribution[3]?.percentage || 0) * 2.513} 251.3`}
+                            strokeWidth="20"
+                            transform={`rotate(${-90 + ((roleDistribution[0]?.percentage || 0) + (roleDistribution[1]?.percentage || 0) + (roleDistribution[2]?.percentage || 0)) * 3.6} 50 50)`}
+                          />
+                        </>
+                      )}
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center flex-col">
-                      <span className="text-2xl font-mono font-bold">1,327</span>
+                      <span className="text-2xl font-mono font-bold">{totalUsers.toLocaleString()}</span>
                       <span className="text-[10px] text-slate-500 uppercase">Total</span>
                     </div>
                   </div>
@@ -315,15 +323,6 @@ export default function AdminPlatformAnalyticsPage() {
           </div>
         </main>
       </div>
-
-      <style jsx>{`
-        body {
-          font-family: 'Inter', sans-serif;
-        }
-        .mono-text {
-          font-family: 'JetBrains Mono', monospace;
-        }
-      `}</style>
     </div>
   );
 }

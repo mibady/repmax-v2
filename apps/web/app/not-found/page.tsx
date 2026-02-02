@@ -22,7 +22,7 @@ export default function Page() {
                     Wrong Route
                 </h1>
 <p className="text-lg text-slate-600 dark:text-text-secondary max-w-md mx-auto leading-relaxed">
-                    Looks like this play got called back. The page you're looking for doesn't exist on our playbook.
+                    Looks like this play got called back. The page you&apos;re looking for doesn&apos;t exist on our playbook.
                 </p>
 </div>
 {/*  Actions  */}

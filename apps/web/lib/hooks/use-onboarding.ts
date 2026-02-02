@@ -7,6 +7,7 @@ export interface OnboardingProgress {
   role?: string;
   current_step: number;
   completed_steps: number[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   collected_data: Record<string, any>;
   chat_history: Array<{
     role: "user" | "assistant";
@@ -49,10 +50,11 @@ export function useOnboarding() {
     fetchProgress();
   }, [fetchProgress]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateProgress = useCallback(async (data: {
     current_step?: number;
     completed_steps?: number[];
-    collected_data?: Record<string, any>;
+    collected_data?: Record<string, unknown>;
     chat_history?: Array<{ role: "user" | "assistant"; content: string }>;
     completed?: boolean;
   }) => {
@@ -95,7 +97,7 @@ export function useOnboarding() {
     }
   }, [progress, updateProgress]);
 
-  const saveData = useCallback(async (data: Record<string, any>) => {
+  const saveData = useCallback(async (data: Record<string, unknown>) => {
     return updateProgress({
       collected_data: data,
     });

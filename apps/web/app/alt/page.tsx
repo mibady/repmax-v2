@@ -99,7 +99,7 @@ export default function Page() {
 <div className="flex items-center gap-2 mt-1">
 <span className="text-xs text-primary font-mono bg-primary/10 px-1.5 py-0.5 rounded">WR</span>
 <span className="text-xs text-gray-400 font-mono">|</span>
-<span className="text-xs text-gray-400 font-mono">Class of '25</span>
+<span className="text-xs text-gray-400 font-mono">Class of &apos;25</span>
 </div>
 </div>
 {/*  Stats Grid  */}
@@ -110,7 +110,7 @@ export default function Page() {
 </div>
 <div className="bg-white/5 rounded p-2 flex flex-col gap-1 border border-white/5">
 <span className="text-[10px] text-gray-500 font-mono uppercase">VERT</span>
-<span className="text-sm font-bold text-white font-mono">38.5"</span>
+<span className="text-sm font-bold text-white font-mono">38.5&quot;</span>
 </div>
 <div className="bg-white/5 rounded p-2 flex flex-col gap-1 border border-white/5">
 <span className="text-[10px] text-gray-500 font-mono uppercase">NIL Val</span>
