@@ -76,9 +76,9 @@ export default function ZoneMapPage() {
   ];
 
   return (
-    <div className="flex h-full overflow-hidden">
+    <div className="flex flex-col h-full overflow-hidden">
       {/* Sub-Header / Controls */}
-      <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-6 py-3 border-b border-[#232931] bg-[#0a0e12]/80 backdrop-blur z-10">
+      <div className="flex-shrink-0 flex items-center justify-between px-6 py-3 border-b border-[#232931] bg-[#0a0e12]/80 backdrop-blur">
         <div className="flex bg-[#1a2028] p-1 rounded-lg">
           <label className="cursor-pointer">
             <input defaultChecked className="peer sr-only" name="view" type="radio" />
@@ -117,7 +117,7 @@ export default function ZoneMapPage() {
       </div>
 
       {/* Main Dashboard Area */}
-      <div className="flex-1 flex pt-14 overflow-hidden relative">
+      <div className="flex-1 flex overflow-hidden relative">
         {/* Map Visualization Container */}
         <section className="flex-1 relative bg-[#050505] overflow-hidden">
           {/* Map Grid Texture */}

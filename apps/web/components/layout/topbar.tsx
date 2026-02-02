@@ -1,5 +1,6 @@
 'use client';
 
+// Z-index fix: topbar should be above all content
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -30,11 +31,11 @@ const ROLE_LABELS: Record<UserRole, string> = {
 };
 
 const ROLE_DASHBOARD_PATHS: Record<UserRole, string> = {
-  athlete: '/dashboard/athlete',
-  parent: '/dashboard/parent',
-  coach: '/dashboard/coach',
-  recruiter: '/dashboard/recruiter/pipeline',
-  club: '/dashboard/club',
+  athlete: '/athlete',
+  parent: '/parent',
+  coach: '/coach',
+  recruiter: '/recruiter/pipeline',
+  club: '/club',
 };
 
 function RoleSwitcher({
@@ -104,7 +105,7 @@ function RoleSwitcher({
 
 function AthleteTopbar({ user, title, unreadNotifications, availableRoles, onRoleSwitch }: Omit<TopbarProps, 'role'>) {
   return (
-    <header className="h-16 flex items-center justify-between px-8 border-b border-[#333] bg-background-dark/80 backdrop-blur-md sticky top-0 z-20">
+    <header className="h-16 flex items-center justify-between px-8 border-b border-[#333] bg-background-dark/95 backdrop-blur-md sticky top-0 z-40">
       <div className="flex items-center gap-4">
         <RoleSwitcher
           currentRole="athlete"
@@ -135,7 +136,7 @@ function AthleteTopbar({ user, title, unreadNotifications, availableRoles, onRol
 
 function RecruiterTopbar({ title, unreadNotifications }: Omit<TopbarProps, 'role' | 'user'>) {
   return (
-    <header className="h-16 border-b border-white/5 flex items-center justify-between px-6 bg-[#0a0a0a]/50 backdrop-blur-sm sticky top-0 z-20">
+    <header className="h-16 border-b border-white/5 flex items-center justify-between px-6 bg-[#0a0a0a]/50 backdrop-blur-sm sticky top-0 z-40">
       <div className="flex items-center gap-4">
         <h2 className="text-white text-xl font-bold tracking-tight">{title || 'Dashboard'}</h2>
       </div>
@@ -163,7 +164,7 @@ function RecruiterTopbar({ title, unreadNotifications }: Omit<TopbarProps, 'role
 
 function ParentTopbar({ user, title, unreadNotifications }: Omit<TopbarProps, 'role'>) {
   return (
-    <header className="h-16 flex items-center justify-between px-8 border-b border-white/10 bg-[#050505]/80 backdrop-blur-md sticky top-0 z-20">
+    <header className="h-16 flex items-center justify-between px-8 border-b border-white/10 bg-[#050505]/80 backdrop-blur-md sticky top-0 z-40">
       <div className="flex items-center gap-4">
         <h2 className="text-xl font-bold text-white">{title || "Marcus's Recruiting Journey"}</h2>
       </div>
@@ -194,7 +195,7 @@ function ParentTopbar({ user, title, unreadNotifications }: Omit<TopbarProps, 'r
 
 function CoachTopbar({ title, unreadNotifications }: Omit<TopbarProps, 'role' | 'user'>) {
   return (
-    <header className="h-16 flex items-center justify-between border-b border-white/10 px-8 bg-[#050505]/80 backdrop-blur-md sticky top-0 z-20">
+    <header className="h-16 flex items-center justify-between border-b border-white/10 px-8 bg-[#050505]/80 backdrop-blur-md sticky top-0 z-40">
       <div className="flex items-center gap-12">
         <div className="flex items-center gap-3 text-primary">
           <div className="size-6">
@@ -228,7 +229,7 @@ function CoachTopbar({ title, unreadNotifications }: Omit<TopbarProps, 'role' | 
 
 function ClubTopbar({ user, title, unreadNotifications }: Omit<TopbarProps, 'role'>) {
   return (
-    <header className="h-16 border-b border-white/5 flex items-center justify-between px-6 bg-[#0a0a0a]/50 backdrop-blur-sm sticky top-0 z-20">
+    <header className="h-16 border-b border-white/5 flex items-center justify-between px-6 bg-[#0a0a0a]/50 backdrop-blur-sm sticky top-0 z-40">
       <div className="flex items-center gap-4">
         <h2 className="text-white text-xl font-bold tracking-tight">{title || 'Club Dashboard'}</h2>
       </div>
