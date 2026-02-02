@@ -370,7 +370,7 @@ function EmptyState() {
         Start building your recruiting pipeline by adding athletes to your shortlist.
       </p>
       <Link
-        href="/dashboard/recruiter/prospects"
+        href="/recruiter/prospects"
         className="flex items-center gap-2 bg-primary hover:bg-[#d9b70b] text-[#050505] px-6 py-3 rounded-lg font-bold text-sm transition-colors"
       >
         <span className="material-symbols-outlined text-[20px]">search</span>
@@ -502,7 +502,7 @@ export default function RecruiterPipelinePage() {
         </div>
 
         <Link
-          href="/dashboard/recruiter/prospects"
+          href="/recruiter/prospects"
           className="flex items-center gap-2 bg-primary hover:bg-[#d9b70b] text-[#050505] px-4 py-2 rounded-lg font-bold text-sm transition-colors shadow-lg shadow-primary/10"
         >
           <span className="material-symbols-outlined text-[20px] font-bold">add</span>

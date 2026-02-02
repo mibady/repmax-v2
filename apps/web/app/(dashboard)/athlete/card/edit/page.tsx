@@ -97,7 +97,7 @@ export default function EditCardPage() {
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="text-center">
           <p className="text-red-500 mb-4">{error.message}</p>
-          <Link href="/dashboard/athlete" className="text-primary hover:underline">
+          <Link href="/athlete" className="text-primary hover:underline">
             Return to dashboard
           </Link>
         </div>
@@ -127,7 +127,7 @@ export default function EditCardPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <Link
-              href="/dashboard/athlete"
+              href="/athlete"
               className="flex items-center gap-2 text-text-grey hover:text-white transition-colors"
             >
               <span className="material-symbols-outlined">arrow_back</span>

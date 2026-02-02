@@ -30,66 +30,66 @@ interface NavItem {
 }
 
 const athleteNavItems: NavItem[] = [
-  { icon: 'dashboard', label: 'Dashboard', href: '/dashboard/athlete' },
-  { icon: 'badge', label: 'My Card', href: '/dashboard/athlete/card/edit' },
-  { icon: 'map', label: 'Zone Intel', href: '/dashboard/zone/map' },
-  { icon: 'trophy', label: 'Offers', href: '/dashboard/athlete/offers' },
-  { icon: 'mail', label: 'Messages', href: '/dashboard/messages' },
+  { icon: 'dashboard', label: 'Dashboard', href: '/athlete' },
+  { icon: 'badge', label: 'My Card', href: '/athlete/card/edit' },
+  { icon: 'map', label: 'Zone Intel', href: '/zone/map' },
+  { icon: 'trophy', label: 'Offers', href: '/athlete/offers' },
+  { icon: 'mail', label: 'Messages', href: '/messages' },
 ];
 
 const athleteSettingsItems: NavItem[] = [
-  { icon: 'person', label: 'Profile', href: '/dashboard/settings' },
-  { icon: 'settings', label: 'Account', href: '/dashboard/settings/notifications' },
+  { icon: 'person', label: 'Profile', href: '/settings' },
+  { icon: 'settings', label: 'Account', href: '/settings/notifications' },
 ];
 
 const recruiterNavItems: NavItem[] = [
-  { icon: 'view_kanban', label: 'Pipeline', href: '/dashboard/recruiter/pipeline' },
-  { icon: 'groups', label: 'Athletes', href: '/dashboard/recruiter/prospects' },
-  { icon: 'campaign', label: 'Campaigns', href: '/dashboard/recruiter/campaigns' },
-  { icon: 'chat_bubble', label: 'Messages', href: '/dashboard/messages' },
-  { icon: 'analytics', label: 'Analytics', href: '/dashboard/recruiter/analytics' },
+  { icon: 'view_kanban', label: 'Pipeline', href: '/recruiter/pipeline' },
+  { icon: 'groups', label: 'Athletes', href: '/recruiter/prospects' },
+  { icon: 'campaign', label: 'Campaigns', href: '/recruiter/campaigns' },
+  { icon: 'chat_bubble', label: 'Messages', href: '/messages' },
+  { icon: 'analytics', label: 'Analytics', href: '/recruiter/analytics' },
 ];
 
 const recruiterSettingsItems: NavItem[] = [
-  { icon: 'settings', label: 'Settings', href: '/dashboard/settings' },
+  { icon: 'settings', label: 'Settings', href: '/settings' },
 ];
 
 const parentNavItems: NavItem[] = [
-  { icon: 'dashboard', label: 'Dashboard', href: '/dashboard/parent' },
-  { icon: 'person', label: "Child's Profile", href: '/dashboard/parent/profile' },
-  { icon: 'chat_bubble', label: 'Messages', href: '/dashboard/messages' },
-  { icon: 'calendar_today', label: 'Calendar', href: '/dashboard/parent/calendar' },
-  { icon: 'school', label: 'Schools', href: '/dashboard/parent/schools' },
-  { icon: 'library_books', label: 'Resources', href: '/dashboard/parent/resources' },
+  { icon: 'dashboard', label: 'Dashboard', href: '/parent' },
+  { icon: 'person', label: "Child's Profile", href: '/parent/profile' },
+  { icon: 'chat_bubble', label: 'Messages', href: '/messages' },
+  { icon: 'calendar_today', label: 'Calendar', href: '/parent/calendar' },
+  { icon: 'school', label: 'Schools', href: '/parent/schools' },
+  { icon: 'library_books', label: 'Resources', href: '/parent/resources' },
 ];
 
 const parentSettingsItems: NavItem[] = [
-  { icon: 'settings', label: 'Settings', href: '/dashboard/settings' },
-  { icon: 'help', label: 'Help Center', href: '/dashboard/help' },
+  { icon: 'settings', label: 'Settings', href: '/settings' },
+  { icon: 'help', label: 'Help Center', href: '/help' },
 ];
 
 const coachNavItems: NavItem[] = [
-  { icon: 'dashboard', label: 'Dashboard', href: '/dashboard/coach' },
-  { icon: 'groups', label: 'Roster', href: '/dashboard/coach/roster' },
-  { icon: 'radar', label: 'Recruiting', href: '/dashboard/coach/recruiting' },
-  { icon: 'calendar_today', label: 'Schedule', href: '/dashboard/coach/schedule' },
-  { icon: 'playlist_add_check', label: 'Team Tasks', href: '/dashboard/coach/tasks' },
+  { icon: 'dashboard', label: 'Dashboard', href: '/coach' },
+  { icon: 'groups', label: 'Roster', href: '/coach/roster' },
+  { icon: 'radar', label: 'Recruiting', href: '/coach/recruiting' },
+  { icon: 'calendar_today', label: 'Schedule', href: '/coach/schedule' },
+  { icon: 'playlist_add_check', label: 'Team Tasks', href: '/coach/tasks' },
 ];
 
 const coachSettingsItems: NavItem[] = [
-  { icon: 'settings', label: 'Settings', href: '/dashboard/settings' },
+  { icon: 'settings', label: 'Settings', href: '/settings' },
 ];
 
 const clubNavItems: NavItem[] = [
-  { icon: 'dashboard', label: 'Dashboard', href: '/dashboard/club' },
-  { icon: 'event', label: 'Events', href: '/dashboard/club/events' },
-  { icon: 'groups', label: 'Athletes', href: '/dashboard/club/athletes' },
-  { icon: 'sports', label: 'Scouts', href: '/dashboard/club/scouts' },
-  { icon: 'analytics', label: 'Analytics', href: '/dashboard/club/analytics' },
+  { icon: 'dashboard', label: 'Dashboard', href: '/club' },
+  { icon: 'event', label: 'Events', href: '/club/events' },
+  { icon: 'groups', label: 'Athletes', href: '/club/athletes' },
+  { icon: 'sports', label: 'Scouts', href: '/club/scouts' },
+  { icon: 'analytics', label: 'Analytics', href: '/club/analytics' },
 ];
 
 const clubSettingsItems: NavItem[] = [
-  { icon: 'settings', label: 'Settings', href: '/dashboard/settings' },
+  { icon: 'settings', label: 'Settings', href: '/settings' },
 ];
 
 function NavLink({ item, isActive }: { item: NavItem; isActive: boolean }) {
@@ -161,7 +161,7 @@ function AthleteSidebar({ user, onSignOut }: { user: SidebarUser; onSignOut?: ()
           <NavLink
             key={item.href}
             item={item}
-            isActive={pathname === item.href || (item.href !== '/dashboard/athlete' && pathname.startsWith(item.href))}
+            isActive={pathname === item.href || (item.href !== '/athlete' && pathname.startsWith(item.href))}
           />
         ))}
 
@@ -213,7 +213,7 @@ function RecruiterSidebar({ user, onSignOut }: { user: SidebarUser; onSignOut?: 
         <nav className="flex flex-col gap-1">
           {recruiterNavItems.map((item) => {
             const isActive = pathname === item.href ||
-              (item.href !== '/dashboard/recruiter/pipeline' && pathname.startsWith(item.href));
+              (item.href !== '/recruiter/pipeline' && pathname.startsWith(item.href));
             return (
               <Link
                 key={item.href}

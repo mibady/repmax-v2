@@ -332,7 +332,7 @@ export default function CampusVisitsPage() {
                         ) : (
                           <>
                             <Link
-                              href={`/dashboard/recruiter/prospects/${visit.athleteId}`}
+                              href={`/recruiter/prospects/${visit.athleteId}`}
                               className="flex-1 rounded bg-white/5 py-1.5 text-xs font-medium text-white hover:bg-white/10 transition text-center"
                             >
                               View Profile

@@ -26,9 +26,9 @@ export default async function DashboardPage() {
 
   // Redirect to role-specific dashboard
   if (profile.role === "athlete") {
-    redirect("/dashboard/athlete");
+    redirect("/athlete");
   } else if (profile.role === "recruiter" || profile.role === "coach") {
-    redirect("/dashboard/recruiter/pipeline");
+    redirect("/recruiter/pipeline");
   } else if (profile.role === "admin") {
     redirect("/admin/analytics");
   }

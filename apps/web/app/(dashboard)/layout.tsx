@@ -36,7 +36,7 @@ function getPageTitle(pathname: string): string {
 }
 
 function getRoleFromPathname(pathname: string): UserRole {
-  if (pathname.startsWith('/dashboard/recruiter')) {
+  if (pathname.startsWith('/recruiter')) {
     return 'recruiter';
   }
   return 'athlete';

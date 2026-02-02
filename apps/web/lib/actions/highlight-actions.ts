@@ -126,7 +126,7 @@ export async function createHighlight(data: {
     return { error: error.message };
   }
 
-  revalidatePath("/dashboard/athlete/film");
+  revalidatePath("/athlete/film");
   return { data: highlight };
 }
 
@@ -170,7 +170,7 @@ export async function updateHighlight(
     return { error: error.message };
   }
 
-  revalidatePath("/dashboard/athlete/film");
+  revalidatePath("/athlete/film");
   return { success: true };
 }
 
@@ -207,7 +207,7 @@ export async function deleteHighlight(highlightId: string) {
     return { error: error.message };
   }
 
-  revalidatePath("/dashboard/athlete/film");
+  revalidatePath("/athlete/film");
   return { success: true };
 }
 

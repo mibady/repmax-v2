@@ -99,7 +99,7 @@ export default function AthleteAnalyticsPage() {
       value: '85%',
       progress: 85,
       actionLabel: 'Complete now',
-      actionHref: '/dashboard/athlete/profile',
+      actionHref: '/athlete/profile',
     },
   ];
 

@@ -193,7 +193,7 @@ export async function updateShortlistStatus(
     return { error: error.message };
   }
 
-  revalidatePath("/dashboard/recruiter/pipeline");
+  revalidatePath("/recruiter/pipeline");
   revalidatePath("/shortlist");
 
   return { success: true };

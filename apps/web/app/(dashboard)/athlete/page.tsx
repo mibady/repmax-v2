@@ -191,7 +191,7 @@ export default function AthleteDashboardPage() {
                   <span className="material-symbols-outlined text-primary">calendar_month</span>
                   Recruiting Calendar
                 </h3>
-                <Link href="/dashboard/athlete/calendar" className="text-xs font-semibold text-primary hover:text-primary/80">View Full Schedule</Link>
+                <Link href="/athlete/calendar" className="text-xs font-semibold text-primary hover:text-primary/80">View Full Schedule</Link>
               </div>
               <div className="p-0">
                 {calendarEvents.length === 0 ? (
@@ -281,7 +281,7 @@ export default function AthleteDashboardPage() {
                 </div>
               </div>
               <div className="p-3 grid grid-cols-2 gap-3">
-                <Link href="/dashboard/athlete/card/edit" className="flex items-center justify-center gap-2 bg-primary text-black font-bold py-2 rounded-lg text-sm hover:bg-primary/90 transition-colors">
+                <Link href="/athlete/card/edit" className="flex items-center justify-center gap-2 bg-primary text-black font-bold py-2 rounded-lg text-sm hover:bg-primary/90 transition-colors">
                   <span className="material-symbols-outlined text-[18px]">edit</span> Edit
                 </Link>
                 <button
@@ -300,7 +300,7 @@ export default function AthleteDashboardPage() {
             <div className="bg-surface-dark rounded-xl border border-[#333] p-5">
               <h3 className="font-bold text-white mb-4 text-sm uppercase tracking-wider text-text-muted">Quick Actions</h3>
               <div className="space-y-3">
-                <Link href="/dashboard/athlete/card/edit" className="w-full flex items-center justify-between p-3 rounded-lg bg-[#2A2A2E] hover:bg-[#333] border border-transparent hover:border-[#444] transition-all group text-left">
+                <Link href="/athlete/card/edit" className="w-full flex items-center justify-between p-3 rounded-lg bg-[#2A2A2E] hover:bg-[#333] border border-transparent hover:border-[#444] transition-all group text-left">
                   <div className="flex items-center gap-3">
                     <div className="size-8 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center">
                       <span className="material-symbols-outlined text-[18px]">add_a_photo</span>
@@ -309,7 +309,7 @@ export default function AthleteDashboardPage() {
                   </div>
                   <span className="material-symbols-outlined text-text-muted text-[18px]">chevron_right</span>
                 </Link>
-                <Link href="/dashboard/athlete/card/edit" className="w-full flex items-center justify-between p-3 rounded-lg bg-[#2A2A2E] hover:bg-[#333] border border-transparent hover:border-[#444] transition-all group text-left">
+                <Link href="/athlete/card/edit" className="w-full flex items-center justify-between p-3 rounded-lg bg-[#2A2A2E] hover:bg-[#333] border border-transparent hover:border-[#444] transition-all group text-left">
                   <div className="flex items-center gap-3">
                     <div className="size-8 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center">
                       <span className="material-symbols-outlined text-[18px]">fitness_center</span>
@@ -318,7 +318,7 @@ export default function AthleteDashboardPage() {
                   </div>
                   <span className="material-symbols-outlined text-text-muted text-[18px]">chevron_right</span>
                 </Link>
-                <Link href="/dashboard/athlete/film" className="w-full flex items-center justify-between p-3 rounded-lg bg-[#2A2A2E] hover:bg-[#333] border border-transparent hover:border-[#444] transition-all group text-left">
+                <Link href="/athlete/film" className="w-full flex items-center justify-between p-3 rounded-lg bg-[#2A2A2E] hover:bg-[#333] border border-transparent hover:border-[#444] transition-all group text-left">
                   <div className="flex items-center gap-3">
                     <div className="size-8 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center">
                       <span className="material-symbols-outlined text-[18px]">videocam</span>

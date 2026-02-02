@@ -266,7 +266,7 @@ export default function ProspectDetailPage() {
     <div className="flex flex-col gap-6">
       {/* Breadcrumbs */}
       <div className="flex items-center gap-2 text-sm">
-        <Link className="text-[#c3b998] hover:text-primary transition-colors" href="/dashboard/recruiter/prospects">
+        <Link className="text-[#c3b998] hover:text-primary transition-colors" href="/recruiter/prospects">
           Prospects
         </Link>
         <span className="text-[#c3b998] material-symbols-outlined text-[20px]">chevron_right</span>
