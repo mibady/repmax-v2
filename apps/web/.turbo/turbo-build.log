@@ -5,8 +5,7 @@
    ▲ Next.js 15.3.6
 
    Creating an optimized production build ...
-<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (133kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
- ✓ Compiled successfully in 13.0s
+ ✓ Compiled successfully in 2000ms
    Linting and checking validity of types ...
 
 ./app/layout.tsx
@@ -15,34 +14,39 @@
 
 info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
    Collecting page data ...
-   Generating static pages (0/16) ...
-   Generating static pages (4/16) 
-   Generating static pages (8/16) 
-   Generating static pages (12/16) 
- ✓ Generating static pages (16/16)
+   Generating static pages (0/21) ...
+   Generating static pages (5/21) 
+   Generating static pages (10/21) 
+   Generating static pages (15/21) 
+ ✓ Generating static pages (21/21)
    Finalizing page optimization ...
    Collecting build traces ...
 
 Route (app)                                 Size  First Load JS
 ┌ ○ /                                      187 B         111 kB
-├ ○ /_not-found                            154 B         102 kB
-├ ƒ /api/athletes                          154 B         102 kB
-├ ƒ /api/athletes/[id]                     154 B         102 kB
-├ ƒ /api/messages                          154 B         102 kB
-├ ƒ /api/shortlists                        154 B         102 kB
-├ ƒ /api/upload                            154 B         102 kB
-├ ƒ /api/webhooks/stripe                   154 B         102 kB
-├ ƒ /callback                              154 B         102 kB
+├ ○ /_not-found                            161 B         102 kB
+├ ƒ /api/athletes                          161 B         102 kB
+├ ƒ /api/athletes/[id]                     161 B         102 kB
+├ ƒ /api/messages                          161 B         102 kB
+├ ƒ /api/recruiting/calendar               161 B         102 kB
+├ ƒ /api/recruiting/class-rankings         161 B         102 kB
+├ ƒ /api/recruiting/zones                  161 B         102 kB
+├ ƒ /api/shortlists                        161 B         102 kB
+├ ƒ /api/upload                            161 B         102 kB
+├ ƒ /api/webhooks/stripe                   161 B         102 kB
+├ ƒ /callback                              161 B         102 kB
 ├ ƒ /card/[id]                             496 B         107 kB
 ├ ƒ /dashboard                             178 B         105 kB
 ├ ƒ /dashboard/athlete                     187 B         111 kB
-├ ○ /dashboard/athlete/card/edit         4.56 kB         115 kB
+├ ○ /dashboard/athlete/card/edit         4.58 kB         115 kB
+├ ○ /dashboard/messages                  6.85 kB         114 kB
 ├ ○ /login                               1.47 kB         159 kB
 ├ ○ /pricing                               178 B         105 kB
+├ ○ /settings/notifications              3.17 kB         108 kB
 └ ○ /signup                              1.77 kB         160 kB
 + First Load JS shared by all             102 kB
-  ├ chunks/315-c01a5b9ad9b15a98.js       46.4 kB
-  ├ chunks/87c73c54-3fe0f55b957286ff.js  53.2 kB
+  ├ chunks/696-359d385655ed4267.js       46.4 kB
+  ├ chunks/87c73c54-fd6aa5cc2924345c.js  53.2 kB
   └ other shared chunks (total)          1.99 kB
 
 
