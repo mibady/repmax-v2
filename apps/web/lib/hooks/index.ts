@@ -190,3 +190,32 @@ export {
   type ZoneAssignment,
   type AvailableRecruiter,
 } from "./use-zone-assignments";
+
+// Parent Dashboard
+export {
+  useParentDashboard,
+  type ChildProfile,
+  type ParentMetrics,
+  type SchoolInterest,
+  type ActivityItem,
+  type CalendarEvent as ParentCalendarEvent,
+} from "./use-parent-dashboard";
+
+// Coach Dashboard
+export {
+  useCoachDashboard,
+  type RosterAthlete,
+  type CoachTask,
+  type CoachNote,
+  type CoachActivityItem,
+  type CoachMetrics,
+} from "./use-coach-dashboard";
+
+// Club Dashboard
+export {
+  useClubDashboard,
+  type Tournament,
+  type VerificationItem,
+  type PaymentItem,
+  type ClubMetrics,
+} from "./use-club-dashboard";

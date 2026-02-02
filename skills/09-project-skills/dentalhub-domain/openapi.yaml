@@ -1,0 +1,1865 @@
+openapi: 3.1.0
+info:
+  title: DentalHub v3 API
+  description: |
+    Dental Practice Management System API.
+
+    ## Authentication
+    All endpoints require Supabase Auth bearer token.
+
+    ## Practice Context
+    User authentication resolves practice_id automatically via practice_users table.
+  version: 1.0.0
+  contact:
+    email: api-support@dentalhub.com
+
+servers:
+  - url: https://api.dentalhub.com
+    description: Production
+  - url: http://localhost:3000/api
+    description: Development
+
+tags:
+  - name: Patients
+    description: Patient management
+  - name: Appointments
+    description: Scheduling and appointments
+  - name: Billing
+    description: Payments, claims, and ledger
+  - name: Clinical
+    description: Clinical charting and treatment
+  - name: Recalls
+    description: Patient recall management
+  - name: Communications
+    description: SMS, voice, and messaging
+  - name: Campaigns
+    description: Automated outreach campaigns
+  - name: Lab Cases
+    description: Lab case management
+  - name: Forms
+    description: Patient forms
+  - name: Settings
+    description: Practice configuration
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Supabase Auth access token
+
+  schemas:
+    # Common
+    UUID:
+      type: string
+      format: uuid
+      example: "550e8400-e29b-41d4-a716-446655440000"
+
+    Timestamp:
+      type: string
+      format: date-time
+      example: "2026-01-17T09:00:00Z"
+
+    Date:
+      type: string
+      format: date
+      example: "2026-01-17"
+
+    # Error Responses
+    ErrorResponse:
+      type: object
+      properties:
+        data:
+          type: "null"
+        error:
+          type: string
+          example: "Resource not found"
+        code:
+          type: string
+          example: "NOT_FOUND"
+
+    ValidationErrorResponse:
+      type: object
+      properties:
+        data:
+          type: "null"
+        error:
+          type: string
+          example: "Validation failed"
+        validation_errors:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
+
+    # Pagination
+    PaginationMeta:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 150
+        page:
+          type: integer
+          example: 1
+        per_page:
+          type: integer
+          example: 20
+        total_pages:
+          type: integer
+          example: 8
+
+    # Patient
+    Patient:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        first_name:
+          type: string
+          example: "John"
+        last_name:
+          type: string
+          example: "Doe"
+        email:
+          type: string
+          format: email
+          example: "john@example.com"
+        phone_mobile:
+          type: string
+          example: "+15551234567"
+        date_of_birth:
+          $ref: "#/components/schemas/Date"
+        status:
+          type: string
+          enum: [active, inactive]
+        address_line1:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        postal_code:
+          type: string
+        sms_consent:
+          type: boolean
+        voice_consent:
+          type: boolean
+        created_at:
+          $ref: "#/components/schemas/Timestamp"
+        updated_at:
+          $ref: "#/components/schemas/Timestamp"
+
+    PatientCreate:
+      type: object
+      required:
+        - first_name
+        - last_name
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone_mobile:
+          type: string
+        date_of_birth:
+          $ref: "#/components/schemas/Date"
+        address_line1:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        postal_code:
+          type: string
+        primary_provider_id:
+          $ref: "#/components/schemas/UUID"
+        sms_consent:
+          type: boolean
+          default: false
+        voice_consent:
+          type: boolean
+          default: false
+
+    # Appointment
+    Appointment:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        patient_id:
+          $ref: "#/components/schemas/UUID"
+        provider_id:
+          $ref: "#/components/schemas/UUID"
+        operatory_id:
+          $ref: "#/components/schemas/UUID"
+        appointment_type_id:
+          $ref: "#/components/schemas/UUID"
+        start_time:
+          $ref: "#/components/schemas/Timestamp"
+        end_time:
+          $ref: "#/components/schemas/Timestamp"
+        duration_minutes:
+          type: integer
+          example: 60
+        status:
+          type: string
+          enum: [scheduled, confirmed, checked_in, in_progress, completed, cancelled, no_show]
+        notes:
+          type: string
+        created_at:
+          $ref: "#/components/schemas/Timestamp"
+
+    AppointmentCreate:
+      type: object
+      required:
+        - patient_id
+        - provider_id
+        - operatory_id
+        - start_time
+        - duration_minutes
+      properties:
+        patient_id:
+          $ref: "#/components/schemas/UUID"
+        provider_id:
+          $ref: "#/components/schemas/UUID"
+        operatory_id:
+          $ref: "#/components/schemas/UUID"
+        appointment_type_id:
+          $ref: "#/components/schemas/UUID"
+        start_time:
+          $ref: "#/components/schemas/Timestamp"
+        duration_minutes:
+          type: integer
+        notes:
+          type: string
+
+    AvailableSlot:
+      type: object
+      properties:
+        start_time:
+          $ref: "#/components/schemas/Timestamp"
+        end_time:
+          $ref: "#/components/schemas/Timestamp"
+        provider_id:
+          $ref: "#/components/schemas/UUID"
+        operatory_id:
+          $ref: "#/components/schemas/UUID"
+
+    # Billing
+    LedgerTransaction:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        patient_id:
+          $ref: "#/components/schemas/UUID"
+        type:
+          type: string
+          enum: [charge, payment, adjustment, refund]
+        amount:
+          type: number
+          format: decimal
+          example: 150.00
+        description:
+          type: string
+        procedure_code:
+          type: string
+        payment_method:
+          type: string
+          enum: [cash, check, credit_card, insurance, other]
+        created_at:
+          $ref: "#/components/schemas/Timestamp"
+
+    PaymentCreate:
+      type: object
+      required:
+        - patient_id
+        - amount
+        - payment_method
+      properties:
+        patient_id:
+          $ref: "#/components/schemas/UUID"
+        amount:
+          type: number
+          format: decimal
+        payment_method:
+          type: string
+          enum: [cash, check, credit_card, insurance, other]
+        stripe_payment_intent_id:
+          type: string
+        notes:
+          type: string
+
+    # Clinical
+    ToothCondition:
+      type: object
+      properties:
+        tooth_number:
+          type: integer
+          minimum: 1
+          maximum: 32
+        conditions:
+          type: array
+          items:
+            type: string
+        restorations:
+          type: array
+          items:
+            type: string
+        notes:
+          type: string
+
+    PerioMeasurement:
+      type: object
+      properties:
+        tooth_number:
+          type: integer
+        site:
+          type: string
+          enum: [MB, B, DB, ML, L, DL]
+        probing_depth:
+          type: integer
+        recession:
+          type: integer
+        bleeding:
+          type: boolean
+        suppuration:
+          type: boolean
+
+    TreatmentPlan:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        patient_id:
+          $ref: "#/components/schemas/UUID"
+        status:
+          type: string
+          enum: [proposed, accepted, in_progress, completed, declined]
+        total_fee:
+          type: number
+          format: decimal
+        insurance_estimate:
+          type: number
+          format: decimal
+        patient_portion:
+          type: number
+          format: decimal
+        procedures:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+              description:
+                type: string
+              tooth:
+                type: integer
+              fee:
+                type: number
+
+    # Recall
+    Recall:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        patient_id:
+          $ref: "#/components/schemas/UUID"
+        type:
+          type: string
+          enum: [prophy, perio, exam, xray]
+        due_date:
+          $ref: "#/components/schemas/Date"
+        status:
+          type: string
+          enum: [pending, contacted, scheduled, completed]
+        last_contact_at:
+          $ref: "#/components/schemas/Timestamp"
+
+    # Campaign
+    Campaign:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        name:
+          type: string
+        type:
+          type: string
+          enum: [recare, reactivation, treatment, custom]
+        status:
+          type: string
+          enum: [draft, active, paused, completed]
+        description:
+          type: string
+        sequence:
+          type: array
+          items:
+            type: object
+            properties:
+              delay_days:
+                type: integer
+              channel:
+                type: string
+                enum: [sms, voice, email]
+              template_id:
+                $ref: "#/components/schemas/UUID"
+
+    CampaignCreate:
+      type: object
+      required:
+        - name
+        - type
+        - sequence
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum: [recare, reactivation, treatment, custom]
+        description:
+          type: string
+        sequence:
+          type: array
+          items:
+            type: object
+            required:
+              - delay_days
+              - channel
+              - template_id
+            properties:
+              delay_days:
+                type: integer
+              channel:
+                type: string
+                enum: [sms, voice, email]
+              template_id:
+                $ref: "#/components/schemas/UUID"
+
+    CampaignStats:
+      type: object
+      properties:
+        total_enrolled:
+          type: integer
+        active:
+          type: integer
+        completed:
+          type: integer
+        scheduled:
+          type: integer
+        sms_sent:
+          type: integer
+        voice_calls:
+          type: integer
+        response_rate:
+          type: number
+          format: float
+
+    # Lab Case
+    LabVendor:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        name:
+          type: string
+        contact_name:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        specialties:
+          type: array
+          items:
+            type: string
+        average_turnaround_days:
+          type: integer
+        is_active:
+          type: boolean
+
+    LabCase:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        case_number:
+          type: string
+          example: "LAB-2026-0042"
+        patient_id:
+          $ref: "#/components/schemas/UUID"
+        vendor_id:
+          $ref: "#/components/schemas/UUID"
+        provider_id:
+          $ref: "#/components/schemas/UUID"
+        case_type:
+          type: string
+          enum: [crown, bridge, denture, implant, veneer, night_guard, other]
+        tooth_numbers:
+          type: array
+          items:
+            type: integer
+        shade:
+          type: string
+        material:
+          type: string
+        status:
+          type: string
+          enum: [pending, sent_to_lab, in_fabrication, on_hold, shipped, received, quality_check, completed, delivered, returned, cancelled]
+        due_date:
+          $ref: "#/components/schemas/Date"
+        tracking_number:
+          type: string
+        status_history:
+          type: array
+          items:
+            type: object
+            properties:
+              status:
+                type: string
+              timestamp:
+                $ref: "#/components/schemas/Timestamp"
+              user_id:
+                $ref: "#/components/schemas/UUID"
+              notes:
+                type: string
+
+    LabCaseCreate:
+      type: object
+      required:
+        - practice_id
+        - patient_id
+        - vendor_id
+        - case_type
+      properties:
+        practice_id:
+          $ref: "#/components/schemas/UUID"
+        patient_id:
+          $ref: "#/components/schemas/UUID"
+        vendor_id:
+          $ref: "#/components/schemas/UUID"
+        provider_id:
+          $ref: "#/components/schemas/UUID"
+        case_type:
+          type: string
+        tooth_numbers:
+          type: array
+          items:
+            type: integer
+        shade:
+          type: string
+        material:
+          type: string
+        due_date:
+          $ref: "#/components/schemas/Date"
+        notes:
+          type: string
+
+    # Communication
+    CommunicationLog:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        patient_id:
+          $ref: "#/components/schemas/UUID"
+        channel:
+          type: string
+          enum: [sms, voice, email]
+        direction:
+          type: string
+          enum: [inbound, outbound]
+        content:
+          type: string
+        status:
+          type: string
+          enum: [sent, delivered, failed, received]
+        created_at:
+          $ref: "#/components/schemas/Timestamp"
+
+    CommunicationTemplate:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        name:
+          type: string
+        channel:
+          type: string
+          enum: [sms, voice, email]
+        content:
+          type: string
+        variables:
+          type: array
+          items:
+            type: string
+
+    # Provider
+    Provider:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        first_name:
+          type: string
+        last_name:
+          type: string
+        title:
+          type: string
+        npi:
+          type: string
+        specialty:
+          type: string
+        is_active:
+          type: boolean
+
+    # Operatory
+    Operatory:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        name:
+          type: string
+        description:
+          type: string
+        is_active:
+          type: boolean
+
+  responses:
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
+    ValidationError:
+      description: Validation failed
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ValidationErrorResponse"
+
+security:
+  - BearerAuth: []
+
+paths:
+  # ============================================================================
+  # PATIENTS
+  # ============================================================================
+  /patients:
+    get:
+      tags: [Patients]
+      summary: List patients
+      parameters:
+        - name: q
+          in: query
+          schema:
+            type: string
+          description: Search by name, email, or phone
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, inactive]
+        - name: provider_id
+          in: query
+          schema:
+            $ref: "#/components/schemas/UUID"
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Paginated patient list
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginationMeta"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Patient"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+    post:
+      tags: [Patients]
+      summary: Create patient
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatientCreate"
+      responses:
+        "201":
+          description: Patient created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Patient"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+
+  /patients/{id}:
+    get:
+      tags: [Patients]
+      summary: Get patient details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Patient details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Patient"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /patients/search:
+    get:
+      tags: [Patients]
+      summary: Fuzzy search patients
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Patient"
+
+  /patients/{id}/appointments:
+    get:
+      tags: [Patients]
+      summary: Get patient appointments
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Patient appointments
+
+  /patients/{id}/ledger:
+    get:
+      tags: [Patients]
+      summary: Get patient financial ledger
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Patient ledger transactions
+
+  /patients/{id}/insurance:
+    get:
+      tags: [Patients]
+      summary: Get patient insurance policies
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Patient insurance info
+
+  /patients/{id}/chart:
+    get:
+      tags: [Patients]
+      summary: Get patient clinical chart
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Patient chart data
+
+  /patients/{id}/recalls:
+    get:
+      tags: [Patients]
+      summary: Get patient recalls
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Patient recalls
+
+  # ============================================================================
+  # APPOINTMENTS
+  # ============================================================================
+  /appointments:
+    get:
+      tags: [Appointments]
+      summary: List appointments
+      parameters:
+        - name: date
+          in: query
+          schema:
+            $ref: "#/components/schemas/Date"
+        - name: start_date
+          in: query
+          schema:
+            $ref: "#/components/schemas/Date"
+        - name: end_date
+          in: query
+          schema:
+            $ref: "#/components/schemas/Date"
+        - name: provider_id
+          in: query
+          schema:
+            $ref: "#/components/schemas/UUID"
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [scheduled, confirmed, checked_in, completed, cancelled]
+      responses:
+        "200":
+          description: Appointment list
+
+    post:
+      tags: [Appointments]
+      summary: Create appointment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppointmentCreate"
+      responses:
+        "201":
+          description: Appointment created
+
+  /appointments/{id}:
+    get:
+      tags: [Appointments]
+      summary: Get appointment details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Appointment details
+
+  /appointments/available-slots:
+    get:
+      tags: [Appointments]
+      summary: Get available appointment slots
+      parameters:
+        - name: date
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/Date"
+        - name: provider_id
+          in: query
+          schema:
+            $ref: "#/components/schemas/UUID"
+        - name: duration_minutes
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Available slots
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/AvailableSlot"
+
+  /appointments/{id}/confirm:
+    post:
+      tags: [Appointments]
+      summary: Confirm appointment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Appointment confirmed
+
+  /appointments/{id}/check-in:
+    post:
+      tags: [Appointments]
+      summary: Check in patient
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Patient checked in
+
+  /appointments/{id}/check-out:
+    post:
+      tags: [Appointments]
+      summary: Complete appointment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                notes:
+                  type: string
+                procedure_codes:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "200":
+          description: Appointment completed
+
+  /appointments/{id}/cancel:
+    post:
+      tags: [Appointments]
+      summary: Cancel appointment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                no_show:
+                  type: boolean
+      responses:
+        "200":
+          description: Appointment cancelled
+
+  # ============================================================================
+  # BILLING
+  # ============================================================================
+  /billing/ledger:
+    get:
+      tags: [Billing]
+      summary: List ledger transactions
+      parameters:
+        - name: patient_id
+          in: query
+          schema:
+            $ref: "#/components/schemas/UUID"
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [charge, payment, adjustment, refund]
+      responses:
+        "200":
+          description: Ledger transactions
+
+  /billing/ledger/{id}:
+    get:
+      tags: [Billing]
+      summary: Get ledger transaction
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Transaction details
+
+  /billing/payments:
+    post:
+      tags: [Billing]
+      summary: Record payment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentCreate"
+      responses:
+        "201":
+          description: Payment recorded
+
+  /billing/payments/terminal:
+    get:
+      tags: [Billing]
+      summary: Get terminal status
+      responses:
+        "200":
+          description: Terminal status
+
+  /billing/eligibility:
+    post:
+      tags: [Billing]
+      summary: Check insurance eligibility
+      description: Stub - DentalXChange integration pending
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - patient_id
+                - insurance_id
+              properties:
+                patient_id:
+                  $ref: "#/components/schemas/UUID"
+                insurance_id:
+                  $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Eligibility result
+
+  /billing/claims:
+    get:
+      tags: [Billing]
+      summary: List claims
+      responses:
+        "200":
+          description: Claims list
+
+    post:
+      tags: [Billing]
+      summary: Create claim
+      responses:
+        "201":
+          description: Claim created
+
+  /billing/memberships/plans:
+    get:
+      tags: [Billing]
+      summary: List membership plans
+      responses:
+        "200":
+          description: Membership plans
+
+  /billing/memberships/patient/{id}:
+    get:
+      tags: [Billing]
+      summary: Get patient membership
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Patient membership
+
+  # ============================================================================
+  # CLINICAL
+  # ============================================================================
+  /clinical/tooth-conditions:
+    get:
+      tags: [Clinical]
+      summary: Get odontogram
+      parameters:
+        - name: patient_id
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Tooth conditions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ToothCondition"
+
+  /clinical/notes:
+    get:
+      tags: [Clinical]
+      summary: List clinical notes
+      parameters:
+        - name: patient_id
+          in: query
+          schema:
+            $ref: "#/components/schemas/UUID"
+        - name: appointment_id
+          in: query
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Clinical notes
+
+  /clinical/notes/{id}/sign:
+    post:
+      tags: [Clinical]
+      summary: Sign clinical note
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Note signed
+
+  /clinical/perio/exams:
+    get:
+      tags: [Clinical]
+      summary: List perio exams
+      responses:
+        "200":
+          description: Perio exams
+
+  /clinical/perio/measurements:
+    post:
+      tags: [Clinical]
+      summary: Record perio measurements
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - patient_id
+                - exam_date
+                - measurements
+              properties:
+                patient_id:
+                  $ref: "#/components/schemas/UUID"
+                exam_date:
+                  $ref: "#/components/schemas/Date"
+                measurements:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/PerioMeasurement"
+      responses:
+        "201":
+          description: Measurements recorded
+
+  /clinical/treatment-plans:
+    get:
+      tags: [Clinical]
+      summary: List treatment plans
+      responses:
+        "200":
+          description: Treatment plans
+
+  /clinical/treatment-plans/{id}:
+    get:
+      tags: [Clinical]
+      summary: Get treatment plan
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Treatment plan details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/TreatmentPlan"
+
+  /clinical/treatment-plans/{id}/accept:
+    post:
+      tags: [Clinical]
+      summary: Accept treatment plan
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                signature_data:
+                  type: string
+                  format: byte
+                accepted_procedures:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Plan accepted
+
+  # ============================================================================
+  # RECALLS
+  # ============================================================================
+  /recalls:
+    get:
+      tags: [Recalls]
+      summary: List recalls
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, contacted, scheduled, completed]
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [prophy, perio, exam, xray]
+        - name: due_before
+          in: query
+          schema:
+            $ref: "#/components/schemas/Date"
+      responses:
+        "200":
+          description: Recalls list
+
+  /recalls/{id}:
+    get:
+      tags: [Recalls]
+      summary: Get recall details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Recall details
+
+  /recalls/due:
+    get:
+      tags: [Recalls]
+      summary: Get recalls due for outreach
+      responses:
+        "200":
+          description: Due recalls
+
+  # ============================================================================
+  # COMMUNICATIONS
+  # ============================================================================
+  /communications:
+    get:
+      tags: [Communications]
+      summary: List communication logs
+      parameters:
+        - name: patient_id
+          in: query
+          schema:
+            $ref: "#/components/schemas/UUID"
+        - name: channel
+          in: query
+          schema:
+            type: string
+            enum: [sms, voice, email]
+        - name: direction
+          in: query
+          schema:
+            type: string
+            enum: [inbound, outbound]
+      responses:
+        "200":
+          description: Communication logs
+
+  /communications/send:
+    post:
+      tags: [Communications]
+      summary: Send communication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - patient_id
+                - channel
+                - template_id
+              properties:
+                patient_id:
+                  $ref: "#/components/schemas/UUID"
+                channel:
+                  type: string
+                  enum: [sms, voice, email]
+                template_id:
+                  $ref: "#/components/schemas/UUID"
+                variables:
+                  type: object
+                  additionalProperties:
+                    type: string
+      responses:
+        "200":
+          description: Message sent
+
+  /communications/templates:
+    get:
+      tags: [Communications]
+      summary: List communication templates
+      responses:
+        "200":
+          description: Templates list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CommunicationTemplate"
+
+  /communications/templates/{id}:
+    get:
+      tags: [Communications]
+      summary: Get communication template
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Template details
+
+  # ============================================================================
+  # CAMPAIGNS
+  # ============================================================================
+  /campaigns:
+    get:
+      tags: [Campaigns]
+      summary: List campaigns
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [draft, active, paused, completed]
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [recare, reactivation, treatment, custom]
+      responses:
+        "200":
+          description: Campaigns list
+
+    post:
+      tags: [Campaigns]
+      summary: Create campaign
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CampaignCreate"
+      responses:
+        "201":
+          description: Campaign created
+
+  /campaigns/{id}:
+    get:
+      tags: [Campaigns]
+      summary: Get campaign details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Campaign details
+
+  /campaigns/{id}/start:
+    post:
+      tags: [Campaigns]
+      summary: Start campaign
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Campaign started
+
+  /campaigns/{id}/pause:
+    post:
+      tags: [Campaigns]
+      summary: Pause campaign
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Campaign paused
+
+  /campaigns/{id}/enroll:
+    post:
+      tags: [Campaigns]
+      summary: Enroll patient in campaign
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - patient_id
+              properties:
+                patient_id:
+                  $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Patient enrolled
+
+  /campaigns/{id}/stats:
+    get:
+      tags: [Campaigns]
+      summary: Get campaign statistics
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Campaign stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/CampaignStats"
+
+  # ============================================================================
+  # LAB CASES
+  # ============================================================================
+  /lab/vendors:
+    get:
+      tags: [Lab Cases]
+      summary: List lab vendors
+      parameters:
+        - name: practice_id
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+        - name: active
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Vendors list
+
+    post:
+      tags: [Lab Cases]
+      summary: Create lab vendor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - practice_id
+                - name
+              properties:
+                practice_id:
+                  $ref: "#/components/schemas/UUID"
+                name:
+                  type: string
+                contact_name:
+                  type: string
+                phone:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                specialties:
+                  type: array
+                  items:
+                    type: string
+                average_turnaround_days:
+                  type: integer
+      responses:
+        "201":
+          description: Vendor created
+
+  /lab/cases:
+    get:
+      tags: [Lab Cases]
+      summary: List lab cases
+      parameters:
+        - name: practice_id
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+        - name: patient_id
+          in: query
+          schema:
+            $ref: "#/components/schemas/UUID"
+        - name: vendor_id
+          in: query
+          schema:
+            $ref: "#/components/schemas/UUID"
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: provider_id
+          in: query
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Lab cases list
+
+    post:
+      tags: [Lab Cases]
+      summary: Create lab case
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LabCaseCreate"
+      responses:
+        "201":
+          description: Lab case created
+
+  /lab/cases/{id}:
+    get:
+      tags: [Lab Cases]
+      summary: Get lab case details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Lab case details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/LabCase"
+
+    patch:
+      tags: [Lab Cases]
+      summary: Update lab case
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                vendor_id:
+                  $ref: "#/components/schemas/UUID"
+                shade:
+                  type: string
+                material:
+                  type: string
+                due_date:
+                  $ref: "#/components/schemas/Date"
+                notes:
+                  type: string
+      responses:
+        "200":
+          description: Lab case updated
+
+  /lab/cases/{id}/status:
+    get:
+      tags: [Lab Cases]
+      summary: Get lab case status history
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Status history
+
+    post:
+      tags: [Lab Cases]
+      summary: Update lab case status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum: [pending, sent_to_lab, in_fabrication, on_hold, shipped, received, quality_check, completed, delivered, returned, cancelled]
+                notes:
+                  type: string
+                tracking_number:
+                  type: string
+                received_date:
+                  $ref: "#/components/schemas/Date"
+                delivered_date:
+                  $ref: "#/components/schemas/Date"
+      responses:
+        "200":
+          description: Status updated
+
+  # ============================================================================
+  # FORMS
+  # ============================================================================
+  /forms/templates:
+    get:
+      tags: [Forms]
+      summary: List form templates
+      responses:
+        "200":
+          description: Form templates
+
+  /forms/submissions:
+    get:
+      tags: [Forms]
+      summary: List form submissions
+      parameters:
+        - name: patient_id
+          in: query
+          schema:
+            $ref: "#/components/schemas/UUID"
+        - name: template_id
+          in: query
+          schema:
+            $ref: "#/components/schemas/UUID"
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, completed, reviewed]
+      responses:
+        "200":
+          description: Form submissions
+
+  /forms/public/{formId}:
+    post:
+      tags: [Forms]
+      summary: Submit public form
+      security: []
+      parameters:
+        - name: formId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+                - responses
+              properties:
+                token:
+                  type: string
+                responses:
+                  type: object
+                  additionalProperties: true
+      responses:
+        "200":
+          description: Form submitted
+
+  # ============================================================================
+  # SETTINGS
+  # ============================================================================
+  /settings/practice:
+    get:
+      tags: [Settings]
+      summary: Get practice settings
+      responses:
+        "200":
+          description: Practice settings
+
+  /settings/providers:
+    get:
+      tags: [Settings]
+      summary: List providers
+      responses:
+        "200":
+          description: Providers list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Provider"
+
+  /settings/operatories:
+    get:
+      tags: [Settings]
+      summary: List operatories
+      responses:
+        "200":
+          description: Operatories list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Operatory"
+
+  /settings/appointment-types:
+    get:
+      tags: [Settings]
+      summary: List appointment types
+      responses:
+        "200":
+          description: Appointment types
+
+  /settings/users:
+    get:
+      tags: [Settings]
+      summary: List practice users
+      responses:
+        "200":
+          description: Users list

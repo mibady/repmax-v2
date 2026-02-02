@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Coach Team Management Dashboard - REPMAX</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#eec22f",
+                        "background-light": "#f8f8f6",
+                        "background-dark": "#050505",
+                        "card-dark": "#1F1F22",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .mono-stat { font-family: 'JetBrains Mono', monospace; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-white">
+<div class="flex h-screen overflow-hidden">
+<!-- Sidebar -->
+<aside class="w-64 border-r border-white/10 flex flex-col justify-between p-4 bg-background-light dark:bg-background-dark">
+<div class="flex flex-col gap-8">
+<div class="flex items-center gap-3 px-2">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary" data-alt="Coach Davis profile headshot wearing team gear" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCwnzy6AiQurivhJ_EJJra0c064ZBDi5A1gibOB4vg7dSrvW4HxVaquDsVZ-ua1sYnkekWjrDUucxr2SgoMEeZnSFA-eb6GzI3lMfKNr_DknDum4M5i_OL76gkZZUSK3L4F-NN-ADstvY-vEF21iR2e0p-S6hI1vqywrAWyjygaLxnGbZEHEw_ffv88b-zuGu0rpk2DUyDfuaM6GzQNZ_wMm8gT8S4Jcllfpk6_blt-H0aeF6k9Ggaa9klEsFQrff9uOvrTjhstr_o");'></div>
+<div class="flex flex-col">
+<h1 class="text-white text-base font-bold leading-tight">Coach Davis</h1>
+<p class="text-primary text-[10px] font-bold uppercase tracking-widest">Head Coach</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary text-background-dark">
+<span class="material-symbols-outlined text-[22px]">dashboard</span>
+<p class="text-sm font-bold">Dashboard</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2.5 text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[22px]">groups</span>
+<p class="text-sm font-medium">Roster</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2.5 text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[22px]">radar</span>
+<p class="text-sm font-medium">Recruiting</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2.5 text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[22px]">calendar_today</span>
+<p class="text-sm font-medium">Schedule</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2.5 text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[22px]">playlist_add_check</span>
+<p class="text-sm font-medium">Team Tasks</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2.5 text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[22px]">settings</span>
+<p class="text-sm font-medium">Settings</p>
+</div>
+</nav>
+</div>
+<button class="w-full flex items-center justify-center gap-2 rounded-lg py-3 bg-primary text-background-dark font-bold text-sm tracking-wide">
+<span class="material-symbols-outlined text-[20px]">person_add</span>
+                Add Athlete
+            </button>
+</aside>
+<!-- Main Content Wrapper -->
+<div class="flex-1 flex flex-col overflow-hidden">
+<!-- Header -->
+<header class="flex items-center justify-between border-b border-white/10 px-8 py-4 bg-background-light dark:bg-background-dark">
+<div class="flex items-center gap-12">
+<div class="flex items-center gap-3 text-primary">
+<div class="size-6">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M47.2426 24L24 47.2426L0.757355 24L24 0.757355L47.2426 24ZM12.2426 21H35.7574L24 9.24264L12.2426 21Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-xl font-black italic tracking-tighter">REPMAX</h2>
+</div>
+<div class="relative w-80">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/40 text-[20px]">search</span>
+<input class="w-full bg-card-dark border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-all text-white placeholder:text-white/30" placeholder="Search athletes, coaches, or scouts..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative p-2 text-white/60 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1 right-1 size-2 bg-primary rounded-full ring-2 ring-background-dark"></span>
+</button>
+<div class="h-8 w-px bg-white/10 mx-2"></div>
+<div class="flex items-center gap-3">
+<span class="text-xs font-mono text-white/40">v2.4.0-STABLE</span>
+</div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<main class="flex-1 flex overflow-hidden">
+<!-- Center Section: Roster and Filters -->
+<div class="flex-1 overflow-y-auto p-8 border-r border-white/10 bg-background-light dark:bg-background-dark">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h3 class="text-2xl font-bold tracking-tight">Active Roster</h3>
+<p class="text-white/40 text-sm">Managing 48 athletes across 4 class years</p>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center gap-2 px-4 py-2 bg-card-dark border border-white/10 rounded-lg text-sm font-medium hover:border-primary/50 transition-all">
+<span class="material-symbols-outlined text-[18px]">file_download</span>
+                                Export
+                            </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-background-dark rounded-lg text-sm font-bold hover:brightness-110 transition-all">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                                New Prospect
+                            </button>
+</div>
+</div>
+<!-- Filter Bar -->
+<div class="flex gap-3 mb-6 flex-wrap">
+<button class="flex items-center gap-2 rounded-lg bg-card-dark border border-white/10 px-4 py-2 text-sm font-medium hover:bg-white/5 transition-all">
+<span class="text-white/40">Position:</span>
+<span>All Positions</span>
+<span class="material-symbols-outlined text-[18px]">keyboard_arrow_down</span>
+</button>
+<button class="flex items-center gap-2 rounded-lg bg-card-dark border border-white/10 px-4 py-2 text-sm font-medium hover:bg-white/5 transition-all">
+<span class="text-white/40">Class:</span>
+<span>2026-2027</span>
+<span class="material-symbols-outlined text-[18px]">keyboard_arrow_down</span>
+</button>
+<button class="flex items-center gap-2 rounded-lg bg-card-dark border border-white/10 px-4 py-2 text-sm font-medium hover:bg-white/5 transition-all">
+<span class="text-white/40">Status:</span>
+<span>Any</span>
+<span class="material-symbols-outlined text-[18px]">keyboard_arrow_down</span>
+</button>
+<button class="flex items-center gap-2 rounded-lg bg-card-dark border border-white/10 px-4 py-2 text-sm font-medium hover:bg-white/5 transition-all">
+<span class="text-white/40">GPA:</span>
+<span>3.0+</span>
+<span class="material-symbols-outlined text-[18px]">keyboard_arrow_down</span>
+</button>
+</div>
+<!-- Roster Grid Table -->
+<div class="bg-card-dark border border-white/10 rounded-xl overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-white/5 border-b border-white/10">
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-widest text-white/40">Athlete</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-widest text-white/40">Position</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-widest text-white/40">Class</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-widest text-white/40">GPA</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-widest text-white/40 text-center">Recruiting Status</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-widest text-white/40 text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/10">
+<!-- Athlete Row 1 -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-4">
+<div class="size-11 rounded-full border border-white/10 overflow-hidden bg-background-dark" data-alt="Athlete headshot - Marcus Thompson">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPBSomGYn4cISN_yy77II_VxBdUMJMl413CTyAxZ4ctlnPefjknDWs1LWkWKTZveBEnMn75BdGOlUvPvRUqZUz-Cjvn1stoxL1Cz9kcX94EOTKMlDaJ0xAswqIkH-BFHtMRgZfPHQw-RgZ2qMHF3DRVAgmr6te1r7XL5b7D0zkyIyI3L1XACHxH-TMurdlnQJJfzxj-dERSz8XmhYM192kvPExwC1XUHbWBWi4INSDe8q8DWXtJu7Gpq4V3-aRdvYa1vgB0umu39E"/>
+</div>
+<div>
+<p class="font-bold text-white group-hover:text-primary transition-colors">Marcus Thompson</p>
+<p class="text-xs text-white/40">San Antonio, TX</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="bg-primary/20 text-primary border border-primary/30 px-3 py-1 rounded text-xs font-bold uppercase tracking-tighter">QB</span>
+</td>
+<td class="px-6 py-4 text-sm text-white/60">2026</td>
+<td class="px-6 py-4 font-mono text-sm text-white">3.82</td>
+<td class="px-6 py-4 text-center">
+<span class="bg-white/5 border border-white/20 text-white text-[11px] font-bold px-3 py-1 rounded-full">5 OFFERS</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-xs font-bold text-primary hover:underline underline-offset-4">VIEW PROFILE</button>
+</td>
+</tr>
+<!-- Athlete Row 2 -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-4">
+<div class="size-11 rounded-full border border-white/10 overflow-hidden bg-background-dark" data-alt="Athlete headshot - Jalen Banks">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWfVQZU9R0g1_YKuUznpHDf_YEdXHWKVTcoW75J6Ao3nf44kp5fjY2bNV_vMT3s_y_zwePARnP-1SM4odfGOd7Dt1qkFqIjjHAMPpSj6ZA943B1-UuRtHYsiwREMoFZJCgI3wpOrk6j8Hzo_7J6cIMnPpl_TM6y2csbz8EPdmnw8v9GebKXDiILHAGU5QOIrf1hrg9KuZy6VbdEEEJg3WhqwmSCOGol89KFG_mrSnqMHZsaQjPba76l1xStyWQVvvge18D0eTpyPE"/>
+</div>
+<div>
+<p class="font-bold text-white group-hover:text-primary transition-colors">Jalen Banks</p>
+<p class="text-xs text-white/40">Dallas, TX</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="bg-primary/20 text-primary border border-primary/30 px-3 py-1 rounded text-xs font-bold uppercase tracking-tighter">LB</span>
+</td>
+<td class="px-6 py-4 text-sm text-white/60">2026</td>
+<td class="px-6 py-4 font-mono text-sm text-white text-primary">4.00</td>
+<td class="px-6 py-4 text-center">
+<span class="bg-primary text-background-dark text-[11px] font-bold px-3 py-1 rounded-full">COMMITTED</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-xs font-bold text-primary hover:underline underline-offset-4">VIEW PROFILE</button>
+</td>
+</tr>
+<!-- Athlete Row 3 -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-4">
+<div class="size-11 rounded-full border border-white/10 overflow-hidden bg-background-dark" data-alt="Athlete headshot - Derek Vose">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWloEsTd7gRedlxqc5ZGmd5PEpsl2CccaSNTxmLO7SzgDhpuUfgdmbSN-6SZTCe6z-9W1JzeYe-7kiKYgXuoGmsfTXTRAderAwRm5-r-aRA9sjdW8qp62P3LRIuhrTemKMHWXekw7hG-3Ue4DFGHxDZCc4iNGo1IMFAIuzdlDl8pkTO4jc-vUF87D4AMSQI9PrqbX_CjSMWd4Xue_c9T8luMTiPbd1qFJs8WNEai9vpuaI5yqzHm3CXvdok2vOgAFPo_ZHxt4Bm7k"/>
+</div>
+<div>
+<p class="font-bold text-white group-hover:text-primary transition-colors">Derek Vose</p>
+<p class="text-xs text-white/40">Austin, TX</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="bg-white/10 text-white/60 border border-white/10 px-3 py-1 rounded text-xs font-bold uppercase tracking-tighter">WR</span>
+</td>
+<td class="px-6 py-4 text-sm text-white/60">2027</td>
+<td class="px-6 py-4 font-mono text-sm text-white">3.45</td>
+<td class="px-6 py-4 text-center">
+<span class="bg-white/5 border border-white/20 text-white text-[11px] font-bold px-3 py-1 rounded-full">2 OFFERS</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-xs font-bold text-primary hover:underline underline-offset-4">VIEW PROFILE</button>
+</td>
+</tr>
+<!-- Athlete Row 4 -->
+<tr class="hover:bg-white/5 transition-colors group border-b-0">
+<td class="px-6 py-4">
+<div class="flex items-center gap-4">
+<div class="size-11 rounded-full border border-white/10 overflow-hidden bg-background-dark" data-alt="Athlete headshot - Sam Richards">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkzfSgCXgCBwVMIvALCsVEoYd4d5cSz7R9HfYRVYeUvD27j9EWc3_iJQQ6N4idk_Xr2-Nkaf7kVGXlkhDpNATwWdOmBDGAKhGjZ3t_sj-liGlz-aVOhQ65gilffSJDZlW9Xm6tAehEKP65JO14Bzpl9nx1vX4ODAvoqLPWqyC2xOYtqjUdV78JaSIIKNp7dSptaoqUeSqTqF1Wry_Ko4HyneXKR1oTk5IFE4cn1pvlkxscTWNxlWUSlRCcwth6TMZM7LeeIrVp_Pg"/>
+</div>
+<div>
+<p class="font-bold text-white group-hover:text-primary transition-colors">Sam Richards</p>
+<p class="text-xs text-white/40">Houston, TX</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="bg-primary/20 text-primary border border-primary/30 px-3 py-1 rounded text-xs font-bold uppercase tracking-tighter">DE</span>
+</td>
+<td class="px-6 py-4 text-sm text-white/60">2025</td>
+<td class="px-6 py-4 font-mono text-sm text-white">3.10</td>
+<td class="px-6 py-4 text-center">
+<span class="bg-white/5 border border-white/20 text-white text-[11px] font-bold px-3 py-1 rounded-full">INTEREST</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-xs font-bold text-primary hover:underline underline-offset-4">VIEW PROFILE</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Right Sidebar Widgets -->
+<aside class="w-80 bg-background-light dark:bg-background-dark border-l border-white/10 flex flex-col gap-6 p-6 overflow-y-auto">
+<!-- Recent Activity Card -->
+<div class="bg-card-dark border border-white/10 rounded-xl p-5 shadow-xl">
+<div class="flex items-center justify-between mb-4">
+<h4 class="text-xs font-bold uppercase tracking-widest text-primary">Recruiter Traffic</h4>
+<span class="material-symbols-outlined text-white/40 text-[18px]">trending_up</span>
+</div>
+<div class="space-y-4">
+<div class="flex gap-3 items-start">
+<div class="size-8 rounded-full bg-white/5 flex items-center justify-center border border-white/10 shrink-0">
+<img alt="TCU Logo" class="size-5 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBA6sgEs7DRyApAWC9r3M8_-yBFjhzv_26jhsNJVaaXMPTPbAGoD0GdhvlmpB7omhtY-3hIfhEeSht5XLEFbPJS-vpmQ2_BzpH6HxIXZPATsbkAzGnqpRDUOzWA6lV9EDseevSVnXTeMuN5XSoqo_Rz3ktIHl2kswY-sL4MRMHkh_rMwxFh0K4FGtJ-12AkAuxwmCDi0Yioyvz0hWUpYhGzkZom4C3Z7WPNICDEl3iZy-hujNDOd-q--8KbTMetmYfAV-lecB7RMIU"/>
+</div>
+<div>
+<p class="text-xs font-bold">TCU Scout</p>
+<p class="text-[10px] text-white/40">Viewed Marcus Thompson's tape</p>
+<p class="text-[9px] text-primary/60 mt-0.5">2 HOURS AGO</p>
+</div>
+</div>
+<div class="flex gap-3 items-start">
+<div class="size-8 rounded-full bg-white/5 flex items-center justify-center border border-white/10 shrink-0">
+<img alt="Oregon Logo" class="size-5 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8kahQmrQytjNRhXwpBwxR3mqFdZ5Lp7aPXl5v50P48L3Jpa_LXYq_eiqfhcIlTaXROu43qoqXsUsDjaRDuge1MMyDcLBEfY9y8I8I7EtBsnhhdT0RXYzzxsu5uoUHvzZHXv35r5Ct6_pJsndyY6BiPeXLpeGshtM0nzmrjn5thhcX_R-_Ox-0C1mvWB-p6WjCXX0Ox8Piu-1E2krw9S8CxgwxVE2Eoa3DoKeiXoRHYwIJqzRNrZgQebbzPUrV2B0AhrTB-YrKGG0"/>
+</div>
+<div>
+<p class="text-xs font-bold">Oregon Football</p>
+<p class="text-[10px] text-white/40">Downloaded Jalen Banks' transcript</p>
+<p class="text-[9px] text-primary/60 mt-0.5">5 HOURS AGO</p>
+</div>
+</div>
+<div class="flex gap-3 items-start">
+<div class="size-8 rounded-full bg-white/5 flex items-center justify-center border border-white/10 shrink-0">
+<img alt="Texas Logo" class="size-5 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8PPXSz0NSNX9wdKj_7mB_MMWGE1jnBifbuaLqe7aU_TDeI4PhTBmRiaXXwo19nmcldlH8rJ6eywxdNMC-jRTCuaoxtjFXrLiH4mKXRa9s73hpmnj3x5C4TRpw-lI7_GdD_SU8ulTubNLwGYFJeOdmWLzaaJojxYT0fuR4pW_9K4J964y0Lcbqhs241co2h8Kk4Y309yY3_mroe-TgwaDLIktCSPA9I_lm3hUEefJICsCe8QQzdlcfvyYFopQzhRzJRxPBTdj8eYM"/>
+</div>
+<div>
+<p class="text-xs font-bold">Texas Longhorns</p>
+<p class="text-[10px] text-white/40">Added Derek Vose to Watchlist</p>
+<p class="text-[9px] text-primary/60 mt-0.5">YESTERDAY</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Team Tasks Checklist -->
+<div class="bg-card-dark border border-primary rounded-xl p-5 shadow-lg shadow-primary/5">
+<h4 class="text-xs font-bold uppercase tracking-widest text-white mb-4">Coach's To-Do</h4>
+<div class="space-y-3">
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="relative flex items-center justify-center">
+<input checked="" class="peer appearance-none size-4 border border-primary rounded bg-transparent checked:bg-primary transition-all" type="checkbox"/>
+<span class="material-symbols-outlined text-[12px] text-background-dark absolute hidden peer-checked:block">check</span>
+</div>
+<span class="text-xs text-white/80 line-through decoration-white/40">Update Spring Camp Schedule</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="relative flex items-center justify-center">
+<input class="peer appearance-none size-4 border border-white/30 rounded bg-transparent checked:bg-primary transition-all" type="checkbox"/>
+<span class="material-symbols-outlined text-[12px] text-background-dark absolute hidden peer-checked:block">check</span>
+</div>
+<span class="text-xs text-white/80">Upload Senior Highlight Reels</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="relative flex items-center justify-center">
+<input class="peer appearance-none size-4 border border-white/30 rounded bg-transparent checked:bg-primary transition-all" type="checkbox"/>
+<span class="material-symbols-outlined text-[12px] text-background-dark absolute hidden peer-checked:block">check</span>
+</div>
+<span class="text-xs text-white/80">Confirm LSU Visit (Jan 12)</span>
+</label>
+</div>
+</div>
+<!-- Colleges Tracking -->
+<div>
+<h4 class="text-xs font-bold uppercase tracking-widest text-white/40 mb-4 px-1">Top Tracked Schools</h4>
+<div class="grid grid-cols-2 gap-2">
+<div class="bg-card-dark border border-white/10 p-3 rounded-lg flex flex-col items-center justify-center gap-2 hover:border-primary/40 transition-all cursor-pointer">
+<img alt="TCU Logo" class="h-8 grayscale group-hover:grayscale-0 transition-all" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5w2gPD3Mypo6tEkZxC_9OwTDmU2jKqfOq3gDRjqWcapgDutbMkAvWq4yPOGs5JdBG2KuqoMW9DzittK5ZpYSoCXI7_ANhLpUYSnEqswWCtQPC5VFS5wPp2oHgaontHpjd3RNX8jsaj0Y29iyt1_YC99mpkrc1L8RJ6-qvCbH5HEOOgNP0N_zOTkavdRxBoSshXlle9iZDlC60_s2VV9760PLgU6ygf4iUN6dal9Uqh7sDr9sFgILZSObT-_Hy-leNNGqcmewZPjM"/>
+<span class="text-[10px] font-bold">TCU</span>
+</div>
+<div class="bg-card-dark border border-white/10 p-3 rounded-lg flex flex-col items-center justify-center gap-2 hover:border-primary/40 transition-all cursor-pointer">
+<img alt="Oregon Logo" class="h-8 grayscale group-hover:grayscale-0 transition-all" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPxIDC_45Cv8zJrcOIz4IS5hUmsSIY6lefu7v4A_rQtBo_CPYtb19_OmuwiWYNmg27P9FHts7-U8rRc0ePn2VqXyuRP_tAz9qU9-HRcP2_eM78yOz6J-TqxPNnO6XBfz6JR-gpwMNc_WPar7hFHqT2vjZP0QTZuU9xMQr4FQEYMZJnTgO5vYhcpxGY0ztENb1SD3YBgkYVp3sVwhwv7MHvD9_n2wUEiFgVy6Qok8GFUhwsEcpoGHWYlcDR-68rOdJqmIjzORb9sLk"/>
+<span class="text-[10px] font-bold">Oregon</span>
+</div>
+<div class="bg-card-dark border border-white/10 p-3 rounded-lg flex flex-col items-center justify-center gap-2 hover:border-primary/40 transition-all cursor-pointer">
+<img alt="A&amp;M Logo" class="h-8 grayscale group-hover:grayscale-0 transition-all" src="https://lh3.googleusercontent.com/aida-public/AB6AXuADZyLfuzm-tOsZ4EqCNIzIynlRWlH3MSzJY8bI8KuM-dCrGizi93Fi4m7liclSH40YIoI3FMKegC6M8xW8nu6ShVzeodoN4Dn1uRp75OxaepYjfKEb3KI07dMb3YfTdBuUjchwWEdyHKzzyr4DfT-je1Xg2yyYm5dKssg0vhxxbTq40vm4uBRygU-V7HrcpGJURz3WLdsxcb9qhWQNmeyttTV4LBEd3bshqlRV-rxWRisPLFsBJu0zazUhGRlRGGvVAdWEOzeVHdA"/>
+<span class="text-[10px] font-bold">A&amp;M</span>
+</div>
+<div class="bg-card-dark border border-white/10 p-3 rounded-lg flex flex-col items-center justify-center gap-2 hover:border-primary/40 transition-all cursor-pointer">
+<img alt="OkState Logo" class="h-8 grayscale group-hover:grayscale-0 transition-all" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2IMqBjM8u9LDEh2cx3Ld3iZFf6Rwen2nrRlBEOtq49CiOTMEb63goYtnWSgDM_bPgOMIxPBGQhxecHE8Pa2ML2wR5VHOAyOg7-gX3QdG3lImB9YfTNrve0vEmUAvCVyb_nzp_6uxR1-Wgg0sC8knJa0kZDgJFAuZuqal3rDsfeIw3s7LBksw_zccmdVvAWLvS1wZPm7HOylhyF-iKwEKVjWosWmaWvwEUijIjYswJAfx79SO3D_PU9EcOyJf0UfeC6cXzPH7rh8E"/>
+<span class="text-[10px] font-bold">OK State</span>
+</div>
+</div>
+</div>
+</aside>
+</main>
+</div>
+</div>
+</body></html>

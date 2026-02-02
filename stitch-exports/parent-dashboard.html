@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RepMax Parent Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#e0ba3e",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#050505",
+                        "card-dark": "#1F1F22",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .sidebar-active {
+            background-color: #1F1F22;
+            border-left: 4px solid #e0ba3e;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white min-h-screen flex">
+<!-- Sidebar Navigation -->
+<aside class="w-64 fixed h-full bg-background-light dark:bg-background-dark border-r border-slate-200 dark:border-white/10 flex flex-col z-50">
+<div class="p-6">
+<div class="flex items-center gap-3 mb-10">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-black font-bold">bolt</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight text-primary uppercase">RepMax</h1>
+</div>
+<div class="flex items-center gap-3 px-3 py-4 mb-8 bg-card-dark rounded-xl">
+<div class="size-10 rounded-full bg-cover bg-center border-2 border-primary/30" data-alt="Profile picture of Lisa the parent" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDhXFE16i8k54d_Jh1kzCj-X6mD0vg5JKLkkPiJvy-eCCSC0iiTv_l8yEWT8aPjcOJIPcH8FZMYx-gjXax3FIkFDzJiWKJzQKJZmLQ6FG4j_UYZpdsDwEGz7ZpH3--H7OaUg0Nhwv-x8RfV2Q1QlOrg_GWdXGricrJlwIgCa-fvXznywR8ksdpmNSoAkzEMBQoBaM3cfLFAMUyKDhI5MQLCmUVE1dCB1O1K02puFXFu8jMjRp7gDzmisXVh4_2MGJS711DK2_5IBF4");'></div>
+<div class="flex flex-col">
+<p class="text-sm font-bold">Lisa</p>
+<p class="text-[10px] text-slate-400 uppercase tracking-widest">Parent of Marcus</p>
+</div>
+</div>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-primary sidebar-active" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-sm font-medium">Marcus's Profile</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="text-sm font-medium">Messages</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="text-sm font-medium">Calendar</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">school</span>
+<span class="text-sm font-medium">Schools</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">library_books</span>
+<span class="text-sm font-medium">Resources</span>
+</a>
+</nav>
+</div>
+<div class="mt-auto p-6 border-t border-white/5 space-y-1">
+<a class="flex items-center gap-3 px-4 py-2 text-slate-400 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-sm">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-slate-400 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-sm">help</span>
+<span class="text-sm font-medium">Help Center</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-64 min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="h-16 border-b border-slate-200 dark:border-white/10 px-8 flex items-center justify-between sticky top-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md z-40">
+<h2 class="text-lg font-semibold tracking-tight">Marcus's Recruiting Journey</h2>
+<div class="flex items-center gap-6">
+<button class="relative p-2 text-slate-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-background-dark"></span>
+</button>
+<div class="h-8 w-[1px] bg-white/10"></div>
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-full bg-cover bg-center" data-alt="Small profile picture of Marcus" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD1mkuSbvD0nD5xCbVxS_pEIZsdxgrXXUIfGAJwuhXnuQQETONg9bI7MsZVTCglaibn_CFyJs0zvFwv4s_mJcJRQOhunzz2TMzAWWf7YETxLHZn5-rWGI5jRwDdT4VRRkaDosmKHgMsjs8p6v_FCAvepLo23C9BylZNNEm6SrQQkLlZC9BEnuzqjqJfPAo1rSXyGq5r1xvwSzGAQszszDcbexia3HcXBBzWUAfeuFNsLfFDKoz0grArFoIYOnthoFCOgzI4knUm-Rg");'></div>
+<span class="text-xs font-medium uppercase tracking-widest text-slate-400">Class of 2025</span>
+</div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="p-8 max-w-7xl mx-auto w-full space-y-8">
+<!-- Key Metrics Row -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="bg-white dark:bg-card-dark p-6 rounded-xl border border-slate-200 dark:border-white/5 flex flex-col gap-1 shadow-sm">
+<p class="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">Profile Views</p>
+<div class="flex items-end justify-between">
+<p class="text-3xl font-bold">47</p>
+<span class="text-green-500 text-xs flex items-center mb-1"><span class="material-symbols-outlined text-sm">trending_up</span> +12%</span>
+</div>
+</div>
+<div class="bg-white dark:bg-card-dark p-6 rounded-xl border border-slate-200 dark:border-white/5 flex flex-col gap-1 shadow-sm">
+<p class="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">Messages</p>
+<div class="flex items-end justify-between">
+<p class="text-3xl font-bold">3</p>
+<span class="bg-primary/20 text-primary px-2 py-0.5 rounded text-[10px] font-bold mb-1 uppercase">New</span>
+</div>
+</div>
+<div class="bg-white dark:bg-card-dark p-6 rounded-xl border border-slate-200 dark:border-white/5 flex flex-col gap-1 shadow-sm">
+<p class="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">Schools Tracking</p>
+<div class="flex items-end justify-between">
+<p class="text-3xl font-bold">12</p>
+<span class="text-slate-500 text-xs mb-1">Active lists</span>
+</div>
+</div>
+<div class="bg-primary dark:bg-primary p-6 rounded-xl border border-primary/20 flex flex-col gap-1 shadow-lg shadow-primary/10">
+<p class="text-black/60 text-xs font-bold uppercase tracking-wider">Days to Signing Day</p>
+<div class="flex items-end justify-between">
+<p class="text-3xl font-bold text-black">5</p>
+<span class="material-symbols-outlined text-black/40">event_available</span>
+</div>
+</div>
+</div>
+<!-- Quick Actions -->
+<div class="flex flex-wrap gap-4">
+<button class="flex items-center gap-3 bg-white dark:bg-card-dark hover:dark:bg-white/5 transition-all border border-slate-200 dark:border-white/5 px-5 py-3 rounded-full group">
+<div class="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-black transition-all">
+<span class="material-symbols-outlined text-lg">account_circle</span>
+</div>
+<span class="text-sm font-semibold">View Profile</span>
+</button>
+<button class="flex items-center gap-3 bg-white dark:bg-card-dark hover:dark:bg-white/5 transition-all border border-slate-200 dark:border-white/5 px-5 py-3 rounded-full group">
+<div class="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-black transition-all">
+<span class="material-symbols-outlined text-lg">history</span>
+</div>
+<span class="text-sm font-semibold">Message History</span>
+</button>
+<button class="flex items-center gap-3 bg-white dark:bg-card-dark hover:dark:bg-white/5 transition-all border border-slate-200 dark:border-white/5 px-5 py-3 rounded-full group">
+<div class="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-black transition-all">
+<span class="material-symbols-outlined text-lg">school</span>
+</div>
+<span class="text-sm font-semibold">Academic Requirements</span>
+</button>
+</div>
+<!-- Main Grid Section -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Left Column: Interest Tracker & Recent Activity -->
+<div class="lg:col-span-8 space-y-8">
+<!-- College Interest Tracker -->
+<section class="bg-white dark:bg-card-dark rounded-xl border border-slate-200 dark:border-white/5 overflow-hidden">
+<div class="p-6 border-b border-slate-200 dark:border-white/5 flex items-center justify-between">
+<h3 class="text-base font-bold">College Interest Tracker</h3>
+<button class="text-xs font-bold text-primary hover:underline">View All Schools</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-slate-50 dark:bg-white/5 text-[10px] uppercase tracking-widest text-slate-400 font-bold">
+<tr>
+<th class="px-6 py-4">University</th>
+<th class="px-6 py-4">Division</th>
+<th class="px-6 py-4">Status</th>
+<th class="px-6 py-4">Last Activity</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-white/5 text-sm">
+<tr class="hover:bg-white/5 transition-colors">
+<td class="px-6 py-4 flex items-center gap-3">
+<div class="size-8 rounded bg-purple-900/30 flex items-center justify-center font-bold text-purple-400">TCU</div>
+<span class="font-semibold">Texas Christian University</span>
+</td>
+<td class="px-6 py-4 text-slate-400">DI - Big 12</td>
+<td class="px-6 py-4">
+<span class="bg-sky-500/10 text-sky-500 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide">Visit Scheduled</span>
+</td>
+<td class="px-6 py-4 text-slate-400">2h ago</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors">
+<td class="px-6 py-4 flex items-center gap-3">
+<div class="size-8 rounded bg-red-900/30 flex items-center justify-center font-bold text-red-400">ASU</div>
+<span class="font-semibold">Arizona State University</span>
+</td>
+<td class="px-6 py-4 text-slate-400">DI - Big 12</td>
+<td class="px-6 py-4">
+<span class="bg-amber-500/10 text-amber-500 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide">Interested</span>
+</td>
+<td class="px-6 py-4 text-slate-400">Yesterday</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors">
+<td class="px-6 py-4 flex items-center gap-3">
+<div class="size-8 rounded bg-green-900/30 flex items-center justify-center font-bold text-green-400">UO</div>
+<span class="font-semibold">University of Oregon</span>
+</td>
+<td class="px-6 py-4 text-slate-400">DI - Big Ten</td>
+<td class="px-6 py-4">
+<span class="bg-emerald-500/10 text-emerald-500 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide">Offered</span>
+</td>
+<td class="px-6 py-4 text-slate-400">3 days ago</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Recent Activity Feed -->
+<section class="bg-white dark:bg-card-dark rounded-xl border border-slate-200 dark:border-white/5">
+<div class="p-6 border-b border-slate-200 dark:border-white/5">
+<h3 class="text-base font-bold">Recent Activity</h3>
+</div>
+<div class="p-6 space-y-6">
+<div class="flex gap-4">
+<div class="relative">
+<div class="size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+<span class="material-symbols-outlined">visibility</span>
+</div>
+<div class="absolute top-10 left-1/2 -translate-x-1/2 w-px h-6 bg-white/10"></div>
+</div>
+<div class="flex-1">
+<p class="text-sm">
+<span class="font-bold">Coach Williams</span> viewed Marcus's profile
+                                    </p>
+<p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest mt-1">TCU • 2 HOURS AGO</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="relative">
+<div class="size-10 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 border border-emerald-500/20">
+<span class="material-symbols-outlined">verified</span>
+</div>
+<div class="absolute top-10 left-1/2 -translate-x-1/2 w-px h-6 bg-white/10"></div>
+</div>
+<div class="flex-1">
+<p class="text-sm">
+<span class="font-bold">New scholarship offer</span> from Baylor University
+                                    </p>
+<p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest mt-1">BAYLOR • YESTERDAY</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+<span class="material-symbols-outlined">forum</span>
+</div>
+<div class="flex-1">
+<p class="text-sm">
+<span class="font-bold">Message received</span> from Coach Bennett
+                                    </p>
+<p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest mt-1">OREGON • 2 DAYS AGO</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Calendar Widget -->
+<div class="lg:col-span-4 space-y-8">
+<section class="bg-white dark:bg-card-dark rounded-xl border border-slate-200 dark:border-white/5 overflow-hidden">
+<div class="p-6 border-b border-slate-200 dark:border-white/5 flex items-center justify-between">
+<h3 class="text-base font-bold">Recruiting Calendar</h3>
+<div class="flex gap-1">
+<button class="p-1 hover:bg-white/5 rounded"><span class="material-symbols-outlined text-sm">chevron_left</span></button>
+<button class="p-1 hover:bg-white/5 rounded"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
+</div>
+</div>
+<!-- Mini Calendar Picker -->
+<div class="p-4 bg-slate-50 dark:bg-white/5">
+<p class="text-center text-xs font-bold uppercase tracking-widest mb-4">October 2023</p>
+<div class="grid grid-cols-7 gap-1 text-center">
+<span class="text-[10px] text-slate-500 font-bold">S</span>
+<span class="text-[10px] text-slate-500 font-bold">M</span>
+<span class="text-[10px] text-slate-500 font-bold">T</span>
+<span class="text-[10px] text-slate-500 font-bold">W</span>
+<span class="text-[10px] text-slate-500 font-bold">T</span>
+<span class="text-[10px] text-slate-500 font-bold">F</span>
+<span class="text-[10px] text-slate-500 font-bold">S</span>
+<button class="h-8 text-xs font-medium rounded-lg opacity-20">29</button>
+<button class="h-8 text-xs font-medium rounded-lg opacity-20">30</button>
+<button class="h-8 text-xs font-medium rounded-lg hover:bg-white/10">1</button>
+<button class="h-8 text-xs font-medium rounded-lg hover:bg-white/10">2</button>
+<button class="h-8 text-xs font-medium rounded-lg hover:bg-white/10">3</button>
+<button class="h-8 text-xs font-medium rounded-lg hover:bg-white/10">4</button>
+<button class="h-8 text-xs font-medium rounded-lg bg-primary text-black font-bold">5</button>
+<button class="h-8 text-xs font-medium rounded-lg hover:bg-white/10">6</button>
+<button class="h-8 text-xs font-medium rounded-lg hover:bg-white/10">7</button>
+<button class="h-8 text-xs font-medium rounded-lg hover:bg-white/10">8</button>
+<button class="h-8 text-xs font-medium rounded-lg bg-sky-500 text-white font-bold ring-2 ring-sky-500/20">9</button>
+<button class="h-8 text-xs font-medium rounded-lg hover:bg-white/10">10</button>
+<button class="h-8 text-xs font-medium rounded-lg hover:bg-white/10">11</button>
+<button class="h-8 text-xs font-medium rounded-lg hover:bg-white/10">12</button>
+</div>
+</div>
+<!-- Upcoming Events -->
+<div class="p-6 space-y-4">
+<div class="flex gap-4 p-3 bg-sky-500/5 border-l-4 border-sky-500 rounded-r-lg">
+<div class="flex flex-col items-center justify-center bg-white/5 rounded min-w-[40px]">
+<span class="text-[10px] uppercase font-bold text-sky-500">Oct</span>
+<span class="text-lg font-bold">09</span>
+</div>
+<div class="flex-1">
+<h4 class="text-sm font-bold">Official Visit to TCU</h4>
+<p class="text-xs text-slate-400">Fort Worth, TX • 10:00 AM</p>
+</div>
+</div>
+<div class="flex gap-4 p-3 bg-primary/5 border-l-4 border-primary rounded-r-lg">
+<div class="flex flex-col items-center justify-center bg-white/5 rounded min-w-[40px]">
+<span class="text-[10px] uppercase font-bold text-primary">Dec</span>
+<span class="text-lg font-bold">20</span>
+</div>
+<div class="flex-1">
+<h4 class="text-sm font-bold">National Signing Day</h4>
+<p class="text-xs text-slate-400">Main Gymnasium • 08:30 AM</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Academic Status Progress -->
+<section class="bg-white dark:bg-card-dark rounded-xl border border-slate-200 dark:border-white/5 p-6">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-sm font-bold uppercase tracking-widest text-slate-400">Academic Standing</h3>
+<span class="text-xs font-bold text-emerald-500">QUALIFIED</span>
+</div>
+<div class="space-y-4">
+<div>
+<div class="flex justify-between text-xs mb-1">
+<span>Core GPA</span>
+<span class="font-bold">3.8 / 4.0</span>
+</div>
+<div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-emerald-500 w-[95%]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-xs mb-1">
+<span>SAT Score</span>
+<span class="font-bold">1320 / 1600</span>
+</div>
+<div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[82%]"></div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+</body></html>

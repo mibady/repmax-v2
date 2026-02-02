@@ -1,0 +1,490 @@
+'use client';
+
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
+import { useAthlete, useShortlist, type PipelineStatus } from '@/lib/hooks';
+import type { Tables } from '@/types/database';
+
+type Athlete = Tables<"athletes"> & {
+  profile: Tables<"profiles"> | null;
+};
+
+interface TimelineItem {
+  id: string;
+  icon: string;
+  iconBg: string;
+  iconColor: string;
+  title: string;
+  description: string;
+  time: string;
+  attachment?: { name: string };
+}
+
+// Mock timeline data - in production this would come from an activity log
+const getTimelineData = (athleteName: string): TimelineItem[] => [
+  {
+    id: '1',
+    icon: 'visibility',
+    iconBg: 'bg-[#363225]',
+    iconColor: 'text-primary',
+    title: 'Viewed Companion Card',
+    description: `Viewed ${athleteName}'s profile stats.`,
+    time: '2h ago',
+  },
+  {
+    id: '2',
+    icon: 'person_add',
+    iconBg: 'bg-[#363225]',
+    iconColor: 'text-[#c3b998]',
+    title: "Added to Pipeline",
+    description: 'Added to recruiting shortlist.',
+    time: 'Oct 1',
+  },
+];
+
+function formatHeight(inches: number | null): string {
+  if (!inches) return 'N/A';
+  const feet = Math.floor(inches / 12);
+  const remainingInches = inches % 12;
+  return `${feet}'${remainingInches}"`;
+}
+
+function getPlaceholderAvatar(id: string): string {
+  const colors = ['6366f1', 'd946ef', 'ec4899', 'f43f5e', 'f97316', 'eab308', '22c55e', '14b8a6', '06b6d4', '3b82f6'];
+  const index = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % colors.length;
+  return `https://ui-avatars.com/api/?name=A&background=${colors[index]}&color=fff&size=256`;
+}
+
+function StarRating({ count }: { count: number }) {
+  return (
+    <div className="flex items-center gap-1 text-primary">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <span
+          key={i}
+          className="material-symbols-outlined"
+          style={{ fontVariationSettings: i < count ? "'FILL' 1" : "'FILL' 0" }}
+        >
+          star
+        </span>
+      ))}
+      <span className="ml-2 text-white font-bold text-sm">{count}-Star Recruit</span>
+    </div>
+  );
+}
+
+function LoadingSkeleton() {
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="h-4 w-32 bg-gray-700 rounded animate-pulse"></div>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="lg:col-span-5">
+          <div className="bg-[#2a271d] rounded-xl border border-[#433d28] h-[600px] animate-pulse"></div>
+        </div>
+        <div className="lg:col-span-7">
+          <div className="bg-[#2a271d] rounded-xl border border-[#433d28] h-[400px] animate-pulse"></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ErrorState({ error, onRetry }: { error: Error; onRetry: () => void }) {
+  return (
+    <div className="flex items-center justify-center py-20">
+      <div className="text-center">
+        <span className="material-symbols-outlined text-6xl text-red-500 mb-4">error</span>
+        <h2 className="text-xl font-bold mb-2">Error Loading Athlete</h2>
+        <p className="text-gray-400 mb-4">{error.message}</p>
+        <button
+          onClick={onRetry}
+          className="bg-primary text-black px-6 py-2 rounded-lg font-bold hover:bg-primary/90 transition-colors"
+        >
+          Try Again
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function AthleteProfile({ athlete }: { athlete: Athlete }) {
+  const avatarUrl = athlete.profile?.avatar_url || getPlaceholderAvatar(athlete.id);
+  const name = athlete.profile?.full_name || 'Unknown Athlete';
+
+  return (
+    <div className="bg-[#2a271d] rounded-xl border border-[#433d28] overflow-hidden">
+      {/* Hero Image & Header */}
+      <div className="relative h-48 bg-gradient-to-t from-black/80 to-transparent">
+        <div
+          className="absolute inset-0 bg-center bg-cover bg-no-repeat opacity-60"
+          style={{ backgroundImage: `url("${avatarUrl}")` }}
+        />
+        <div className="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-[#2a271d] via-[#2a271d]/90 to-transparent pt-20">
+          <div className="flex justify-between items-end">
+            <div>
+              <h1 className="text-3xl font-black text-white tracking-tight leading-none mb-1">
+                {name}
+              </h1>
+              <p className="text-[#c3b998] text-sm">
+                {athlete.high_school}, {athlete.state} | Class of {athlete.class_year}
+              </p>
+            </div>
+            {athlete.star_rating && (
+              <div className="flex flex-col items-center bg-[#363225] p-2 rounded-lg border border-[#433d28] shadow-lg">
+                <span className="text-primary font-black text-xl leading-none">* {athlete.star_rating}</span>
+                <span className="text-[10px] uppercase tracking-wider text-[#c3b998]">Rating</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="p-6 pt-2 flex flex-col gap-6">
+        {/* Rating & Position */}
+        <div className="flex items-center justify-between pb-4 border-b border-[#433d28]/50">
+          <StarRating count={athlete.star_rating || 3} />
+          <div className="px-3 py-1 bg-white/10 rounded text-white text-xs font-bold tracking-wide">
+            {athlete.primary_position}
+          </div>
+        </div>
+
+        {/* Physical Stats */}
+        <div className="grid grid-cols-4 gap-2">
+          {[
+            { label: 'Height', value: formatHeight(athlete.height_inches) },
+            { label: 'Weight', value: athlete.weight_lbs ? `${athlete.weight_lbs}` : 'N/A' },
+            { label: '40 YD', value: athlete.forty_yard_time ? athlete.forty_yard_time.toFixed(2) : 'N/A' },
+            { label: 'GPA', value: athlete.gpa ? athlete.gpa.toFixed(1) : 'N/A' },
+          ].map((stat) => (
+            <div
+              key={stat.label}
+              className="bg-[#363225] p-3 rounded-lg border border-[#433d28] text-center"
+            >
+              <p className="text-[#c3b998] text-xs uppercase mb-1">{stat.label}</p>
+              <p className="text-white font-bold">{stat.value}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Additional Stats */}
+        {(athlete.vertical_inches || athlete.sat_score || athlete.act_score) && (
+          <div className="grid grid-cols-3 gap-2">
+            {athlete.vertical_inches && (
+              <div className="bg-[#363225] p-3 rounded-lg border border-[#433d28] text-center">
+                <p className="text-[#c3b998] text-xs uppercase mb-1">Vertical</p>
+                <p className="text-white font-bold">{athlete.vertical_inches}&quot;</p>
+              </div>
+            )}
+            {athlete.sat_score && (
+              <div className="bg-[#363225] p-3 rounded-lg border border-[#433d28] text-center">
+                <p className="text-[#c3b998] text-xs uppercase mb-1">SAT</p>
+                <p className="text-white font-bold">{athlete.sat_score}</p>
+              </div>
+            )}
+            {athlete.act_score && (
+              <div className="bg-[#363225] p-3 rounded-lg border border-[#433d28] text-center">
+                <p className="text-[#c3b998] text-xs uppercase mb-1">ACT</p>
+                <p className="text-white font-bold">{athlete.act_score}</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Contact Actions */}
+        <div className="grid grid-cols-3 gap-3">
+          {[
+            { icon: 'call', label: 'Call' },
+            { icon: 'mail', label: 'Email' },
+            { icon: 'chat', label: 'DM' },
+          ].map((action) => (
+            <button
+              key={action.label}
+              className="flex flex-col items-center justify-center gap-1 p-2 rounded-lg bg-[#363225] hover:bg-[#363225]/80 border border-[#433d28] transition-colors group"
+            >
+              <span className="material-symbols-outlined text-[#c3b998] group-hover:text-primary">
+                {action.icon}
+              </span>
+              <span className="text-[10px] uppercase font-bold text-[#c3b998]">{action.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Verification Status */}
+        <div className="pt-4 border-t border-[#433d28]/50">
+          <div className="flex justify-between items-center">
+            <span className="text-[#c3b998] text-sm">Eligibility Status</span>
+            <span className={`text-sm font-bold flex items-center gap-1 ${athlete.verified ? 'text-green-500' : 'text-yellow-500'}`}>
+              <span className="material-symbols-outlined text-[16px]">
+                {athlete.verified ? 'check_circle' : 'pending'}
+              </span>
+              {athlete.verified ? 'Verified' : 'Pending'}
+            </span>
+          </div>
+          {athlete.ncaa_id && (
+            <div className="flex justify-between items-center mt-2">
+              <span className="text-[#c3b998] text-sm">NCAA ID</span>
+              <span className="text-white text-sm font-mono">{athlete.ncaa_id}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function ProspectDetailPage() {
+  const params = useParams();
+  const athleteId = params.id as string;
+
+  const { athlete, isLoading, error } = useAthlete(athleteId);
+  const { shortlist, add, remove, isInShortlist, updateStatus } = useShortlist();
+
+  const shortlistItem = shortlist.find(item => item.athlete_id === athleteId);
+  const isOnShortlist = isInShortlist(athleteId);
+  const currentStatus = shortlistItem?.pipeline_status || 'identified';
+
+  const handleAddToShortlist = async () => {
+    await add(athleteId);
+  };
+
+  const handleRemoveFromShortlist = async () => {
+    await remove(athleteId);
+  };
+
+  const handleStatusChange = async (newStatus: PipelineStatus) => {
+    await updateStatus(athleteId, newStatus);
+  };
+
+  if (isLoading) return <LoadingSkeleton />;
+  if (error) return <ErrorState error={error} onRetry={() => window.location.reload()} />;
+  if (!athlete) return <ErrorState error={new Error('Athlete not found')} onRetry={() => window.location.reload()} />;
+
+  const athleteName = athlete.profile?.full_name || 'Unknown Athlete';
+  const timelineData = getTimelineData(athleteName);
+
+  return (
+    <div className="flex flex-col gap-6">
+      {/* Breadcrumbs */}
+      <div className="flex items-center gap-2 text-sm">
+        <Link className="text-[#c3b998] hover:text-primary transition-colors" href="/dashboard/recruiter/prospects">
+          Prospects
+        </Link>
+        <span className="text-[#c3b998] material-symbols-outlined text-[20px]">chevron_right</span>
+        <span className="text-white font-medium">{athleteName}</span>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left Column: Athlete Profile */}
+        <div className="lg:col-span-5 flex flex-col gap-6">
+          <AthleteProfile athlete={athlete} />
+
+          {/* Quick Stats */}
+          <div className="bg-[#2a271d] rounded-xl border border-[#433d28] p-6">
+            <h3 className="text-white font-semibold text-lg mb-4">Quick Stats</h3>
+            <div className="grid grid-cols-2 gap-y-4 gap-x-8">
+              <div>
+                <p className="text-[#c3b998] text-xs uppercase">Position</p>
+                <p className="text-white font-medium">{athlete.primary_position}</p>
+              </div>
+              {athlete.secondary_position && (
+                <div>
+                  <p className="text-[#c3b998] text-xs uppercase">Secondary</p>
+                  <p className="text-white font-medium">{athlete.secondary_position}</p>
+                </div>
+              )}
+              <div>
+                <p className="text-[#c3b998] text-xs uppercase">Zone</p>
+                <p className="text-white font-medium">{athlete.zone || 'N/A'}</p>
+              </div>
+              <div>
+                <p className="text-[#c3b998] text-xs uppercase">Offers</p>
+                <p className="text-white font-medium">{athlete.offers_count || 0}</p>
+              </div>
+              {athlete.repmax_score && (
+                <div className="col-span-2">
+                  <p className="text-[#c3b998] text-xs uppercase">RepMax Score</p>
+                  <p className="text-primary font-bold text-lg">{athlete.repmax_score}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: CRM */}
+        <div className="lg:col-span-7 flex flex-col gap-6">
+          {/* CRM Control Bar */}
+          <div className="bg-[#2a271d] p-4 rounded-xl border border-[#433d28] flex flex-wrap gap-4 items-center justify-between">
+            <div className="flex gap-3 flex-wrap">
+              {/* Shortlist Toggle */}
+              {isOnShortlist ? (
+                <>
+                  {/* Stage Dropdown */}
+                  <div className="relative">
+                    <select
+                      value={currentStatus}
+                      onChange={(e) => handleStatusChange(e.target.value as PipelineStatus)}
+                      className="appearance-none bg-[#363225] text-white pl-9 pr-8 py-2 rounded-lg border border-[#433d28] focus:border-primary focus:outline-none text-sm font-medium cursor-pointer min-w-[140px]"
+                    >
+                      <option value="identified">Identified</option>
+                      <option value="contacted">Contacted</option>
+                      <option value="evaluating">Evaluating</option>
+                      <option value="visit_scheduled">Visit Scheduled</option>
+                      <option value="offered">Offered</option>
+                      <option value="committed">Committed</option>
+                    </select>
+                    <span className="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-primary text-[20px]">
+                      manage_search
+                    </span>
+                    <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-[#c3b998] text-[20px] pointer-events-none">
+                      expand_more
+                    </span>
+                  </div>
+
+                  {/* Remove from Pipeline */}
+                  <button
+                    onClick={handleRemoveFromShortlist}
+                    className="flex items-center gap-2 bg-red-500/20 px-3 py-2 rounded-lg border border-red-500/40 hover:bg-red-500/30 transition-colors"
+                  >
+                    <span className="material-symbols-outlined text-red-500 text-[20px]">person_remove</span>
+                    <span className="text-red-500 text-sm font-medium">Remove</span>
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={handleAddToShortlist}
+                  className="flex items-center gap-2 bg-primary/20 px-4 py-2 rounded-lg border border-primary/40 hover:bg-primary/30 transition-colors"
+                >
+                  <span className="material-symbols-outlined text-primary text-[20px]">person_add</span>
+                  <span className="text-primary text-sm font-medium">Add to Pipeline</span>
+                </button>
+              )}
+            </div>
+
+            {/* Priority indicator */}
+            {isOnShortlist && shortlistItem?.priority && (
+              <div className="flex items-center gap-2 pl-4 border-l border-[#433d28]">
+                <span
+                  className={`material-symbols-outlined text-[20px] ${
+                    shortlistItem.priority === 'top' || shortlistItem.priority === 'high'
+                      ? 'text-primary'
+                      : 'text-[#c3b998]'
+                  }`}
+                  style={{ fontVariationSettings: shortlistItem.priority === 'top' ? "'FILL' 1" : "'FILL' 0" }}
+                >
+                  flag
+                </span>
+                <span className="text-white text-sm font-medium capitalize">{shortlistItem.priority} Priority</span>
+              </div>
+            )}
+          </div>
+
+          {/* Tags & Notes */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Tags */}
+            <div className="bg-[#2a271d] p-5 rounded-xl border border-[#433d28]">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-white font-semibold text-sm">Tags</h3>
+                <button className="text-[#c3b998] hover:text-white">
+                  <span className="material-symbols-outlined text-[20px]">edit</span>
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <span className="px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-medium border border-primary/20">
+                  {athlete.primary_position} Target
+                </span>
+                <span className="px-3 py-1 rounded-full bg-purple-500/20 text-purple-500 text-xs font-medium border border-purple-500/20">
+                  Class of &apos;{String(athlete.class_year).slice(-2)}
+                </span>
+                {athlete.zone && (
+                  <span className="px-3 py-1 rounded-full bg-[#363225] text-[#c3b998] text-xs font-medium border border-[#433d28]">
+                    {athlete.zone}
+                  </span>
+                )}
+                <button className="px-3 py-1 rounded-full border border-dashed border-[#c3b998]/50 text-[#c3b998] text-xs font-medium hover:text-white hover:border-white transition-colors">
+                  + Add
+                </button>
+              </div>
+            </div>
+
+            {/* Quick Note */}
+            <div className="bg-[#2a271d] p-5 rounded-xl border border-[#433d28] flex flex-col">
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-white font-semibold text-sm">Notes</h3>
+              </div>
+              {shortlistItem?.notes ? (
+                <p className="text-[#c3b998] text-sm leading-relaxed flex-1">
+                  &quot;{shortlistItem.notes}&quot;
+                </p>
+              ) : (
+                <p className="text-[#c3b998]/50 text-sm italic flex-1">
+                  No notes yet. Add notes when you add to pipeline.
+                </p>
+              )}
+              <div className="mt-3 flex justify-end">
+                <Link href={`/dashboard/messages?to=${athleteId}`} className="text-primary text-xs font-bold hover:underline">
+                  Send Message
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Timeline */}
+          <div className="bg-[#2a271d] rounded-xl border border-[#433d28] p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-white font-semibold">Activity Timeline</h3>
+              <button className="bg-[#363225] hover:bg-[#363225]/80 text-white text-xs px-3 py-1.5 rounded-lg border border-[#433d28] transition-colors">
+                Filter
+              </button>
+            </div>
+            <div className="relative space-y-8 pl-2">
+              {/* Vertical Line */}
+              <div className="absolute top-2 bottom-2 left-[19px] w-[2px] bg-[#433d28]"></div>
+
+              {timelineData.map((item) => (
+                <div key={item.id} className="relative flex gap-4">
+                  <div
+                    className={`relative z-10 size-10 rounded-full ${item.iconBg} border border-[#433d28] flex items-center justify-center shrink-0`}
+                  >
+                    <span className={`material-symbols-outlined ${item.iconColor} text-sm`}>{item.icon}</span>
+                  </div>
+                  <div className="flex flex-col pt-1 w-full">
+                    <div className="flex justify-between items-start">
+                      <p className="text-white text-sm font-medium">{item.title}</p>
+                      <span className="text-xs text-[#c3b998]">{item.time}</span>
+                    </div>
+                    <p className="text-[#c3b998] text-xs mt-0.5">{item.description}</p>
+                    {item.attachment && (
+                      <div className="mt-2 p-2 bg-[#363225] rounded border border-[#433d28] max-w-md">
+                        <div className="flex items-center gap-2 text-xs text-[#c3b998]">
+                          <span className="material-symbols-outlined text-sm">attachment</span>
+                          <span>{item.attachment.name}</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <style jsx>{`
+        ::-webkit-scrollbar {
+          width: 8px;
+          height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+          background: #201d12;
+        }
+        ::-webkit-scrollbar-thumb {
+          background: #433d28;
+          border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+          background: #d4af35;
+        }
+      `}</style>
+    </div>
+  );
+}
