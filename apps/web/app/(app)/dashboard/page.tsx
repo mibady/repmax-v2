@@ -24,6 +24,15 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
+  // Redirect to role-specific dashboard
+  if (profile.role === "athlete") {
+    redirect("/dashboard/athlete");
+  } else if (profile.role === "recruiter" || profile.role === "coach") {
+    redirect("/dashboard/recruiter/pipeline");
+  } else if (profile.role === "admin") {
+    redirect("/admin/analytics");
+  }
+
   // Cast profile to expected type for build
   const typedProfile = profile as {
     id: string;
