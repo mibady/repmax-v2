@@ -118,14 +118,9 @@ async function seedUser(supabase: SupabaseClient, userData: TestUserData): Promi
   // 2. Create profile
   const { error: profileError } = await supabase.from('profiles').insert({
     id: userId,
-    repmax_id: userData.repmaxId,
-    email: userData.email,
+    user_id: userId,
+    role: userData.activeRole,
     full_name: userData.fullName,
-    roles: userData.roles,
-    active_role: userData.activeRole,
-    city: userData.city,
-    state: userData.state,
-    zone: userData.zone,
   });
 
   if (profileError) {
@@ -134,75 +129,56 @@ async function seedUser(supabase: SupabaseClient, userData: TestUserData): Promi
 
   // 3. Create role-specific profiles
   if (userData.athleteProfile) {
-    const { error } = await supabase.from('athlete_profiles').insert({
+    const { error } = await supabase.from('athletes').insert({
       profile_id: userId,
-      position: userData.athleteProfile.position,
+      primary_position: userData.athleteProfile.position,
       class_year: userData.athleteProfile.classYear,
-      school: userData.athleteProfile.school,
-      height: userData.athleteProfile.height,
-      weight: userData.athleteProfile.weight,
-      forty_yard: userData.athleteProfile.fortyYard,
-      vertical: userData.athleteProfile.vertical,
-      bench: userData.athleteProfile.bench,
-      squat: userData.athleteProfile.squat,
+      high_school: userData.athleteProfile.school,
+      city: userData.city,
+      state: userData.state,
+      zone: userData.zone,
+      height_inches: userData.athleteProfile.height,
+      weight_lbs: userData.athleteProfile.weight,
+      forty_yard_time: userData.athleteProfile.fortyYard,
+      vertical_inches: userData.athleteProfile.vertical,
       gpa: userData.athleteProfile.gpa,
-      sat: userData.athleteProfile.sat,
-      act: userData.athleteProfile.act,
-      bio: userData.athleteProfile.bio,
+      sat_score: userData.athleteProfile.sat,
+      act_score: userData.athleteProfile.act,
       verified: userData.athleteProfile.verified,
-      profile_completeness: userData.athleteProfile.profileCompleteness,
     });
 
     if (error) {
-      console.warn(`  Warning: athlete_profiles insert failed: ${error.message}`);
+      console.warn(`  Warning: athletes insert failed: ${error.message}`);
     }
   }
 
-  if (userData.parentProfile) {
-    const { error } = await supabase.from('parent_profiles').insert({
+  // Note: parent_profiles, coach_profiles, and club_profiles tables don't exist in current schema
+  // Only coaches table exists for coach/recruiter roles
+
+  if (userData.recruiterProfile) {
+    const { error } = await supabase.from('coaches').insert({
       profile_id: userId,
-      relationship: userData.parentProfile.relationship,
+      school_name: userData.recruiterProfile.school,
+      division: 'D1', // Default division - update test data if specific division needed
+      conference: userData.recruiterProfile.conference,
+      title: userData.recruiterProfile.title,
     });
 
     if (error) {
-      console.warn(`  Warning: parent_profiles insert failed: ${error.message}`);
+      console.warn(`  Warning: coaches insert failed: ${error.message}`);
     }
   }
 
   if (userData.coachProfile) {
-    const { error } = await supabase.from('coach_profiles').insert({
+    const { error } = await supabase.from('coaches').insert({
       profile_id: userId,
-      team_name: userData.coachProfile.teamName,
-      school: userData.coachProfile.school,
+      school_name: userData.coachProfile.school,
+      division: 'D1', // Default division - update test data if specific division needed
+      title: 'Head Coach',
     });
 
     if (error) {
-      console.warn(`  Warning: coach_profiles insert failed: ${error.message}`);
-    }
-  }
-
-  if (userData.recruiterProfile) {
-    const { error } = await supabase.from('recruiter_profiles').insert({
-      profile_id: userId,
-      school: userData.recruiterProfile.school,
-      conference: userData.recruiterProfile.conference,
-      title: userData.recruiterProfile.title,
-      territory: userData.recruiterProfile.territory,
-    });
-
-    if (error) {
-      console.warn(`  Warning: recruiter_profiles insert failed: ${error.message}`);
-    }
-  }
-
-  if (userData.clubProfile) {
-    const { error } = await supabase.from('club_profiles').insert({
-      profile_id: userId,
-      organization_name: userData.clubProfile.organizationName,
-    });
-
-    if (error) {
-      console.warn(`  Warning: club_profiles insert failed: ${error.message}`);
+      console.warn(`  Warning: coaches insert failed: ${error.message}`);
     }
   }
 

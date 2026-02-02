@@ -29,14 +29,14 @@ export async function GET() {
       .from("athletes")
       .select(`
         id,
-        school,
+        high_school,
         city,
         state,
         class_year,
-        position,
+        primary_position,
         height_inches,
         weight_lbs,
-        forty_yard_dash,
+        forty_yard_time,
         gpa,
         zone
       `)
@@ -62,14 +62,14 @@ export async function GET() {
       firstName,
       lastName,
       classYear: athlete.class_year || new Date().getFullYear() + 1,
-      position: athlete.position || "ATH",
-      school: athlete.school || "",
+      position: athlete.primary_position || "ATH",
+      school: athlete.high_school || "",
       city: athlete.city || "",
       state: athlete.state || "",
       zone: athlete.zone || "Unknown",
       heightInches: athlete.height_inches,
       weightLbs: athlete.weight_lbs,
-      fortyYardDash: athlete.forty_yard_dash,
+      fortyYardDash: athlete.forty_yard_time,
       gpa: athlete.gpa,
       avatarUrl: profile.avatar_url,
       starRating: 3, // Default - would come from rankings table
