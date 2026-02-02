@@ -15,14 +15,14 @@ export default function Page() {
 <h2 className="text-xl font-black tracking-tight text-white">REPMAX</h2>
 </div>
 <nav className="hidden md:flex items-center gap-8">
-<Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="/">Features</Link>
-<Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="/">How it Works</Link>
-<Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="/">Pricing</Link>
-<Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="/">Login</Link>
+<Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="#features">Features</Link>
+<Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="#how-it-works">How it Works</Link>
+<Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="/pricing">Pricing</Link>
+<Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="/login">Login</Link>
 </nav>
-<button className="hidden md:flex items-center justify-center rounded-md bg-primary px-5 py-2.5 text-sm font-bold text-[#050505] transition-all hover:bg-primary-hover hover:scale-105">
+<Link href="/signup" className="hidden md:flex items-center justify-center rounded-md bg-primary px-5 py-2.5 text-sm font-bold text-[#050505] transition-all hover:bg-primary-hover hover:scale-105">
                 Get Your Free RepMax ID
-            </button>
+            </Link>
 <button className="flex md:hidden text-white">
 <span className="material-symbols-outlined">menu</span>
 </button>
@@ -56,9 +56,9 @@ export default function Page() {
                         The ultimate data-driven platform connecting elite talent with top-tier programs through verified analytics and AI-driven matchmaking.
                     </p>
 <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
-<button className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-md bg-primary px-8 py-3.5 text-base font-bold text-[#050505] transition-all hover:bg-primary-hover shadow-[0_0_20px_rgba(212,175,53,0.3)]">
+<Link href="/signup" className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-md bg-primary px-8 py-3.5 text-base font-bold text-[#050505] transition-all hover:bg-primary-hover shadow-[0_0_20px_rgba(212,175,53,0.3)]">
                             Get Your Free RepMax ID
-                        </button>
+                        </Link>
 <button className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-md border border-white/10 bg-white/5 px-8 py-3.5 text-base font-medium text-white transition-all hover:bg-white/10">
 <span className="material-symbols-outlined text-[20px]">play_circle</span>
                             View Demo
@@ -110,9 +110,9 @@ export default function Page() {
 <p className="text-xl font-bold text-white stats-font">12</p>
 </div>
 </div>
-<button className="w-full rounded bg-primary py-2 text-sm font-bold text-black hover:bg-primary-hover">
+<Link href="/signup" className="w-full rounded bg-primary py-2 text-sm font-bold text-black hover:bg-primary-hover text-center block">
                                     View Full Profile
-                                </button>
+                                </Link>
 </div>
 </div>
 </div>
@@ -169,7 +169,7 @@ export default function Page() {
 </div>
 </section>
 {/*  Solution Section  */}
-<section className="py-24 bg-background-dark">
+<section id="features" className="py-24 bg-background-dark">
 <div className="mx-auto max-w-7xl px-6 lg:px-8">
 <div className="flex flex-col lg:flex-row gap-16 items-start">
 <div className="flex-1 lg:sticky lg:top-24">
@@ -192,10 +192,10 @@ export default function Page() {
 <span>Direct Coach Messaging</span>
 </li>
 </ul>
-<button className="flex items-center justify-center gap-2 rounded-md bg-white text-black px-6 py-3 text-sm font-bold transition-all hover:bg-gray-200">
+<Link href="#features" className="flex items-center justify-center gap-2 rounded-md bg-white text-black px-6 py-3 text-sm font-bold transition-all hover:bg-gray-200">
                         Explore Features
                         <span className="material-symbols-outlined text-sm">arrow_forward</span>
-</button>
+</Link>
 </div>
 <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
 {/*  Feature Card 1  */}
@@ -235,7 +235,7 @@ export default function Page() {
 </div>
 </section>
 {/*  How It Works Section  */}
-<section className="py-24 bg-surface-dark relative overflow-hidden">
+<section id="how-it-works" className="py-24 bg-surface-dark relative overflow-hidden">
 {/*  Background decorative line  */}
 <div className="absolute top-1/2 left-0 w-full h-[1px] bg-white/5 -translate-y-1/2 hidden md:block z-0"></div>
 <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
@@ -325,12 +325,12 @@ export default function Page() {
 <h2 className="text-4xl sm:text-5xl font-black text-white mb-6 tracking-tight">Ready to Level Up?</h2>
 <p className="text-xl text-text-grey mb-10 max-w-2xl mx-auto">Join thousands of athletes and coaches transforming the recruitment process. Your future starts with verified data.</p>
 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-<button className="w-full sm:w-auto rounded-md bg-primary px-10 py-4 text-lg font-bold text-[#050505] transition-all hover:bg-primary-hover hover:scale-105 shadow-[0_0_20px_rgba(212,175,53,0.4)]">
+<Link href="/signup" className="w-full sm:w-auto rounded-md bg-primary px-10 py-4 text-lg font-bold text-[#050505] transition-all hover:bg-primary-hover hover:scale-105 shadow-[0_0_20px_rgba(212,175,53,0.4)] text-center">
                     Create Free Athlete Account
-                </button>
-<button className="w-full sm:w-auto rounded-md border border-white/10 bg-white/5 px-10 py-4 text-lg font-bold text-white transition-all hover:bg-white/10 hover:border-white/20">
+                </Link>
+<Link href="/login" className="w-full sm:w-auto rounded-md border border-white/10 bg-white/5 px-10 py-4 text-lg font-bold text-white transition-all hover:bg-white/10 hover:border-white/20 text-center">
                     Coach / Recruiter Login
-                </button>
+                </Link>
 </div>
 </div>
 </section>
@@ -347,30 +347,30 @@ export default function Page() {
                         The ultimate data-driven platform connecting elite talent with top-tier programs. Built for the modern athlete.
                     </p>
 <div className="flex gap-4">
-<Link className="text-text-grey hover:text-white transition-colors" href="/"><span className="material-symbols-outlined text-xl">thumb_up</span></Link>
-<Link className="text-text-grey hover:text-white transition-colors" href="/"><span className="material-symbols-outlined text-xl">smart_display</span></Link>
-<Link className="text-text-grey hover:text-white transition-colors" href="/"><span className="material-symbols-outlined text-xl">share</span></Link>
+<span className="text-text-grey hover:text-white transition-colors cursor-pointer"><span className="material-symbols-outlined text-xl">thumb_up</span></span>
+<span className="text-text-grey hover:text-white transition-colors cursor-pointer"><span className="material-symbols-outlined text-xl">smart_display</span></span>
+<span className="text-text-grey hover:text-white transition-colors cursor-pointer"><span className="material-symbols-outlined text-xl">share</span></span>
 </div>
 </div>
 <div className="flex flex-col gap-4">
 <h3 className="text-sm font-bold text-white uppercase tracking-wider">Product</h3>
-<Link className="text-sm text-text-grey hover:text-primary transition-colors" href="/">Features</Link>
-<Link className="text-sm text-text-grey hover:text-primary transition-colors" href="/">Pricing</Link>
-<Link className="text-sm text-text-grey hover:text-primary transition-colors" href="/">For Athletes</Link>
-<Link className="text-sm text-text-grey hover:text-primary transition-colors" href="/">For Coaches</Link>
+<Link className="text-sm text-text-grey hover:text-primary transition-colors" href="#features">Features</Link>
+<Link className="text-sm text-text-grey hover:text-primary transition-colors" href="/pricing">Pricing</Link>
+<Link className="text-sm text-text-grey hover:text-primary transition-colors" href="/signup">For Athletes</Link>
+<Link className="text-sm text-text-grey hover:text-primary transition-colors" href="/login">For Coaches</Link>
 </div>
 <div className="flex flex-col gap-4">
 <h3 className="text-sm font-bold text-white uppercase tracking-wider">Company</h3>
-<Link className="text-sm text-text-grey hover:text-primary transition-colors" href="/">About</Link>
-<Link className="text-sm text-text-grey hover:text-primary transition-colors" href="/">Careers</Link>
-<Link className="text-sm text-text-grey hover:text-primary transition-colors" href="/">Blog</Link>
-<Link className="text-sm text-text-grey hover:text-primary transition-colors" href="/">Contact</Link>
+<span className="text-sm text-text-grey">About</span>
+<span className="text-sm text-text-grey">Careers</span>
+<span className="text-sm text-text-grey">Blog</span>
+<span className="text-sm text-text-grey">Contact</span>
 </div>
 <div className="flex flex-col gap-4">
 <h3 className="text-sm font-bold text-white uppercase tracking-wider">Legal</h3>
-<Link className="text-sm text-text-grey hover:text-primary transition-colors" href="/">Privacy</Link>
-<Link className="text-sm text-text-grey hover:text-primary transition-colors" href="/">Terms</Link>
-<Link className="text-sm text-text-grey hover:text-primary transition-colors" href="/">Security</Link>
+<span className="text-sm text-text-grey">Privacy</span>
+<span className="text-sm text-text-grey">Terms</span>
+<span className="text-sm text-text-grey">Security</span>
 </div>
 </div>
 <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
