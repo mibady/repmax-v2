@@ -15,13 +15,38 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get roster athletes linked to this coach
-    const { data: rosterLinks } = await supabase
-      .from("coach_roster")
-      .select("athlete_id")
-      .eq("coach_id", user.id);
+    // Get the user's profile
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("user_id", user.id)
+      .single();
 
-    const athleteIds = rosterLinks?.map((r) => r.athlete_id) || [];
+    if (!profile) {
+      return NextResponse.json(
+        { error: "Profile not found" },
+        { status: 404 }
+      );
+    }
+
+    // Get teams where this coach is the owner
+    const { data: teams } = await supabase
+      .from("teams")
+      .select("id")
+      .eq("coach_profile_id", profile.id);
+
+    const teamIds = teams?.map((t) => t.id) || [];
+
+    // Get roster athletes via team_rosters
+    let athleteIds: string[] = [];
+    if (teamIds.length > 0) {
+      const { data: rosterLinks } = await supabase
+        .from("team_rosters")
+        .select("athlete_id")
+        .in("team_id", teamIds);
+
+      athleteIds = rosterLinks?.map((r) => r.athlete_id) || [];
+    }
 
     // Get roster athlete details
     let roster: Array<{
@@ -37,15 +62,17 @@ export async function GET() {
 
     if (athleteIds.length > 0) {
       const { data: athletes } = await supabase
-        .from("profiles")
+        .from("athletes")
         .select(
           `
           id,
-          full_name,
-          athlete_profiles!inner (
-            position,
-            class_year,
-            gpa
+          primary_position,
+          class_year,
+          gpa,
+          offers_count,
+          profile:profiles!inner(
+            full_name,
+            avatar_url
           )
         `
         )
@@ -53,18 +80,16 @@ export async function GET() {
 
       if (athletes) {
         roster = athletes.map((a) => {
-          const ap = Array.isArray(a.athlete_profiles)
-            ? a.athlete_profiles[0]
-            : a.athlete_profiles;
+          const p = Array.isArray(a.profile) ? a.profile[0] : a.profile;
           return {
             id: a.id,
-            name: a.full_name || "Unknown",
-            position: ap?.position || "ATH",
-            classYear: ap?.class_year || 2026,
-            gpa: ap?.gpa || null,
-            offers: 0, // TODO: Count from offers table
+            name: (p as { full_name?: string })?.full_name || "Unknown",
+            position: a.primary_position || "ATH",
+            classYear: a.class_year || 2026,
+            gpa: a.gpa ? Number(a.gpa) : null,
+            offers: a.offers_count || 0,
             status: "active",
-            avatarUrl: null,
+            avatarUrl: (p as { avatar_url?: string })?.avatar_url || null,
           };
         });
       }
@@ -76,32 +101,27 @@ export async function GET() {
       .select(
         `
         id,
-        title,
-        description,
+        text,
         due_date,
         priority,
-        status,
+        completed,
         athlete_id,
-        created_at,
-        profiles:athlete_id (
-          full_name
-        )
+        created_at
       `
       )
-      .eq("coach_id", user.id)
+      .eq("coach_id", profile.id)
       .order("created_at", { ascending: false });
 
     const tasks =
       tasksData?.map((t) => ({
         id: t.id,
-        title: t.title,
-        description: t.description,
+        title: t.text,
+        description: null,
         dueDate: t.due_date,
         priority: t.priority || "medium",
-        status: t.status || "pending",
+        status: t.completed ? "completed" : "pending",
         athleteId: t.athlete_id,
-        athleteName:
-          (t.profiles as { full_name?: string } | null)?.full_name || null,
+        athleteName: null,
         createdAt: t.created_at,
       })) || [];
 
@@ -112,15 +132,12 @@ export async function GET() {
         `
         id,
         athlete_id,
-        content,
-        category,
-        created_at,
-        profiles:athlete_id (
-          full_name
-        )
+        text,
+        pinned,
+        created_at
       `
       )
-      .eq("coach_id", user.id)
+      .eq("coach_id", profile.id)
       .order("created_at", { ascending: false })
       .limit(10);
 
@@ -128,42 +145,37 @@ export async function GET() {
       notesData?.map((n) => ({
         id: n.id,
         athleteId: n.athlete_id,
-        athleteName:
-          (n.profiles as { full_name?: string } | null)?.full_name ||
-          "Unknown",
-        content: n.content,
-        category: n.category || "general",
+        athleteName: "Unknown",
+        content: n.text,
+        category: n.pinned ? "pinned" : "general",
         createdAt: n.created_at,
       })) || [];
 
-    // Get coach activities
+    // Get activity log
     const { data: activitiesData } = await supabase
-      .from("coach_activities")
+      .from("activity_log")
       .select(
         `
         id,
-        type,
-        description,
+        activity_type,
+        notes,
         athlete_id,
-        created_at,
-        profiles:athlete_id (
-          full_name
-        )
+        school_name,
+        activity_date,
+        created_at
       `
       )
-      .eq("coach_id", user.id)
+      .eq("coach_id", profile.id)
       .order("created_at", { ascending: false })
       .limit(10);
 
     const activity =
       activitiesData?.map((a) => ({
         id: a.id,
-        type: a.type,
-        description: a.description,
+        type: a.activity_type,
+        description: a.notes || `${a.activity_type} activity`,
         athleteId: a.athlete_id,
-        athleteName:
-          (a.profiles as { full_name?: string } | null)?.full_name ||
-          "Unknown",
+        athleteName: "Unknown",
         timestamp: a.created_at,
       })) || [];
 

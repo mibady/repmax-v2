@@ -38,6 +38,7 @@ export async function GET() {
         weight_lbs,
         forty_yard_time,
         gpa,
+        star_rating,
         zone
       `)
       .eq("profile_id", profile.id)
@@ -72,7 +73,7 @@ export async function GET() {
       fortyYardDash: athlete.forty_yard_time,
       gpa: athlete.gpa,
       avatarUrl: profile.avatar_url,
-      starRating: 3, // Default - would come from rankings table
+      starRating: athlete.star_rating || null,
     };
 
     // Get profile views (last 7 days)
@@ -83,7 +84,7 @@ export async function GET() {
       .from("profile_views")
       .select("*", { count: "exact", head: true })
       .eq("athlete_id", athlete.id)
-      .gte("viewed_at", sevenDaysAgo.toISOString());
+      .gte("created_at", sevenDaysAgo.toISOString());
 
     const fourteenDaysAgo = new Date();
     fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
@@ -92,8 +93,8 @@ export async function GET() {
       .from("profile_views")
       .select("*", { count: "exact", head: true })
       .eq("athlete_id", athlete.id)
-      .gte("viewed_at", fourteenDaysAgo.toISOString())
-      .lt("viewed_at", sevenDaysAgo.toISOString());
+      .gte("created_at", fourteenDaysAgo.toISOString())
+      .lt("created_at", sevenDaysAgo.toISOString());
 
     const profileViewsChange =
       viewsLastWeek && viewsLastWeek > 0
@@ -133,7 +134,7 @@ export async function GET() {
       .from("messages")
       .select("*", { count: "exact", head: true })
       .eq("recipient_id", profile.id)
-      .eq("is_read", false);
+      .eq("read", false);
 
     // Build stats
     const stats = {

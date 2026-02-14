@@ -75,7 +75,7 @@ export async function GET() {
     // Get athletes with profile completeness
     const { data: athletes } = await supabase
       .from("athletes")
-      .select("height_inches, weight_lbs, forty_yard_dash, gpa, profile:profiles(avatar_url, full_name)");
+      .select("height_inches, weight_lbs, forty_yard_time, gpa, profile:profiles(avatar_url, full_name)");
 
     // Calculate profile completeness distribution
     const completenessRanges = {
@@ -91,7 +91,7 @@ export async function GET() {
 
       if (athlete.height_inches) filledFields++;
       if (athlete.weight_lbs) filledFields++;
-      if (athlete.forty_yard_dash) filledFields++;
+      if (athlete.forty_yard_time) filledFields++;
       if (athlete.gpa) filledFields++;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if ((athlete.profile as any)?.[0]?.avatar_url || (athlete.profile as any)?.avatar_url) filledFields++;
@@ -140,7 +140,7 @@ export async function GET() {
     const { count: recentViews } = await supabase
       .from("profile_views")
       .select("*", { count: "exact", head: true })
-      .gte("viewed_at", today.toISOString());
+      .gte("created_at", today.toISOString());
 
     // Calculate approximate DAU based on activity
     const estimatedDAU = Math.max(

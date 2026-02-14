@@ -15,12 +15,25 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Get the user's profile
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("user_id", user.id)
+      .single();
+
+    if (!profile) {
+      return NextResponse.json(
+        { error: "Profile not found" },
+        { status: 404 }
+      );
+    }
+
     // Get linked athlete(s) for this parent
     const { data: links, error: linksError } = await supabase
-      .from("parent_athlete_links")
-      .select("athlete_id")
-      .eq("parent_id", user.id)
-      .eq("status", "active");
+      .from("parent_links")
+      .select("athlete_profile_id")
+      .eq("parent_profile_id", profile.id);
 
     if (linksError) {
       console.error("Error fetching parent links:", linksError);
@@ -47,7 +60,7 @@ export async function GET() {
       time: string;
       timestamp: string;
     }> = [];
-    let calendarEvents: Array<{
+    const calendarEvents: Array<{
       id: string;
       date: string;
       title: string;
@@ -55,149 +68,125 @@ export async function GET() {
     }> = [];
 
     if (links && links.length > 0) {
-      const athleteId = links[0].athlete_id;
+      const athleteProfileId = links[0].athlete_profile_id;
 
-      // Get athlete profile
+      // Get athlete data with profile info
       const { data: athlete } = await supabase
-        .from("profiles")
+        .from("athletes")
         .select(
           `
           id,
-          full_name,
-          athlete_profiles!inner (
-            position,
-            class_year,
-            gpa,
-            school
+          primary_position,
+          class_year,
+          gpa,
+          high_school,
+          profile:profiles!inner(
+            full_name,
+            avatar_url
           )
         `
         )
-        .eq("id", athleteId)
+        .eq("profile_id", athleteProfileId)
         .single();
 
-      if (athlete && athlete.athlete_profiles) {
-        const ap = Array.isArray(athlete.athlete_profiles)
-          ? athlete.athlete_profiles[0]
-          : athlete.athlete_profiles;
+      if (athlete) {
+        const p = Array.isArray(athlete.profile)
+          ? athlete.profile[0]
+          : athlete.profile;
         childProfile = {
           id: athlete.id,
-          name: athlete.full_name?.split(" ")[0] || "Athlete",
-          position: ap.position || "ATH",
-          classYear: ap.class_year || 2026,
-          gpa: ap.gpa,
-          school: ap.school || "High School",
-          avatarUrl: null,
+          name:
+            (p as { full_name?: string })?.full_name?.split(" ")[0] ||
+            "Athlete",
+          position: athlete.primary_position || "ATH",
+          classYear: athlete.class_year || 2026,
+          gpa: athlete.gpa ? Number(athlete.gpa) : null,
+          school: athlete.high_school || "High School",
+          avatarUrl: (p as { avatar_url?: string })?.avatar_url || null,
         };
-      }
 
-      // Get profile views count
-      const { count: viewsCount } = await supabase
-        .from("profile_views")
-        .select("*", { count: "exact", head: true })
-        .eq("athlete_id", athleteId);
+        // Get profile views count
+        const { count: viewsCount } = await supabase
+          .from("profile_views")
+          .select("*", { count: "exact", head: true })
+          .eq("athlete_id", athlete.id);
 
-      // Get shortlists (schools tracking)
-      const { count: shortlistCount } = await supabase
-        .from("shortlist_athletes")
-        .select("*", { count: "exact", head: true })
-        .eq("athlete_id", athleteId);
+        // Get shortlists (schools tracking this athlete)
+        const { count: shortlistCount } = await supabase
+          .from("shortlists")
+          .select("*", { count: "exact", head: true })
+          .eq("athlete_id", athlete.id);
 
-      // Get unread messages
-      const { count: messagesCount } = await supabase
-        .from("messages")
-        .select("*", { count: "exact", head: true })
-        .eq("recipient_id", athleteId)
-        .eq("read", false);
+        // Get unread messages for the athlete
+        const { count: messagesCount } = await supabase
+          .from("messages")
+          .select("*", { count: "exact", head: true })
+          .eq("recipient_id", athleteProfileId)
+          .eq("read", false);
 
-      metrics = {
-        profileViews: viewsCount || 0,
-        profileViewsChange: 12, // TODO: Calculate actual change
-        coachMessages: messagesCount || 0,
-        schoolsTracking: shortlistCount || 0,
-        upcomingDeadlines: 2, // TODO: Calculate from calendar
-      };
+        metrics = {
+          profileViews: viewsCount || 0,
+          profileViewsChange: 0,
+          coachMessages: messagesCount || 0,
+          schoolsTracking: shortlistCount || 0,
+          upcomingDeadlines: 0,
+        };
 
-      // Get schools showing interest (from shortlists)
-      const { data: shortlists } = await supabase
-        .from("shortlist_athletes")
-        .select(
-          `
-          shortlist_id,
-          shortlists!inner (
-            recruiter_id,
-            name,
-            profiles!recruiter_id (
-              recruiter_profiles!inner (
-                school
-              )
+        // Get schools showing interest (from shortlists via coaches)
+        const { data: shortlistData } = await supabase
+          .from("shortlists")
+          .select(
+            `
+            id,
+            coach:coaches!inner(
+              school_name
             )
+          `
           )
-        `
-        )
-        .eq("athlete_id", athleteId)
-        .limit(5);
+          .eq("athlete_id", athlete.id)
+          .limit(5);
 
-      if (shortlists) {
-        schools = shortlists.map((s, index) => {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const shortlistData = s.shortlists as any;
-          const school =
-            shortlistData?.profiles?.recruiter_profiles?.[0]?.school ||
-            "Unknown School";
-          return {
-            id: String(index),
-            name: school,
-            status: "Following" as const,
-            statusColor: "text-blue-400 bg-blue-400/10",
-          };
-        });
-      }
+        if (shortlistData) {
+          schools = shortlistData.map((s, index) => {
+            const coach = s.coach as { school_name?: string } | null;
+            return {
+              id: String(index),
+              name: coach?.school_name || "Unknown School",
+              status: "Following",
+              statusColor: "text-blue-400 bg-blue-400/10",
+            };
+          });
+        }
 
-      // Get recent activity (profile views + messages)
-      const { data: recentViews } = await supabase
-        .from("profile_views")
-        .select("id, viewer_school, viewed_at, section_viewed")
-        .eq("athlete_id", athleteId)
-        .order("viewed_at", { ascending: false })
-        .limit(4);
+        // Get recent activity (profile views)
+        const { data: recentViews } = await supabase
+          .from("profile_views")
+          .select("id, viewer_school, created_at, section_viewed")
+          .eq("athlete_id", athlete.id)
+          .order("created_at", { ascending: false })
+          .limit(4);
 
-      if (recentViews) {
-        activity = recentViews.map((v) => {
-          const viewedAt = new Date(v.viewed_at);
-          const now = new Date();
-          const diffHours = Math.floor(
-            (now.getTime() - viewedAt.getTime()) / (1000 * 60 * 60)
-          );
-          const time =
-            diffHours < 24
-              ? `${diffHours} hours ago`
-              : `${Math.floor(diffHours / 24)} days ago`;
+        if (recentViews) {
+          activity = recentViews.map((v) => {
+            const viewedAt = new Date(v.created_at);
+            const now = new Date();
+            const diffHours = Math.floor(
+              (now.getTime() - viewedAt.getTime()) / (1000 * 60 * 60)
+            );
+            const time =
+              diffHours < 24
+                ? `${diffHours} hours ago`
+                : `${Math.floor(diffHours / 24)} days ago`;
 
-          return {
-            id: v.id,
-            type: "view" as const,
-            message: `${v.viewer_school || "A coach"} viewed ${v.section_viewed || "profile"}`,
-            time,
-            timestamp: v.viewed_at,
-          };
-        });
-      }
-
-      // Get calendar events (recruiting events for athlete's zone)
-      const { data: events } = await supabase
-        .from("recruiting_events")
-        .select("id, title, event_date, event_type")
-        .gte("event_date", new Date().toISOString())
-        .order("event_date", { ascending: true })
-        .limit(3);
-
-      if (events) {
-        calendarEvents = events.map((e) => ({
-          id: e.id,
-          date: e.event_date,
-          title: e.title,
-          type: (e.event_type || "other") as "visit" | "deadline" | "camp",
-        }));
+            return {
+              id: v.id,
+              type: "view" as const,
+              message: `${v.viewer_school || "A coach"} viewed ${v.section_viewed || "profile"}`,
+              time,
+              timestamp: v.created_at,
+            };
+          });
+        }
       }
     }
 
