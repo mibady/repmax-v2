@@ -1,8 +1,10 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAthlete, useShortlist, type PipelineStatus } from '@/lib/hooks';
+import { logCommunication, getAthleteContactEmail } from '@/lib/actions/communication-actions';
 import type { Tables } from '@/types/database';
 
 type Athlete = Tables<"athletes"> & {
@@ -106,7 +108,17 @@ function ErrorState({ error, onRetry }: { error: Error; onRetry: () => void }) {
   );
 }
 
-function AthleteProfile({ athlete }: { athlete: Athlete }) {
+function AthleteProfile({
+  athlete,
+  onCall,
+  onEmail,
+  onDM,
+}: {
+  athlete: Athlete;
+  onCall: () => void;
+  onEmail: () => void;
+  onDM: () => void;
+}) {
   const avatarUrl = athlete.profile?.avatar_url || getPlaceholderAvatar(athlete.id);
   const name = athlete.profile?.full_name || 'Unknown Athlete';
 
@@ -192,21 +204,27 @@ function AthleteProfile({ athlete }: { athlete: Athlete }) {
 
         {/* Contact Actions */}
         <div className="grid grid-cols-3 gap-3">
-          {[
-            { icon: 'call', label: 'Call' },
-            { icon: 'mail', label: 'Email' },
-            { icon: 'chat', label: 'DM' },
-          ].map((action) => (
-            <button
-              key={action.label}
-              className="flex flex-col items-center justify-center gap-1 p-2 rounded-lg bg-[#363225] hover:bg-[#363225]/80 border border-[#433d28] transition-colors group"
-            >
-              <span className="material-symbols-outlined text-[#c3b998] group-hover:text-primary">
-                {action.icon}
-              </span>
-              <span className="text-[10px] uppercase font-bold text-[#c3b998]">{action.label}</span>
-            </button>
-          ))}
+          <button
+            onClick={onCall}
+            className="flex flex-col items-center justify-center gap-1 p-2 rounded-lg bg-[#363225] hover:bg-[#363225]/80 border border-[#433d28] transition-colors group"
+          >
+            <span className="material-symbols-outlined text-[#c3b998] group-hover:text-primary">call</span>
+            <span className="text-[10px] uppercase font-bold text-[#c3b998]">Call</span>
+          </button>
+          <button
+            onClick={onEmail}
+            className="flex flex-col items-center justify-center gap-1 p-2 rounded-lg bg-[#363225] hover:bg-[#363225]/80 border border-[#433d28] transition-colors group"
+          >
+            <span className="material-symbols-outlined text-[#c3b998] group-hover:text-primary">mail</span>
+            <span className="text-[10px] uppercase font-bold text-[#c3b998]">Email</span>
+          </button>
+          <button
+            onClick={onDM}
+            className="flex flex-col items-center justify-center gap-1 p-2 rounded-lg bg-[#363225] hover:bg-[#363225]/80 border border-[#433d28] transition-colors group"
+          >
+            <span className="material-symbols-outlined text-[#c3b998] group-hover:text-primary">chat</span>
+            <span className="text-[10px] uppercase font-bold text-[#c3b998]">DM</span>
+          </button>
         </div>
 
         {/* Verification Status */}
@@ -234,10 +252,12 @@ function AthleteProfile({ athlete }: { athlete: Athlete }) {
 
 export default function ProspectDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const athleteId = params.id as string;
 
   const { athlete, isLoading, error } = useAthlete(athleteId);
   const { shortlist, add, remove, isInShortlist, updateStatus } = useShortlist();
+  const [toast, setToast] = useState<string | null>(null);
 
   const shortlistItem = shortlist.find(item => item.athlete_id === athleteId);
   const isOnShortlist = isInShortlist(athleteId);
@@ -253,6 +273,41 @@ export default function ProspectDetailPage() {
 
   const handleStatusChange = async (newStatus: PipelineStatus) => {
     await updateStatus(athleteId, newStatus);
+  };
+
+  const showToast = (message: string) => {
+    setToast(message);
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  const handleCall = async () => {
+    const result = await logCommunication(athleteId, 'call', 'Phone call initiated');
+    if (result.error) {
+      showToast(`Error: ${result.error}`);
+    } else {
+      showToast('Call logged');
+    }
+  };
+
+  const handleEmail = async () => {
+    const emailResult = await getAthleteContactEmail(athleteId);
+    if (emailResult.email) {
+      window.open(`mailto:${emailResult.email}`);
+      await logCommunication(athleteId, 'email', `Email sent to ${emailResult.email}`);
+      showToast('Email opened & logged');
+    } else {
+      showToast('No email available for this athlete');
+    }
+  };
+
+  const handleDM = () => {
+    // Navigate to messages with the athlete's profile ID pre-filled
+    const profileId = athlete?.profile?.id;
+    if (profileId) {
+      router.push(`/messages?to=${profileId}`);
+    } else {
+      showToast('Cannot message: profile not found');
+    }
   };
 
   if (isLoading) return <LoadingSkeleton />;
@@ -276,7 +331,7 @@ export default function ProspectDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Athlete Profile */}
         <div className="lg:col-span-5 flex flex-col gap-6">
-          <AthleteProfile athlete={athlete} />
+          <AthleteProfile athlete={athlete} onCall={handleCall} onEmail={handleEmail} onDM={handleDM} />
 
           {/* Quick Stats */}
           <div className="bg-[#2a271d] rounded-xl border border-[#433d28] p-6">
@@ -468,6 +523,14 @@ export default function ProspectDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Toast Notification */}
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-50 bg-[#2a271d] border border-[#433d28] text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
+          <span className="material-symbols-outlined text-primary text-[20px]">info</span>
+          <span className="text-sm">{toast}</span>
+        </div>
+      )}
 
       <style jsx>{`
         ::-webkit-scrollbar {

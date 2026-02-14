@@ -388,6 +388,10 @@ export default function RecruiterPipelinePage() {
   const [positionFilter, setPositionFilter] = useState<string>('all');
   const [zoneFilter, setZoneFilter] = useState<string>('all');
 
+  // Drag and drop state
+  const [draggedAthleteId, setDraggedAthleteId] = useState<string | null>(null);
+  const [dragOverColumnId, setDragOverColumnId] = useState<string | null>(null);
+
   // Extract unique filter options from the full shortlist
   const filterOptions = useMemo(() => extractFilterOptions(shortlist), [shortlist]);
 
@@ -407,6 +411,37 @@ export default function RecruiterPipelinePage() {
 
   const handleStatusChange = async (athleteId: string, newStatus: PipelineStatus) => {
     await updateStatus(athleteId, newStatus);
+  };
+
+  const handleDragStart = (e: React.DragEvent, athleteId: string) => {
+    e.dataTransfer.setData("text/plain", athleteId);
+    e.dataTransfer.effectAllowed = "move";
+    setDraggedAthleteId(athleteId);
+  };
+
+  const handleDragOver = (e: React.DragEvent, columnId: string) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    setDragOverColumnId(columnId);
+  };
+
+  const handleDragLeave = () => {
+    setDragOverColumnId(null);
+  };
+
+  const handleDrop = async (e: React.DragEvent, columnStatus: PipelineStatus) => {
+    e.preventDefault();
+    const athleteId = e.dataTransfer.getData("text/plain");
+    setDraggedAthleteId(null);
+    setDragOverColumnId(null);
+    if (athleteId) {
+      await handleStatusChange(athleteId, columnStatus);
+    }
+  };
+
+  const handleDragEnd = () => {
+    setDraggedAthleteId(null);
+    setDragOverColumnId(null);
   };
 
   return (
@@ -521,7 +556,14 @@ export default function RecruiterPipelinePage() {
             {pipelineData.map((column) => (
               <div
                 key={column.id}
-                className="flex flex-col w-72 flex-shrink-0 bg-[#0a0a0a] rounded-xl border border-white/5 h-full relative overflow-hidden"
+                className={`flex flex-col w-72 flex-shrink-0 bg-[#0a0a0a] rounded-xl border h-full relative overflow-hidden transition-all ${
+                  dragOverColumnId === column.id
+                    ? 'border-primary/60 ring-2 ring-primary/30'
+                    : 'border-white/5'
+                }`}
+                onDragOver={(e) => handleDragOver(e, column.id)}
+                onDragLeave={handleDragLeave}
+                onDrop={(e) => handleDrop(e, column.id)}
               >
                 {/* Gold glow for Offered column */}
                 {column.id === 'offered' && (
@@ -541,12 +583,19 @@ export default function RecruiterPipelinePage() {
                 {/* Column Content */}
                 <div className="flex-1 overflow-y-auto p-2 flex flex-col gap-3 relative z-10" style={{ height: 'calc(100vh - 280px)' }}>
                   {column.prospects.map((prospect) => (
-                    <ProspectCardComponent
+                    <div
                       key={prospect.id}
-                      prospect={prospect}
-                      columnId={column.id}
-                      onStatusChange={handleStatusChange}
-                    />
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, prospect.athleteId)}
+                      onDragEnd={handleDragEnd}
+                      className={`transition-opacity ${draggedAthleteId === prospect.athleteId ? 'opacity-40' : 'opacity-100'}`}
+                    >
+                      <ProspectCardComponent
+                        prospect={prospect}
+                        columnId={column.id}
+                        onStatusChange={handleStatusChange}
+                      />
+                    </div>
                   ))}
                   {column.prospects.length === 0 && (
                     <div className="flex flex-col items-center justify-center py-8 text-gray-600">

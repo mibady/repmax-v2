@@ -54,6 +54,11 @@ interface UseCommunicationLogsReturn {
   setDateFilter: (dateFrom: string, dateTo: string) => void;
   goToPage: (page: number) => void;
   refresh: () => void;
+  logCommunication: (
+    athleteId: string,
+    commType: "call" | "visit" | "email" | "message",
+    summary: string
+  ) => Promise<{ success?: boolean; error?: string }>;
 }
 
 export function useCommunicationLogs(): UseCommunicationLogsReturn {
@@ -116,7 +121,15 @@ export function useCommunicationLogs(): UseCommunicationLogsReturn {
     } finally {
       setIsLoading(false);
     }
-  }, [pagination.page, pagination.limit, filters.type, filters.search, filters.staff, filters.dateFrom, filters.dateTo]);
+  }, [
+    pagination.page,
+    pagination.limit,
+    filters.type,
+    filters.search,
+    filters.staff,
+    filters.dateFrom,
+    filters.dateTo,
+  ]);
 
   useEffect(() => {
     fetchLogs();
@@ -150,6 +163,34 @@ export function useCommunicationLogs(): UseCommunicationLogsReturn {
     fetchLogs();
   }, [fetchLogs]);
 
+  const logCommunication = useCallback(
+    async (
+      athleteId: string,
+      commType: "call" | "visit" | "email" | "message",
+      summary: string
+    ) => {
+      try {
+        const res = await fetch("/api/recruiting/communications", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            athlete_id: athleteId,
+            comm_type: commType,
+            summary,
+          }),
+        });
+        const result = await res.json();
+        if (!res.ok)
+          return { error: result.error || "Failed to log communication" };
+        await fetchLogs();
+        return { success: true };
+      } catch {
+        return { error: "Failed to log communication" };
+      }
+    },
+    [fetchLogs]
+  );
+
   return {
     logs,
     staffMembers,
@@ -163,5 +204,6 @@ export function useCommunicationLogs(): UseCommunicationLogsReturn {
     setDateFilter,
     goToPage,
     refresh,
+    logCommunication,
   };
 }

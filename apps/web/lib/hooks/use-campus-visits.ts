@@ -13,7 +13,7 @@ export interface CampusVisit {
   highSchool: string;
   state: string;
   visitType: "official" | "unofficial";
-  status: "confirmed" | "pending";
+  status: "confirmed" | "pending" | "cancelled";
   date: string;
   time: string;
   details: string;
@@ -43,6 +43,24 @@ interface UseCampusVisitsReturn {
   error: Error | null;
   refetch: () => Promise<void>;
   getEventsForDay: (day: number) => CalendarEvent[];
+  createVisit: (data: {
+    athlete_id: string;
+    visit_date: string;
+    visit_type: "official" | "unofficial";
+    visit_time?: string;
+    notes?: string;
+  }) => Promise<{ success?: boolean; error?: string }>;
+  updateVisit: (
+    id: string,
+    data: {
+      status?: "confirmed" | "pending" | "cancelled";
+      visit_date?: string;
+      visit_time?: string;
+      visit_type?: "official" | "unofficial";
+      notes?: string;
+    }
+  ) => Promise<{ success?: boolean; error?: string }>;
+  cancelVisit: (id: string) => Promise<{ success?: boolean; error?: string }>;
 }
 
 const defaultStats: VisitStats = {
@@ -92,6 +110,67 @@ export function useCampusVisits(): UseCampusVisitsReturn {
     [calendarEvents]
   );
 
+  const createVisit = useCallback(
+    async (data: {
+      athlete_id: string;
+      visit_date: string;
+      visit_type: "official" | "unofficial";
+      visit_time?: string;
+      notes?: string;
+    }) => {
+      try {
+        const res = await fetch("/api/recruiting/visits", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        const result = await res.json();
+        if (!res.ok) return { error: result.error || "Failed to create visit" };
+        await fetchVisits();
+        return { success: true };
+      } catch {
+        return { error: "Failed to create visit" };
+      }
+    },
+    [fetchVisits]
+  );
+
+  const updateVisit = useCallback(
+    async (
+      id: string,
+      data: {
+        status?: "confirmed" | "pending" | "cancelled";
+        visit_date?: string;
+        visit_time?: string;
+        visit_type?: "official" | "unofficial";
+        notes?: string;
+      }
+    ) => {
+      try {
+        const res = await fetch("/api/recruiting/visits", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id, ...data }),
+        });
+        const result = await res.json();
+        if (!res.ok)
+          return { error: result.error || "Failed to update visit" };
+        await fetchVisits();
+        return { success: true };
+      } catch {
+        return { error: "Failed to update visit" };
+      }
+    },
+    [fetchVisits]
+  );
+
+  const cancelVisit = useCallback(
+    async (id: string) => {
+      return updateVisit(id, { status: "cancelled" });
+    },
+    [updateVisit]
+  );
+
   return {
     visits,
     stats,
@@ -100,5 +179,8 @@ export function useCampusVisits(): UseCampusVisitsReturn {
     error,
     refetch: fetchVisits,
     getEventsForDay,
+    createVisit,
+    updateVisit,
+    cancelVisit,
   };
 }

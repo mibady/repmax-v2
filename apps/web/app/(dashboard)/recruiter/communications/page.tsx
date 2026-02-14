@@ -40,6 +40,7 @@ export default function CommunicationsPage() {
     setStaffFilter,
     setDateFilter,
     goToPage,
+    logCommunication,
   } = useCommunicationLogs();
 
   const [searchInput, setSearchInput] = useState('');
@@ -318,33 +319,58 @@ export default function CommunicationsPage() {
 
       {/* Log Communication Modal */}
       {isModalOpen && (
-        <LogCommunicationModal onClose={() => setIsModalOpen(false)} />
+        <LogCommunicationModal
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={async (athleteId, commType, summary) => {
+            const result = await logCommunication(athleteId, commType, summary);
+            return result;
+          }}
+        />
       )}
     </div>
   );
 }
 
-function LogCommunicationModal({ onClose }: { onClose: () => void }) {
+function LogCommunicationModal({
+  onClose,
+  onSubmit,
+}: {
+  onClose: () => void;
+  onSubmit: (
+    athleteId: string,
+    commType: 'call' | 'email' | 'visit' | 'message',
+    summary: string
+  ) => Promise<{ success?: boolean; error?: string }>;
+}) {
   const [formData, setFormData] = useState({
-    prospectName: '',
+    athleteId: '',
     type: 'call' as 'call' | 'email' | 'visit' | 'message',
     summary: '',
     date: new Date().toISOString().split('T')[0],
     time: new Date().toTimeString().slice(0, 5),
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.athleteId.trim()) {
+      setSubmitError('Athlete ID is required');
+      return;
+    }
     setIsSubmitting(true);
+    setSubmitError('');
 
-    // Simulate API call - in production this would create a message/communication record
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    const summaryText = formData.summary || `${formData.type} logged on ${formData.date} at ${formData.time}`;
+    const result = await onSubmit(formData.athleteId, formData.type, summaryText);
 
-    // For now, just close the modal - a real implementation would call an API endpoint
-    alert(`Communication logged: ${formData.type} with ${formData.prospectName}`);
-    setIsSubmitting(false);
-    onClose();
+    if (result.error) {
+      setSubmitError(result.error);
+      setIsSubmitting(false);
+    } else {
+      setIsSubmitting(false);
+      onClose();
+    }
   };
 
   return (
@@ -370,21 +396,24 @@ function LogCommunicationModal({ onClose }: { onClose: () => void }) {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {/* Prospect Name */}
+          {/* Athlete ID */}
           <div>
             <label className="block text-xs font-medium text-[#c9bc92] mb-1.5">
-              Prospect Name
+              Athlete ID
             </label>
             <input
               type="text"
-              value={formData.prospectName}
+              value={formData.athleteId}
               onChange={(e) =>
-                setFormData((prev) => ({ ...prev, prospectName: e.target.value }))
+                setFormData((prev) => ({ ...prev, athleteId: e.target.value }))
               }
-              placeholder="Enter prospect name"
+              placeholder="Enter athlete UUID"
               required
               className="w-full bg-[#0F0F0F] border border-[#333] rounded-lg h-10 px-3 text-sm text-white placeholder-[#555] focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37]"
             />
+            {submitError && (
+              <p className="text-red-400 text-xs mt-1">{submitError}</p>
+            )}
           </div>
 
           {/* Type */}

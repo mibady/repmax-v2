@@ -8,7 +8,7 @@ import { useState } from 'react';
 const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 export default function CampusVisitsPage() {
-  const { visits, stats, isLoading, error, getEventsForDay } = useCampusVisits();
+  const { visits, stats, isLoading, error, getEventsForDay, updateVisit, cancelVisit } = useCampusVisits();
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   // Calendar calculations
@@ -322,11 +322,28 @@ export default function CampusVisitsPage() {
                       <div className="mt-4 pt-3 border-t border-white/5 flex gap-2">
                         {visit.status === 'pending' ? (
                           <>
-                            <button className="flex-1 rounded bg-primary/10 py-1.5 text-xs font-medium text-primary hover:bg-primary/20 transition">
+                            <button
+                              onClick={async () => {
+                                const result = await updateVisit(visit.id, { status: 'confirmed' });
+                                if (result.error) {
+                                  alert(result.error);
+                                }
+                              }}
+                              className="flex-1 rounded bg-primary/10 py-1.5 text-xs font-medium text-primary hover:bg-primary/20 transition"
+                            >
                               Confirm Visit
                             </button>
-                            <button className="rounded bg-white/5 px-3 py-1.5 text-[#A1A1AA] hover:text-white hover:bg-white/10 transition">
-                              <span className="material-symbols-outlined text-[16px]">edit</span>
+                            <button
+                              onClick={async () => {
+                                const result = await cancelVisit(visit.id);
+                                if (result.error) {
+                                  alert(result.error);
+                                }
+                              }}
+                              className="rounded bg-white/5 px-3 py-1.5 text-[#A1A1AA] hover:text-white hover:bg-white/10 transition"
+                              title="Cancel Visit"
+                            >
+                              <span className="material-symbols-outlined text-[16px]">close</span>
                             </button>
                           </>
                         ) : (
@@ -337,8 +354,17 @@ export default function CampusVisitsPage() {
                             >
                               View Profile
                             </Link>
-                            <button className="rounded bg-white/5 px-3 py-1.5 text-[#A1A1AA] hover:text-white hover:bg-white/10 transition">
-                              <span className="material-symbols-outlined text-[16px]">more_horiz</span>
+                            <button
+                              onClick={async () => {
+                                const result = await cancelVisit(visit.id);
+                                if (result.error) {
+                                  alert(result.error);
+                                }
+                              }}
+                              className="rounded bg-white/5 px-3 py-1.5 text-[#A1A1AA] hover:text-white hover:bg-white/10 transition"
+                              title="Cancel Visit"
+                            >
+                              <span className="material-symbols-outlined text-[16px]">close</span>
                             </button>
                           </>
                         )}
