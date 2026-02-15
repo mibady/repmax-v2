@@ -23,15 +23,15 @@
       { "id": "NGE-39", "title": "Athlete profile card + public view" },
       { "id": "NGE-40", "title": "Messaging system" },
       { "id": "NGE-41", "title": "Zone intelligence map + widgets" },
-      { "id": "NGE-42", "title": "Database schema (4 migrations)" }
+      { "id": "NGE-42", "title": "Database schema (4 migrations)" },
+      { "id": "NGE-46", "title": "Recruiter API sprint (7 routes)", "phase": 2 },
+      { "id": "NGE-47", "title": "Wire recruiter frontend", "phase": 2 },
+      { "id": "NGE-48", "title": "MCP connector routes", "phase": 3 },
+      { "id": "NGE-43", "title": "Import 203 JotForm prospects", "phase": 0 },
+      { "id": "NGE-44", "title": "[BUG] Coach dashboard API", "phase": 1 },
+      { "id": "NGE-45", "title": "[BUG] Athlete dashboard column + star rating", "phase": 1 }
     ],
     "todo": [
-      { "id": "NGE-43", "title": "Import 203 JotForm prospects", "phase": 0, "priority": "Urgent" },
-      { "id": "NGE-44", "title": "[BUG] Coach dashboard API", "phase": 1, "priority": "Urgent" },
-      { "id": "NGE-45", "title": "[BUG] Athlete dashboard column + star rating", "phase": 1, "priority": "Urgent" },
-      { "id": "NGE-46", "title": "Recruiter API sprint (7 routes)", "phase": 2, "priority": "High" },
-      { "id": "NGE-47", "title": "Wire recruiter frontend", "phase": 2, "priority": "High" },
-      { "id": "NGE-48", "title": "MCP connector routes", "phase": 3, "priority": "Medium", "status": "Done" },
       { "id": "NGE-49", "title": "Testing sprint (70% coverage)", "phase": 4, "priority": "Medium" },
       { "id": "NGE-50", "title": "Coach dashboard backend", "phase": 5, "priority": "Medium" },
       { "id": "NGE-51", "title": "Parent dashboard backend", "phase": 5, "priority": "Low" },
@@ -44,8 +44,8 @@
   },
   "summary": {
     "total": 22,
-    "done": 9,
-    "todo": 13
+    "done": 14,
+    "todo": 8
   },
-  "createdAt": "2026-02-14"
+  "updatedAt": "2026-02-15"
 }
