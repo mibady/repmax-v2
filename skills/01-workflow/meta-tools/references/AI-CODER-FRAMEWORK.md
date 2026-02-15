@@ -85,9 +85,9 @@ Analyze the authentication flow and identify issues:
 
 ---
 
-### Pattern 03: Sub-Agent Pattern (Specialized Execution)
+### Pattern 03: Subagent Pattern (Specialized Execution)
 
-**Description:** A primary agent deploys one or more specialized sub-agents to handle focused tasks, often in parallel.
+**Description:** A primary agent deploys one or more specialized subagents to handle focused tasks, often in parallel.
 
 **When to Use:**
 - ✅ Need to specialize (assign focused expertise)
@@ -97,7 +97,7 @@ Analyze the authentication flow and identify issues:
 
 **Implementation:**
 ```typescript
-// Orchestrator coordinates specialized sub-agents
+// Orchestrator coordinates specialized subagents
 class OrchestratorAgent extends BaseAgent {
   private ragAgent: RAGAgent;      // Knowledge retrieval
   private mcpAgent: MCPAgent;      // Tool execution
@@ -190,8 +190,8 @@ START: New Task/Feature/Project
 │      (Create custom command in .claude/commands/)
 │
 ├─ Need specialized agents or parallel execution?
-│  └─ YES → Pattern 03: Sub-Agent Pattern
-│      (Build orchestrator with specialized sub-agents)
+│  └─ YES → Pattern 03: Subagent Pattern
+│      (Build orchestrator with specialized subagents)
 │
 ├─ Need to integrate 3+ external services?
 │  └─ YES → Pattern 04: MCP Wrapper
@@ -259,10 +259,10 @@ class RAGAgent extends BaseAgent {
 **Use when:** You need to coordinate multiple agents or handle complex multi-step workflows.
 
 **Characteristics:**
-- ✅ Manages OTHER agents as sub-agents
+- ✅ Manages OTHER agents as subagents
 - ✅ Decides which agent to call and when
 - ✅ Combines results from multiple agents
-- ✅ Does NOT directly call LLMs (delegates to sub-agents)
+- ✅ Does NOT directly call LLMs (delegates to subagents)
 
 **Examples:**
 ```typescript
@@ -301,11 +301,11 @@ class MicroSDLCOrchestrator extends BaseAgent {
 | Aspect              | BaseAgent                  | Orchestrator Agent                   |
 |---------------------|----------------------------|--------------------------------------|
 | **Purpose**         | Execute one specific task  | Coordinate multiple agents/tasks     |
-| **LLM Calls**       | Makes LLM calls directly   | Delegates to sub-agents              |
+| **LLM Calls**       | Makes LLM calls directly   | Delegates to subagents              |
 | **Complexity**      | Simple, focused            | Complex, multi-step                  |
 | **Example**         | ChatAgent, RAGAgent        | SdrAgent, MicroSDLC                  |
 | **Inheritance**     | `extends BaseAgent`        | `extends BaseAgent` (or custom)      |
-| **Sub-components**  | None                       | Has multiple sub-agents              |
+| **Sub-components**  | None                       | Has multiple subagents              |
 | **Decision logic**  | Minimal                    | Significant (routing, coordination)  |
 
 ---
@@ -314,11 +314,11 @@ class MicroSDLCOrchestrator extends BaseAgent {
 
 ### 4.1 Multi-Agent Orchestration Pattern
 
-**Core Concept:** Move beyond a single agent performing a single task. Use a coordinator agent (orchestrator) that manages a team of specialized sub-agents to handle complex, multi-step workflows.
+**Core Concept:** Move beyond a single agent performing a single task. Use a coordinator agent (orchestrator) that manages a team of specialized subagents to handle complex, multi-step workflows.
 
 **Orchestrator Responsibilities:**
 
-1. **Delegation:** Receives initial prompt and decides which specialized sub-agent to call first
+1. **Delegation:** Receives initial prompt and decides which specialized subagent to call first
 2. **Validation & Transformation:** Validates output against predefined data contracts
 3. **Data Flow Management:** Transforms Agent A's output to fit Agent B's input schema
 4. **Aggregation:** Collects final outputs and synthesizes them into a coherent response
@@ -742,7 +742,7 @@ async function onUserTriggersHandoff(taskId: string) {
 - `template-sanity-cms`: Headless CMS integration
 - `templates-liveblocks-starter-kit`: Real-time collaboration
 
-**🔸 Pattern 03 - Sub-Agents (2 templates):**
+**🔸 Pattern 03 - Subagents (2 templates):**
 - `template-ai-sdk-image-generator`: Multi-provider image AI
 - `template-cron-jobs`: Automation and background jobs
 
@@ -848,7 +848,7 @@ Before implementing any feature, verify alignment:
 **Agent Type:** [BaseAgent / Orchestrator]
 
 **If Orchestrator:**
-- Sub-agents required: [List specialized agents]
+- Subagents required: [List specialized agents]
 - Handoff sequence: [Describe agent-to-agent workflow]
 - Data contracts: [Link to schema definitions]
 

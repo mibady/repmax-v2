@@ -159,7 +159,7 @@ project-name/
 
 **Actions:**
 1. Read the Pattern Selection Decision Tree
-2. Determine if this is Pattern 01 (Ad Hoc), 02 (Reusable Prompt), 03 (Sub-Agent), 04 (MCP Wrapper), or 05 (Full Application)
+2. Determine if this is Pattern 01 (Ad Hoc), 02 (Reusable Prompt), 03 (Subagent), 04 (MCP Wrapper), or 05 (Full Application)
 3. Verify pattern evolution triggers (e.g., 3+ repetitions → Pattern 02)
 4. If Pattern 03-05, determine if BaseAgent or Orchestrator is needed
 5. If multi-agent (Pattern 03-05), define agent handoff strategy
@@ -171,7 +171,7 @@ project-name/
 
 # Good: Select pattern first
 ✅ Read AI-CODER-FRAMEWORK.md
-✅ Determine: This is Pattern 03 (Sub-Agent) - need RAGAgent + MCPAgent
+✅ Determine: This is Pattern 03 (Subagent) - need RAGAgent + MCPAgent
 ✅ Architecture: Orchestrator pattern with strict data contracts
 ✅ Now proceed to template selection...
 ```

@@ -28,7 +28,7 @@
 ```
 Pattern 01: Ad Hoc Prompts         → Direct CLI interaction, no code
 Pattern 02: Reusable Prompts       → Custom commands (.md/.toml files)
-Pattern 03: Sub-Agent Pattern      → Specialized agent execution
+Pattern 03: Subagent Pattern      → Specialized agent execution
 Pattern 04: Multi-Agent Systems    → Complex orchestration with MCP
 Pattern 05: Production Platforms   → Full-scale production applications
 ```
@@ -718,7 +718,7 @@ Do you need organization/team features?
 ```
 **Plus ONE service SDK:** Supabase, Upstash, Vercel Blob, or Sanity
 
-#### Pattern 03: Sub-Agent Pattern
+#### Pattern 03: Subagent Pattern
 ```json
 {
   "@ag-ui/client": "latest",

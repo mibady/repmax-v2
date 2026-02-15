@@ -107,14 +107,14 @@ Codified task repeated 3+ times.
 Output only the final code block. No explanation.
 ```
 
-### Pattern 03: Sub-Agent (Specialization)
+### Pattern 03: Subagent (Specialization)
 
 Orchestrator delegates to specialized agents.
 
 ```markdown
 # Analyze Log File
 
-**Purpose:** Coordinate sub-agents for log analysis.
+**Purpose:** Coordinate subagents for log analysis.
 
 **Variables:**
 - LOG_FILE_PATH: (dynamic)

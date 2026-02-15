@@ -1,0 +1,51 @@
+{
+  "project": {
+    "id": "c916e9a6-0a09-4955-a879-eb1d73eb48f5",
+    "name": "RepMax v2",
+    "url": "https://linear.app/ngeniuspro/project/repmax-v2-2496ff8f1959",
+    "team": "Ngeniuspro",
+    "teamId": "b86e33ba-cfa5-478b-989a-59dfecc4e8f4"
+  },
+  "milestones": {
+    "phase0": { "id": "f79f0efb-c3b0-426e-b6f6-6bce67635671", "name": "Phase 0: Data Import" },
+    "phase1": { "id": "637cf70d-d170-4afe-9d27-ef7cdf37702d", "name": "Phase 1: Bug Fixes" },
+    "phase2": { "id": "231e5a5e-400f-4ca4-a33d-d71357cc6a29", "name": "Phase 2: Recruiter API Sprint" },
+    "phase3": { "id": "3c6b6e0c-99a2-4550-9932-b462bb3f76f7", "name": "Phase 3: MCP Connectors" },
+    "phase4": { "id": "96f3ab44-1e3e-4e1b-b044-ad863375286b", "name": "Phase 4: Testing Sprint" },
+    "phase56": { "id": "da09f418-7a18-4a31-89c4-9c96e1fcfb32", "name": "Phase 5-6: Secondary Roles & Polish" }
+  },
+  "issues": {
+    "completed": [
+      { "id": "NGE-35", "title": "Auth flow" },
+      { "id": "NGE-36", "title": "Role-based dashboards" },
+      { "id": "NGE-37", "title": "Stitch conversion (85 screens)" },
+      { "id": "NGE-38", "title": "Landing + pricing pages" },
+      { "id": "NGE-39", "title": "Athlete profile card + public view" },
+      { "id": "NGE-40", "title": "Messaging system" },
+      { "id": "NGE-41", "title": "Zone intelligence map + widgets" },
+      { "id": "NGE-42", "title": "Database schema (4 migrations)" }
+    ],
+    "todo": [
+      { "id": "NGE-43", "title": "Import 203 JotForm prospects", "phase": 0, "priority": "Urgent" },
+      { "id": "NGE-44", "title": "[BUG] Coach dashboard API", "phase": 1, "priority": "Urgent" },
+      { "id": "NGE-45", "title": "[BUG] Athlete dashboard column + star rating", "phase": 1, "priority": "Urgent" },
+      { "id": "NGE-46", "title": "Recruiter API sprint (7 routes)", "phase": 2, "priority": "High" },
+      { "id": "NGE-47", "title": "Wire recruiter frontend", "phase": 2, "priority": "High" },
+      { "id": "NGE-48", "title": "MCP connector routes", "phase": 3, "priority": "Medium", "status": "Done" },
+      { "id": "NGE-49", "title": "Testing sprint (70% coverage)", "phase": 4, "priority": "Medium" },
+      { "id": "NGE-50", "title": "Coach dashboard backend", "phase": 5, "priority": "Medium" },
+      { "id": "NGE-51", "title": "Parent dashboard backend", "phase": 5, "priority": "Low" },
+      { "id": "NGE-52", "title": "Club dashboard backend", "phase": 5, "priority": "Low" },
+      { "id": "NGE-53", "title": "Admin panel", "phase": 5, "priority": "Medium" },
+      { "id": "NGE-54", "title": "Stripe subscription integration", "phase": 5, "priority": "High" },
+      { "id": "NGE-55", "title": "Mobile app (Expo)", "phase": 5, "priority": "High" },
+      { "id": "NGE-56", "title": "Polish: rankings, notifications, etc.", "phase": 6, "priority": "Low" }
+    ]
+  },
+  "summary": {
+    "total": 22,
+    "done": 9,
+    "todo": 13
+  },
+  "createdAt": "2026-02-14"
+}

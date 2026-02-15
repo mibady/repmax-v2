@@ -336,12 +336,12 @@ Different patterns require different milestone structures:
 
 ---
 
-#### Pattern 03: Sub-Agent Pattern
+#### Pattern 03: Subagent Pattern
 **Typical Milestones:**
 - M1: Planning - Agent Architecture
 - M2: Building - Primary Agent
-- M3: Building - Sub-Agent 1
-- M4: Building - Sub-Agent 2
+- M3: Building - Subagent 1
+- M4: Building - Subagent 2
 - M5: Building - Agent Handoff
 - M6: Testing - Agent Integration
 

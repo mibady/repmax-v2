@@ -404,7 +404,7 @@ export class SarahOrchestrator {
   private model = openai('gpt-4-turbo');
 
   async route(message: string, context: any) {
-    // Determine which sub-agent to use
+    // Determine which subagent to use
     const routing = await generateText({
       model: this.model,
       messages: [
@@ -418,7 +418,7 @@ export class SarahOrchestrator {
 
     const category = routing.text.toLowerCase();
 
-    // Route to appropriate sub-agent
+    // Route to appropriate subagent
     switch (category) {
       case 'logistics':
         return this.logisticsAgent(message, context);
@@ -461,7 +461,7 @@ export class SarahOrchestrator {
     });
   }
 
-  // ... other sub-agents
+  // ... other subagents
 }
 ```
 

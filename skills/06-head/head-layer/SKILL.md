@@ -381,7 +381,7 @@ export function CompletionComponent() {
 
 ## Agent Patterns
 
-### Pattern 03: Sub-Agent (Specialized)
+### Pattern 03: Subagent (Specialized)
 ```typescript
 // lib/agents/code-reviewer.ts
 export async function reviewCode(code: string) {

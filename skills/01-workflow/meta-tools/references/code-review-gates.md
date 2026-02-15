@@ -319,8 +319,8 @@ Create this file in your project root to enforce review gates with AI assistants
 
 Before moving to next pattern:
 - ✅ Pattern 01 → 02: Review ad-hoc code before templating
-- ✅ Pattern 02 → 03: Review reusable prompt before sub-agents
-- ✅ Pattern 03 → 04: Review sub-agents before MCP wrapper
+- ✅ Pattern 02 → 03: Review reusable prompt before subagents
+- ✅ Pattern 03 → 04: Review subagents before MCP wrapper
 - ✅ Pattern 04 → 05: Review MCP wrapper before full app
 
 ## Development Workflow
@@ -357,7 +357,7 @@ Pattern 02: Reusable Prompt
     ↓
     ✅ No major issues
     ↓
-Pattern 03: Sub-Agent Pattern
+Pattern 03: Subagent Pattern
     ↓
 [REVIEW GATE] ← Comprehensive review
     ↓

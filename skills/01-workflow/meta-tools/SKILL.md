@@ -229,7 +229,7 @@ Before implementation, complete:
 | --------------- | ------------------------- | ---------- |
 | 01: Ad Hoc      | Quick one-off tasks       | None       |
 | 02: Reusable    | Repeated tasks            | Low        |
-| 03: Sub-Agent   | Specialized AI task       | Medium     |
+| 03: Subagent   | Specialized AI task       | Medium     |
 | 04: MCP Wrapper | Multi-service integration | High       |
 | 05: Full App    | Production application    | Very High  |
 
@@ -283,7 +283,7 @@ Select one:
 
 - [ ] Pattern 01: Ad Hoc — Quick one-off tasks
 - [ ] Pattern 02: Reusable — Repeated tasks with templates
-- [ ] Pattern 03: Sub-Agent — Specialized AI task processing
+- [ ] Pattern 03: Subagent — Specialized AI task processing
 - [ ] Pattern 04: MCP Wrapper — Multi-service integration
 - [ ] Pattern 05: Full Application — Production-grade app
 
@@ -1114,7 +1114,7 @@ find . -name "*.ts" -o -name "*.tsx" | xargs wc -l
 ```typescript
 // Look for indicators:
 
-// Pattern 03 (Sub-Agent)
+// Pattern 03 (Subagent)
 - Single AI function
 - generateText/streamText usage
 - Limited tool calling
