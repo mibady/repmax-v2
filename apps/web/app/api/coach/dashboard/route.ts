@@ -69,32 +69,93 @@ export async function GET() {
       .eq("coach_id", coach.id)
       .order("created_at", { ascending: false });
 
+    // Get committed athlete IDs from offers table
+    const athleteIds = (shortlistData || [])
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .map((s: any) => s.athlete?.id)
+      .filter(Boolean);
+
+    let committedAthleteIds = new Set<string>();
+    if (athleteIds.length > 0) {
+      const { data: committedOffers } = await supabase
+        .from("offers")
+        .select("athlete_id")
+        .in("athlete_id", athleteIds)
+        .eq("committed", true);
+
+      committedAthleteIds = new Set(
+        (committedOffers || []).map((o) => o.athlete_id)
+      );
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const roster = (shortlistData || []).map((s: any) => {
       const a = s.athlete;
       const p = Array.isArray(a?.profile) ? a.profile[0] : a?.profile;
+      const athleteId = a?.id || s.id;
       return {
-        id: a?.id || s.id,
+        id: athleteId,
         name: p?.full_name || "Unknown",
         position: a?.primary_position || "ATH",
         classYear: a?.class_year || 2026,
         gpa: a?.gpa ? Number(a.gpa) : null,
         offers: a?.offers_count || 0,
-        priority: s.priority || "medium",
-        notes: s.notes,
+        status: committedAthleteIds.has(athleteId) ? "committed" : "active",
         avatarUrl: p?.avatar_url || null,
-        addedAt: s.created_at,
       };
     });
 
-    // Get unread messages count
-    const { count: messagesUnread } = await supabase
-      .from("messages")
-      .select("*", { count: "exact", head: true })
-      .eq("recipient_id", profile.id)
-      .eq("read", false);
+    // Get coach tasks
+    const { data: taskData } = await supabase
+      .from("coach_tasks")
+      .select(
+        `
+        id,
+        title,
+        description,
+        due_date,
+        priority,
+        status,
+        athlete_id,
+        created_at
+      `
+      )
+      .eq("coach_id", coach.id)
+      .order("created_at", { ascending: false });
 
-    // Get recent messages (last 10)
+    // Resolve athlete names for tasks that reference an athlete
+    const taskAthleteIds = (taskData || [])
+      .map((t) => t.athlete_id)
+      .filter(Boolean) as string[];
+
+    let athleteNameMap: Record<string, string> = {};
+    if (taskAthleteIds.length > 0) {
+      const { data: taskAthletes } = await supabase
+        .from("athletes")
+        .select("id, profile:profiles!inner(full_name)")
+        .in("id", taskAthleteIds);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      athleteNameMap = (taskAthletes || []).reduce((map: Record<string, string>, a: any) => {
+        const p = Array.isArray(a.profile) ? a.profile[0] : a.profile;
+        map[a.id] = p?.full_name || "Unknown";
+        return map;
+      }, {});
+    }
+
+    const tasks = (taskData || []).map((t) => ({
+      id: t.id,
+      title: t.title,
+      description: t.description,
+      dueDate: t.due_date,
+      priority: t.priority,
+      status: t.status,
+      athleteId: t.athlete_id,
+      athleteName: t.athlete_id ? (athleteNameMap[t.athlete_id] || null) : null,
+      createdAt: t.created_at,
+    }));
+
+    // Get recent messages as activity
     const { data: recentMessages } = await supabase
       .from("messages")
       .select(
@@ -127,11 +188,15 @@ export async function GET() {
     });
 
     // Calculate metrics
+    const committedCount = roster.filter((r) => r.status === "committed").length;
+    const pendingTaskCount = tasks.filter((t) => t.status === "pending" || t.status === "in_progress").length;
+
     const metrics = {
       totalAthletes: roster.length,
-      highPriority: roster.filter((r) => r.priority === "high" || r.priority === "top").length,
+      activeAthletes: roster.length - committedCount,
+      committedAthletes: committedCount,
+      pendingTasks: pendingTaskCount,
       totalOffers: roster.reduce((sum, r) => sum + r.offers, 0),
-      messagesUnread: messagesUnread || 0,
     };
 
     return NextResponse.json({
@@ -144,6 +209,7 @@ export async function GET() {
         avatarUrl: profile.avatar_url,
       },
       roster,
+      tasks,
       activity,
       metrics,
     });
