@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import type { Program } from "@/lib/data/zone-data";
+import { getCached, setCache } from "@/lib/utils/mcp-cache";
 
-// Programs data from MCP
+// Static programs data — no DB table for HS football programs
 const ALL_PROGRAMS: Program[] = [
   // Texas
   { id: "7c644cd5-ea93-49c9-85f4-9345e201dec2", team_name: "North Shore", city: "Houston", state: "TX", zone_code: "SOUTHWEST", current_rating: 891.164, state_rank: 1, current_record: "14-2", d1_prospect_count: 159 },
@@ -33,6 +34,10 @@ export async function GET(request: NextRequest) {
   const zone = searchParams.get("zone");
   const limit = parseInt(searchParams.get("limit") || "20", 10);
 
+  const cacheKey = `programs-${state || "all"}-${zone || "all"}-${limit}`;
+  const cached = getCached<{ programs: Program[]; total: number }>(cacheKey);
+  if (cached) return NextResponse.json(cached);
+
   let filtered = [...ALL_PROGRAMS];
 
   if (state) {
@@ -46,8 +51,11 @@ export async function GET(request: NextRequest) {
   // Sort by rating descending
   filtered.sort((a, b) => b.current_rating - a.current_rating);
 
-  return NextResponse.json({
+  const result = {
     programs: filtered.slice(0, limit),
     total: filtered.length,
-  });
+  };
+
+  setCache(cacheKey, result);
+  return NextResponse.json(result);
 }

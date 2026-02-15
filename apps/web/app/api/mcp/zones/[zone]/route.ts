@@ -1,81 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import type { ZoneInfo, Program, Prospect, ZoneCode } from "@/lib/data/zone-data";
-import { getPlaceholderImage } from "@/lib/data/zone-data";
+import { createClient } from "@/lib/supabase/server";
+import type { ZoneCode, ZoneInfo, Program, Prospect } from "@/lib/data/zone-data";
+import {
+  DB_ZONE_TO_UI,
+  UI_ZONE_TO_DB,
+  ZONE_METADATA,
+  ZONE_DISPLAY_NAMES,
+  getPlaceholderImage,
+} from "@/lib/data/zone-data";
+import { getCached, setCache } from "@/lib/utils/mcp-cache";
 
 const zoneSchema = z.enum(["MIDWEST", "NORTHEAST", "PLAINS", "SOUTHEAST", "SOUTHWEST", "WEST"]);
 
-// Zone data
-const ZONES: Record<ZoneCode, ZoneInfo> = {
-  MIDWEST: {
-    zone_code: "MIDWEST",
-    zone_name: "Midwest",
-    states: ["OH", "MI", "IL", "IN", "WI", "MN", "IA"],
-    metro_areas: ["Cleveland", "Detroit", "Chicago", "Indianapolis", "Columbus", "Minneapolis", "Cincinnati"],
-    description: "Big Ten territory - strong football tradition with consistent talent production",
-    total_recruits: 87,
-    blue_chip_count: 87,
-    pending_alerts: 0,
-    upcoming_events_30d: 0,
-  },
-  NORTHEAST: {
-    zone_code: "NORTHEAST",
-    zone_name: "Northeast",
-    states: ["PA", "MD", "NJ", "NY", "VA", "MA", "CT", "DE", "DC", "WV", "ME", "NH", "VT", "RI"],
-    metro_areas: ["Philadelphia", "New York", "Baltimore", "Washington DC", "Boston", "Pittsburgh", "Newark"],
-    description: "Mid-Atlantic and New England - ACC/Big Ten overlap with strong academic focus",
-    total_recruits: 73,
-    blue_chip_count: 73,
-    pending_alerts: 0,
-    upcoming_events_30d: 0,
-  },
-  PLAINS: {
-    zone_code: "PLAINS",
-    zone_name: "Plains",
-    states: ["NE", "KS", "MO", "AR"],
-    metro_areas: ["Kansas City", "St. Louis", "Little Rock", "Omaha", "Wichita"],
-    description: "Central recruiting - Big 12/SEC border region with underrecruited talent",
-    total_recruits: 25,
-    blue_chip_count: 25,
-    pending_alerts: 0,
-    upcoming_events_30d: 0,
-  },
-  SOUTHEAST: {
-    zone_code: "SOUTHEAST",
-    zone_name: "Southeast",
-    states: ["FL", "GA", "AL", "SC", "NC", "TN", "MS"],
-    metro_areas: ["Miami", "Atlanta", "Birmingham", "Charlotte", "Nashville", "Jacksonville", "Tampa"],
-    description: "SEC country - elite talent region with strongest high school football tradition",
-    total_recruits: 281,
-    blue_chip_count: 281,
-    pending_alerts: 0,
-    upcoming_events_30d: 2,
-  },
-  SOUTHWEST: {
-    zone_code: "SOUTHWEST",
-    zone_name: "Southwest",
-    states: ["TX", "OK", "AZ", "NM", "LA"],
-    metro_areas: ["Dallas", "Houston", "Austin", "San Antonio", "Phoenix", "Oklahoma City", "New Orleans"],
-    description: "Texas pipeline - HS football powerhouse region with elite talent concentration",
-    total_recruits: 141,
-    blue_chip_count: 141,
-    pending_alerts: 0,
-    upcoming_events_30d: 4,
-  },
-  WEST: {
-    zone_code: "WEST",
-    zone_name: "West",
-    states: ["CA", "NV", "OR", "WA", "UT", "CO"],
-    metro_areas: ["Los Angeles", "San Francisco", "San Diego", "Seattle", "Denver", "Las Vegas", "Portland"],
-    description: "West Coast talent - diverse recruiting landscape with growing football programs",
-    total_recruits: 81,
-    blue_chip_count: 81,
-    pending_alerts: 0,
-    upcoming_events_30d: 3,
-  },
-};
-
-// Sample programs data (from MCP)
+// Static programs data — no DB table for HS football programs
 const PROGRAMS: Record<ZoneCode, Program[]> = {
   SOUTHWEST: [
     { id: "7c644cd5-ea93-49c9-85f4-9345e201dec2", team_name: "North Shore", city: "Houston", state: "TX", zone_code: "SOUTHWEST", current_rating: 891.164, state_rank: 1, current_record: "14-2", d1_prospect_count: 159 },
@@ -105,35 +43,6 @@ const PROGRAMS: Record<ZoneCode, Program[]> = {
   ],
 };
 
-// Sample prospects data
-const PROSPECTS: Record<ZoneCode, Prospect[]> = {
-  SOUTHWEST: [
-    { id: "sw-1", full_name: "Jalen Green", position: "QB", high_school: "Desert Ridge", class_year: 2025, star_rating: 5, zone_code: "SOUTHWEST", commitment_status: "uncommitted", committed_team: null, image_url: null },
-    { id: "sw-2", full_name: "Marcus Thorton", position: "WR", high_school: "Valley Christian", class_year: 2025, star_rating: 5, zone_code: "SOUTHWEST", commitment_status: "uncommitted", committed_team: null, image_url: null },
-    { id: "sw-3", full_name: "David Chen", position: "LB", high_school: "Chandler High", class_year: 2026, star_rating: 4, zone_code: "SOUTHWEST", commitment_status: "uncommitted", committed_team: null, image_url: null },
-    { id: "sw-4", full_name: "Trey Williams", position: "RB", high_school: "Saguaro", class_year: 2024, star_rating: 5, zone_code: "SOUTHWEST", commitment_status: "committed", committed_team: "Texas", image_url: null },
-  ],
-  SOUTHEAST: [
-    { id: "se-p1", full_name: "Jeremiah Smith", position: "WR", high_school: "Chaminade-Madonna", class_year: 2024, star_rating: 5, zone_code: "SOUTHEAST", commitment_status: "committed", committed_team: "Ohio State", image_url: null },
-    { id: "se-p2", full_name: "KJ Bolden", position: "ATH", high_school: "Buford", class_year: 2024, star_rating: 5, zone_code: "SOUTHEAST", commitment_status: "committed", committed_team: "Georgia", image_url: null },
-    { id: "se-p3", full_name: "Ryan Wingo", position: "WR", high_school: "IMG Academy", class_year: 2025, star_rating: 5, zone_code: "SOUTHEAST", commitment_status: "uncommitted", committed_team: null, image_url: null },
-  ],
-  MIDWEST: [
-    { id: "mw-p1", full_name: "Johnny O'Brien", position: "QB", high_school: "Palatine", class_year: 2026, star_rating: 4, zone_code: "MIDWEST", commitment_status: "uncommitted", committed_team: null, image_url: null },
-    { id: "mw-p2", full_name: "Alex Manske", position: "QB", high_school: "Algona", class_year: 2026, star_rating: 4, zone_code: "MIDWEST", commitment_status: "uncommitted", committed_team: null, image_url: null },
-  ],
-  WEST: [
-    { id: "w-p1", full_name: "Malachi Nelson", position: "QB", high_school: "Los Alamitos", class_year: 2024, star_rating: 5, zone_code: "WEST", commitment_status: "committed", committed_team: "USC", image_url: null },
-    { id: "w-p2", full_name: "Nico Iamaleava", position: "QB", high_school: "Warren", class_year: 2024, star_rating: 5, zone_code: "WEST", commitment_status: "committed", committed_team: "Tennessee", image_url: null },
-  ],
-  NORTHEAST: [
-    { id: "ne-p1", full_name: "Caleb Williams Jr", position: "QB", high_school: "Gonzaga College HS", class_year: 2026, star_rating: 4, zone_code: "NORTHEAST", commitment_status: "uncommitted", committed_team: null, image_url: null },
-  ],
-  PLAINS: [
-    { id: "pl-p1", full_name: "Arch Manning Jr", position: "QB", high_school: "De Smet Jesuit", class_year: 2027, star_rating: 4, zone_code: "PLAINS", commitment_status: "uncommitted", committed_team: null, image_url: null },
-  ],
-};
-
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ zone: string }> }
@@ -148,18 +57,88 @@ export async function GET(
     }
 
     const zoneCode = validZone.data as ZoneCode;
-    const zoneData = ZONES[zoneCode];
-    const zonePrograms = PROGRAMS[zoneCode] || [];
-    const zoneProspects = (PROSPECTS[zoneCode] || []).map(p => ({
-      ...p,
-      image_url: p.image_url || getPlaceholderImage(p.id),
-    }));
+    const cacheKey = `zone-${zoneCode}`;
 
-    return NextResponse.json({
-      zone: zoneData,
-      programs: zonePrograms,
-      prospects: zoneProspects,
+    const cached = getCached<{ zone: ZoneInfo; programs: Program[]; prospects: Prospect[] }>(cacheKey);
+    if (cached) return NextResponse.json(cached);
+
+    const dbZones = UI_ZONE_TO_DB[zoneCode];
+    const meta = ZONE_METADATA[zoneCode];
+
+    // PLAINS has no DB athletes — return static metadata only
+    if (dbZones.length === 0) {
+      const result = {
+        zone: {
+          zone_code: zoneCode,
+          zone_name: ZONE_DISPLAY_NAMES[zoneCode],
+          states: meta.states,
+          metro_areas: meta.metro_areas,
+          description: meta.description,
+          total_recruits: 0,
+          blue_chip_count: 0,
+          pending_alerts: 0,
+          upcoming_events_30d: 0,
+        } as ZoneInfo,
+        programs: PROGRAMS[zoneCode] || [],
+        prospects: [] as Prospect[],
+      };
+      setCache(cacheKey, result);
+      return NextResponse.json(result);
+    }
+
+    const supabase = await createClient();
+
+    const { data: rows, error } = await supabase
+      .from("athletes")
+      .select("id, primary_position, high_school, class_year, star_rating, zone, state, city, profile_id, profiles(full_name, avatar_url)")
+      .in("zone", dbZones)
+      .order("star_rating", { ascending: false, nullsFirst: false });
+
+    if (error) {
+      console.error("Zone detail query error:", error);
+      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    }
+
+    const athletes = rows ?? [];
+    let blueChipCount = 0;
+    const prospects: Prospect[] = athletes.map((a) => {
+      if ((a.star_rating ?? 0) >= 4) blueChipCount++;
+      const profileArr = a.profiles as unknown as { full_name: string; avatar_url: string | null }[] | null;
+      const profile = profileArr?.[0] ?? null;
+      return {
+        id: a.id,
+        full_name: profile?.full_name ?? "Unknown",
+        position: a.primary_position,
+        high_school: a.high_school,
+        class_year: a.class_year,
+        star_rating: a.star_rating ?? 0,
+        zone_code: DB_ZONE_TO_UI[a.zone as string] ?? zoneCode,
+        commitment_status: "uncommitted",
+        committed_team: null,
+        image_url: profile?.avatar_url || getPlaceholderImage(a.id),
+      };
     });
+
+    const zoneInfo: ZoneInfo = {
+      zone_code: zoneCode,
+      zone_name: ZONE_DISPLAY_NAMES[zoneCode],
+      states: meta.states,
+      metro_areas: meta.metro_areas,
+      description: meta.description,
+      total_recruits: athletes.length,
+      blue_chip_count: blueChipCount,
+      pending_alerts: 0,
+      upcoming_events_30d: 0,
+    };
+
+    const result = {
+      zone: zoneInfo,
+      programs: PROGRAMS[zoneCode] || [],
+      prospects,
+    };
+
+    setCache(cacheKey, result);
+    return NextResponse.json(result);
   } catch (error) {
     console.error("Zone API error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

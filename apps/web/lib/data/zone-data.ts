@@ -53,6 +53,59 @@ export interface CalendarContext {
   }>;
 }
 
+// DB enum → UI ZoneCode mapping
+export const DB_ZONE_TO_UI: Record<string, ZoneCode> = {
+  'West': 'WEST',
+  'Southwest': 'SOUTHWEST',
+  'Midwest': 'MIDWEST',
+  'Southeast': 'SOUTHEAST',
+  'Northeast': 'NORTHEAST',
+  'Mid-Atlantic': 'NORTHEAST',
+};
+
+export const UI_ZONE_TO_DB: Record<ZoneCode, string[]> = {
+  WEST: ['West'],
+  SOUTHWEST: ['Southwest'],
+  MIDWEST: ['Midwest'],
+  SOUTHEAST: ['Southeast'],
+  NORTHEAST: ['Northeast', 'Mid-Atlantic'],
+  PLAINS: [], // no DB equivalent
+};
+
+// Static zone metadata (states, metro areas, descriptions)
+export const ZONE_METADATA: Record<ZoneCode, { states: string[]; metro_areas: string[]; description: string }> = {
+  MIDWEST: {
+    states: ["OH", "MI", "IL", "IN", "WI", "MN", "IA"],
+    metro_areas: ["Cleveland", "Detroit", "Chicago", "Indianapolis", "Columbus", "Minneapolis", "Cincinnati"],
+    description: "Big Ten territory - strong football tradition with consistent talent production",
+  },
+  NORTHEAST: {
+    states: ["PA", "MD", "NJ", "NY", "VA", "MA", "CT", "DE", "DC", "WV", "ME", "NH", "VT", "RI"],
+    metro_areas: ["Philadelphia", "New York", "Baltimore", "Washington DC", "Boston", "Pittsburgh", "Newark"],
+    description: "Mid-Atlantic and New England - ACC/Big Ten overlap with strong academic focus",
+  },
+  PLAINS: {
+    states: ["NE", "KS", "MO", "AR"],
+    metro_areas: ["Kansas City", "St. Louis", "Little Rock", "Omaha", "Wichita"],
+    description: "Central recruiting - Big 12/SEC border region with underrecruited talent",
+  },
+  SOUTHEAST: {
+    states: ["FL", "GA", "AL", "SC", "NC", "TN", "MS"],
+    metro_areas: ["Miami", "Atlanta", "Birmingham", "Charlotte", "Nashville", "Jacksonville", "Tampa"],
+    description: "SEC country - elite talent region with strongest high school football tradition",
+  },
+  SOUTHWEST: {
+    states: ["TX", "OK", "AZ", "NM", "LA"],
+    metro_areas: ["Dallas", "Houston", "Austin", "San Antonio", "Phoenix", "Oklahoma City", "New Orleans"],
+    description: "Texas pipeline - HS football powerhouse region with elite talent concentration",
+  },
+  WEST: {
+    states: ["CA", "NV", "OR", "WA", "UT", "CO"],
+    metro_areas: ["Los Angeles", "San Francisco", "San Diego", "Seattle", "Denver", "Las Vegas", "Portland"],
+    description: "West Coast talent - diverse recruiting landscape with growing football programs",
+  },
+};
+
 // Zone color configuration for UI
 export const ZONE_COLORS: Record<ZoneCode, { primary: string; bg: string; border: string; text: string }> = {
   MIDWEST: {

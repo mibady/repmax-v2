@@ -42,7 +42,7 @@
     "minimatch": "^9.0.5",
     "prettier": "^3.2.5",
     "tsx": "^4.21.0",
-    "turbo": "^2.3.0",
+    "turbo": "^2.8.9",
     "typescript": "^5.7.2",
     "vitest": "^2.1.0"
   },
