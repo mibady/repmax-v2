@@ -165,6 +165,23 @@ export {
   type AthleteCardData,
 } from "./use-athlete-card-editor";
 
+// Admin Analytics
+export {
+  useAdminAnalytics,
+  type KpiCard,
+  type RoleDistribution,
+  type ProfileBucket,
+  type AdminAnalyticsData,
+} from "./use-admin-analytics";
+
+// Admin Users
+export {
+  useAdminUsers,
+  type AdminUser,
+  type UserStats,
+  type Pagination,
+} from "./use-admin-users";
+
 // Admin Moderation
 export {
   useAdminModeration,

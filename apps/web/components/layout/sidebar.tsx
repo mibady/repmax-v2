@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-export type UserRole = 'athlete' | 'parent' | 'coach' | 'recruiter' | 'club';
+export type UserRole = 'athlete' | 'parent' | 'coach' | 'recruiter' | 'club' | 'admin';
 
 interface SidebarUser {
   name: string;
@@ -89,6 +89,17 @@ const clubNavItems: NavItem[] = [
 ];
 
 const clubSettingsItems: NavItem[] = [
+  { icon: 'settings', label: 'Settings', href: '/settings' },
+];
+
+const adminNavItems: NavItem[] = [
+  { icon: 'dashboard', label: 'Dashboard', href: '/admin' },
+  { icon: 'group', label: 'User Management', href: '/admin/users' },
+  { icon: 'shield', label: 'Content Moderation', href: '/admin/moderation' },
+  { icon: 'toggle_on', label: 'Feature Flags', href: '/admin/flags' },
+];
+
+const adminSettingsItems: NavItem[] = [
   { icon: 'settings', label: 'Settings', href: '/settings' },
 ];
 
@@ -502,6 +513,91 @@ function ClubSidebar({ user, onSignOut }: { user: SidebarUser; onSignOut?: () =>
   );
 }
 
+function AdminSidebar({ user, onSignOut }: { user: SidebarUser; onSignOut?: () => void }) {
+  const pathname = usePathname();
+
+  return (
+    <aside className="w-64 flex-shrink-0 bg-[#0a0a0a] border-r border-white/5 flex flex-col justify-between p-4 h-full">
+      <div className="flex flex-col gap-6">
+        {/* Brand */}
+        <Link href="/" className="flex gap-3 items-center px-2">
+          <div className="flex items-center justify-center size-10 rounded-full bg-primary/10 border border-primary/20">
+            <span className="material-symbols-outlined text-primary text-xl">admin_panel_settings</span>
+          </div>
+          <div className="flex flex-col">
+            <h1 className="text-white text-lg font-bold leading-none tracking-tight">RepMax</h1>
+            <p className="text-gray-500 text-xs font-medium uppercase tracking-wider mt-1">Admin Console</p>
+          </div>
+        </Link>
+
+        {/* Navigation */}
+        <nav className="flex flex-col gap-1">
+          {adminNavItems.map((item) => {
+            const isActive = pathname === item.href ||
+              (item.href !== '/admin' && pathname.startsWith(item.href));
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
+                  isActive
+                    ? 'bg-white/5 text-primary border border-white/5 group'
+                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <span className={`material-symbols-outlined text-[20px] ${isActive ? 'group-hover:scale-110 transition-transform' : ''}`}>
+                  {item.icon}
+                </span>
+                <p className="text-sm font-medium">{item.label}</p>
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        {adminSettingsItems.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all"
+          >
+            <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
+            <p className="text-sm font-medium">{item.label}</p>
+          </Link>
+        ))}
+
+        {/* User Info */}
+        <div className="flex items-center gap-3 px-3 py-3 mt-2 border-t border-white/5">
+          {user.avatarUrl ? (
+            <div
+              className="size-8 rounded-full bg-center bg-no-repeat bg-cover"
+              style={{ backgroundImage: `url('${user.avatarUrl}')` }}
+            />
+          ) : (
+            <div className="flex items-center justify-center size-8 rounded-full bg-primary/20">
+              <span className="material-symbols-outlined text-primary text-sm">person</span>
+            </div>
+          )}
+          <div className="flex flex-col">
+            <p className="text-white text-sm font-medium">{user.name}</p>
+            <p className="text-gray-500 text-xs">Administrator</p>
+          </div>
+        </div>
+
+        {/* Sign Out */}
+        <button
+          onClick={onSignOut}
+          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all"
+        >
+          <span className="material-symbols-outlined text-[20px]">logout</span>
+          <p className="text-sm font-medium">Sign Out</p>
+        </button>
+      </div>
+    </aside>
+  );
+}
+
 export function Sidebar({ role, user, onSignOut }: SidebarProps) {
   switch (role) {
     case 'athlete':
@@ -514,6 +610,8 @@ export function Sidebar({ role, user, onSignOut }: SidebarProps) {
       return <RecruiterSidebar user={user} onSignOut={onSignOut} />;
     case 'club':
       return <ClubSidebar user={user} onSignOut={onSignOut} />;
+    case 'admin':
+      return <AdminSidebar user={user} onSignOut={onSignOut} />;
     default:
       return <AthleteSidebar user={user} onSignOut={onSignOut} />;
   }

@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 
-export type UserRole = 'athlete' | 'parent' | 'coach' | 'recruiter' | 'club';
+export type UserRole = 'athlete' | 'parent' | 'coach' | 'recruiter' | 'club' | 'admin';
 
 interface TopbarUser {
   name: string;
@@ -28,6 +28,7 @@ const ROLE_LABELS: Record<UserRole, string> = {
   coach: 'Coach',
   recruiter: 'Recruiter',
   club: 'Club',
+  admin: 'Admin',
 };
 
 const ROLE_DASHBOARD_PATHS: Record<UserRole, string> = {
@@ -36,6 +37,7 @@ const ROLE_DASHBOARD_PATHS: Record<UserRole, string> = {
   coach: '/coach',
   recruiter: '/recruiter/pipeline',
   club: '/club',
+  admin: '/admin',
 };
 
 function RoleSwitcher({
@@ -271,6 +273,34 @@ function ClubTopbar({ user, title, unreadNotifications }: Omit<TopbarProps, 'rol
   );
 }
 
+function AdminTopbar({ title, unreadNotifications }: Omit<TopbarProps, 'role' | 'user'>) {
+  return (
+    <header className="h-16 border-b border-white/5 flex items-center justify-between px-6 bg-[#0a0a0a]/50 backdrop-blur-sm sticky top-0 z-40">
+      <div className="flex items-center gap-4">
+        <h2 className="text-white text-xl font-bold tracking-tight">{title || 'Admin Dashboard'}</h2>
+      </div>
+      <div className="flex items-center gap-4">
+        <div className="relative group">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <span className="material-symbols-outlined text-gray-500 text-[20px]">search</span>
+          </div>
+          <input
+            type="text"
+            className="block w-64 pl-10 pr-3 py-2 border border-white/5 rounded-lg leading-5 bg-[#141414] text-gray-300 placeholder-gray-500 focus:outline-none focus:bg-[#1c1c1c] focus:ring-1 focus:ring-primary/50 focus:border-primary/50 sm:text-sm transition-colors"
+            placeholder="Search users, flags..."
+          />
+        </div>
+        <button className="relative p-2 text-gray-400 hover:text-white transition-colors">
+          <span className="material-symbols-outlined">notifications</span>
+          {unreadNotifications !== undefined && unreadNotifications > 0 && (
+            <span className="absolute top-1.5 right-1.5 size-2 bg-red-500 rounded-full border-2 border-[#0a0a0a]" />
+          )}
+        </button>
+      </div>
+    </header>
+  );
+}
+
 export function Topbar({ role, user, title, unreadNotifications, availableRoles, onRoleSwitch }: TopbarProps) {
   switch (role) {
     case 'athlete':
@@ -309,6 +339,13 @@ export function Topbar({ role, user, title, unreadNotifications, availableRoles,
       return (
         <ClubTopbar
           user={user}
+          title={title}
+          unreadNotifications={unreadNotifications}
+        />
+      );
+    case 'admin':
+      return (
+        <AdminTopbar
           title={title}
           unreadNotifications={unreadNotifications}
         />

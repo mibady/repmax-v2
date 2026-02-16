@@ -30,15 +30,21 @@ function getPageTitle(pathname: string): string {
     territory: 'Territory',
     visits: 'Campus Visits',
     reports: 'Reports',
+    admin: 'Platform Analytics',
+    users: 'User Management',
+    moderation: 'Content Moderation',
+    flags: 'Feature Flags',
   };
 
   return titleMap[lastSegment] || 'Dashboard';
 }
 
 function getRoleFromPathname(pathname: string): UserRole {
-  if (pathname.startsWith('/recruiter')) {
-    return 'recruiter';
-  }
+  if (pathname.startsWith('/admin')) return 'admin';
+  if (pathname.startsWith('/recruiter')) return 'recruiter';
+  if (pathname.startsWith('/coach')) return 'coach';
+  if (pathname.startsWith('/parent')) return 'parent';
+  if (pathname.startsWith('/club')) return 'club';
   return 'athlete';
 }
 
@@ -97,6 +103,9 @@ export default function DashboardLayout({
   const availableRoles: UserRole[] = ['athlete'];
   if (user.profile.role === 'recruiter' || user.profile.role === 'coach') {
     availableRoles.push('recruiter');
+  }
+  if (user.profile.role === 'admin') {
+    availableRoles.push('admin');
   }
 
   return (
