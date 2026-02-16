@@ -1,8 +1,42 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { createCheckoutSession } from '@/lib/actions/subscription-actions';
 
 export default function Page() {
+  const router = useRouter();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleCheckout(planSlug: string) {
+    setLoadingPlan(planSlug);
+    setError(null);
+
+    try {
+      const result = await createCheckoutSession(planSlug);
+
+      if ('error' in result && result.error) {
+        setError(result.error);
+        return;
+      }
+
+      if ('sessionUrl' in result && result.sessionUrl) {
+        window.location.href = result.sessionUrl;
+        return;
+      }
+
+      if ('redirectTo' in result && result.redirectTo) {
+        router.push(result.redirectTo);
+      }
+    } catch {
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setLoadingPlan(null);
+    }
+  }
+
   return (
     <>
       {/*  Navbar  */}
@@ -43,6 +77,11 @@ export default function Page() {
                 Transparent pricing for every level of recruiting. Unlock the data you need to build a championship roster.
             </p>
 </div>
+{error && (
+<div className="w-full max-w-2xl mx-auto mb-8 bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-center">
+  <p className="text-red-400 text-sm">{error}</p>
+</div>
+)}
 {/*  Pricing Grid  */}
 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 w-full max-w-7xl mx-auto items-stretch">
 {/*  STARTER CARD  */}
@@ -69,8 +108,12 @@ export default function Page() {
 <span>Public Profiles Only</span>
 </li>
 </ul>
-<button className="w-full py-3 px-6 rounded-full border border-white/20 hover:bg-white/5 text-white text-sm font-bold transition-colors">
-                    Start Free
+<button
+  onClick={() => handleCheckout('starter')}
+  disabled={loadingPlan === 'starter'}
+  className="w-full py-3 px-6 rounded-full border border-white/20 hover:bg-white/5 text-white text-sm font-bold transition-colors disabled:opacity-50"
+>
+                    {loadingPlan === 'starter' ? 'Loading...' : 'Start Free'}
                 </button>
 </div>
 {/*  PRO CARD (Highlighted)  */}
@@ -104,8 +147,12 @@ export default function Page() {
 <span>Export Data (CSV)</span>
 </li>
 </ul>
-<button className="w-full py-3 px-6 rounded-full bg-primary hover:bg-primary-hover text-background-dark text-sm font-bold transition-colors shadow-lg shadow-primary/20">
-                    Go Pro
+<button
+  onClick={() => handleCheckout('pro')}
+  disabled={loadingPlan === 'pro'}
+  className="w-full py-3 px-6 rounded-full bg-primary hover:bg-primary-hover text-background-dark text-sm font-bold transition-colors shadow-lg shadow-primary/20 disabled:opacity-50"
+>
+                    {loadingPlan === 'pro' ? 'Loading...' : 'Go Pro'}
                 </button>
 </div>
 {/*  TEAM CARD  */}
@@ -136,8 +183,12 @@ export default function Page() {
 <span>Priority Support</span>
 </li>
 </ul>
-<button className="w-full py-3 px-6 rounded-full bg-[#1F2937] hover:bg-[#374151] border border-accent-green/30 text-white text-sm font-bold transition-colors">
-                    Get Team
+<button
+  onClick={() => handleCheckout('team')}
+  disabled={loadingPlan === 'team'}
+  className="w-full py-3 px-6 rounded-full bg-[#1F2937] hover:bg-[#374151] border border-accent-green/30 text-white text-sm font-bold transition-colors disabled:opacity-50"
+>
+                    {loadingPlan === 'team' ? 'Loading...' : 'Get Team'}
                 </button>
 </div>
 {/*  SCOUT CARD  */}
@@ -167,7 +218,10 @@ export default function Page() {
 <span>SSO Integration</span>
 </li>
 </ul>
-<button className="w-full py-3 px-6 rounded-full bg-[#1F2937] hover:bg-[#374151] border border-accent-purple/30 text-white text-sm font-bold transition-colors">
+<button
+  onClick={() => window.location.href = 'mailto:sales@repmax.com?subject=Scout Plan Inquiry'}
+  className="w-full py-3 px-6 rounded-full bg-[#1F2937] hover:bg-[#374151] border border-accent-purple/30 text-white text-sm font-bold transition-colors"
+>
                     Contact Sales
                 </button>
 </div>
