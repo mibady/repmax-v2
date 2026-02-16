@@ -153,3 +153,40 @@ This project existed before tracking was set up.
 
 ### Linear
 - NGE-50 → Done (Coach dashboard backend complete)
+
+---
+
+## Session 4 — 2026-02-15
+
+### Completed
+- **Phase 5: Stripe Subscription Integration** (NGE-54)
+  - Created `supabase/migrations/006_stripe_customer_id.sql` — adds `stripe_customer_id` to profiles with unique partial index
+  - Rewrote `lib/actions/subscription-actions.ts` — full Stripe SDK integration: paid checkout sessions, get-or-create customer, billing portal sessions
+  - Created `app/api/billing/portal/route.ts` — POST endpoint for Stripe billing portal access
+  - Wired `app/pricing/page.tsx` — all 4 plan buttons now functional with loading states and error banner
+  - Rewrote `__tests__/lib/subscription-actions.test.ts` — 14 tests with Stripe SDK mocks (vi.hoisted pattern)
+  - Wrote spec: `specs/stripe-subscription-integration.md`
+- All quality gates pass: tsc 0 errors, lint 0 new warnings, 315/315 tests, build success
+
+### Decisions Made
+- `PLAN_PRICE_IDS` changed from module-level constant to `getPriceId()` function — env vars must be read at call time, not import time (important for testing and serverless cold starts)
+- Stripe customer ID stored via `createServiceClient()` (bypasses RLS) since user auth client may lack write permission on that column
+- Billing portal tests live in `subscription-actions.test.ts` (not separate file) since `createBillingPortalSession` is a server action
+- Scout plan uses `mailto:` link, not checkout — enterprise/custom pricing
+
+### Known Issues
+- 5 pre-existing lint warnings unchanged
+- Stripe webhook handler (`app/api/webhooks/stripe/route.ts`) already existed and works — not modified this session
+- No E2E test for full Stripe checkout flow (would need Stripe test mode + real browser)
+- `app/api/billing/portal/route.ts` has no dedicated test file (covered via server action tests)
+
+### Next Session Should
+- Run `/prime` to load context
+- Phase 5 continued: Parent dashboard backend (NGE-51) or Club dashboard backend (NGE-52)
+- Admin panel (NGE-53) — moderate effort, needed for ops
+- Mobile app (NGE-55) if client prioritizes
+- Phase 6: Polish — rankings, notifications (NGE-56)
+- Only 5 issues remain (17/22 done)
+
+### Linear
+- NGE-54 → Done (Stripe subscription integration complete)

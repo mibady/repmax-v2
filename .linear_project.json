@@ -31,21 +31,21 @@
       { "id": "NGE-44", "title": "[BUG] Coach dashboard API", "phase": 1 },
       { "id": "NGE-45", "title": "[BUG] Athlete dashboard column + star rating", "phase": 1 },
       { "id": "NGE-49", "title": "Testing sprint (70% coverage)", "phase": 4 },
-      { "id": "NGE-50", "title": "Coach dashboard backend", "phase": 5 }
+      { "id": "NGE-50", "title": "Coach dashboard backend", "phase": 5 },
+      { "id": "NGE-54", "title": "Stripe subscription integration", "phase": 5 }
     ],
     "todo": [
       { "id": "NGE-51", "title": "Parent dashboard backend", "phase": 5, "priority": "Low" },
       { "id": "NGE-52", "title": "Club dashboard backend", "phase": 5, "priority": "Low" },
       { "id": "NGE-53", "title": "Admin panel", "phase": 5, "priority": "Medium" },
-      { "id": "NGE-54", "title": "Stripe subscription integration", "phase": 5, "priority": "High" },
       { "id": "NGE-55", "title": "Mobile app (Expo)", "phase": 5, "priority": "High" },
       { "id": "NGE-56", "title": "Polish: rankings, notifications, etc.", "phase": 6, "priority": "Low" }
     ]
   },
   "summary": {
     "total": 22,
-    "done": 16,
-    "todo": 6
+    "done": 17,
+    "todo": 5
   },
   "updatedAt": "2026-02-15"
 }
