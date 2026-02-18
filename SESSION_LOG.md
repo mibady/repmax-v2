@@ -232,3 +232,53 @@ This project existed before tracking was set up.
 
 ### Linear
 - NGE-53 → Done (Admin panel complete — 4 pages, 22 tests)
+
+---
+
+## Session 6 — 2026-02-18
+
+### Completed
+- **Investor Demo Prep** — committed all pending work from specs/investor-demo-ready-plan.md
+  - Seed loader rewrite: 5 FK bug fixes, offers/messages/relationships seeding
+  - Landing page: hero gradient, mobile menu, accordion, footer year, dashboard image
+  - Athlete card: CardActions client component with login redirect
+  - Coach dashboard: Send to Recruiter wired with ComposeMessageModal
+  - Migration 007: extend user_role enum with parent + club roles
+- **Phase 5: Parent Dashboard Backend** (NGE-51)
+  - Migration 008: `parent_links` table with RLS policies
+  - `seedParentLinks()` in seed-loader (Lisa Washington → Jaylen Washington link)
+  - CLI command: `seed:parents`
+- **Phase 5: Club Dashboard Backend** (NGE-52)
+  - Migration 009: `tournaments`, `athlete_verifications`, `tournament_payments` tables with RLS
+  - `seedClubData()` in seed-loader (3 tournaments, 3 verifications, 5 payments for Mike Torres)
+  - 6 new tests in `club-dashboard.test.ts` (auth, tournaments, empty state, metrics, verifications, payments)
+  - CLI command: `seed:club`
+- **Pre-commit hook fix** — updated monorepo lint detection (run `next lint` from apps/web, skip for root-level files)
+- All quality gates pass: tsc 0 errors, lint 0 new warnings, 343/343 tests, build success
+
+### Decisions Made
+- All 6 role dashboards now backed by real DB tables (athlete, recruiter, coach, parent, club, admin)
+- Club `organizer_id` and `club_id` reference `auth.users(id)` (not profiles) to match API route's `user.id`
+- Verification `athlete_id` references `profiles(id)` to support the join query pattern in the club API
+- Pre-commit hook: only lint web files via `next lint` from apps/web; skip eslint for root-level files (no root config)
+
+### Known Issues
+- 5 pre-existing lint warnings unchanged
+- `parent_links` RLS uses text comparison (`auth.uid()::text = parent_profile_id::text`) — may need optimization
+- Admin role check still permissive in API routes
+
+### Stats
+- 52 commits total
+- 343 tests passing (~78% coverage)
+- 20/22 Linear issues done (91%)
+- 9 database migrations
+
+### Next Session Should
+- Run `/prime` to load context
+- NGE-55: Mobile app (Expo) — highest priority remaining issue
+- NGE-56: Polish — rankings, notifications, etc.
+- Only 2 issues remain
+
+### Linear
+- NGE-51 → Done (Parent dashboard backend — parent_links table + seed)
+- NGE-52 → Done (Club dashboard backend — 3 tables + 6 tests)

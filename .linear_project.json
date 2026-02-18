@@ -33,19 +33,19 @@
       { "id": "NGE-49", "title": "Testing sprint (70% coverage)", "phase": 4 },
       { "id": "NGE-50", "title": "Coach dashboard backend", "phase": 5 },
       { "id": "NGE-54", "title": "Stripe subscription integration", "phase": 5 },
-      { "id": "NGE-53", "title": "Admin panel (4 pages + 22 tests)", "phase": 5 }
+      { "id": "NGE-53", "title": "Admin panel (4 pages + 22 tests)", "phase": 5 },
+      { "id": "NGE-51", "title": "Parent dashboard backend (parent_links table + seed)", "phase": 5 },
+      { "id": "NGE-52", "title": "Club dashboard backend (3 tables + 6 tests)", "phase": 5 }
     ],
     "todo": [
-      { "id": "NGE-51", "title": "Parent dashboard backend", "phase": 5, "priority": "Low" },
-      { "id": "NGE-52", "title": "Club dashboard backend", "phase": 5, "priority": "Low" },
       { "id": "NGE-55", "title": "Mobile app (Expo)", "phase": 5, "priority": "High" },
       { "id": "NGE-56", "title": "Polish: rankings, notifications, etc.", "phase": 6, "priority": "Low" }
     ]
   },
   "summary": {
     "total": 22,
-    "done": 18,
-    "todo": 4
+    "done": 20,
+    "todo": 2
   },
-  "updatedAt": "2026-02-16"
+  "updatedAt": "2026-02-18"
 }
