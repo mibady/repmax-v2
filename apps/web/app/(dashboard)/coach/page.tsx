@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState, useCallback, useMemo } from 'react';
 import { useCoachDashboard } from '@/lib/hooks';
+import ComposeMessageModal from '@/components/modals/ComposeMessageModal';
 
 const statusColors: Record<string, { bg: string; text: string; label: string }> = {
   active: { bg: 'bg-green-500/10', text: 'text-green-400', label: 'Active' },
@@ -26,6 +27,7 @@ export default function CoachDashboardPage() {
   const [filterPosition, setFilterPosition] = useState<string>('all');
   const [filterClass, setFilterClass] = useState<string>('all');
   const [exportStatus, setExportStatus] = useState<'idle' | 'exporting' | 'done'>('idle');
+  const [composeOpen, setComposeOpen] = useState(false);
 
   const filteredRoster = useMemo(() => {
     return roster.filter((athlete) => {
@@ -62,19 +64,17 @@ export default function CoachDashboardPage() {
 
   const handleSendToRecruiter = useCallback(() => {
     if (selectedAthletes.length === 0) return;
-    alert(`Ready to send ${selectedAthletes.length} athlete(s) to recruiter. This feature will open a recruiter selection modal.`);
+    setComposeOpen(true);
   }, [selectedAthletes]);
 
   const handleEditAthlete = useCallback((athleteId: string) => {
     window.location.href = `/dashboard/coach/roster/${athleteId}/edit`;
   }, []);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleSendAthlete = useCallback((athleteId: string) => {
-    const athlete = roster.find(a => a.id === athleteId);
-    if (athlete) {
-      alert(`Ready to send ${athlete.name} to a recruiter. This feature will open a recruiter selection modal.`);
-    }
-  }, [roster]);
+    setComposeOpen(true);
+  }, []);
 
   const handleToggleTask = useCallback(async (taskId: string, currentStatus: string) => {
     const newStatus = currentStatus === 'completed' ? 'pending' : 'completed';
@@ -381,6 +381,7 @@ export default function CoachDashboardPage() {
           </div>
         </div>
       </div>
+      <ComposeMessageModal isOpen={composeOpen} onClose={() => setComposeOpen(false)} />
     </div>
   );
 }

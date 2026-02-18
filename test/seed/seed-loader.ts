@@ -2,48 +2,24 @@
  * Seed Data Loader
  *
  * TypeScript utility to load/clean test users and related data for RepMax v2.
- * Based on USER_TESTING_GUIDE.md - 15 test users with comprehensive seed data.
+ * Based on USER_TESTING_GUIDE.md - 22 test users with comprehensive seed data.
  *
  * Usage:
  *   npx tsx test/seed/seed-loader.ts seed              # Create all test data
  *   npx tsx test/seed/seed-loader.ts clean             # Remove all test data
  *   npx tsx test/seed/seed-loader.ts reset             # Clean and re-seed
  *   npx tsx test/seed/seed-loader.ts seed:users        # Users only
- *   npx tsx test/seed/seed-loader.ts seed:films        # Films only
- *   npx tsx test/seed/seed-loader.ts seed:docs         # Documents only
- *   npx tsx test/seed/seed-loader.ts seed:coach        # Coach data (tasks, notes, activities)
- *   npx tsx test/seed/seed-loader.ts seed:club         # Tournament data
- *   npx tsx test/seed/seed-loader.ts seed:teams        # Tournament teams with rosters
- *   npx tsx test/seed/seed-loader.ts seed:verifications# Verification queue data
- *   npx tsx test/seed/seed-loader.ts seed:payments     # Tournament payment data
- *   npx tsx test/seed/seed-loader.ts seed:pipeline     # Recruiter pipeline data
+ *   npx tsx test/seed/seed-loader.ts seed:highlights   # Highlights only
+ *   npx tsx test/seed/seed-loader.ts seed:coach        # Coach tasks only
+ *   npx tsx test/seed/seed-loader.ts seed:relationships# Link recruiters to real athletes
  */
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import {
   testUserData,
   TestUserData,
-  filmData,
-  FilmData,
-  documentData,
-  DocumentData,
-  coachActivities,
-  ActivityData,
+  highlightData,
   coachTasks,
-  TaskData,
-  coachNotes,
-  NoteData,
-  tournamentData,
-  TournamentData,
-  tournamentTeamsData,
-  TournamentTeamData,
-  verificationQueueData,
-  VerificationQueueData,
-  tournamentPaymentData,
-  TournamentPaymentData,
-  recruiterPipelines,
-  PipelineProspect,
-  getRosterAthletes,
 } from './data/users';
 
 // ============================================
@@ -64,8 +40,13 @@ interface CleanResult {
   duration: number;
 }
 
-// User ID mapping (email -> UUID)
+// User ID mapping (email -> auth user UUID)
 const userIdMap: Map<string, string> = new Map();
+
+// Entity ID maps (email -> table-specific UUID)
+const athleteIdMap: Map<string, string> = new Map();
+const coachIdMap: Map<string, string> = new Map();
+const profileIdMap: Map<string, string> = new Map();
 
 // ============================================
 // SUPABASE CLIENT
@@ -152,14 +133,11 @@ async function seedUser(supabase: SupabaseClient, userData: TestUserData): Promi
     }
   }
 
-  // Note: parent_profiles, coach_profiles, and club_profiles tables don't exist in current schema
-  // Only coaches table exists for coach/recruiter roles
-
   if (userData.recruiterProfile) {
     const { error } = await supabase.from('coaches').insert({
       profile_id: userId,
       school_name: userData.recruiterProfile.school,
-      division: 'D1', // Default division - update test data if specific division needed
+      division: 'D1',
       conference: userData.recruiterProfile.conference,
       title: userData.recruiterProfile.title,
     });
@@ -173,7 +151,7 @@ async function seedUser(supabase: SupabaseClient, userData: TestUserData): Promi
     const { error } = await supabase.from('coaches').insert({
       profile_id: userId,
       school_name: userData.coachProfile.school,
-      division: 'D1', // Default division - update test data if specific division needed
+      division: 'D1',
       title: 'Head Coach',
     });
 
@@ -217,59 +195,114 @@ export async function seedTestUsers(): Promise<SeedResult> {
 }
 
 // ============================================
-// FILM SEEDING
+// ENTITY MAP BUILDER
 // ============================================
 
-export async function seedFilms(): Promise<SeedResult> {
-  const startTime = Date.now();
-  const created: string[] = [];
-  const errors: string[] = [];
+async function buildEntityMaps(supabase: SupabaseClient): Promise<void> {
+  console.log('Building entity ID maps...');
 
-  console.log('\nSeeding films...\n');
-
-  const supabase = getSupabaseClient();
-
-  // Build user ID map if not populated
+  // Build userIdMap from auth if not already populated
   if (userIdMap.size === 0) {
     await buildUserIdMap(supabase);
   }
 
-  for (const film of filmData) {
+  // Build athleteIdMap: email -> athletes.id
+  for (const [email, userId] of userIdMap) {
+    const { data: athlete } = await supabase
+      .from('athletes')
+      .select('id')
+      .eq('profile_id', userId)
+      .single();
+
+    if (athlete) {
+      athleteIdMap.set(email, athlete.id);
+    }
+  }
+
+  // Build coachIdMap: email -> coaches.id
+  for (const [email, userId] of userIdMap) {
+    const { data: coach } = await supabase
+      .from('coaches')
+      .select('id')
+      .eq('profile_id', userId)
+      .single();
+
+    if (coach) {
+      coachIdMap.set(email, coach.id);
+    }
+  }
+
+  // Build profileIdMap: email -> profiles.id (same as auth user id for our seed data)
+  for (const [email, userId] of userIdMap) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('id', userId)
+      .single();
+
+    if (profile) {
+      profileIdMap.set(email, profile.id);
+    }
+  }
+
+  console.log(`  Athletes: ${athleteIdMap.size}, Coaches: ${coachIdMap.size}, Profiles: ${profileIdMap.size}\n`);
+}
+
+// ============================================
+// HIGHLIGHT SEEDING
+// ============================================
+
+export async function seedHighlights(): Promise<SeedResult> {
+  const startTime = Date.now();
+  const created: string[] = [];
+  const errors: string[] = [];
+
+  console.log('\nSeeding highlights...\n');
+
+  const supabase = getSupabaseClient();
+
+  // Build entity maps if not populated
+  if (athleteIdMap.size === 0) {
+    await buildEntityMaps(supabase);
+  }
+
+  for (const highlight of highlightData) {
     try {
-      const athleteId = userIdMap.get(film.athleteEmail);
+      const athleteId = athleteIdMap.get(highlight.athleteEmail);
       if (!athleteId) {
-        throw new Error(`Athlete not found: ${film.athleteEmail}`);
+        throw new Error(`Athlete not found: ${highlight.athleteEmail}`);
       }
 
-      const { error } = await supabase.from('films').insert({
+      const { error } = await supabase.from('highlights').insert({
         athlete_id: athleteId,
-        title: film.title,
-        type: film.type,
-        video_url: film.videoUrl,
-        thumbnail_url: film.thumbnailUrl,
-        duration: film.duration,
-        views: film.views || 0,
-        featured: film.featured || false,
-        created_at: film.uploadedAt || new Date().toISOString(),
+        title: highlight.title,
+        description: highlight.description || null,
+        video_url: highlight.videoUrl,
+        thumbnail_url: highlight.thumbnailUrl || null,
+        duration_seconds: highlight.durationSeconds || null,
+        view_count: highlight.viewCount || 0,
+        ai_analyzed: highlight.aiAnalyzed || false,
+        ai_tags: highlight.aiTags || null,
+        created_at: highlight.createdAt || new Date().toISOString(),
       });
 
       if (error) {
         throw new Error(error.message);
       }
 
-      created.push(`${film.title} (${film.athleteEmail})`);
-      console.log(`  ✓ Created film: ${film.title}`);
+      created.push(`${highlight.title} (${highlight.athleteEmail})`);
+      console.log(`  ✓ Created highlight: ${highlight.title}`);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      errors.push(`${film.title}: ${message}`);
-      console.log(`  ✗ Failed film ${film.title}: ${message}`);
+      errors.push(`${highlight.title}: ${message}`);
+      console.log(`  ✗ Failed highlight ${highlight.title}: ${message}`);
     }
   }
 
   const duration = Date.now() - startTime;
 
-  console.log('\n--- Film Seed Summary ---');
-  console.log(`Created: ${created.length} films`);
+  console.log('\n--- Highlight Seed Summary ---');
+  console.log(`Created: ${created.length} highlights`);
   console.log(`Errors: ${errors.length}`);
   console.log(`Duration: ${duration}ms`);
 
@@ -277,93 +310,34 @@ export async function seedFilms(): Promise<SeedResult> {
 }
 
 // ============================================
-// DOCUMENT SEEDING
+// COACH TASKS SEEDING
 // ============================================
 
-export async function seedDocuments(): Promise<SeedResult> {
+export async function seedCoachTasks(): Promise<SeedResult> {
   const startTime = Date.now();
   const created: string[] = [];
   const errors: string[] = [];
 
-  console.log('\nSeeding documents...\n');
+  console.log('\nSeeding coach tasks...\n');
 
   const supabase = getSupabaseClient();
 
-  if (userIdMap.size === 0) {
-    await buildUserIdMap(supabase);
+  if (coachIdMap.size === 0 || athleteIdMap.size === 0) {
+    await buildEntityMaps(supabase);
   }
 
-  for (const doc of documentData) {
-    try {
-      const athleteId = userIdMap.get(doc.athleteEmail);
-      if (!athleteId) {
-        throw new Error(`Athlete not found: ${doc.athleteEmail}`);
-      }
-
-      const { error } = await supabase.from('documents').insert({
-        athlete_id: athleteId,
-        title: doc.title,
-        type: doc.type,
-        file_url: doc.fileUrl,
-        verified: doc.verified,
-        verified_at: doc.verifiedAt,
-        created_at: doc.uploadedAt || new Date().toISOString(),
-      });
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      created.push(`${doc.title} (${doc.athleteEmail})`);
-      console.log(`  ✓ Created document: ${doc.title}`);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      errors.push(`${doc.title}: ${message}`);
-      console.log(`  ✗ Failed document ${doc.title}: ${message}`);
-    }
-  }
-
-  const duration = Date.now() - startTime;
-
-  console.log('\n--- Document Seed Summary ---');
-  console.log(`Created: ${created.length} documents`);
-  console.log(`Errors: ${errors.length}`);
-  console.log(`Duration: ${duration}ms`);
-
-  return { success: errors.length === 0, created, errors, duration };
-}
-
-// ============================================
-// COACH DATA SEEDING (Tasks, Notes, Activities)
-// ============================================
-
-export async function seedCoachData(): Promise<SeedResult> {
-  const startTime = Date.now();
-  const created: string[] = [];
-  const errors: string[] = [];
-
-  console.log('\nSeeding coach data (tasks, notes, activities)...\n');
-
-  const supabase = getSupabaseClient();
-
-  if (userIdMap.size === 0) {
-    await buildUserIdMap(supabase);
-  }
-
-  // Seed Tasks
-  console.log('  Seeding tasks...');
   for (const task of coachTasks) {
     try {
-      const coachId = userIdMap.get(task.coachEmail);
+      const coachId = coachIdMap.get(task.coachEmail);
       if (!coachId) {
         throw new Error(`Coach not found: ${task.coachEmail}`);
       }
 
-      const athleteId = task.athleteEmail ? userIdMap.get(task.athleteEmail) : null;
+      const athleteId = task.athleteEmail ? athleteIdMap.get(task.athleteEmail) : null;
 
       const { error } = await supabase.from('coach_tasks').insert({
         coach_id: coachId,
-        athlete_id: athleteId,
+        athlete_id: athleteId || null,
         title: task.title,
         description: task.description,
         due_date: task.dueDate,
@@ -377,109 +351,18 @@ export async function seedCoachData(): Promise<SeedResult> {
       }
 
       created.push(`Task: ${task.title}`);
-      console.log(`    ✓ ${task.title}`);
+      console.log(`  ✓ ${task.title}`);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       errors.push(`Task ${task.title}: ${message}`);
-      console.log(`    ✗ ${task.title}: ${message}`);
-    }
-  }
-
-  // Seed Notes
-  console.log('  Seeding notes...');
-  for (const note of coachNotes) {
-    try {
-      const coachId = userIdMap.get(note.coachEmail);
-      const athleteId = userIdMap.get(note.athleteEmail);
-      if (!coachId || !athleteId) {
-        throw new Error(`Coach or athlete not found`);
-      }
-
-      const { error } = await supabase.from('coach_notes').insert({
-        coach_id: coachId,
-        athlete_id: athleteId,
-        content: note.content,
-        category: note.category,
-        created_at: note.createdAt,
-      });
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      created.push(`Note: ${note.athleteEmail}`);
-      console.log(`    ✓ Note for ${note.athleteEmail}`);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      errors.push(`Note for ${note.athleteEmail}: ${message}`);
-      console.log(`    ✗ Note for ${note.athleteEmail}: ${message}`);
-    }
-  }
-
-  // Seed Activities
-  console.log('  Seeding activities...');
-  for (const activity of coachActivities) {
-    try {
-      const coachId = userIdMap.get(activity.coachEmail);
-      const athleteId = userIdMap.get(activity.athleteEmail);
-      if (!coachId || !athleteId) {
-        throw new Error(`Coach or athlete not found`);
-      }
-
-      const { error } = await supabase.from('coach_activities').insert({
-        coach_id: coachId,
-        athlete_id: athleteId,
-        type: activity.type,
-        description: activity.description,
-        created_at: activity.timestamp,
-      });
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      created.push(`Activity: ${activity.type}`);
-      console.log(`    ✓ ${activity.type} - ${activity.athleteEmail}`);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      errors.push(`Activity ${activity.type}: ${message}`);
-      console.log(`    ✗ ${activity.type}: ${message}`);
-    }
-  }
-
-  // Link roster athletes to coach
-  console.log('  Linking roster athletes to coach...');
-  const coachDavisId = userIdMap.get('coach.davis@test.repmax.com');
-  if (coachDavisId) {
-    const rosterAthletes = getRosterAthletes();
-    for (const athlete of rosterAthletes) {
-      try {
-        const athleteId = userIdMap.get(athlete.email);
-        if (!athleteId) continue;
-
-        const { error } = await supabase.from('coach_roster').insert({
-          coach_id: coachDavisId,
-          athlete_id: athleteId,
-          added_at: new Date().toISOString(),
-        });
-
-        if (error && !error.message.includes('duplicate')) {
-          throw new Error(error.message);
-        }
-
-        created.push(`Roster: ${athlete.email}`);
-        console.log(`    ✓ Linked ${athlete.fullName}`);
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        errors.push(`Roster ${athlete.email}: ${message}`);
-      }
+      console.log(`  ✗ ${task.title}: ${message}`);
     }
   }
 
   const duration = Date.now() - startTime;
 
-  console.log('\n--- Coach Data Seed Summary ---');
-  console.log(`Created: ${created.length} items`);
+  console.log('\n--- Coach Tasks Seed Summary ---');
+  console.log(`Created: ${created.length} tasks`);
   console.log(`Errors: ${errors.length}`);
   console.log(`Duration: ${duration}ms`);
 
@@ -487,457 +370,373 @@ export async function seedCoachData(): Promise<SeedResult> {
 }
 
 // ============================================
-// CLUB/TOURNAMENT SEEDING
-// ============================================
-
-export async function seedTournaments(): Promise<SeedResult> {
-  const startTime = Date.now();
-  const created: string[] = [];
-  const errors: string[] = [];
-
-  console.log('\nSeeding tournaments...\n');
-
-  const supabase = getSupabaseClient();
-
-  if (userIdMap.size === 0) {
-    await buildUserIdMap(supabase);
-  }
-
-  for (const tournament of tournamentData) {
-    try {
-      const clubId = userIdMap.get(tournament.clubEmail);
-      if (!clubId) {
-        throw new Error(`Club owner not found: ${tournament.clubEmail}`);
-      }
-
-      const { error } = await supabase.from('tournaments').insert({
-        organizer_id: clubId,
-        name: tournament.name,
-        start_date: tournament.startDate,
-        end_date: tournament.endDate,
-        location: tournament.location,
-        teams_registered: tournament.teamsRegistered,
-        teams_capacity: tournament.teamsCapacity,
-        entry_fee: tournament.entryFee,
-        total_collected: tournament.totalCollected,
-        status: tournament.status,
-      });
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      created.push(tournament.name);
-      console.log(`  ✓ Created tournament: ${tournament.name}`);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      errors.push(`${tournament.name}: ${message}`);
-      console.log(`  ✗ Failed tournament ${tournament.name}: ${message}`);
-    }
-  }
-
-  const duration = Date.now() - startTime;
-
-  console.log('\n--- Tournament Seed Summary ---');
-  console.log(`Created: ${created.length} tournaments`);
-  console.log(`Errors: ${errors.length}`);
-  console.log(`Duration: ${duration}ms`);
-
-  return { success: errors.length === 0, created, errors, duration };
-}
-
-// ============================================
-// TOURNAMENT TEAMS SEEDING
-// ============================================
-
-// Map to store tournament IDs by name
-const tournamentIdMap: Map<string, string> = new Map();
-
-export async function seedTournamentTeams(): Promise<SeedResult> {
-  const startTime = Date.now();
-  const created: string[] = [];
-  const errors: string[] = [];
-
-  console.log('\nSeeding tournament teams...\n');
-
-  const supabase = getSupabaseClient();
-
-  if (userIdMap.size === 0) {
-    await buildUserIdMap(supabase);
-  }
-
-  // Build tournament ID map
-  const { data: tournaments } = await supabase
-    .from('tournaments')
-    .select('id, name');
-
-  if (tournaments) {
-    for (const t of tournaments) {
-      tournamentIdMap.set(t.name, t.id);
-    }
-  }
-
-  for (const team of tournamentTeamsData) {
-    try {
-      const tournamentId = tournamentIdMap.get(team.tournamentName);
-      if (!tournamentId) {
-        throw new Error(`Tournament not found: ${team.tournamentName}`);
-      }
-
-      // Insert team
-      const { data: insertedTeam, error: teamError } = await supabase
-        .from('tournament_teams')
-        .insert({
-          tournament_id: tournamentId,
-          name: team.name,
-          coach_name: team.coachName,
-          contact_email: team.contactEmail,
-          division: team.division,
-          pool: team.pool,
-          payment_status: team.paymentStatus,
-          payment_amount: team.paymentAmount,
-          payment_date: team.paymentDate,
-          athletes_count: team.athletesCount,
-          athletes_verified: team.athletesVerified,
-        })
-        .select()
-        .single();
-
-      if (teamError) {
-        throw new Error(teamError.message);
-      }
-
-      // Insert team athletes/roster
-      if (insertedTeam && team.roster.length > 0) {
-        const rosterEntries = team.roster.map((athlete) => ({
-          team_id: insertedTeam.id,
-          name: athlete.name,
-          position: athlete.position,
-          jersey_number: athlete.jerseyNumber,
-          verified: athlete.verified,
-        }));
-
-        const { error: rosterError } = await supabase
-          .from('tournament_team_athletes')
-          .insert(rosterEntries);
-
-        if (rosterError) {
-          console.warn(`  Warning: Failed to insert roster for ${team.name}: ${rosterError.message}`);
-        }
-      }
-
-      created.push(`${team.name} (${team.division})`);
-      console.log(`  ✓ Created team: ${team.name} with ${team.roster.length} athletes`);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      errors.push(`${team.name}: ${message}`);
-      console.log(`  ✗ Failed team ${team.name}: ${message}`);
-    }
-  }
-
-  const duration = Date.now() - startTime;
-
-  console.log('\n--- Tournament Teams Seed Summary ---');
-  console.log(`Created: ${created.length} teams`);
-  console.log(`Errors: ${errors.length}`);
-  console.log(`Duration: ${duration}ms`);
-
-  return { success: errors.length === 0, created, errors, duration };
-}
-
-// ============================================
-// VERIFICATION QUEUE SEEDING
-// ============================================
-
-export async function seedVerificationQueue(): Promise<SeedResult> {
-  const startTime = Date.now();
-  const created: string[] = [];
-  const errors: string[] = [];
-
-  console.log('\nSeeding verification queue...\n');
-
-  const supabase = getSupabaseClient();
-
-  if (userIdMap.size === 0) {
-    await buildUserIdMap(supabase);
-  }
-
-  for (const verification of verificationQueueData) {
-    try {
-      const clubId = userIdMap.get(verification.clubEmail);
-      if (!clubId) {
-        throw new Error(`Club owner not found: ${verification.clubEmail}`);
-      }
-
-      const { error } = await supabase.from('athlete_verifications').insert({
-        club_id: clubId,
-        athlete_name: verification.athleteName,
-        team_name: verification.teamName,
-        division: verification.division,
-        type: verification.type,
-        method: verification.method,
-        status: verification.status,
-        notes: verification.notes,
-        submitted_at: verification.submittedAt,
-      });
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      created.push(`${verification.athleteName} (${verification.type})`);
-      console.log(`  ✓ Created verification: ${verification.athleteName} - ${verification.type}`);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      errors.push(`${verification.athleteName}: ${message}`);
-      console.log(`  ✗ Failed verification ${verification.athleteName}: ${message}`);
-    }
-  }
-
-  const duration = Date.now() - startTime;
-
-  console.log('\n--- Verification Queue Seed Summary ---');
-  console.log(`Created: ${created.length} verifications`);
-  console.log(`Errors: ${errors.length}`);
-  console.log(`Duration: ${duration}ms`);
-
-  return { success: errors.length === 0, created, errors, duration };
-}
-
-// ============================================
-// TOURNAMENT PAYMENTS SEEDING
-// ============================================
-
-export async function seedTournamentPayments(): Promise<SeedResult> {
-  const startTime = Date.now();
-  const created: string[] = [];
-  const errors: string[] = [];
-
-  console.log('\nSeeding tournament payments...\n');
-
-  const supabase = getSupabaseClient();
-
-  // Build tournament ID map if not populated
-  if (tournamentIdMap.size === 0) {
-    const { data: tournaments } = await supabase
-      .from('tournaments')
-      .select('id, name');
-
-    if (tournaments) {
-      for (const t of tournaments) {
-        tournamentIdMap.set(t.name, t.id);
-      }
-    }
-  }
-
-  // Get team IDs map
-  const teamIdMap: Map<string, string> = new Map();
-  const { data: teams } = await supabase
-    .from('tournament_teams')
-    .select('id, name');
-
-  if (teams) {
-    for (const t of teams) {
-      teamIdMap.set(t.name, t.id);
-    }
-  }
-
-  for (const payment of tournamentPaymentData) {
-    try {
-      const tournamentId = tournamentIdMap.get(payment.tournamentName);
-      const teamId = teamIdMap.get(payment.teamName);
-
-      if (!tournamentId) {
-        throw new Error(`Tournament not found: ${payment.tournamentName}`);
-      }
-
-      const { error } = await supabase.from('tournament_payments').insert({
-        tournament_id: tournamentId,
-        team_id: teamId,
-        team_name: payment.teamName,
-        division: payment.division,
-        amount: payment.amount,
-        status: payment.status,
-        payment_method: payment.paymentMethod,
-        paid_at: payment.paidAt,
-        description: payment.description,
-      });
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      created.push(`${payment.teamName} - $${payment.amount}`);
-      console.log(`  ✓ Created payment: ${payment.teamName} - $${payment.amount} (${payment.status})`);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      errors.push(`${payment.teamName}: ${message}`);
-      console.log(`  ✗ Failed payment ${payment.teamName}: ${message}`);
-    }
-  }
-
-  const duration = Date.now() - startTime;
-
-  console.log('\n--- Tournament Payments Seed Summary ---');
-  console.log(`Created: ${created.length} payments`);
-  console.log(`Errors: ${errors.length}`);
-  console.log(`Duration: ${duration}ms`);
-
-  return { success: errors.length === 0, created, errors, duration };
-}
-
-// ============================================
-// RECRUITER PIPELINE SEEDING
-// ============================================
-
-export async function seedRecruiterPipelines(): Promise<SeedResult> {
-  const startTime = Date.now();
-  const created: string[] = [];
-  const errors: string[] = [];
-
-  console.log('\nSeeding recruiter pipelines...\n');
-
-  const supabase = getSupabaseClient();
-
-  if (userIdMap.size === 0) {
-    await buildUserIdMap(supabase);
-  }
-
-  for (const prospect of recruiterPipelines) {
-    try {
-      const recruiterId = userIdMap.get(prospect.recruiterEmail);
-      if (!recruiterId) {
-        throw new Error(`Recruiter not found: ${prospect.recruiterEmail}`);
-      }
-
-      const athleteId = prospect.athleteEmail ? userIdMap.get(prospect.athleteEmail) : null;
-
-      const { error } = await supabase.from('recruiter_pipeline').insert({
-        recruiter_id: recruiterId,
-        athlete_id: athleteId,
-        prospect_name: prospect.prospectName,
-        position: prospect.position,
-        school: prospect.school,
-        class_year: prospect.classYear,
-        status: prospect.status,
-        notes: prospect.notes,
-        added_at: prospect.addedAt,
-      });
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      created.push(`${prospect.prospectName} (${prospect.recruiterEmail})`);
-      console.log(`  ✓ Added ${prospect.prospectName} to pipeline`);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      errors.push(`${prospect.prospectName}: ${message}`);
-      console.log(`  ✗ Failed ${prospect.prospectName}: ${message}`);
-    }
-  }
-
-  const duration = Date.now() - startTime;
-
-  console.log('\n--- Pipeline Seed Summary ---');
-  console.log(`Created: ${created.length} prospects`);
-  console.log(`Errors: ${errors.length}`);
-  console.log(`Duration: ${duration}ms`);
-
-  return { success: errors.length === 0, created, errors, duration };
-}
-
-// ============================================
-// ADDITIONAL TEST DATA (Profile Views, Shortlists)
+// TEST DATA (Shortlists + Profile Views)
 // ============================================
 
 export async function seedTestData(): Promise<void> {
-  console.log('\nSeeding additional test data...\n');
+  console.log('\nSeeding test data (shortlists + profile views)...\n');
 
   const supabase = getSupabaseClient();
 
-  if (userIdMap.size === 0) {
-    await buildUserIdMap(supabase);
+  if (athleteIdMap.size === 0 || coachIdMap.size === 0 || profileIdMap.size === 0) {
+    await buildEntityMaps(supabase);
   }
 
   const athletes = testUserData.filter((u) => u.roles.includes('athlete'));
   const recruiters = testUserData.filter((u) => u.roles.includes('recruiter'));
 
-  // Seed profile views for athletes
+  // Seed profile views for athletes (correct schema)
   for (const athlete of athletes.slice(0, 5)) {
-    // Just core athletes
-    const athleteId = userIdMap.get(athlete.email);
+    const athleteId = athleteIdMap.get(athlete.email);
     if (!athleteId) continue;
 
     const views = [];
+    const sources = ['search', 'shortlist', 'direct'] as const;
+
     for (let i = 0; i < 10; i++) {
       const recruiter = recruiters[i % recruiters.length];
-      const recruiterId = userIdMap.get(recruiter.email);
-      if (!recruiterId) continue;
+      const viewerId = profileIdMap.get(recruiter.email);
+      if (!viewerId) continue;
 
       views.push({
         athlete_id: athleteId,
-        viewer_id: recruiterId,
+        viewer_id: viewerId,
         viewer_role: 'recruiter',
         viewer_zone: recruiter.zone || 'SOUTHWEST',
-        viewer_school: recruiter.recruiterProfile?.school,
-        section_viewed: ['stats', 'film', 'academics'][i % 3],
-        viewed_at: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString(),
+        viewer_school: recruiter.recruiterProfile?.school || null,
+        viewer_division: 'D1',
+        viewer_state: recruiter.state || null,
+        source: sources[i % 3],
+        duration_seconds: Math.floor(Math.random() * 120) + 10,
+        created_at: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString(),
       });
     }
 
     const { error } = await supabase.from('profile_views').insert(views);
     if (!error) {
       console.log(`  ✓ Created ${views.length} profile views for ${athlete.email}`);
+    } else {
+      console.log(`  ✗ profile_views for ${athlete.email}: ${error.message}`);
     }
   }
 
-  // Seed shortlists for recruiters
+  // Seed shortlists for recruiters (flat table: one row per coach-athlete pair)
   for (const recruiter of recruiters) {
-    const recruiterId = userIdMap.get(recruiter.email);
-    if (!recruiterId) continue;
+    const coachId = coachIdMap.get(recruiter.email);
+    if (!coachId) continue;
 
-    const { data: shortlist, error: shortlistError } = await supabase
-      .from('shortlists')
-      .insert({
-        recruiter_id: recruiterId,
-        name: 'Top Targets 2026',
-      })
-      .select()
-      .single();
+    const pipelineStatuses = ['identified', 'contacted', 'evaluating'] as const;
+    const priorities = ['high', 'medium', 'low'] as const;
 
-    if (shortlistError || !shortlist) continue;
+    for (let i = 0; i < Math.min(5, athletes.length); i++) {
+      const athlete = athletes[i];
+      const athleteId = athleteIdMap.get(athlete.email);
+      if (!athleteId) continue;
 
-    const athleteEntries = athletes.slice(0, 5).map((a) => ({
-      shortlist_id: shortlist.id,
-      athlete_id: userIdMap.get(a.email),
-      notes: 'Priority prospect',
-    }));
+      const { error } = await supabase.from('shortlists').insert({
+        coach_id: coachId,
+        athlete_id: athleteId,
+        notes: `Priority prospect - ${athlete.athleteProfile?.position || 'ATH'}`,
+        priority: priorities[i % 3],
+        pipeline_status: pipelineStatuses[i % 3],
+      });
 
-    const { error } = await supabase.from('shortlist_athletes').insert(athleteEntries);
-    if (!error) {
-      console.log(`  ✓ Created shortlist with ${athleteEntries.length} athletes for ${recruiter.email}`);
+      if (error && !error.message.includes('duplicate')) {
+        console.log(`  ✗ shortlist ${recruiter.email}→${athlete.email}: ${error.message}`);
+      }
     }
+    console.log(`  ✓ Created shortlist entries for ${recruiter.email}`);
   }
 
-  // Link parent to athlete
-  const lisaId = userIdMap.get('lisa.washington@test.repmax.com');
-  const jaylenId = userIdMap.get('jaylen.washington@test.repmax.com');
-  if (lisaId && jaylenId) {
-    const { error } = await supabase.from('parent_athlete_links').insert({
-      parent_id: lisaId,
-      athlete_id: jaylenId,
-      relationship: 'mother',
-      status: 'active',
-      verified_at: new Date().toISOString(),
+  console.log('\n✓ Test data seeded');
+}
+
+// ============================================
+// SEED RELATIONSHIPS (link to REAL imported athletes)
+// ============================================
+
+export async function seedRelationships(): Promise<SeedResult> {
+  const startTime = Date.now();
+  const created: string[] = [];
+  const errors: string[] = [];
+
+  console.log('\nSeeding relationships with real imported athletes...\n');
+
+  const supabase = getSupabaseClient();
+
+  if (coachIdMap.size === 0 || profileIdMap.size === 0) {
+    await buildEntityMaps(supabase);
+  }
+
+  // 1. Query real athletes (from JotForm import, typically CA-based)
+  const { data: realAthletes, error: queryError } = await supabase
+    .from('athletes')
+    .select('id, profile_id, primary_position, state, high_school, class_year, profiles(full_name)')
+    .eq('state', 'CA')
+    .limit(50);
+
+  if (queryError || !realAthletes || realAthletes.length === 0) {
+    console.log('  No real imported athletes found. Skipping relationship seeding.');
+    return { success: true, created, errors, duration: Date.now() - startTime };
+  }
+
+  console.log(`  Found ${realAthletes.length} real CA athletes\n`);
+
+  // TCU and ASU recruiter IDs
+  const tcuCoachId = coachIdMap.get('coach.williams@test.repmax.com');
+  const asuCoachId = coachIdMap.get('coach.martinez@test.repmax.com');
+  const tcuProfileId = profileIdMap.get('coach.williams@test.repmax.com');
+  const asuProfileId = profileIdMap.get('coach.martinez@test.repmax.com');
+
+  // 2. Create shortlists: TCU → 15 athletes, ASU → 10 athletes
+  if (tcuCoachId) {
+    const pipelineStatuses = ['identified', 'contacted', 'evaluating'] as const;
+    for (let i = 0; i < Math.min(15, realAthletes.length); i++) {
+      try {
+        const { error } = await supabase.from('shortlists').insert({
+          coach_id: tcuCoachId,
+          athlete_id: realAthletes[i].id,
+          notes: `TCU target - ${realAthletes[i].primary_position || 'ATH'} from ${realAthletes[i].high_school || 'Unknown HS'}`,
+          priority: i < 5 ? 'high' : i < 10 ? 'medium' : 'low',
+          pipeline_status: pipelineStatuses[i % 3],
+        });
+        if (!error) created.push(`Shortlist: TCU → ${realAthletes[i].id}`);
+      } catch (e) {
+        errors.push(`TCU shortlist ${i}: ${e instanceof Error ? e.message : String(e)}`);
+      }
+    }
+    console.log(`  ✓ TCU shortlists: ${Math.min(15, realAthletes.length)}`);
+  }
+
+  if (asuCoachId) {
+    const pipelineStatuses = ['identified', 'contacted', 'evaluating'] as const;
+    for (let i = 0; i < Math.min(10, realAthletes.length); i++) {
+      try {
+        const { error } = await supabase.from('shortlists').insert({
+          coach_id: asuCoachId,
+          athlete_id: realAthletes[i].id,
+          notes: `ASU target - ${realAthletes[i].primary_position || 'ATH'}`,
+          priority: i < 3 ? 'high' : 'medium',
+          pipeline_status: pipelineStatuses[i % 3],
+        });
+        if (!error) created.push(`Shortlist: ASU → ${realAthletes[i].id}`);
+      } catch (e) {
+        errors.push(`ASU shortlist ${i}: ${e instanceof Error ? e.message : String(e)}`);
+      }
+    }
+    console.log(`  ✓ ASU shortlists: ${Math.min(10, realAthletes.length)}`);
+  }
+
+  // 3. Create profile_views: 200+ views over 30 days
+  const viewerEntries: Array<{
+    email: string;
+    profileId: string;
+    school: string;
+    zone: string;
+    state: string;
+  }> = [];
+
+  if (tcuProfileId) {
+    viewerEntries.push({ email: 'coach.williams@test.repmax.com', profileId: tcuProfileId, school: 'TCU', zone: 'SOUTHWEST', state: 'TX' });
+  }
+  if (asuProfileId) {
+    viewerEntries.push({ email: 'coach.martinez@test.repmax.com', profileId: asuProfileId, school: 'Arizona State', zone: 'SOUTHWEST', state: 'AZ' });
+  }
+
+  if (viewerEntries.length > 0) {
+    const sources = ['search', 'shortlist', 'direct'] as const;
+    const viewRows = [];
+
+    for (let day = 0; day < 30; day++) {
+      const viewsPerDay = 5 + Math.floor(Math.random() * 5); // 5-9 views per day
+      for (let v = 0; v < viewsPerDay; v++) {
+        const athlete = realAthletes[Math.floor(Math.random() * realAthletes.length)];
+        const viewer = viewerEntries[Math.floor(Math.random() * viewerEntries.length)];
+        viewRows.push({
+          athlete_id: athlete.id,
+          viewer_id: viewer.profileId,
+          viewer_role: 'recruiter',
+          viewer_school: viewer.school,
+          viewer_division: 'D1',
+          viewer_state: viewer.state,
+          viewer_zone: viewer.zone,
+          source: sources[Math.floor(Math.random() * sources.length)],
+          duration_seconds: Math.floor(Math.random() * 180) + 10,
+          created_at: new Date(Date.now() - day * 24 * 60 * 60 * 1000 - Math.random() * 86400000).toISOString(),
+        });
+      }
+    }
+
+    // Insert in batches of 50
+    for (let i = 0; i < viewRows.length; i += 50) {
+      const batch = viewRows.slice(i, i + 50);
+      const { error } = await supabase.from('profile_views').insert(batch);
+      if (error) {
+        errors.push(`profile_views batch ${i}: ${error.message}`);
+      }
+    }
+    created.push(`Profile views: ${viewRows.length}`);
+    console.log(`  ✓ Profile views: ${viewRows.length}`);
+  }
+
+  // 4. Create offers for top 20 real athletes
+  const offerSchools = [
+    { name: 'USC', division: 'D1' },
+    { name: 'UCLA', division: 'D1' },
+    { name: 'Oregon', division: 'D1' },
+    { name: 'Arizona State', division: 'D1' },
+    { name: 'TCU', division: 'D1' },
+    { name: 'San Diego State', division: 'D1' },
+    { name: 'Cal', division: 'D1' },
+    { name: 'Stanford', division: 'D1' },
+    { name: 'Washington', division: 'D1' },
+    { name: 'Colorado', division: 'D1' },
+  ];
+  const scholarshipTypes = ['full', 'partial', 'preferred_walk_on'] as const;
+
+  const topAthletes = realAthletes.slice(0, Math.min(20, realAthletes.length));
+  let offerCount = 0;
+
+  for (let i = 0; i < topAthletes.length; i++) {
+    const offersPerAthlete = i < 5 ? 3 : i < 10 ? 2 : 1;
+
+    for (let j = 0; j < offersPerAthlete; j++) {
+      const school = offerSchools[(i + j) % offerSchools.length];
+      try {
+        const { error } = await supabase.from('offers').insert({
+          athlete_id: topAthletes[i].id,
+          school_name: school.name,
+          division: school.division,
+          scholarship_type: scholarshipTypes[j % 3],
+          offer_date: new Date(Date.now() - (30 - i) * 24 * 60 * 60 * 1000).toISOString(),
+          committed: i < 3 && j === 0, // First 3 athletes committed to first offer
+        });
+        if (!error) {
+          offerCount++;
+          created.push(`Offer: ${school.name} → athlete ${topAthletes[i].id}`);
+        }
+      } catch (e) {
+        errors.push(`Offer ${school.name}: ${e instanceof Error ? e.message : String(e)}`);
+      }
+    }
+  }
+  console.log(`  ✓ Offers: ${offerCount}`);
+
+  // 5. Create messages between TCU recruiter and real athletes
+  if (tcuProfileId) {
+    let msgCount = 0;
+    for (let i = 0; i < Math.min(10, realAthletes.length); i++) {
+      const athleteProfileId = realAthletes[i].profile_id;
+      if (!athleteProfileId) continue;
+
+      // Recruiter sends message
+      const { error: err1 } = await supabase.from('messages').insert({
+        sender_id: tcuProfileId,
+        recipient_id: athleteProfileId,
+        subject: `TCU Football - Interest in ${getProfileName(realAthletes[i]) || 'you'}`,
+        body: `We have been following your progress and would love to discuss TCU football opportunities with you.`,
+        read: i < 5, // First 5 are read
+      });
+
+      if (!err1) msgCount++;
+
+      // Athlete replies (for first 5)
+      if (i < 5) {
+        const { error: err2 } = await supabase.from('messages').insert({
+          sender_id: athleteProfileId,
+          recipient_id: tcuProfileId,
+          subject: `Re: TCU Football`,
+          body: `Thank you for reaching out! I am very interested in learning more about TCU.`,
+          read: true,
+        });
+        if (!err2) msgCount++;
+      }
+    }
+    created.push(`Messages: ${msgCount}`);
+    console.log(`  ✓ Messages: ${msgCount}`);
+  }
+
+  // 6. Create zone_activity for West zone (30 days)
+  const zoneRows = [];
+  for (let day = 0; day < 30; day++) {
+    const date = new Date(Date.now() - day * 24 * 60 * 60 * 1000);
+    const dateStr = date.toISOString().split('T')[0];
+    const baseViews = 50 + Math.floor(Math.random() * 50);
+
+    zoneRows.push({
+      zone: 'WEST',
+      date: dateStr,
+      total_views: baseViews,
+      unique_athletes_viewed: Math.floor(baseViews * 0.6),
+      unique_coaches_active: 5 + Math.floor(Math.random() * 10),
+      new_offers: Math.floor(Math.random() * 5),
+      new_commits: Math.floor(Math.random() * 2),
+      hot_positions: ['QB', 'WR', 'DB'].slice(0, 1 + Math.floor(Math.random() * 3)),
+      active_schools: ['USC', 'UCLA', 'Oregon', 'TCU', 'Arizona State'].slice(0, 2 + Math.floor(Math.random() * 4)),
+      activity_level: baseViews > 75 ? 'high' : baseViews > 50 ? 'medium' : 'low',
+      week_over_week_change: parseFloat((Math.random() * 20 - 10).toFixed(1)),
     });
-
-    if (!error) {
-      console.log('  ✓ Linked Lisa Washington to Jaylen Washington');
-    }
   }
 
-  console.log('\n✓ Additional test data seeded');
+  // Insert zone_activity in batches
+  for (let i = 0; i < zoneRows.length; i += 15) {
+    const batch = zoneRows.slice(i, i + 15);
+    const { error } = await supabase.from('zone_activity').insert(batch);
+    if (error) {
+      errors.push(`zone_activity batch: ${error.message}`);
+    }
+  }
+  created.push(`Zone activity: ${zoneRows.length} days`);
+  console.log(`  ✓ Zone activity: ${zoneRows.length} days`);
+
+  // 7. Create class_rankings for 10 D1 schools
+  const rankingSchools = [
+    { name: 'USC', conference: 'Big Ten' },
+    { name: 'UCLA', conference: 'Big Ten' },
+    { name: 'Oregon', conference: 'Big Ten' },
+    { name: 'TCU', conference: 'Big 12' },
+    { name: 'Arizona State', conference: 'Big 12' },
+    { name: 'San Diego State', conference: 'Mountain West' },
+    { name: 'Cal', conference: 'ACC' },
+    { name: 'Stanford', conference: 'ACC' },
+    { name: 'Washington', conference: 'Big Ten' },
+    { name: 'Colorado', conference: 'Big 12' },
+  ];
+
+  const rankingRows = rankingSchools.map((school, idx) => ({
+    school_name: school.name,
+    division: 'D1',
+    conference: school.conference,
+    class_year: 2026,
+    overall_rank: idx + 1,
+    conference_rank: (idx % 5) + 1,
+    total_commits: 15 + Math.floor(Math.random() * 15),
+    five_stars: idx < 3 ? 2 + Math.floor(Math.random() * 3) : Math.floor(Math.random() * 2),
+    four_stars: 3 + Math.floor(Math.random() * 5),
+    three_stars: 5 + Math.floor(Math.random() * 8),
+    avg_rating: parseFloat((4.5 - idx * 0.1 + Math.random() * 0.2).toFixed(2)),
+    points: parseFloat((300 - idx * 20 + Math.random() * 10).toFixed(1)),
+    ranking_source: '247Sports',
+    as_of_date: new Date().toISOString().split('T')[0],
+  }));
+
+  const { error: rankError } = await supabase.from('class_rankings').insert(rankingRows);
+  if (rankError) {
+    errors.push(`class_rankings: ${rankError.message}`);
+    console.log(`  ✗ class_rankings: ${rankError.message}`);
+  } else {
+    created.push(`Class rankings: ${rankingRows.length}`);
+    console.log(`  ✓ Class rankings: ${rankingRows.length}`);
+  }
+
+  const duration = Date.now() - startTime;
+
+  console.log('\n--- Relationships Seed Summary ---');
+  console.log(`Created: ${created.length} items`);
+  console.log(`Errors: ${errors.length}`);
+  console.log(`Duration: ${duration}ms`);
+
+  return { success: errors.length === 0, created, errors, duration };
 }
 
 // ============================================
@@ -1001,23 +800,37 @@ export async function cleanTestUsers(): Promise<CleanResult> {
 // HELPERS
 // ============================================
 
-async function buildUserIdMap(supabase: SupabaseClient): Promise<void> {
-  console.log('Building user ID map...');
-
-  const { data: profiles } = await supabase
-    .from('profiles')
-    .select('id, email')
-    .in(
-      'email',
-      testUserData.map((u) => u.email)
-    );
-
-  if (profiles) {
-    for (const profile of profiles) {
-      userIdMap.set(profile.email, profile.id);
-    }
-    console.log(`  Found ${profiles.length} existing users\n`);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function getProfileName(athlete: any): string | undefined {
+  const profiles = athlete?.profiles;
+  if (Array.isArray(profiles) && profiles.length > 0) {
+    return profiles[0].full_name;
   }
+  if (profiles && typeof profiles === 'object' && !Array.isArray(profiles)) {
+    return profiles.full_name;
+  }
+  return undefined;
+}
+
+async function buildUserIdMap(supabase: SupabaseClient): Promise<void> {
+  console.log('Building user ID map from auth...');
+
+  const { data, error } = await supabase.auth.admin.listUsers();
+
+  if (error) {
+    console.warn(`  Warning: Failed to list auth users: ${error.message}`);
+    return;
+  }
+
+  const testEmails = new Set(testUserData.map((u) => u.email));
+
+  for (const user of data.users) {
+    if (user.email && testEmails.has(user.email)) {
+      userIdMap.set(user.email, user.id);
+    }
+  }
+
+  console.log(`  Found ${userIdMap.size} existing users\n`);
 }
 
 // ============================================
@@ -1029,62 +842,39 @@ async function seedAll(): Promise<void> {
   console.log('REPMAX v2 - FULL SEED');
   console.log('='.repeat(60));
 
-  // Seed users first
+  // 1. Seed users
   await seedTestUsers();
 
-  // Seed related data (these may fail gracefully if tables don't exist)
+  // 2. Build entity maps
+  const supabase = getSupabaseClient();
+  await buildEntityMaps(supabase);
+
+  // 3. Seed highlights
   try {
-    await seedFilms();
+    await seedHighlights();
   } catch (e) {
-    console.log('  Skipped films (table may not exist)');
+    console.log('  Skipped highlights (error)');
   }
 
+  // 4. Seed coach tasks
   try {
-    await seedDocuments();
+    await seedCoachTasks();
   } catch (e) {
-    console.log('  Skipped documents (table may not exist)');
+    console.log('  Skipped coach tasks (error)');
   }
 
-  try {
-    await seedCoachData();
-  } catch (e) {
-    console.log('  Skipped coach data (tables may not exist)');
-  }
-
-  try {
-    await seedTournaments();
-  } catch (e) {
-    console.log('  Skipped tournaments (table may not exist)');
-  }
-
-  try {
-    await seedTournamentTeams();
-  } catch (e) {
-    console.log('  Skipped tournament teams (table may not exist)');
-  }
-
-  try {
-    await seedVerificationQueue();
-  } catch (e) {
-    console.log('  Skipped verification queue (table may not exist)');
-  }
-
-  try {
-    await seedTournamentPayments();
-  } catch (e) {
-    console.log('  Skipped tournament payments (table may not exist)');
-  }
-
-  try {
-    await seedRecruiterPipelines();
-  } catch (e) {
-    console.log('  Skipped pipelines (table may not exist)');
-  }
-
+  // 5. Seed test data (shortlists + profile views for test users)
   try {
     await seedTestData();
   } catch (e) {
-    console.log('  Skipped test data (tables may not exist)');
+    console.log('  Skipped test data (error)');
+  }
+
+  // 6. Seed relationships (links to real imported athletes)
+  try {
+    await seedRelationships();
+  } catch (e) {
+    console.log('  Skipped relationships (no real athletes imported yet)');
   }
 
   console.log('\n' + '='.repeat(60));
@@ -1106,29 +896,14 @@ async function main() {
     case 'seed:users':
       await seedTestUsers();
       break;
-    case 'seed:films':
-      await seedFilms();
-      break;
-    case 'seed:docs':
-      await seedDocuments();
+    case 'seed:highlights':
+      await seedHighlights();
       break;
     case 'seed:coach':
-      await seedCoachData();
+      await seedCoachTasks();
       break;
-    case 'seed:club':
-      await seedTournaments();
-      break;
-    case 'seed:teams':
-      await seedTournamentTeams();
-      break;
-    case 'seed:verifications':
-      await seedVerificationQueue();
-      break;
-    case 'seed:payments':
-      await seedTournamentPayments();
-      break;
-    case 'seed:pipeline':
-      await seedRecruiterPipelines();
+    case 'seed:relationships':
+      await seedRelationships();
       break;
     case 'clean':
       await cleanTestUsers();
@@ -1143,14 +918,9 @@ async function main() {
       console.log('Commands:');
       console.log('  seed              - Create all test users and data');
       console.log('  seed:users        - Create test users only');
-      console.log('  seed:films        - Create film data only');
-      console.log('  seed:docs         - Create document data only');
-      console.log('  seed:coach        - Create coach data (tasks, notes, activities)');
-      console.log('  seed:club         - Create tournament data');
-      console.log('  seed:teams        - Create tournament teams with rosters');
-      console.log('  seed:verifications- Create verification queue data');
-      console.log('  seed:payments     - Create tournament payment data');
-      console.log('  seed:pipeline     - Create recruiter pipeline data');
+      console.log('  seed:highlights   - Create highlight data only');
+      console.log('  seed:coach        - Create coach tasks only');
+      console.log('  seed:relationships- Link recruiters to real imported athletes');
       console.log('  clean             - Remove all test users');
       console.log('  reset             - Clean and re-seed everything');
   }

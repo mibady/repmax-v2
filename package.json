@@ -21,17 +21,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "seed": "npx tsx test/seed/seed-loader.ts seed",
     "seed:clean": "npx tsx test/seed/seed-loader.ts clean",
-    "seed:reset": "npx tsx test/seed/seed-loader.ts reset",
-    "sandbox:status": "npx tsx /home/mibady/ai-coder/scripts/sandbox-runner.ts --status",
-    "sandbox:build": "npx tsx /home/mibady/ai-coder/scripts/sandbox-runner.ts --build",
-    "sandbox:lint": "npx tsx /home/mibady/ai-coder/scripts/sandbox-runner.ts --lint",
-    "sandbox:typecheck": "npx tsx /home/mibady/ai-coder/scripts/sandbox-runner.ts --typecheck",
-    "sandbox:test": "npx tsx /home/mibady/ai-coder/scripts/sandbox-runner.ts --test",
-    "sandbox:e2e": "SANDBOX_TEMPLATE=z-thread-e2e-v1 npx tsx /home/mibady/ai-coder/scripts/sandbox-runner.ts --e2e",
-    "sandbox:integration": "npx tsx /home/mibady/ai-coder/scripts/sandbox-runner.ts --integration",
-    "sandbox:seed": "npx tsx /home/mibady/ai-coder/scripts/sandbox-runner.ts --seed",
-    "sandbox:responsive": "SANDBOX_TEMPLATE=z-thread-e2e-v1 npx tsx /home/mibady/ai-coder/scripts/sandbox-runner.ts --responsive",
-    "sandbox:all": "npx tsx /home/mibady/ai-coder/scripts/sandbox-runner.ts --all"
+    "seed:reset": "npx tsx test/seed/seed-loader.ts reset"
   },
   "devDependencies": {
     "@playwright/test": "^1.47.0",

@@ -16,8 +16,8 @@ npm run dev
 # Build for production
 npm run build
 
-# Run in E2B sandbox (recommended for testing)
-npm run sandbox:build
+# Run quality pipeline (tsc -> lint -> test -> build)
+npx tsx ~/.claude/scripts/quality-pipeline.ts --all
 ```
 
 ## Tech Stack
@@ -31,7 +31,7 @@ npm run sandbox:build
 | Payments | Stripe |
 | Styling | Tailwind CSS 3.4 |
 | Validation | Zod |
-| Testing | E2B Cloud Sandbox |
+| Testing | Quality Pipeline (tsc/lint/test/build) |
 
 ## Project Structure
 
@@ -109,13 +109,13 @@ E2B_API_KEY=
 
 ## Testing
 
-Use E2B sandbox for isolated testing:
+Run the quality pipeline (stops on first failure):
 ```bash
-npm run sandbox:status    # Check configuration
-npm run sandbox:build     # Test build
-npm run sandbox:lint      # Run linter
-npm run sandbox:typecheck # Type check
-npm run sandbox:all       # Run all gates
+npx tsx ~/.claude/scripts/quality-pipeline.ts --all        # Full pipeline
+npx tsx ~/.claude/scripts/quality-pipeline.ts --gate tsc   # TypeScript only
+npx tsx ~/.claude/scripts/quality-pipeline.ts --gate lint  # Lint only
+npx tsx ~/.claude/scripts/quality-pipeline.ts --gate build # Build only
+npx tsx ~/.claude/scripts/quality-pipeline.ts --status     # Show config
 ```
 
 ## Common Tasks

@@ -2,6 +2,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Tables } from "@/types/database";
+import CardActions from "./CardActions";
 
 type AthleteWithProfile = Tables<"athletes"> & {
   profile: Tables<"profiles"> | null;
@@ -338,22 +339,7 @@ export default async function AthleteCardPage({
         </div>
 
         {/* Sticky Footer Actions */}
-        <div className="p-6 bg-[#0a0a0a]/95 backdrop-blur-xl border-t border-white/5 flex flex-col gap-4">
-          <button className="w-full h-12 bg-primary hover:bg-yellow-500 text-black font-bold rounded-full flex items-center justify-center gap-2 transition-all transform active:scale-95 shadow-lg shadow-primary/20">
-            <span className="material-symbols-outlined text-[20px]">add</span>
-            Add to Shortlist
-          </button>
-          <button className="w-full h-12 bg-transparent border border-primary text-primary hover:bg-primary/10 font-bold rounded-full flex items-center justify-center gap-2 transition-all active:scale-95">
-            <span className="material-symbols-outlined text-[20px]">mail</span>
-            Contact Coach
-          </button>
-          <div className="w-full flex justify-center items-center gap-1.5 opacity-40 mt-2">
-            <span className="material-symbols-outlined text-[12px]">bolt</span>
-            <p className="text-[10px] font-medium tracking-widest uppercase">
-              Powered by REPMAX
-            </p>
-          </div>
-        </div>
+        <CardActions athleteId={athlete.id} />
       </main>
     </div>
   );

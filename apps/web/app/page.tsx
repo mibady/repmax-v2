@@ -1,8 +1,20 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function Page() {
+  const router = useRouter();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeAccordion, setActiveAccordion] = useState(0);
+
+  const accordionItems = [
+    { title: 'Advanced Filtering', body: 'Filter thousands of athletes by verified stats, GPA, location, and AI-predicted potential rating. Find exactly who fits your system.' },
+    { title: 'Team Collaboration', body: 'Share watchlists, assign evaluations, and coordinate recruiting efforts across your entire coaching staff in real-time.' },
+    { title: 'Pipeline Management', body: 'Track prospects from initial contact through commitment with customizable stages, automated follow-ups, and deadline alerts.' },
+  ];
+
   return (
     <>
       {/*  Sticky Navigation  */}
@@ -23,11 +35,33 @@ export default function Page() {
 <Link href="/signup" className="hidden md:flex items-center justify-center rounded-md bg-primary px-5 py-2.5 text-sm font-bold text-[#050505] transition-all hover:bg-primary-hover hover:scale-105">
                 Get Your Free RepMax ID
             </Link>
-<button className="flex md:hidden text-white">
+<button className="flex md:hidden text-white" onClick={() => setMobileMenuOpen(true)}>
 <span className="material-symbols-outlined">menu</span>
 </button>
 </div>
 </header>
+{mobileMenuOpen && (
+  <div className="fixed inset-0 z-[60] bg-background-dark/95 backdrop-blur-md md:hidden">
+    <div className="flex items-center justify-between px-6 h-20">
+      <div className="flex items-center gap-4">
+        <div className="flex h-8 w-8 items-center justify-center rounded bg-primary/20 text-primary">
+          <span className="material-symbols-outlined">sports_football</span>
+        </div>
+        <h2 className="text-xl font-black tracking-tight text-white">REPMAX</h2>
+      </div>
+      <button onClick={() => setMobileMenuOpen(false)} className="text-white">
+        <span className="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <nav className="flex flex-col items-center gap-8 pt-12">
+      <Link className="text-lg font-medium text-white" href="#features" onClick={() => setMobileMenuOpen(false)}>Features</Link>
+      <Link className="text-lg font-medium text-white" href="#how-it-works" onClick={() => setMobileMenuOpen(false)}>How it Works</Link>
+      <Link className="text-lg font-medium text-white" href="/pricing" onClick={() => setMobileMenuOpen(false)}>Pricing</Link>
+      <Link className="text-lg font-medium text-white" href="/login" onClick={() => setMobileMenuOpen(false)}>Login</Link>
+      <Link href="/signup" className="mt-4 rounded-md bg-primary px-8 py-3 text-base font-bold text-[#050505]" onClick={() => setMobileMenuOpen(false)}>Get Your Free RepMax ID</Link>
+    </nav>
+  </div>
+)}
 {/*  Hero Section  */}
 <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
 {/*  Background decorative elements  */}
@@ -59,7 +93,7 @@ export default function Page() {
 <Link href="/signup" className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-md bg-primary px-8 py-3.5 text-base font-bold text-[#050505] transition-all hover:bg-primary-hover shadow-[0_0_20px_rgba(212,175,53,0.3)]">
                             Get Your Free RepMax ID
                         </Link>
-<button className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-md border border-white/10 bg-white/5 px-8 py-3.5 text-base font-medium text-white transition-all hover:bg-white/10">
+<button onClick={() => router.push('/login')} className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-md border border-white/10 bg-white/5 px-8 py-3.5 text-base font-medium text-white transition-all hover:bg-white/10">
 <span className="material-symbols-outlined text-[20px]">play_circle</span>
                             View Demo
                         </button>
@@ -75,7 +109,7 @@ export default function Page() {
 {/*  Image Header  */}
 <div className="relative h-64 w-full overflow-hidden">
 <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] to-transparent z-10"></div>
-<div className="w-full h-full bg-cover bg-center" data-alt="Athletic football player in action pose holding a ball with intense focus" style={{backgroundImage: "url('https"}}>
+<div className="w-full h-full" data-alt="Athletic football player in action pose holding a ball with intense focus" style={{background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)"}}>
 </div>
 <div className="absolute top-4 right-4 z-20 flex items-center gap-1 rounded bg-black/60 px-2 py-1 backdrop-blur-sm border border-primary/30">
 <span className="text-xs font-bold text-primary">ELITE 11</span>
@@ -282,7 +316,7 @@ export default function Page() {
 <div className="relative rounded-xl border border-white/10 bg-[#0A0A0A] overflow-hidden shadow-2xl">
 <div className="absolute top-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>
 <div className="p-1">
-<div className="w-full h-[300px] sm:h-[400px] bg-cover bg-top rounded-lg opacity-90" data-alt="Dashboard interface screenshot showing charts, athlete list, and filtering options with a dark theme" style={{backgroundImage: "url('https"}}>
+<div className="w-full h-[300px] sm:h-[400px] rounded-lg opacity-90" data-alt="Dashboard interface screenshot showing charts, athlete list, and filtering options with a dark theme" style={{background: "linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)"}}>
 </div>
 </div>
 </div>
@@ -290,30 +324,29 @@ export default function Page() {
 {/*  Accordion Side  */}
 <div className="w-full lg:w-1/2 flex flex-col gap-4">
 <h2 className="text-3xl font-bold text-white mb-4">Command Center</h2>
-{/*  Accordion Item 1 (Active)  */}
-<div className="rounded-lg border border-primary/20 bg-primary/5 p-4 transition-all">
-<button className="flex w-full items-center justify-between text-left mb-2">
-<span className="text-lg font-bold text-primary">Advanced Filtering</span>
-<span className="material-symbols-outlined text-primary">expand_less</span>
-</button>
-<p className="text-sm text-text-grey leading-relaxed">
-                            Filter thousands of athletes by verified stats, GPA, location, and AI-predicted potential rating. Find exactly who fits your system.
-                        </p>
-</div>
-{/*  Accordion Item 2  */}
-<div className="rounded-lg border border-white/5 bg-surface-dark p-4 transition-all hover:bg-[#151515] cursor-pointer group">
-<div className="flex w-full items-center justify-between text-left">
-<span className="text-lg font-medium text-white group-hover:text-primary transition-colors">Team Collaboration</span>
-<span className="material-symbols-outlined text-text-grey group-hover:text-primary transition-colors">expand_more</span>
-</div>
-</div>
-{/*  Accordion Item 3  */}
-<div className="rounded-lg border border-white/5 bg-surface-dark p-4 transition-all hover:bg-[#151515] cursor-pointer group">
-<div className="flex w-full items-center justify-between text-left">
-<span className="text-lg font-medium text-white group-hover:text-primary transition-colors">Pipeline Management</span>
-<span className="material-symbols-outlined text-text-grey group-hover:text-primary transition-colors">expand_more</span>
-</div>
-</div>
+{accordionItems.map((item, i) => (
+  <div
+    key={i}
+    onClick={() => setActiveAccordion(activeAccordion === i ? -1 : i)}
+    className={`rounded-lg p-4 transition-all cursor-pointer ${
+      activeAccordion === i
+        ? 'border border-primary/20 bg-primary/5'
+        : 'border border-white/5 bg-surface-dark hover:bg-[#151515]'
+    }`}
+  >
+    <button className="flex w-full items-center justify-between text-left">
+      <span className={`text-lg ${activeAccordion === i ? 'font-bold text-primary' : 'font-medium text-white'}`}>
+        {item.title}
+      </span>
+      <span className={`material-symbols-outlined ${activeAccordion === i ? 'text-primary' : 'text-text-grey'}`}>
+        {activeAccordion === i ? 'expand_less' : 'expand_more'}
+      </span>
+    </button>
+    {activeAccordion === i && (
+      <p className="text-sm text-text-grey leading-relaxed mt-2">{item.body}</p>
+    )}
+  </div>
+))}
 </div>
 </div>
 </div>
@@ -374,7 +407,7 @@ export default function Page() {
 </div>
 </div>
 <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-<p className="text-xs text-text-grey">© 2024 RepMax Inc. All rights reserved.</p>
+<p className="text-xs text-text-grey">© 2026 RepMax Inc. All rights reserved.</p>
 <div className="flex items-center gap-2">
 <div className="h-2 w-2 rounded-full bg-green-500"></div>
 <span className="text-xs text-text-grey">Systems Operational</span>

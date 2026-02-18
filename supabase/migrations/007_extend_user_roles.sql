@@ -1,0 +1,2 @@
+ALTER TYPE user_role ADD VALUE IF NOT EXISTS 'parent';
+ALTER TYPE user_role ADD VALUE IF NOT EXISTS 'club';
