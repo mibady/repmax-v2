@@ -740,6 +740,231 @@ export async function seedRelationships(): Promise<SeedResult> {
 }
 
 // ============================================
+// PARENT LINKS SEEDING
+// ============================================
+
+export async function seedParentLinks(): Promise<SeedResult> {
+  const startTime = Date.now();
+  const created: string[] = [];
+  const errors: string[] = [];
+
+  console.log('\nSeeding parent links...\n');
+
+  const supabase = getSupabaseClient();
+
+  if (profileIdMap.size === 0) {
+    await buildEntityMaps(supabase);
+  }
+
+  // Link Lisa Washington → Jaylen Washington
+  const parentLinks = [
+    {
+      parentEmail: 'lisa.washington@test.repmax.com',
+      athleteEmail: 'jaylen.washington@test.repmax.com',
+      relationship: 'mother',
+    },
+  ];
+
+  for (const link of parentLinks) {
+    try {
+      const parentProfileId = profileIdMap.get(link.parentEmail);
+      const athleteProfileId = profileIdMap.get(link.athleteEmail);
+
+      if (!parentProfileId) {
+        throw new Error(`Parent profile not found: ${link.parentEmail}`);
+      }
+      if (!athleteProfileId) {
+        throw new Error(`Athlete profile not found: ${link.athleteEmail}`);
+      }
+
+      const { error } = await supabase.from('parent_links').insert({
+        parent_profile_id: parentProfileId,
+        athlete_profile_id: athleteProfileId,
+        relationship: link.relationship,
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      created.push(`${link.parentEmail} → ${link.athleteEmail}`);
+      console.log(`  ✓ Linked ${link.parentEmail} → ${link.athleteEmail}`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      errors.push(`${link.parentEmail}: ${message}`);
+      console.log(`  ✗ ${link.parentEmail}: ${message}`);
+    }
+  }
+
+  const duration = Date.now() - startTime;
+
+  console.log('\n--- Parent Links Seed Summary ---');
+  console.log(`Created: ${created.length} links`);
+  console.log(`Errors: ${errors.length}`);
+  console.log(`Duration: ${duration}ms`);
+
+  return { success: errors.length === 0, created, errors, duration };
+}
+
+// ============================================
+// CLUB DATA SEEDING
+// ============================================
+
+export async function seedClubData(): Promise<SeedResult> {
+  const startTime = Date.now();
+  const created: string[] = [];
+  const errors: string[] = [];
+
+  console.log('\nSeeding club data (tournaments, verifications, payments)...\n');
+
+  const supabase = getSupabaseClient();
+
+  if (userIdMap.size === 0 || profileIdMap.size === 0) {
+    await buildEntityMaps(supabase);
+  }
+
+  const mikeTorresUserId = userIdMap.get('mike.torres@test.repmax.com');
+
+  if (!mikeTorresUserId) {
+    console.log('  Mike Torres user not found. Skipping club seeding.');
+    return { success: true, created, errors, duration: Date.now() - startTime };
+  }
+
+  // 1. Create tournaments
+  const tournamentData = [
+    {
+      name: 'Winter Classic 2026',
+      start_date: '2026-02-15T09:00:00Z',
+      end_date: '2026-02-16T18:00:00Z',
+      location: 'Austin, TX',
+      teams_registered: 12,
+      teams_capacity: 16,
+      total_collected: 4500,
+      status: 'upcoming',
+    },
+    {
+      name: 'Spring Showcase 2026',
+      start_date: '2026-04-10T09:00:00Z',
+      end_date: '2026-04-12T18:00:00Z',
+      location: 'San Antonio, TX',
+      teams_registered: 8,
+      teams_capacity: 32,
+      total_collected: 2400,
+      status: 'upcoming',
+    },
+    {
+      name: 'Fall Championship 2025',
+      start_date: '2025-11-01T09:00:00Z',
+      end_date: '2025-11-02T18:00:00Z',
+      location: 'Dallas, TX',
+      teams_registered: 24,
+      teams_capacity: 24,
+      total_collected: 9600,
+      status: 'completed',
+    },
+  ];
+
+  const tournamentIds: string[] = [];
+
+  for (const t of tournamentData) {
+    try {
+      const { data, error } = await supabase
+        .from('tournaments')
+        .insert({
+          organizer_id: mikeTorresUserId,
+          ...t,
+        })
+        .select('id')
+        .single();
+
+      if (error) throw new Error(error.message);
+      if (data) tournamentIds.push(data.id);
+
+      created.push(`Tournament: ${t.name}`);
+      console.log(`  ✓ Tournament: ${t.name}`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      errors.push(`Tournament ${t.name}: ${message}`);
+      console.log(`  ✗ Tournament ${t.name}: ${message}`);
+    }
+  }
+
+  // 2. Create athlete verifications (pending, for 3 athletes)
+  const verificationAthletes = [
+    'jaylen.washington@test.repmax.com',
+    'deshawn.harris@test.repmax.com',
+    'sofia.rodriguez@test.repmax.com',
+  ];
+  const verificationTypes = ['identity', 'academic', 'athletic'] as const;
+
+  for (let i = 0; i < verificationAthletes.length; i++) {
+    const athleteProfileId = profileIdMap.get(verificationAthletes[i]);
+    if (!athleteProfileId) continue;
+
+    try {
+      const { error } = await supabase.from('athlete_verifications').insert({
+        athlete_id: athleteProfileId,
+        club_id: mikeTorresUserId,
+        type: verificationTypes[i],
+        status: 'pending',
+        created_at: new Date(Date.now() - (i + 1) * 12 * 60 * 60 * 1000).toISOString(),
+      });
+
+      if (error) throw new Error(error.message);
+
+      created.push(`Verification: ${verificationAthletes[i]} (${verificationTypes[i]})`);
+      console.log(`  ✓ Verification: ${verificationAthletes[i]} (${verificationTypes[i]})`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      errors.push(`Verification ${verificationAthletes[i]}: ${message}`);
+      console.log(`  ✗ Verification ${verificationAthletes[i]}: ${message}`);
+    }
+  }
+
+  // 3. Create tournament payments
+  if (tournamentIds.length > 0) {
+    const paymentData = [
+      { description: 'Team registration — Riverside Elite', amount: 375, status: 'completed', daysAgo: 5 },
+      { description: 'Team registration — Houston Select', amount: 375, status: 'completed', daysAgo: 3 },
+      { description: 'Team registration — Dallas Thunder', amount: 375, status: 'pending', daysAgo: 1 },
+      { description: 'Referee fee — Pool Play', amount: 800, status: 'completed', daysAgo: 7 },
+      { description: 'Field rental deposit', amount: 1200, status: 'completed', daysAgo: 14 },
+    ];
+
+    for (const p of paymentData) {
+      try {
+        const { error } = await supabase.from('tournament_payments').insert({
+          organizer_id: mikeTorresUserId,
+          tournament_id: tournamentIds[0],
+          description: p.description,
+          amount: p.amount,
+          status: p.status,
+          created_at: new Date(Date.now() - p.daysAgo * 24 * 60 * 60 * 1000).toISOString(),
+        });
+
+        if (error) throw new Error(error.message);
+
+        created.push(`Payment: ${p.description}`);
+        console.log(`  ✓ Payment: ${p.description}`);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        errors.push(`Payment ${p.description}: ${message}`);
+        console.log(`  ✗ Payment ${p.description}: ${message}`);
+      }
+    }
+  }
+
+  const duration = Date.now() - startTime;
+
+  console.log('\n--- Club Data Seed Summary ---');
+  console.log(`Created: ${created.length} items`);
+  console.log(`Errors: ${errors.length}`);
+  console.log(`Duration: ${duration}ms`);
+
+  return { success: errors.length === 0, created, errors, duration };
+}
+
+// ============================================
 // CLEANUP
 // ============================================
 
@@ -877,6 +1102,20 @@ async function seedAll(): Promise<void> {
     console.log('  Skipped relationships (no real athletes imported yet)');
   }
 
+  // 7. Seed parent links
+  try {
+    await seedParentLinks();
+  } catch (e) {
+    console.log('  Skipped parent links (error)');
+  }
+
+  // 8. Seed club data (tournaments, verifications, payments)
+  try {
+    await seedClubData();
+  } catch (e) {
+    console.log('  Skipped club data (error)');
+  }
+
   console.log('\n' + '='.repeat(60));
   console.log('SEED COMPLETE');
   console.log('='.repeat(60));
@@ -905,6 +1144,12 @@ async function main() {
     case 'seed:relationships':
       await seedRelationships();
       break;
+    case 'seed:parents':
+      await seedParentLinks();
+      break;
+    case 'seed:club':
+      await seedClubData();
+      break;
     case 'clean':
       await cleanTestUsers();
       break;
@@ -921,6 +1166,8 @@ async function main() {
       console.log('  seed:highlights   - Create highlight data only');
       console.log('  seed:coach        - Create coach tasks only');
       console.log('  seed:relationships- Link recruiters to real imported athletes');
+      console.log('  seed:parents      - Create parent-athlete links');
+      console.log('  seed:club         - Create club data (tournaments, verifications, payments)');
       console.log('  clean             - Remove all test users');
       console.log('  reset             - Clean and re-seed everything');
   }
