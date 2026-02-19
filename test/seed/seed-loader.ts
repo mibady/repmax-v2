@@ -1153,6 +1153,191 @@ async function buildUserIdMap(supabase: SupabaseClient): Promise<void> {
 }
 
 // ============================================
+// SCHOOL COACH ACCOUNTS
+// ============================================
+
+interface SchoolConfig {
+  key: string;
+  email: string;
+  displayName: string;
+  highSchool: string; // must match athletes.high_school exactly
+  client: 'repmax' | 'ca_recruits';
+}
+
+const SCHOOL_PASSWORD = 'RepMax2026!School';
+
+const schoolConfigs: SchoolConfig[] = [
+  // RepMax schools (6 core)
+  { key: 'wilson', email: 'wilson@repmax.io', displayName: 'Wilson HS Coach', highSchool: 'Woodrow Wilson High School', client: 'repmax' },
+  { key: 'western', email: 'western@repmax.io', displayName: 'Western HS Coach', highSchool: 'Western High School', client: 'repmax' },
+  { key: 'sierracanyon', email: 'sierracanyon@repmax.io', displayName: 'Sierra Canyon Coach', highSchool: 'Sierra Canyon School', client: 'repmax' },
+  { key: 'stpius', email: 'stpius@repmax.io', displayName: 'St. Pius Coach', highSchool: 'St. Pius X - St. Matthias Academy', client: 'repmax' },
+  { key: 'newburypark', email: 'newburypark@repmax.io', displayName: 'Newbury Park Coach', highSchool: 'Newbury Park High School', client: 'repmax' },
+  { key: 'mayfair', email: 'mayfair@repmax.io', displayName: 'Mayfair HS Coach', highSchool: 'Mayfair High School', client: 'repmax' },
+  // RepMax additional (batch5)
+  { key: 'riversidepoly', email: 'riversidepoly@repmax.io', displayName: 'Riverside Poly Coach', highSchool: 'Riverside Poly High School', client: 'repmax' },
+  // CA Recruits schools (10)
+  { key: 'frontier', email: 'frontier@repmax.io', displayName: 'Frontier HS Coach', highSchool: 'Frontier High School', client: 'ca_recruits' },
+  { key: 'bakersfield', email: 'bakersfield@repmax.io', displayName: 'Bakersfield Christian Coach', highSchool: 'Bakersfield Christian High School', client: 'ca_recruits' },
+  { key: 'garces', email: 'garces@repmax.io', displayName: 'Garces Memorial Coach', highSchool: 'Garces Memorial High School', client: 'ca_recruits' },
+  { key: 'heritage', email: 'heritage@repmax.io', displayName: 'Heritage Christian Coach', highSchool: 'Heritage Christian School', client: 'ca_recruits' },
+  { key: 'independence', email: 'independence@repmax.io', displayName: 'Independence HS Coach', highSchool: 'Independence High School', client: 'ca_recruits' },
+  { key: 'knight', email: 'knight@repmax.io', displayName: 'Knight HS Coach', highSchool: 'Knight High School', client: 'ca_recruits' },
+  { key: 'ontario', email: 'ontario@repmax.io', displayName: 'Ontario Christian Coach', highSchool: 'Ontario Christian High School', client: 'ca_recruits' },
+  { key: 'paraclete', email: 'paraclete@repmax.io', displayName: 'Paraclete HS Coach', highSchool: 'Paraclete High School', client: 'ca_recruits' },
+  { key: 'redwood', email: 'redwood@repmax.io', displayName: 'Redwood HS Coach', highSchool: 'Redwood High School', client: 'ca_recruits' },
+  { key: 'southeast', email: 'southeast@repmax.io', displayName: 'South East HS Coach', highSchool: 'South East High School', client: 'ca_recruits' },
+  // CA Recruits aggregate — sees ALL CA Recruits athletes
+  { key: 'carecruits', email: 'carecruits@repmax.io', displayName: 'CA Recruits', highSchool: '__CA_RECRUITS_ALL__', client: 'ca_recruits' },
+];
+
+export async function seedSchoolCoaches(): Promise<SeedResult> {
+  const startTime = Date.now();
+  const created: string[] = [];
+  const errors: string[] = [];
+
+  console.log('\nSeeding school coach accounts...\n');
+
+  const supabase = getSupabaseClient();
+
+  // CA Recruits school names for the aggregate account
+  const caRecruitsSchools = schoolConfigs
+    .filter(s => s.client === 'ca_recruits' && s.highSchool !== '__CA_RECRUITS_ALL__')
+    .map(s => s.highSchool);
+
+  for (const school of schoolConfigs) {
+    try {
+      // 1. Create or find auth user
+      let userId: string;
+      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+        email: school.email,
+        password: SCHOOL_PASSWORD,
+        email_confirm: true,
+        user_metadata: {
+          full_name: school.displayName,
+          roles: ['coach'],
+          active_role: 'coach',
+        },
+      });
+
+      if (authError) {
+        if (authError.message.includes('already been registered')) {
+          // Look up existing user
+          const { data: listData } = await supabase.auth.admin.listUsers({ perPage: 1000 });
+          const existing = listData?.users.find(u => u.email === school.email);
+          if (!existing) throw new Error(`Auth exists but not found: ${school.email}`);
+          userId = existing.id;
+          console.log(`  ↻ ${school.key}: auth exists`);
+        } else {
+          throw new Error(authError.message);
+        }
+      } else {
+        userId = authData.user.id;
+      }
+
+      // 2. Create or find profile
+      let profileId: string;
+      const { data: existingProfile } = await supabase
+        .from('profiles').select('id').eq('user_id', userId).single();
+
+      if (existingProfile) {
+        profileId = existingProfile.id;
+      } else {
+        const { error: profErr } = await supabase.from('profiles').insert({
+          id: userId,
+          user_id: userId,
+          role: 'coach',
+          full_name: school.displayName,
+        });
+        if (profErr) throw new Error(`Profile: ${profErr.message}`);
+        profileId = userId;
+      }
+
+      // 3. Create or find coach record
+      let coachId: string;
+      const { data: existingCoach } = await supabase
+        .from('coaches').select('id').eq('profile_id', profileId).single();
+
+      if (existingCoach) {
+        coachId = existingCoach.id;
+      } else {
+        const { data: newCoach, error: coachErr } = await supabase
+          .from('coaches')
+          .insert({
+            profile_id: profileId,
+            school_name: school.highSchool === '__CA_RECRUITS_ALL__' ? 'CA Recruits' : school.highSchool,
+            division: 'D1',
+            title: 'Head Coach',
+          })
+          .select('id')
+          .single();
+        if (coachErr) throw new Error(`Coach: ${coachErr.message}`);
+        coachId = newCoach!.id;
+      }
+
+      // 4. Query school's athletes
+      let athleteQuery;
+      if (school.highSchool === '__CA_RECRUITS_ALL__') {
+        // Aggregate: all CA Recruits schools
+        athleteQuery = supabase
+          .from('athletes')
+          .select('id')
+          .in('high_school', caRecruitsSchools);
+      } else {
+        athleteQuery = supabase
+          .from('athletes')
+          .select('id')
+          .eq('high_school', school.highSchool);
+      }
+
+      const { data: athletes, error: athErr } = await athleteQuery;
+      if (athErr) throw new Error(`Athletes query: ${athErr.message}`);
+      if (!athletes || athletes.length === 0) {
+        console.log(`  ⚠ ${school.key}: 0 athletes found for "${school.highSchool}"`);
+        created.push(`${school.key} (0 athletes)`);
+        continue;
+      }
+
+      // 5. Create shortlist entries (skip existing)
+      let shortlisted = 0;
+      for (const athlete of athletes) {
+        const { error: slErr } = await supabase.from('shortlists').insert({
+          coach_id: coachId,
+          athlete_id: athlete.id,
+          notes: `${school.highSchool === '__CA_RECRUITS_ALL__' ? 'CA Recruits' : school.highSchool} roster`,
+          priority: 'high',
+        });
+
+        if (slErr) {
+          if (!slErr.message.includes('duplicate')) {
+            console.log(`    ✗ shortlist: ${slErr.message}`);
+          }
+          // duplicate is fine — skip
+        } else {
+          shortlisted++;
+        }
+      }
+
+      created.push(`${school.key}: ${shortlisted}/${athletes.length} athletes`);
+      console.log(`  ✓ ${school.key} (${school.email}): ${shortlisted} athletes shortlisted`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      errors.push(`${school.key}: ${message}`);
+      console.log(`  ✗ ${school.key}: ${message}`);
+    }
+  }
+
+  const duration = Date.now() - startTime;
+
+  console.log('\n--- School Coach Seed Summary ---');
+  console.log(`Created: ${created.length} school accounts`);
+  console.log(`Errors: ${errors.length}`);
+  console.log(`Duration: ${duration}ms`);
+
+  return { success: errors.length === 0, created, errors, duration };
+}
+
+// ============================================
 // FULL SEED
 // ============================================
 
@@ -1210,6 +1395,13 @@ async function seedAll(): Promise<void> {
     console.log('  Skipped club data (error)');
   }
 
+  // 9. Seed school coach accounts (one per onboarded school)
+  try {
+    await seedSchoolCoaches();
+  } catch (e) {
+    console.log('  Skipped school coaches (error)');
+  }
+
   console.log('\n' + '='.repeat(60));
   console.log('SEED COMPLETE');
   console.log('='.repeat(60));
@@ -1244,6 +1436,9 @@ async function main() {
     case 'seed:club':
       await seedClubData();
       break;
+    case 'seed:schools':
+      await seedSchoolCoaches();
+      break;
     case 'clean':
       await cleanTestUsers();
       break;
@@ -1262,6 +1457,7 @@ async function main() {
       console.log('  seed:relationships- Link recruiters to real imported athletes');
       console.log('  seed:parents      - Create parent-athlete links');
       console.log('  seed:club         - Create club data (tournaments, verifications, payments)');
+      console.log('  seed:schools      - Create school coach accounts with athlete rosters');
       console.log('  clean             - Remove all test users');
       console.log('  reset             - Clean and re-seed everything');
   }
