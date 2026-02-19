@@ -109,7 +109,7 @@ export default function ZoneMapPage() {
             <span className={`material-symbols-outlined text-[16px] ${isLoading ? 'animate-spin' : ''}`}>refresh</span>
             Refresh
           </button>
-          <button className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary hover:bg-blue-600 text-xs font-medium text-white transition-colors">
+          <button disabled title="Export coming soon" className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary/50 text-xs font-medium text-white/60 cursor-not-allowed">
             <span className="material-symbols-outlined text-[16px]">download</span>
             Export
           </button>
@@ -229,9 +229,9 @@ export default function ZoneMapPage() {
           <div className="p-5 border-b border-[#232931]">
             <div className="flex items-center justify-between mb-1">
               <h2 className="text-lg font-bold text-white tracking-tight">Zone Activity</h2>
-              <button className="text-primary hover:text-white transition-colors">
+              <span className="text-primary/50" title="Filters coming soon">
                 <span className="material-symbols-outlined text-[20px]">tune</span>
-              </button>
+              </span>
             </div>
             <p className="text-xs text-slate-500">Live intelligence updates across zones</p>
           </div>

@@ -363,7 +363,7 @@ export default function TerritoryAssignmentsPage() {
                 <div className="mb-8">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-sm font-bold text-white uppercase tracking-wider">Active Assignments</h3>
-                    <button className="text-xs text-[#D4AF37] hover:text-[#D4AF37]/80 font-medium">View All</button>
+                    <button disabled title="Coming soon" className="text-xs text-[#D4AF37] font-medium opacity-50 cursor-not-allowed">View All</button>
                   </div>
                   <div className="flex flex-col gap-3">
                     {assignedZones.map(zone => (

@@ -56,7 +56,7 @@ export default function RecruitingReportsPage() {
                   <span className="material-symbols-outlined text-[#D4AF37]">filter_list</span>
                   Pipeline Funnel
                 </h3>
-                <button className="text-xs text-[#D4AF37] hover:text-white font-medium">View Detail</button>
+                <button disabled title="Detail view coming soon" className="text-xs text-[#D4AF37] font-medium opacity-50 cursor-not-allowed">View Detail</button>
               </div>
               <div className="min-w-[800px] flex flex-col">
                 {/* Funnel Bars */}
@@ -169,9 +169,9 @@ export default function RecruitingReportsPage() {
               <div className="rounded-xl border border-[#333333] bg-[#1F1F22] overflow-hidden flex flex-col h-full">
                 <div className="p-5 border-b border-[#333333] flex justify-between items-center">
                   <h3 className="font-semibold text-white">Staff Activity Leaderboard</h3>
-                  <button className="text-[#A1A1AA] hover:text-white">
+                  <span className="text-[#A1A1AA] opacity-50" title="Options coming soon">
                     <span className="material-symbols-outlined">more_horiz</span>
-                  </button>
+                  </span>
                 </div>
                 <div className="overflow-x-auto flex-1">
                   {staffActivity.length === 0 ? (
@@ -228,7 +228,7 @@ export default function RecruitingReportsPage() {
                   )}
                 </div>
                 <div className="p-3 border-t border-[#333333] flex justify-center">
-                  <button className="text-xs font-medium text-[#A1A1AA] hover:text-white">View All Staff</button>
+                  <button disabled title="Staff directory coming soon" className="text-xs font-medium text-[#A1A1AA] opacity-50 cursor-not-allowed">View All Staff</button>
                 </div>
               </div>
 

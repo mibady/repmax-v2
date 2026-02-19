@@ -62,7 +62,7 @@ export default function CampusVisitsPage() {
             Manage your recruiting calendar and upcoming prospect visits.
           </p>
         </div>
-        <button className="flex items-center justify-center gap-2 rounded-lg h-10 px-4 bg-primary hover:bg-[#bfa030] text-[#121214] text-sm font-bold transition-colors shadow-[0_0_15px_rgba(212,175,53,0.3)]">
+        <button disabled title="Visit scheduling coming soon" className="flex items-center justify-center gap-2 rounded-lg h-10 px-4 bg-primary/50 text-[#121214] text-sm font-bold cursor-not-allowed">
           <span className="material-symbols-outlined text-[20px]">add</span>
           <span className="hidden sm:inline">Schedule Visit</span>
         </button>
@@ -243,7 +243,7 @@ export default function CampusVisitsPage() {
             <div className="xl:col-span-4 flex flex-col gap-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-bold text-white">Upcoming Visits</h3>
-                <button className="text-xs text-primary font-medium hover:underline">View All</button>
+                <button disabled title="Coming soon" className="text-xs text-primary font-medium opacity-50 cursor-not-allowed">View All</button>
               </div>
               {visits.length === 0 ? (
                 <div className="bg-[#1F1F22] rounded-xl border border-white/5 p-8 text-center">
