@@ -12,11 +12,16 @@ export async function GET(request: NextRequest) {
     const minStars = parseInt(searchParams.get("minStars") || "0", 10);
     const limit = parseInt(searchParams.get("limit") || "20", 10);
 
+    const supabase = await createClient();
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const cacheKey = `prospects-${position || "all"}-${zone || "all"}-${minStars}-${limit}`;
     const cached = getCached<{ prospects: Prospect[]; total: number }>(cacheKey);
     if (cached) return NextResponse.json(cached);
-
-    const supabase = await createClient();
 
     let query = supabase
       .from("athletes")

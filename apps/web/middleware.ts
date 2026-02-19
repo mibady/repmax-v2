@@ -9,9 +9,12 @@ export async function middleware(request: NextRequest) {
     },
   });
 
-  // Use fallback values during build time when env vars are not available
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder.supabase.co";
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder-key";
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!supabaseUrl || !supabaseAnonKey) {
+    // During build time, env vars may not be available — skip middleware
+    return response;
+  }
 
   const supabase = createServerClient(
     supabaseUrl,
@@ -66,7 +69,7 @@ export async function middleware(request: NextRequest) {
   );
 
   // App routes that require authentication
-  const appRoutes = ["/dashboard", "/athletes", "/shortlist", "/settings"];
+  const appRoutes = ["/dashboard", "/athlete", "/recruiter", "/coach", "/admin", "/parent", "/club", "/zone", "/messages", "/onboarding", "/settings", "/athletes", "/shortlist"];
   const isAppRoute = appRoutes.some((route) => pathname.startsWith(route));
 
   // Redirect unauthenticated users from protected routes

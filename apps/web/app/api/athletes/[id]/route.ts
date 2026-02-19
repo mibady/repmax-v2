@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { z } from "zod";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
@@ -9,6 +10,11 @@ export async function GET(request: Request, context: RouteContext) {
   try {
     const { id } = await context.params;
     const supabase = await createClient();
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const { data, error } = await supabase
       .from("athletes")
@@ -72,10 +78,33 @@ export async function PATCH(request: Request, context: RouteContext) {
 
     const body = await request.json();
 
+    // Validate body
+    const updateSchema = z.object({
+      primary_position: z.string().optional(),
+      secondary_position: z.string().nullable().optional(),
+      high_school: z.string().optional(),
+      city: z.string().optional(),
+      state: z.string().optional(),
+      class_year: z.number().optional(),
+      height_inches: z.number().nullable().optional(),
+      weight_lbs: z.number().nullable().optional(),
+      forty_yard_time: z.number().nullable().optional(),
+      gpa: z.number().nullable().optional(),
+      star_rating: z.number().min(1).max(5).nullable().optional(),
+      zone: z.string().optional(),
+      bio: z.string().nullable().optional(),
+      verified: z.boolean().optional(),
+    }).partial();
+
+    const parsed = updateSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid request body", details: parsed.error.flatten() }, { status: 400 });
+    }
+
     // Update athlete
     const { data, error } = await supabase
       .from("athletes")
-      .update(body)
+      .update(parsed.data)
       .eq("id", id)
       .select()
       .single();

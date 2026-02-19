@@ -14,19 +14,16 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Check if user is admin (you may want to add an admin role check here)
-    const { data: _profile } = await supabase
+    // Check if user is admin
+    const { data: profile } = await supabase
       .from("profiles")
       .select("role")
       .eq("user_id", user.id)
       .single();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    void _profile; // Used for admin role check in production
 
-    // For now, allow any authenticated user - in production, check for admin role
-    // if (profile?.role !== 'admin') {
-    //   return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    // }
+    if (profile?.role !== "admin") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
     // Get total user count
     const { count: totalUsers } = await supabase
@@ -148,35 +145,35 @@ export async function GET() {
       Math.floor((recentMessages || 0) + (recentViews || 0) / 5)
     );
 
-    // Build KPI data
+    // Build KPI data — all values from real DB counts; change is 0 when no historical comparison
     const kpiData = [
       {
         id: "1",
         label: "DAU",
-        value: String(estimatedDAU || Math.floor(Math.random() * 50) + 100),
-        change: 5.2,
-        isPositive: true,
+        value: String(estimatedDAU),
+        change: 0,
+        isPositive: estimatedDAU > 0,
       },
       {
         id: "2",
         label: "WAU",
-        value: String(weekSignups || Math.floor(Math.random() * 200) + 300),
-        change: 2.1,
-        isPositive: true,
+        value: String(weekSignups || 0),
+        change: 0,
+        isPositive: (weekSignups || 0) > 0,
       },
       {
         id: "3",
         label: "MAU",
         value: String(totalUsers || 0),
-        change: 0.5,
-        isPositive: totalUsers ? true : false,
+        change: 0,
+        isPositive: (totalUsers || 0) > 0,
       },
       {
         id: "4",
         label: "Daily Signups",
         value: String(todaySignups || 0),
-        change: todaySignups && todaySignups > 0 ? 12 : -5,
-        isPositive: todaySignups ? todaySignups > 0 : false,
+        change: 0,
+        isPositive: (todaySignups || 0) > 0,
       },
     ];
 

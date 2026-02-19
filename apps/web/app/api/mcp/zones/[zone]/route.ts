@@ -49,6 +49,13 @@ export async function GET(
 ) {
   try {
     const { zone } = await params;
+
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const upperZone = zone.toUpperCase();
 
     const validZone = zoneSchema.safeParse(upperZone);
@@ -85,8 +92,6 @@ export async function GET(
       setCache(cacheKey, result);
       return NextResponse.json(result);
     }
-
-    const supabase = await createClient();
 
     const { data: rows, error } = await supabase
       .from("athletes")

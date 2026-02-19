@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 import type { CalendarContext } from "@/lib/data/zone-data";
 import { getCached, setCache } from "@/lib/utils/mcp-cache";
 
@@ -75,6 +76,12 @@ function formatDate(d: Date): string {
 
 export async function GET() {
   try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const cached = getCached<{ calendar: CalendarContext }>(CACHE_KEY);
     if (cached) return NextResponse.json(cached);
 

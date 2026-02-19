@@ -37,6 +37,17 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Verify admin role
+    const { data: adminProfile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("user_id", user.id)
+      .single();
+
+    if (adminProfile?.role !== "admin") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     // Parse query params
     const searchParams = request.nextUrl.searchParams;
     const type = searchParams.get("type") || "all";
@@ -50,30 +61,8 @@ export async function GET(request: NextRequest) {
     // This is a placeholder - in production you'd have a proper moderation_flags table
     let items: ModerationItem[] = [];
 
-    // Try to fetch some sample data from profiles to demonstrate the structure
-    // In real implementation, this would query a moderation_queue or flagged_content table
-    const { data: _profiles, error: profilesError } = await supabase
-      .from("profiles")
-      .select("id, full_name, avatar_url, bio, updated_at")
-      .limit(0); // Return empty for now - no mock data in production
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    void _profiles; // Would be used for profile moderation items
-
-    if (profilesError) {
-      console.error("Error fetching profiles:", profilesError);
-    }
-
-    // Similarly check highlights table if it exists
-    const { data: _highlights, error: highlightsError } = await supabase
-      .from("highlights")
-      .select("id, athlete_id, title, video_url, created_at")
-      .limit(0); // Return empty for now
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    void _highlights; // Would be used for highlight moderation items
-
-    if (highlightsError) {
-      console.error("Error fetching highlights:", highlightsError);
-    }
+    // TODO: Create moderation_queue table for proper content moderation
+    // Currently returns empty — no moderation_flags table exists yet
 
     // Filter by type if specified
     if (type !== "all" && items.length > 0) {
@@ -118,6 +107,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Verify admin role
+    const { data: adminProfile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("user_id", user.id)
+      .single();
+
+    if (adminProfile?.role !== "admin") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const body = await request.json();
     const { itemId, action, contentType, userId } = body;
 
@@ -141,7 +141,11 @@ export async function POST(request: NextRequest) {
     // 3. If action is 'warn', send a notification to the user
     // 4. Log the moderation action for audit trail
 
-    // For now, we'll simulate the action based on content type
+    // Approve and warn are not yet implemented
+    if (action === "approve" || action === "warn") {
+      return NextResponse.json({ error: `${action} action not yet implemented` }, { status: 501 });
+    }
+
     if (action === "remove" && contentType && userId) {
       // Remove content based on type
       if (contentType === "bio") {

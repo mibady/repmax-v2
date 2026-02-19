@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,6 +13,17 @@ export async function GET(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Verify admin role
+    const { data: adminProfile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("user_id", user.id)
+      .single();
+
+    if (adminProfile?.role !== "admin") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Parse query params
@@ -150,12 +162,31 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json();
-    const { userId, role, status: _status } = body; // eslint-disable-line @typescript-eslint/no-unused-vars
+    // Verify admin role
+    const { data: adminProfile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("user_id", user.id)
+      .single();
 
-    if (!userId) {
-      return NextResponse.json({ error: "User ID required" }, { status: 400 });
+    if (adminProfile?.role !== "admin") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
+
+    const body = await request.json();
+
+    const patchSchema = z.object({
+      userId: z.string().uuid(),
+      role: z.enum(["athlete", "coach", "recruiter", "parent", "club_director", "admin"]).optional(),
+      status: z.enum(["active", "suspended"]).optional(),
+    });
+
+    const parsed = patchSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid request body", details: parsed.error.flatten() }, { status: 400 });
+    }
+
+    const { userId, role } = parsed.data;
 
     const updates: Record<string, unknown> = {};
     if (role) updates.role = role;
