@@ -43,32 +43,6 @@ interface UseAthleteCardEditorReturn {
   profileCompletion: number;
 }
 
-const DEFAULT_DATA: AthleteCardData = {
-  name: "",
-  position: "",
-  secondaryPosition: "",
-  classYear: new Date().getFullYear() + 1,
-  highSchool: "",
-  city: "",
-  state: "",
-  bio: "",
-  zone: "",
-  avatarUrl: "",
-  height: "",
-  weight: "",
-  wingspan: "",
-  fortyYard: "",
-  benchPress: "",
-  squat: "",
-  vertical: "",
-  gpa: "",
-  sat: "",
-  act: "",
-  major: "",
-  hudlLink: "",
-  youtubeLink: "",
-};
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function _formatHeight(inches: number | null): string {
   if (!inches) return "";
@@ -108,8 +82,7 @@ export function useAthleteCardEditor(): UseAthleteCardEditorReturn {
       setData(responseData);
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Unknown error"));
-      // Set default data on error so form is still usable
-      setData(DEFAULT_DATA);
+      // Leave data as null so UI can show error state
     } finally {
       setIsLoading(false);
     }

@@ -105,7 +105,9 @@ export function useAdminUsers(params: UseAdminUsersParams = {}): UseAdminUsersRe
       await fetchUsers();
       return true;
     } catch (err) {
+      const errorObj = err instanceof Error ? err : new Error("Failed to update user");
       console.error("Error updating user:", err);
+      setError(errorObj);
       return false;
     }
   }, [fetchUsers]);

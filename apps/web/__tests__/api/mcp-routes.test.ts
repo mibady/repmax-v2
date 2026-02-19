@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { configureMockSupabase, createMockRequest, resetMocks } from '../helpers/route-test-utils';
+import { configureMockSupabase, createMockRequest, mockAuthenticated, mockUnauthenticated, resetMocks } from '../helpers/route-test-utils';
+import { coachDavis } from '../fixtures/users';
 
 // Mock cache module — always cache miss to test route logic directly
 vi.mock('@/lib/utils/mcp-cache', () => ({
@@ -31,7 +32,16 @@ describe('GET /api/mcp/zones', () => {
     vi.mocked(getCached).mockReturnValue(null);
   });
 
+  it('returns 401 when unauthenticated', async () => {
+    mockUnauthenticated();
+    const response = await getZones();
+    expect(response.status).toBe(401);
+    const body = await response.json();
+    expect(body.error).toBe('Unauthorized');
+  });
+
   it('returns all 6 zones with correct structure', async () => {
+    mockAuthenticated(coachDavis);
     configureMockSupabase({
       athletes: {
         data: [
@@ -63,6 +73,7 @@ describe('GET /api/mcp/zones', () => {
   });
 
   it('aggregates athlete counts by zone using DB_ZONE_TO_UI mapping', async () => {
+    mockAuthenticated(coachDavis);
     configureMockSupabase({
       athletes: {
         data: [
@@ -108,6 +119,7 @@ describe('GET /api/mcp/zones', () => {
   });
 
   it('returns 500 on database error', async () => {
+    mockAuthenticated(coachDavis);
     configureMockSupabase({
       athletes: {
         data: null,
@@ -123,6 +135,7 @@ describe('GET /api/mcp/zones', () => {
   });
 
   it('returns all zones with 0 counts when athletes table is empty', async () => {
+    mockAuthenticated(coachDavis);
     configureMockSupabase({
       athletes: { data: [], error: null },
     });
@@ -149,7 +162,19 @@ describe('GET /api/mcp/zones/[zone]', () => {
     vi.mocked(getCached).mockReturnValue(null);
   });
 
+  it('returns 401 when unauthenticated', async () => {
+    mockUnauthenticated();
+    const request = createMockRequest('http://localhost:3000/api/mcp/zones/SOUTHWEST');
+    const response = await getZoneDetail(request, {
+      params: Promise.resolve({ zone: 'SOUTHWEST' }),
+    });
+    expect(response.status).toBe(401);
+    const body = await response.json();
+    expect(body.error).toBe('Unauthorized');
+  });
+
   it('returns zone info, programs, and prospects for a valid zone', async () => {
+    mockAuthenticated(coachDavis);
     configureMockSupabase({
       athletes: {
         data: [
@@ -207,6 +232,7 @@ describe('GET /api/mcp/zones/[zone]', () => {
   });
 
   it('returns 400 for an invalid zone', async () => {
+    mockAuthenticated(coachDavis);
     const request = createMockRequest('http://localhost:3000/api/mcp/zones/INVALID');
     const response = await getZoneDetail(request, {
       params: Promise.resolve({ zone: 'INVALID' }),
@@ -218,6 +244,7 @@ describe('GET /api/mcp/zones/[zone]', () => {
   });
 
   it('returns empty prospects for PLAINS zone (no DB equivalent)', async () => {
+    mockAuthenticated(coachDavis);
     // PLAINS has no DB zones mapped, so route returns static metadata only
     const request = createMockRequest('http://localhost:3000/api/mcp/zones/PLAINS');
     const response = await getZoneDetail(request, {
@@ -234,6 +261,7 @@ describe('GET /api/mcp/zones/[zone]', () => {
   });
 
   it('returns 500 on database error', async () => {
+    mockAuthenticated(coachDavis);
     configureMockSupabase({
       athletes: {
         data: null,
@@ -300,7 +328,17 @@ describe('GET /api/mcp/prospects', () => {
     vi.mocked(getCached).mockReturnValue(null);
   });
 
+  it('returns 401 when unauthenticated', async () => {
+    mockUnauthenticated();
+    const request = createNextRequest('http://localhost:3000/api/mcp/prospects');
+    const response = await getProspects(request);
+    expect(response.status).toBe(401);
+    const body = await response.json();
+    expect(body.error).toBe('Unauthorized');
+  });
+
   it('returns all prospects when no filters applied', async () => {
+    mockAuthenticated(coachDavis);
     configureMockSupabase({
       athletes: { data: mockAthletes, count: 3, error: null },
     });
@@ -323,6 +361,7 @@ describe('GET /api/mcp/prospects', () => {
   });
 
   it('filters prospects by position (ilike)', async () => {
+    mockAuthenticated(coachDavis);
     const qbs = mockAthletes.filter((a) => a.primary_position === 'QB');
     configureMockSupabase({
       athletes: { data: qbs, count: 1, error: null },
@@ -338,6 +377,7 @@ describe('GET /api/mcp/prospects', () => {
   });
 
   it('filters prospects by minStars', async () => {
+    mockAuthenticated(coachDavis);
     const stars4plus = mockAthletes.filter((a) => a.star_rating >= 4);
     configureMockSupabase({
       athletes: { data: stars4plus, count: 2, error: null },
@@ -355,6 +395,7 @@ describe('GET /api/mcp/prospects', () => {
   });
 
   it('filters prospects by zone', async () => {
+    mockAuthenticated(coachDavis);
     const southwest = mockAthletes.filter((a) => a.zone === 'Southwest');
     configureMockSupabase({
       athletes: { data: southwest, count: 1, error: null },
@@ -370,6 +411,7 @@ describe('GET /api/mcp/prospects', () => {
   });
 
   it('returns 500 on database error', async () => {
+    mockAuthenticated(coachDavis);
     configureMockSupabase({
       athletes: { data: null, error: { message: 'timeout', code: 'PGRST500' } },
     });
@@ -388,10 +430,21 @@ describe('GET /api/mcp/prospects', () => {
 // ---------------------------------------------------------------------------
 describe('GET /api/mcp/programs', () => {
   beforeEach(() => {
+    resetMocks();
     vi.mocked(getCached).mockReturnValue(null);
   });
 
+  it('returns 401 when unauthenticated', async () => {
+    mockUnauthenticated();
+    const request = createNextRequest('http://localhost:3000/api/mcp/programs');
+    const response = await getPrograms(request);
+    expect(response.status).toBe(401);
+    const body = await response.json();
+    expect(body.error).toBe('Unauthorized');
+  });
+
   it('returns all programs sorted by rating descending', async () => {
+    mockAuthenticated(coachDavis);
     const request = createNextRequest('http://localhost:3000/api/mcp/programs');
     const response = await getPrograms(request);
     const body = await response.json();
@@ -409,6 +462,7 @@ describe('GET /api/mcp/programs', () => {
   });
 
   it('filters programs by state (case insensitive)', async () => {
+    mockAuthenticated(coachDavis);
     const request = createNextRequest('http://localhost:3000/api/mcp/programs?state=tx');
     const response = await getPrograms(request);
     const body = await response.json();
@@ -425,6 +479,7 @@ describe('GET /api/mcp/programs', () => {
   });
 
   it('filters programs by zone', async () => {
+    mockAuthenticated(coachDavis);
     const request = createNextRequest('http://localhost:3000/api/mcp/programs?zone=WEST');
     const response = await getPrograms(request);
     const body = await response.json();
@@ -446,12 +501,22 @@ describe('GET /api/mcp/calendar', () => {
   });
 
   beforeEach(() => {
+    resetMocks();
     vi.mocked(getCached).mockReturnValue(null);
+  });
+
+  it('returns 401 when unauthenticated', async () => {
+    mockUnauthenticated();
+    const response = await getCalendar();
+    expect(response.status).toBe(401);
+    const body = await response.json();
+    expect(body.error).toBe('Unauthorized');
   });
 
   it('returns calendar context with valid structure and non-negative daysUntilSigning', async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-10-01T12:00:00Z'));
+    mockAuthenticated(coachDavis);
 
     const response = await getCalendar();
     const body = await response.json();
@@ -473,6 +538,7 @@ describe('GET /api/mcp/calendar', () => {
   it('returns "Early Signing Period" for Dec 19', async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-12-19T12:00:00Z'));
+    mockAuthenticated(coachDavis);
 
     const response = await getCalendar();
     const body = await response.json();
@@ -483,6 +549,7 @@ describe('GET /api/mcp/calendar', () => {
   it('returns "Fall Contact Period" for Oct 1', async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-10-01T12:00:00Z'));
+    mockAuthenticated(coachDavis);
 
     const response = await getCalendar();
     const body = await response.json();

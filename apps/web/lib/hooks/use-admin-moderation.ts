@@ -118,7 +118,9 @@ export function useAdminModeration(
 
         return true;
       } catch (err) {
+        const errorObj = err instanceof Error ? err : new Error(`Failed to ${action} item`);
         console.error(`Error ${action}ing item:`, err);
+        setError(errorObj);
         return false;
       }
     },

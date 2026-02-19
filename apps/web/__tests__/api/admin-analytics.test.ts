@@ -22,7 +22,10 @@ describe('API /api/admin/analytics', () => {
     messagesCount?: number;
     viewsCount?: number;
   }) {
+    // First element must be { role: 'admin' } so that .single() passes the admin role check.
+    // Remaining elements provide role distribution data for the analytics calculations.
     const defaultProfiles = [
+      { role: 'admin', created_at: '2026-01-01T00:00:00Z' },
       { role: 'athlete', created_at: '2026-01-15T00:00:00Z' },
       { role: 'athlete', created_at: '2026-01-20T00:00:00Z' },
       { role: 'athlete', created_at: '2026-02-05T00:00:00Z' },
@@ -78,6 +81,17 @@ describe('API /api/admin/analytics', () => {
     expect(body.error).toBe('Unauthorized');
   });
 
+  it('returns 403 when authenticated but not admin', async () => {
+    mockAuthenticated(adminUser);
+    configureMockSupabase({
+      profiles: { data: [{ role: 'athlete' }], error: null },
+    });
+    const res = await GET();
+    expect(res.status).toBe(403);
+    const body = await res.json();
+    expect(body.error).toBe('Forbidden');
+  });
+
   it('returns analytics data with correct kpiData structure', async () => {
     mockAuthenticated(adminUser);
     setupAnalyticsMocks();
@@ -108,13 +122,14 @@ describe('API /api/admin/analytics', () => {
     mockAuthenticated(adminUser);
     setupAnalyticsMocks({
       profilesData: [
+        { role: 'admin', created_at: '2026-01-01T00:00:00Z' },
         { role: 'athlete', created_at: '2026-01-15T00:00:00Z' },
         { role: 'athlete', created_at: '2026-01-20T00:00:00Z' },
         { role: 'coach', created_at: '2026-02-01T00:00:00Z' },
         { role: 'recruiter', created_at: '2026-02-05T00:00:00Z' },
         { role: 'parent', created_at: '2026-02-10T00:00:00Z' },
       ],
-      profilesCount: 5,
+      profilesCount: 6,
     });
 
     const res = await GET();

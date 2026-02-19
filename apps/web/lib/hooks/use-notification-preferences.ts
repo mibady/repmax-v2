@@ -96,9 +96,7 @@ export function useNotificationPreferences(): UseNotificationPreferencesReturn {
       setOriginalPreferences(prefs);
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Unknown error"));
-      // Use defaults on error
-      setPreferences(defaultPreferences);
-      setOriginalPreferences(defaultPreferences);
+      // Leave preferences as-is so UI can show error state
     } finally {
       setIsLoading(false);
     }

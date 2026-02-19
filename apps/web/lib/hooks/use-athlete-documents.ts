@@ -21,42 +21,6 @@ interface UseAthleteDocumentsReturn {
   deleteDocument: (id: string) => Promise<void>;
 }
 
-// Mock data - will be replaced with real API when documents table is created
-const mockDocuments: AthleteDocument[] = [
-  {
-    id: "1",
-    name: "Official Transcript.pdf",
-    type: "pdf",
-    size: "2.4 MB",
-    uploadDate: "Oct 12, 2023",
-    verified: true,
-  },
-  {
-    id: "2",
-    name: "Coach Recommendation.pdf",
-    type: "doc",
-    size: "1.1 MB",
-    uploadDate: "Nov 04, 2023",
-    verified: false,
-  },
-  {
-    id: "3",
-    name: "SAT Score Report.png",
-    type: "image",
-    size: "850 KB",
-    uploadDate: "Dec 15, 2023",
-    verified: false,
-  },
-  {
-    id: "4",
-    name: "Hudl Highlight Reel Link.pdf",
-    type: "pdf",
-    size: "45 KB",
-    uploadDate: "Jan 10, 2024",
-    verified: true,
-  },
-];
-
 export function useAthleteDocuments(): UseAthleteDocumentsReturn {
   const [documents, setDocuments] = useState<AthleteDocument[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -67,16 +31,17 @@ export function useAthleteDocuments(): UseAthleteDocumentsReturn {
     setError(null);
 
     try {
-      // When a documents API is created, replace this with:
-      // const res = await fetch("/api/athlete/documents");
-      // const data = await res.json();
-      // setDocuments(data.documents);
-
-      // For now, use mock data with a simulated delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      setDocuments(mockDocuments);
+      const res = await fetch("/api/athlete/documents");
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to fetch documents");
+      }
+      const data = await res.json();
+      setDocuments(data.documents || []);
     } catch (err) {
-      setError(err instanceof Error ? err : new Error("Failed to fetch documents"));
+      const message = err instanceof Error ? err.message : "Failed to fetch documents";
+      console.error("Error fetching documents:", err);
+      setError(err instanceof Error ? err : new Error(message));
     } finally {
       setIsLoading(false);
     }
@@ -87,36 +52,46 @@ export function useAthleteDocuments(): UseAthleteDocumentsReturn {
   }, [fetchDocuments]);
 
   const uploadDocument = useCallback(async (file: File) => {
-    // Placeholder for actual upload logic
-    // When storage is set up:
-    // 1. Upload file to Supabase storage
-    // 2. Create document record in database
-    // 3. Refetch documents
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
 
-    const newDoc: AthleteDocument = {
-      id: Date.now().toString(),
-      name: file.name,
-      type: file.type.includes("pdf")
-        ? "pdf"
-        : file.type.includes("image")
-          ? "image"
-          : "doc",
-      size: `${(file.size / 1024).toFixed(0)} KB`,
-      uploadDate: new Date().toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      }),
-      verified: false,
-    };
+      const res = await fetch("/api/athlete/documents", {
+        method: "POST",
+        body: formData,
+      });
 
-    setDocuments((prev) => [newDoc, ...prev]);
-  }, []);
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to upload document");
+      }
+
+      await fetchDocuments();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to upload document";
+      console.error("Error uploading document:", err);
+      setError(err instanceof Error ? err : new Error(message));
+    }
+  }, [fetchDocuments]);
 
   const deleteDocument = useCallback(async (id: string) => {
-    // Placeholder for actual delete logic
-    setDocuments((prev) => prev.filter((doc) => doc.id !== id));
-  }, []);
+    try {
+      const res = await fetch(`/api/athlete/documents?id=${id}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to delete document");
+      }
+
+      await fetchDocuments();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to delete document";
+      console.error("Error deleting document:", err);
+      setError(err instanceof Error ? err : new Error(message));
+    }
+  }, [fetchDocuments]);
 
   return {
     documents,

@@ -184,8 +184,10 @@ export function useCommunicationLogs(): UseCommunicationLogsReturn {
           return { error: result.error || "Failed to log communication" };
         await fetchLogs();
         return { success: true };
-      } catch {
-        return { error: "Failed to log communication" };
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Failed to log communication";
+        console.error("Communication log error:", err);
+        return { error: message };
       }
     },
     [fetchLogs]

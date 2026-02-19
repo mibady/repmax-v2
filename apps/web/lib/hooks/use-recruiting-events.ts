@@ -41,8 +41,6 @@ export function useRecruitingEvents(options: UseRecruitingEventsOptions = {}) {
   const [period, setPeriod] = useState<{ start: string; end: string } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const [isMock, setIsMock] = useState(false);
-
   const fetchEvents = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -64,7 +62,6 @@ export function useRecruitingEvents(options: UseRecruitingEventsOptions = {}) {
       const result = await response.json();
       setEvents(result.events || []);
       setPeriod(result.period);
-      setIsMock(result.is_mock || false);
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Unknown error"));
     } finally {
@@ -113,7 +110,6 @@ export function useRecruitingEvents(options: UseRecruitingEventsOptions = {}) {
     period,
     isLoading,
     error,
-    isMock,
     refetch: fetchEvents,
     getEventsForMonth,
     getUpcomingEvents,

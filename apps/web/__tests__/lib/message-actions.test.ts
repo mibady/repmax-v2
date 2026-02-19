@@ -31,11 +31,19 @@ describe('message-actions', () => {
 
   // ─── sendMessage ──────────────────────────────────────────
   describe('sendMessage', () => {
+    // Valid UUID for recipientId — sendMessage now validates with Zod
+    const validRecipientId = '550e8400-e29b-41d4-a716-446655440000';
+
+    it('returns validation error for non-UUID recipientId', async () => {
+      const result = await sendMessage('recipient-1', 'Hello');
+      expect(result).toEqual({ error: 'Invalid recipient ID' });
+    });
+
     it('redirects when unauthenticated', async () => {
       mockUnauthenticated();
 
       try {
-        await sendMessage('recipient-1', 'Hello');
+        await sendMessage(validRecipientId, 'Hello');
       } catch {
         // Mock redirect doesn't throw
       }
@@ -49,7 +57,7 @@ describe('message-actions', () => {
         profiles: { data: null, error: null },
       });
 
-      const result = await sendMessage('recipient-1', 'Hello');
+      const result = await sendMessage(validRecipientId, 'Hello');
       expect(result).toEqual({ error: 'Profile not found' });
     });
 
@@ -60,7 +68,7 @@ describe('message-actions', () => {
         messages: { data: [], error: null },
       });
 
-      const result = await sendMessage('recipient-1', 'Hello', 'Greetings');
+      const result = await sendMessage(validRecipientId, 'Hello', 'Greetings');
       expect(result).toEqual({ success: true });
     });
 
@@ -71,7 +79,7 @@ describe('message-actions', () => {
         messages: { data: null, error: { message: 'Insert failed' } },
       });
 
-      const result = await sendMessage('recipient-1', 'Hello');
+      const result = await sendMessage(validRecipientId, 'Hello');
       expect(result).toEqual({ error: 'Insert failed' });
     });
   });

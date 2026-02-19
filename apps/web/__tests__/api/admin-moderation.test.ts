@@ -14,10 +14,11 @@ describe('API /api/admin/moderation', () => {
     resetMocks();
   });
 
-  // Shared mock setup for moderation — profiles and highlights empty
+  // Shared mock setup for moderation — profiles must include admin role
+  // so the .single() call in the admin role check passes.
   function setupModerationMocks() {
     configureMockSupabase({
-      profiles: { data: [], error: null },
+      profiles: { data: [{ role: 'admin' }], error: null },
       highlights: { data: [], error: null },
     });
   }
@@ -35,6 +36,21 @@ describe('API /api/admin/moderation', () => {
     expect(res.status).toBe(401);
     const body = await res.json();
     expect(body.error).toBe('Unauthorized');
+  });
+
+  it('returns 403 when not admin', async () => {
+    mockAuthenticated(adminUser);
+    configureMockSupabase({
+      profiles: { data: [{ role: 'athlete' }], error: null },
+    });
+
+    const request = new NextRequest(
+      new URL('http://localhost/api/admin/moderation')
+    );
+    const res = await GET(request);
+    expect(res.status).toBe(403);
+    const body = await res.json();
+    expect(body.error).toBe('Forbidden');
   });
 
   it('returns empty moderation queue', async () => {
@@ -111,7 +127,7 @@ describe('API /api/admin/moderation', () => {
     expect(body.error).toBeDefined();
   });
 
-  it('POST accepts valid approve action', async () => {
+  it('POST returns 501 for approve action (not yet implemented)', async () => {
     mockAuthenticated(adminUser);
     setupModerationMocks();
 
@@ -124,9 +140,27 @@ describe('API /api/admin/moderation', () => {
       }
     );
     const res = await POST(request);
+    expect(res.status).toBe(501);
+    const body = await res.json();
+    expect(body.error).toBe('approve action not yet implemented');
+  });
+
+  it('POST accepts valid remove action', async () => {
+    mockAuthenticated(adminUser);
+    setupModerationMocks();
+
+    const request = new NextRequest(
+      new URL('http://localhost/api/admin/moderation'),
+      {
+        method: 'POST',
+        body: JSON.stringify({ itemId: '1', action: 'remove' }),
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+    const res = await POST(request);
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.success).toBe(true);
-    expect(body.message).toBe('Content approved successfully');
+    expect(body.message).toBe('Content removed successfully');
   });
 });

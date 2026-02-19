@@ -128,8 +128,10 @@ export function useCampusVisits(): UseCampusVisitsReturn {
         if (!res.ok) return { error: result.error || "Failed to create visit" };
         await fetchVisits();
         return { success: true };
-      } catch {
-        return { error: "Failed to create visit" };
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Failed to create visit";
+        console.error("Campus visit error:", err);
+        return { error: message };
       }
     },
     [fetchVisits]
@@ -157,8 +159,10 @@ export function useCampusVisits(): UseCampusVisitsReturn {
           return { error: result.error || "Failed to update visit" };
         await fetchVisits();
         return { success: true };
-      } catch {
-        return { error: "Failed to update visit" };
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Failed to update visit";
+        console.error("Campus visit error:", err);
+        return { error: message };
       }
     },
     [fetchVisits]

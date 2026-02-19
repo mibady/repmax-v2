@@ -29,8 +29,6 @@ export function useClassRankings(options: UseClassRankingsOptions = {}) {
   const [year, setYear] = useState<number>(options.year || new Date().getFullYear());
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const [isMock, setIsMock] = useState(false);
-
   const fetchRankings = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -51,7 +49,6 @@ export function useClassRankings(options: UseClassRankingsOptions = {}) {
       const result = await response.json();
       setRankings(result.rankings || []);
       setYear(result.year);
-      setIsMock(result.is_mock || false);
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Unknown error"));
     } finally {
@@ -68,7 +65,6 @@ export function useClassRankings(options: UseClassRankingsOptions = {}) {
     year,
     isLoading,
     error,
-    isMock,
     refetch: fetchRankings,
   };
 }
@@ -95,8 +91,6 @@ export function useProgramRankings(options: UseProgramRankingsOptions = {}) {
   const [programs, setPrograms] = useState<ProgramRanking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const [isMock, setIsMock] = useState(false);
-
   const fetchRankings = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -116,7 +110,6 @@ export function useProgramRankings(options: UseProgramRankingsOptions = {}) {
 
       const result = await response.json();
       setPrograms(result.programs || []);
-      setIsMock(result.is_mock || false);
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Unknown error"));
     } finally {
@@ -132,7 +125,6 @@ export function useProgramRankings(options: UseProgramRankingsOptions = {}) {
     programs,
     isLoading,
     error,
-    isMock,
     refetch: fetchRankings,
   };
 }

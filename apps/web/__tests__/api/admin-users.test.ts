@@ -14,12 +14,23 @@ describe('API /api/admin/users', () => {
     resetMocks();
   });
 
-  // Shared mock setup for user management
+  // Shared mock setup for user management.
+  // The first element must have role: 'admin' so the .single() admin role
+  // check passes. The remaining elements provide the user list data.
   function setupUsersMocks(overrides?: {
     profilesData?: unknown[];
     profilesCount?: number;
   }) {
     const defaultProfiles = [
+      {
+        id: 'admin-001',
+        full_name: 'Admin User',
+        email: 'admin@repmax.com',
+        role: 'admin',
+        avatar_url: null,
+        created_at: '2026-01-01T00:00:00Z',
+        updated_at: '2026-02-15T00:00:00Z',
+      },
       {
         id: 'u1',
         full_name: 'Test User',
@@ -64,6 +75,20 @@ describe('API /api/admin/users', () => {
     expect(res.status).toBe(401);
     const body = await res.json();
     expect(body.error).toBe('Unauthorized');
+  });
+
+  it('returns 403 when not admin', async () => {
+    mockAuthenticated(adminUser);
+    configureMockSupabase({
+      profiles: { data: [{ role: 'athlete' }], error: null },
+    });
+    const request = new NextRequest(
+      new URL('http://localhost/api/admin/users')
+    );
+    const res = await GET(request);
+    expect(res.status).toBe(403);
+    const body = await res.json();
+    expect(body.error).toBe('Forbidden');
   });
 
   it('returns user list with correct structure', async () => {
@@ -180,7 +205,27 @@ describe('API /api/admin/users', () => {
     expect(body.error).toBe('Unauthorized');
   });
 
-  it('PATCH updates user role', async () => {
+  it('PATCH returns 403 when not admin', async () => {
+    mockAuthenticated(adminUser);
+    configureMockSupabase({
+      profiles: { data: [{ role: 'athlete' }], error: null },
+    });
+
+    const request = new NextRequest(
+      new URL('http://localhost/api/admin/users'),
+      {
+        method: 'PATCH',
+        body: JSON.stringify({ userId: '550e8400-e29b-41d4-a716-446655440000', role: 'coach' }),
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+    const res = await PATCH(request);
+    expect(res.status).toBe(403);
+    const body = await res.json();
+    expect(body.error).toBe('Forbidden');
+  });
+
+  it('PATCH returns 400 for invalid userId (not UUID)', async () => {
     mockAuthenticated(adminUser);
     setupUsersMocks();
 
@@ -189,6 +234,25 @@ describe('API /api/admin/users', () => {
       {
         method: 'PATCH',
         body: JSON.stringify({ userId: 'u1', role: 'coach' }),
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+    const res = await PATCH(request);
+    expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.error).toBe('Invalid request body');
+    expect(body.details).toBeDefined();
+  });
+
+  it('PATCH updates user role with valid UUID', async () => {
+    mockAuthenticated(adminUser);
+    setupUsersMocks();
+
+    const request = new NextRequest(
+      new URL('http://localhost/api/admin/users'),
+      {
+        method: 'PATCH',
+        body: JSON.stringify({ userId: '550e8400-e29b-41d4-a716-446655440000', role: 'coach' }),
         headers: { 'Content-Type': 'application/json' },
       }
     );

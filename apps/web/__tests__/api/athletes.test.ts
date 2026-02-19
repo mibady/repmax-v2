@@ -11,6 +11,9 @@ import { jaylenWashington, coachDavis } from '../fixtures/users';
 import { GET } from '@/app/api/athletes/route';
 import { GET as getAthleteById } from '@/app/api/athletes/[id]/route';
 
+// Helper for auth in athletes tests — any authenticated user works
+const authUser = coachDavis;
+
 // ---------------------------------------------------------------------------
 // Mock athlete data
 // ---------------------------------------------------------------------------
@@ -62,7 +65,17 @@ describe('GET /api/athletes', () => {
     resetMocks();
   });
 
+  it('returns 401 when unauthenticated', async () => {
+    mockUnauthenticated();
+    const request = createMockRequest('http://localhost:3000/api/athletes');
+    const response = await GET(request);
+    expect(response.status).toBe(401);
+    const json = await response.json();
+    expect(json.error).toBe('Unauthorized');
+  });
+
   it('returns athletes with pagination metadata', async () => {
+    mockAuthenticated(authUser);
     configureMockSupabase({
       athletes: { data: [mockAthleteRow], error: null, count: 1 },
     });
@@ -79,6 +92,7 @@ describe('GET /api/athletes', () => {
   });
 
   it('applies position filter', async () => {
+    mockAuthenticated(authUser);
     configureMockSupabase({
       athletes: { data: [mockAthleteRow], error: null, count: 1 },
     });
@@ -94,6 +108,7 @@ describe('GET /api/athletes', () => {
   });
 
   it('applies zone filter', async () => {
+    mockAuthenticated(authUser);
     configureMockSupabase({
       athletes: { data: [mockAthleteRow], error: null, count: 1 },
     });
@@ -107,6 +122,7 @@ describe('GET /api/athletes', () => {
   });
 
   it('applies class_year filter', async () => {
+    mockAuthenticated(authUser);
     configureMockSupabase({
       athletes: { data: [mockAthleteRow], error: null, count: 1 },
     });
@@ -120,6 +136,7 @@ describe('GET /api/athletes', () => {
   });
 
   it('applies min_stars filter via gte', async () => {
+    mockAuthenticated(authUser);
     configureMockSupabase({
       athletes: { data: [mockAthleteRow], error: null, count: 1 },
     });
@@ -133,6 +150,7 @@ describe('GET /api/athletes', () => {
   });
 
   it('applies verified filter', async () => {
+    mockAuthenticated(authUser);
     configureMockSupabase({
       athletes: { data: [mockAthleteRow], error: null, count: 1 },
     });
@@ -146,6 +164,7 @@ describe('GET /api/athletes', () => {
   });
 
   it('returns 400 on invalid Zod params (min_stars out of range)', async () => {
+    mockAuthenticated(authUser);
     const request = createMockRequest(
       'http://localhost:3000/api/athletes?min_stars=10'
     );
@@ -158,6 +177,7 @@ describe('GET /api/athletes', () => {
   });
 
   it('returns 500 on database error', async () => {
+    mockAuthenticated(authUser);
     configureMockSupabase({
       athletes: {
         data: null,
@@ -175,6 +195,7 @@ describe('GET /api/athletes', () => {
   });
 
   it('returns empty array with count 0 when no athletes match', async () => {
+    mockAuthenticated(authUser);
     configureMockSupabase({
       athletes: { data: [], error: null, count: 0 },
     });
@@ -200,6 +221,7 @@ describe('GET /api/athletes/[id]', () => {
   });
 
   it('returns athlete with profile, highlights, and offers', async () => {
+    mockAuthenticated(authUser);
     configureMockSupabase({
       athletes: { data: mockAthleteDetail, error: null },
     });
@@ -220,6 +242,7 @@ describe('GET /api/athletes/[id]', () => {
   });
 
   it('returns 404 when athlete not found (PGRST116)', async () => {
+    mockAuthenticated(authUser);
     configureMockSupabase({
       athletes: {
         data: null,
@@ -239,6 +262,7 @@ describe('GET /api/athletes/[id]', () => {
   });
 
   it('returns 500 on other database errors', async () => {
+    mockAuthenticated(authUser);
     configureMockSupabase({
       athletes: {
         data: null,
