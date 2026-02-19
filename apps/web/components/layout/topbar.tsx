@@ -3,6 +3,8 @@
 // Z-index fix: topbar should be above all content
 import Link from 'next/link';
 import { useState } from 'react';
+import { NotificationDropdown } from '@/components/ui/notification-dropdown';
+import { SearchInput } from '@/components/ui/search-input';
 
 export type UserRole = 'athlete' | 'parent' | 'coach' | 'recruiter' | 'club' | 'admin';
 
@@ -20,6 +22,7 @@ interface TopbarProps {
   unreadNotifications?: number;
   availableRoles?: UserRole[];
   onRoleSwitch?: (role: UserRole) => void;
+  userId?: string;
 }
 
 const ROLE_LABELS: Record<UserRole, string> = {
@@ -105,7 +108,7 @@ function RoleSwitcher({
   );
 }
 
-function AthleteTopbar({ user, title, unreadNotifications, availableRoles, onRoleSwitch }: Omit<TopbarProps, 'role'>) {
+function AthleteTopbar({ user, title, userId, availableRoles, onRoleSwitch }: Omit<TopbarProps, 'role'>) {
   return (
     <header className="h-16 flex items-center justify-between px-8 border-b border-[#333] bg-background-dark/95 backdrop-blur-md sticky top-0 z-40">
       <div className="flex items-center gap-4">
@@ -125,59 +128,56 @@ function AthleteTopbar({ user, title, unreadNotifications, availableRoles, onRol
           </div>
         )}
         <div className="h-8 w-[1px] bg-[#333] mx-2" />
-        <button disabled aria-label="Notifications" className="relative p-2 text-text-muted hover:text-white transition-colors rounded-lg hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed">
-          <span className="material-symbols-outlined">notifications</span>
-          {unreadNotifications !== undefined && unreadNotifications > 0 && (
-            <span className="absolute top-2 right-2 size-2 bg-primary rounded-full ring-2 ring-background-dark" />
-          )}
-        </button>
+        {userId ? (
+          <NotificationDropdown userId={userId} />
+        ) : (
+          <button disabled aria-label="Notifications" className="relative p-2 text-text-muted hover:text-white transition-colors rounded-lg hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed">
+            <span className="material-symbols-outlined">notifications</span>
+          </button>
+        )}
       </div>
     </header>
   );
 }
 
-function RecruiterTopbar({ title, unreadNotifications }: Omit<TopbarProps, 'role' | 'user'>) {
+function RecruiterTopbar({ title, userId }: Omit<TopbarProps, 'role' | 'user'>) {
   return (
     <header className="h-16 border-b border-white/5 flex items-center justify-between px-6 bg-[#0a0a0a]/50 backdrop-blur-sm sticky top-0 z-40">
       <div className="flex items-center gap-4">
         <h2 className="text-white text-xl font-bold tracking-tight">{title || 'Dashboard'}</h2>
       </div>
       <div className="flex items-center gap-4">
-        <div className="relative group">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <span className="material-symbols-outlined text-gray-500 text-[20px]">search</span>
-          </div>
-          <input
-            type="text"
-            disabled
-            className="block w-64 pl-10 pr-3 py-2 border border-white/5 rounded-lg leading-5 bg-[#141414] text-gray-300 placeholder-gray-500 focus:outline-none focus:bg-[#1c1c1c] focus:ring-1 focus:ring-primary/50 focus:border-primary/50 sm:text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            placeholder="Search coming soon"
-          />
-        </div>
-        <button disabled aria-label="Notifications" className="relative p-2 text-gray-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-          <span className="material-symbols-outlined">notifications</span>
-          {unreadNotifications !== undefined && unreadNotifications > 0 && (
-            <span className="absolute top-1.5 right-1.5 size-2 bg-red-500 rounded-full border-2 border-[#0a0a0a]" />
-          )}
-        </button>
+        <SearchInput
+          className="block w-64 pl-10 pr-3 py-2 border border-white/5 rounded-lg leading-5 bg-[#141414] text-gray-300 placeholder-gray-500 focus:outline-none focus:bg-[#1c1c1c] focus:ring-1 focus:ring-primary/50 focus:border-primary/50 sm:text-sm transition-colors"
+          placeholder="Search athletes..."
+          iconClassName="text-gray-500"
+        />
+        {userId ? (
+          <NotificationDropdown userId={userId} />
+        ) : (
+          <button disabled aria-label="Notifications" className="relative p-2 text-gray-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            <span className="material-symbols-outlined">notifications</span>
+          </button>
+        )}
       </div>
     </header>
   );
 }
 
-function ParentTopbar({ user, title, unreadNotifications }: Omit<TopbarProps, 'role'>) {
+function ParentTopbar({ user, title, userId }: Omit<TopbarProps, 'role'>) {
   return (
     <header className="h-16 flex items-center justify-between px-8 border-b border-white/10 bg-[#050505]/80 backdrop-blur-md sticky top-0 z-40">
       <div className="flex items-center gap-4">
         <h2 className="text-xl font-bold text-white">{title || "Marcus's Recruiting Journey"}</h2>
       </div>
       <div className="flex items-center gap-4">
-        <button disabled aria-label="Notifications" className="relative p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed">
-          <span className="material-symbols-outlined">notifications</span>
-          {unreadNotifications !== undefined && unreadNotifications > 0 && (
-            <span className="absolute top-2 right-2 size-2 bg-primary rounded-full ring-2 ring-[#050505]" />
-          )}
-        </button>
+        {userId ? (
+          <NotificationDropdown userId={userId} />
+        ) : (
+          <button disabled aria-label="Notifications" className="relative p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed">
+            <span className="material-symbols-outlined">notifications</span>
+          </button>
+        )}
         <div className="h-8 w-[1px] bg-white/10 mx-2" />
         <div className="flex items-center gap-3">
           {user.avatarUrl ? (
@@ -196,7 +196,7 @@ function ParentTopbar({ user, title, unreadNotifications }: Omit<TopbarProps, 'r
   );
 }
 
-function CoachTopbar({ title, unreadNotifications }: Omit<TopbarProps, 'role' | 'user'>) {
+function CoachTopbar({ title, userId }: Omit<TopbarProps, 'role' | 'user'>) {
   return (
     <header className="h-16 flex items-center justify-between border-b border-white/10 px-8 bg-[#050505]/80 backdrop-blur-md sticky top-0 z-40">
       <div className="flex items-center gap-12">
@@ -208,53 +208,45 @@ function CoachTopbar({ title, unreadNotifications }: Omit<TopbarProps, 'role' | 
           </div>
           <h2 className="text-xl font-black italic tracking-tighter">REPMAX</h2>
         </div>
-        <div className="relative w-80">
-          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/40 text-[20px]">search</span>
-          <input
-            disabled
-            className="w-full bg-[#1F1F22] border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-all text-white placeholder:text-white/30 disabled:opacity-50 disabled:cursor-not-allowed"
-            placeholder="Search coming soon"
-            type="text"
-          />
-        </div>
+        <SearchInput
+          className="w-80 bg-[#1F1F22] border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-all text-white placeholder:text-white/30"
+          placeholder="Search athletes..."
+          iconClassName="text-white/40"
+        />
       </div>
       <div className="flex items-center gap-6">
         <h2 className="text-white text-lg font-semibold">{title || 'Team Dashboard'}</h2>
-        <button disabled aria-label="Notifications" className="relative p-2 text-white/60 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-          <span className="material-symbols-outlined">notifications</span>
-          {unreadNotifications !== undefined && unreadNotifications > 0 && (
-            <span className="absolute top-1.5 right-1.5 size-2 bg-primary rounded-full border-2 border-[#050505]" />
-          )}
-        </button>
+        {userId ? (
+          <NotificationDropdown userId={userId} />
+        ) : (
+          <button disabled aria-label="Notifications" className="relative p-2 text-white/60 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            <span className="material-symbols-outlined">notifications</span>
+          </button>
+        )}
       </div>
     </header>
   );
 }
 
-function ClubTopbar({ user, title, unreadNotifications }: Omit<TopbarProps, 'role'>) {
+function ClubTopbar({ user, title, userId }: Omit<TopbarProps, 'role'>) {
   return (
     <header className="h-16 border-b border-white/5 flex items-center justify-between px-6 bg-[#0a0a0a]/50 backdrop-blur-sm sticky top-0 z-40">
       <div className="flex items-center gap-4">
         <h2 className="text-white text-xl font-bold tracking-tight">{title || 'Club Dashboard'}</h2>
       </div>
       <div className="flex items-center gap-4">
-        <div className="relative group">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <span className="material-symbols-outlined text-gray-500 text-[20px]">search</span>
-          </div>
-          <input
-            type="text"
-            disabled
-            className="block w-64 pl-10 pr-3 py-2 border border-white/5 rounded-lg leading-5 bg-[#141414] text-gray-300 placeholder-gray-500 focus:outline-none focus:bg-[#1c1c1c] focus:ring-1 focus:ring-primary/50 focus:border-primary/50 sm:text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            placeholder="Search coming soon"
-          />
-        </div>
-        <button disabled aria-label="Notifications" className="relative p-2 text-gray-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-          <span className="material-symbols-outlined">notifications</span>
-          {unreadNotifications !== undefined && unreadNotifications > 0 && (
-            <span className="absolute top-1.5 right-1.5 size-2 bg-primary rounded-full border-2 border-[#0a0a0a]" />
-          )}
-        </button>
+        <SearchInput
+          className="block w-64 pl-10 pr-3 py-2 border border-white/5 rounded-lg leading-5 bg-[#141414] text-gray-300 placeholder-gray-500 focus:outline-none focus:bg-[#1c1c1c] focus:ring-1 focus:ring-primary/50 focus:border-primary/50 sm:text-sm transition-colors"
+          placeholder="Search athletes..."
+          iconClassName="text-gray-500"
+        />
+        {userId ? (
+          <NotificationDropdown userId={userId} />
+        ) : (
+          <button disabled aria-label="Notifications" className="relative p-2 text-gray-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            <span className="material-symbols-outlined">notifications</span>
+          </button>
+        )}
         <div className="h-8 w-[1px] bg-white/10" />
         <div className="flex items-center gap-3">
           {user.avatarUrl ? (
@@ -276,36 +268,31 @@ function ClubTopbar({ user, title, unreadNotifications }: Omit<TopbarProps, 'rol
   );
 }
 
-function AdminTopbar({ title, unreadNotifications }: Omit<TopbarProps, 'role' | 'user'>) {
+function AdminTopbar({ title, userId }: Omit<TopbarProps, 'role' | 'user'>) {
   return (
     <header className="h-16 border-b border-white/5 flex items-center justify-between px-6 bg-[#0a0a0a]/50 backdrop-blur-sm sticky top-0 z-40">
       <div className="flex items-center gap-4">
         <h2 className="text-white text-xl font-bold tracking-tight">{title || 'Admin Dashboard'}</h2>
       </div>
       <div className="flex items-center gap-4">
-        <div className="relative group">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <span className="material-symbols-outlined text-gray-500 text-[20px]">search</span>
-          </div>
-          <input
-            type="text"
-            disabled
-            className="block w-64 pl-10 pr-3 py-2 border border-white/5 rounded-lg leading-5 bg-[#141414] text-gray-300 placeholder-gray-500 focus:outline-none focus:bg-[#1c1c1c] focus:ring-1 focus:ring-primary/50 focus:border-primary/50 sm:text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            placeholder="Search coming soon"
-          />
-        </div>
-        <button disabled aria-label="Notifications" className="relative p-2 text-gray-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-          <span className="material-symbols-outlined">notifications</span>
-          {unreadNotifications !== undefined && unreadNotifications > 0 && (
-            <span className="absolute top-1.5 right-1.5 size-2 bg-red-500 rounded-full border-2 border-[#0a0a0a]" />
-          )}
-        </button>
+        <SearchInput
+          className="block w-64 pl-10 pr-3 py-2 border border-white/5 rounded-lg leading-5 bg-[#141414] text-gray-300 placeholder-gray-500 focus:outline-none focus:bg-[#1c1c1c] focus:ring-1 focus:ring-primary/50 focus:border-primary/50 sm:text-sm transition-colors"
+          placeholder="Search athletes..."
+          iconClassName="text-gray-500"
+        />
+        {userId ? (
+          <NotificationDropdown userId={userId} />
+        ) : (
+          <button disabled aria-label="Notifications" className="relative p-2 text-gray-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            <span className="material-symbols-outlined">notifications</span>
+          </button>
+        )}
       </div>
     </header>
   );
 }
 
-export function Topbar({ role, user, title, unreadNotifications, availableRoles, onRoleSwitch }: TopbarProps) {
+export function Topbar({ role, user, title, unreadNotifications, availableRoles, onRoleSwitch, userId }: TopbarProps) {
   switch (role) {
     case 'athlete':
       return (
@@ -315,6 +302,7 @@ export function Topbar({ role, user, title, unreadNotifications, availableRoles,
           unreadNotifications={unreadNotifications}
           availableRoles={availableRoles}
           onRoleSwitch={onRoleSwitch}
+          userId={userId}
         />
       );
     case 'parent':
@@ -323,6 +311,7 @@ export function Topbar({ role, user, title, unreadNotifications, availableRoles,
           user={user}
           title={title}
           unreadNotifications={unreadNotifications}
+          userId={userId}
         />
       );
     case 'coach':
@@ -330,6 +319,7 @@ export function Topbar({ role, user, title, unreadNotifications, availableRoles,
         <CoachTopbar
           title={title}
           unreadNotifications={unreadNotifications}
+          userId={userId}
         />
       );
     case 'recruiter':
@@ -337,6 +327,7 @@ export function Topbar({ role, user, title, unreadNotifications, availableRoles,
         <RecruiterTopbar
           title={title}
           unreadNotifications={unreadNotifications}
+          userId={userId}
         />
       );
     case 'club':
@@ -345,6 +336,7 @@ export function Topbar({ role, user, title, unreadNotifications, availableRoles,
           user={user}
           title={title}
           unreadNotifications={unreadNotifications}
+          userId={userId}
         />
       );
     case 'admin':
@@ -352,6 +344,7 @@ export function Topbar({ role, user, title, unreadNotifications, availableRoles,
         <AdminTopbar
           title={title}
           unreadNotifications={unreadNotifications}
+          userId={userId}
         />
       );
     default:
@@ -362,6 +355,7 @@ export function Topbar({ role, user, title, unreadNotifications, availableRoles,
           unreadNotifications={unreadNotifications}
           availableRoles={availableRoles}
           onRoleSwitch={onRoleSwitch}
+          userId={userId}
         />
       );
   }

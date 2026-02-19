@@ -133,6 +133,7 @@ export default function DashboardLayout({
           user={topbarUser}
           title={pageTitle}
           availableRoles={availableRoles}
+          userId={user.id}
         />
         <div className="flex-1 overflow-y-auto">
           {children}
