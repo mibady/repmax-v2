@@ -65,7 +65,7 @@ export default function ZoneMapPage() {
           ? `${ZONE_DISPLAY_NAMES[zone.zone_code as ZoneCode]} Zone Activity`
           : `${zone.blue_chip_count} Blue Chips in ${ZONE_SHORT_CODES[zone.zone_code] || zone.zone_code}`,
         description: `${zone.total_recruits.toLocaleString()} total prospects tracked`,
-        time: `${Math.floor(Math.random() * 60)}m ago`,
+        time: 'recently',
         zoneCode: zone.zone_code,
       };
     });

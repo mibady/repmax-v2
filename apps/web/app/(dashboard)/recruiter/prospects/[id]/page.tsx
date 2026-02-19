@@ -22,27 +22,10 @@ interface TimelineItem {
   attachment?: { name: string };
 }
 
-// Mock timeline data - in production this would come from an activity log
-const getTimelineData = (athleteName: string): TimelineItem[] => [
-  {
-    id: '1',
-    icon: 'visibility',
-    iconBg: 'bg-[#363225]',
-    iconColor: 'text-primary',
-    title: 'Viewed Companion Card',
-    description: `Viewed ${athleteName}'s profile stats.`,
-    time: '2h ago',
-  },
-  {
-    id: '2',
-    icon: 'person_add',
-    iconBg: 'bg-[#363225]',
-    iconColor: 'text-[#c3b998]',
-    title: "Added to Pipeline",
-    description: 'Added to recruiting shortlist.',
-    time: 'Oct 1',
-  },
-];
+// Timeline data placeholder - will come from activity log when implemented
+function getTimelineData(): TimelineItem[] {
+  return [];
+}
 
 function formatHeight(inches: number | null): string {
   if (!inches) return 'N/A';
@@ -315,7 +298,7 @@ export default function ProspectDetailPage() {
   if (!athlete) return <ErrorState error={new Error('Athlete not found')} onRetry={() => window.location.reload()} />;
 
   const athleteName = athlete.profile?.full_name || 'Unknown Athlete';
-  const timelineData = getTimelineData(athleteName);
+  const timelineData = getTimelineData();
 
   return (
     <div className="flex flex-col gap-6">
@@ -492,33 +475,39 @@ export default function ProspectDetailPage() {
               </button>
             </div>
             <div className="relative space-y-8 pl-2">
-              {/* Vertical Line */}
-              <div className="absolute top-2 bottom-2 left-[19px] w-[2px] bg-[#433d28]"></div>
+              {timelineData.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No activity recorded yet</p>
+              ) : (
+                <>
+                  {/* Vertical Line */}
+                  <div className="absolute top-2 bottom-2 left-[19px] w-[2px] bg-[#433d28]"></div>
 
-              {timelineData.map((item) => (
-                <div key={item.id} className="relative flex gap-4">
-                  <div
-                    className={`relative z-10 size-10 rounded-full ${item.iconBg} border border-[#433d28] flex items-center justify-center shrink-0`}
-                  >
-                    <span className={`material-symbols-outlined ${item.iconColor} text-sm`}>{item.icon}</span>
-                  </div>
-                  <div className="flex flex-col pt-1 w-full">
-                    <div className="flex justify-between items-start">
-                      <p className="text-white text-sm font-medium">{item.title}</p>
-                      <span className="text-xs text-[#c3b998]">{item.time}</span>
-                    </div>
-                    <p className="text-[#c3b998] text-xs mt-0.5">{item.description}</p>
-                    {item.attachment && (
-                      <div className="mt-2 p-2 bg-[#363225] rounded border border-[#433d28] max-w-md">
-                        <div className="flex items-center gap-2 text-xs text-[#c3b998]">
-                          <span className="material-symbols-outlined text-sm">attachment</span>
-                          <span>{item.attachment.name}</span>
-                        </div>
+                  {timelineData.map((item) => (
+                    <div key={item.id} className="relative flex gap-4">
+                      <div
+                        className={`relative z-10 size-10 rounded-full ${item.iconBg} border border-[#433d28] flex items-center justify-center shrink-0`}
+                      >
+                        <span className={`material-symbols-outlined ${item.iconColor} text-sm`}>{item.icon}</span>
                       </div>
-                    )}
-                  </div>
-                </div>
-              ))}
+                      <div className="flex flex-col pt-1 w-full">
+                        <div className="flex justify-between items-start">
+                          <p className="text-white text-sm font-medium">{item.title}</p>
+                          <span className="text-xs text-[#c3b998]">{item.time}</span>
+                        </div>
+                        <p className="text-[#c3b998] text-xs mt-0.5">{item.description}</p>
+                        {item.attachment && (
+                          <div className="mt-2 p-2 bg-[#363225] rounded border border-[#433d28] max-w-md">
+                            <div className="flex items-center gap-2 text-xs text-[#c3b998]">
+                              <span className="material-symbols-outlined text-sm">attachment</span>
+                              <span>{item.attachment.name}</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
             </div>
           </div>
         </div>

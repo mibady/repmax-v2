@@ -271,7 +271,7 @@ export default function Page() {
 <span className="material-symbols-outlined transition-transform duration-300 group-open:rotate-180 text-gray-400">expand_more</span>
 </summary>
 <div className="px-6 pb-6 text-gray-400 text-sm leading-relaxed">
-                        No, our standard plans are month-to-month. You can cancel at any time without penalty. Long-term contracts are only required={true} for custom enterprise solutions under the Scout plan.
+                        No, our standard plans are month-to-month. You can cancel at any time without penalty. Long-term contracts are only required for custom enterprise solutions under the Scout plan.
                     </div>
 </details>
 </div>
@@ -284,19 +284,9 @@ export default function Page() {
 <span className="material-symbols-outlined text-primary">sports_football</span>
 <span className="font-bold">RepMax</span>
 </div>
-<p>© 2023 RepMax Intelligence. All rights reserved.</p>
+<p>© 2026 RepMax Intelligence. All rights reserved.</p>
 </div>
 </footer>
-{/* Custom styles from Stitch */}
-<style jsx>{`
-        details > summary {
-        details > summary::-webkit-details-marker {
-        details[open] summary ~ * {
-        @keyframes sweep {
-            0%    {opacity: 0; transform: translateY(-10px)}
-            100%  {opacity: 1; transform: translateY(0)}
-        .feature-check {
-`}</style>
     </>
   );
 }

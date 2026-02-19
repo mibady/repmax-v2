@@ -46,10 +46,10 @@ export default function CampusVisitsPage() {
   }
 
   const statsData = [
-    { label: `Total Visits (${currentMonth.toLocaleDateString('en-US', { month: 'short' })})`, value: stats.totalVisits.toString(), icon: 'calendar_today', trend: '+12%', isUp: true },
-    { label: 'Official Visits', value: stats.officialVisits.toString(), icon: 'verified', trend: '+5%', isUp: true },
-    { label: 'Pending', value: stats.pendingVisits.toString(), icon: 'pending', trend: stats.pendingVisits > 0 ? '-2%' : '0%', isUp: stats.pendingVisits === 0 },
-    { label: 'Win Rate', value: `${stats.winRate}%`, icon: 'pie_chart', trend: '+1.5%', isUp: true },
+    { label: `Total Visits (${currentMonth.toLocaleDateString('en-US', { month: 'short' })})`, value: stats.totalVisits.toString(), icon: 'calendar_today', trend: null, isUp: true },
+    { label: 'Official Visits', value: stats.officialVisits.toString(), icon: 'verified', trend: null, isUp: true },
+    { label: 'Pending', value: stats.pendingVisits.toString(), icon: 'pending', trend: null, isUp: stats.pendingVisits === 0 },
+    { label: 'Win Rate', value: `${stats.winRate}%`, icon: 'pie_chart', trend: null, isUp: true },
   ];
 
   return (
@@ -92,14 +92,16 @@ export default function CampusVisitsPage() {
                 </div>
                 <div className="flex items-baseline gap-2">
                   <h3 className="text-2xl font-bold text-white">{stat.value}</h3>
-                  <span
-                    className={`text-xs font-medium flex items-center ${stat.isUp ? 'text-green-500' : 'text-red-500'}`}
-                  >
-                    <span className="material-symbols-outlined text-[14px]">
-                      {stat.isUp ? 'trending_up' : 'trending_down'}
+                  {stat.trend && (
+                    <span
+                      className={`text-xs font-medium flex items-center ${stat.isUp ? 'text-green-500' : 'text-red-500'}`}
+                    >
+                      <span className="material-symbols-outlined text-[14px]">
+                        {stat.isUp ? 'trending_up' : 'trending_down'}
+                      </span>
+                      {stat.trend}
                     </span>
-                    {stat.trend}
-                  </span>
+                  )}
                 </div>
               </div>
             ))}

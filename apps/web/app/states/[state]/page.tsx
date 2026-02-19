@@ -281,7 +281,7 @@ export default function StateLandingPage() {
             Join {stateName} Athletes on RepMax
           </Link>
           <div className="mt-12 flex flex-col md:flex-row justify-between w-full pt-8 border-t border-white/5 text-gray-500 text-sm">
-            <p>© 2024 RepMax. All rights reserved.</p>
+            <p>© 2026 RepMax. All rights reserved.</p>
             <div className="flex gap-6 mt-4 md:mt-0">
               <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
               <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>

@@ -206,7 +206,7 @@ export default function PositionLandingPage() {
               <label className="flex flex-col gap-1.5">
                 <span className="text-xs font-bold text-[#c3b998] uppercase tracking-wider">Class</span>
                 <div className="relative">
-                  <select className="w-full h-12 bg-[#2A2A2A] border border-[#333333] text-white text-sm rounded-xl px-4 appearance-none focus:outline-none focus:border-[#d4af35] focus:ring-1 focus:ring-[#d4af35] cursor-pointer">
+                  <select disabled className="w-full h-12 bg-[#2A2A2A] border border-[#333333] text-white text-sm rounded-xl px-4 appearance-none focus:outline-none focus:border-[#d4af35] focus:ring-1 focus:ring-[#d4af35] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                     <option>All Classes</option>
                     <option>2024</option>
                     <option>2025</option>
@@ -235,7 +235,7 @@ export default function PositionLandingPage() {
               <label className="flex flex-col gap-1.5">
                 <span className="text-xs font-bold text-[#c3b998] uppercase tracking-wider">Status</span>
                 <div className="relative">
-                  <select className="w-full h-12 bg-[#2A2A2A] border border-[#333333] text-white text-sm rounded-xl px-4 appearance-none focus:outline-none focus:border-[#d4af35] focus:ring-1 focus:ring-[#d4af35] cursor-pointer">
+                  <select disabled className="w-full h-12 bg-[#2A2A2A] border border-[#333333] text-white text-sm rounded-xl px-4 appearance-none focus:outline-none focus:border-[#d4af35] focus:ring-1 focus:ring-[#d4af35] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                     <option>All Statuses</option>
                     <option>Uncommitted</option>
                     <option>Committed</option>
