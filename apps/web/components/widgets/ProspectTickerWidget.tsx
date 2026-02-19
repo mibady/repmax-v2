@@ -16,14 +16,6 @@ interface ProspectTickerWidgetProps {
   zoneColor?: 'purple' | 'red' | 'blue' | 'green' | 'orange';
 }
 
-const defaultProspects: Prospect[] = [
-  { name: 'Madden Faraimo', position: 'LB', school: 'J Serra Catholic', stars: 5 },
-  { name: 'Julian Lewis', position: 'QB', school: 'Carrollton', stars: 5 },
-  { name: 'Justus Terry', position: 'DL', school: 'Manchester', stars: 5 },
-  { name: 'DJ Pickett', position: 'S', school: 'Zephyrhills High School', stars: 5 },
-  { name: "Na'eem Offord", position: 'CB', school: 'Parker', stars: 5 },
-];
-
 function StarRating({ stars }: { stars: number }) {
   return (
     <div className="flex items-center gap-0.5 text-primary">
@@ -42,7 +34,7 @@ function StarRating({ stars }: { stars: number }) {
 
 export default function ProspectTickerWidget({
   zone = 'West',
-  prospects = defaultProspects,
+  prospects = [],
   totalCount = 81,
   zoneColor = 'purple',
 }: ProspectTickerWidgetProps) {
@@ -97,7 +89,7 @@ export default function ProspectTickerWidget({
       <div className="pt-2 px-1">
         <Link
           className="group flex items-center gap-1.5 text-sm font-medium text-primary hover:text-white transition-colors"
-          href="#"
+          href="/recruiter/prospects"
         >
           <span>View all {totalCount} zone prospects</span>
           <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">

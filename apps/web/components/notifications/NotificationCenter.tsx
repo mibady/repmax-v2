@@ -35,48 +35,8 @@ const NOTIFICATION_ICONS: Record<Notification['type'], React.ElementType> = {
   offer: Star,
 };
 
-const MOCK_NOTIFICATIONS: Notification[] = [
-  {
-    id: '1',
-    type: 'profile_view',
-    title: 'New Profile View: TCU',
-    timestamp: '2m ago',
-    read: false,
-    metadata: { schoolName: 'TCU' },
-  },
-  {
-    id: '2',
-    type: 'shortlist',
-    title: 'Candidate Shortlisted: ASU',
-    timestamp: '1h ago',
-    read: false,
-    metadata: { schoolName: 'ASU' },
-  },
-  {
-    id: '3',
-    type: 'deadline',
-    title: 'Signing Day approaching',
-    timestamp: '4h ago',
-    read: false,
-  },
-  {
-    id: '4',
-    type: 'parent_link',
-    title: 'Parent Link account created',
-    timestamp: '1d ago',
-    read: true,
-  },
-  {
-    id: '5',
-    type: 'summary',
-    title: 'Weekly Recruiting Summary',
-    timestamp: '2d ago',
-    read: true,
-  },
-];
-
 export function NotificationCenter({
-  notifications = MOCK_NOTIFICATIONS,
+  notifications = [],
   onMarkAllRead,
   onNotificationClick,
   onViewAll,

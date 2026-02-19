@@ -17,29 +17,12 @@ interface ParentCalendarWidgetProps {
   daysInMonth?: number;
 }
 
-const defaultEvents: CalendarEvent[] = [
-  {
-    icon: 'sync_alt',
-    title: 'Transfer Portal Opens',
-    date: 'Dec 4th',
-    day: 4,
-    explanation: 'College athletes can transfer schools starting today. This often frees up scholarship spots unexpectedly for high school recruits.',
-  },
-  {
-    icon: 'ink_pen',
-    title: 'National Signing Day',
-    date: 'Dec 20th',
-    day: 20,
-    explanation: 'This is the early period when high school seniors officially commit to colleges. A signed National Letter of Intent (NLI) ends the recruiting process.',
-  },
-];
-
 const daysOfWeek = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
 export default function ParentCalendarWidget({
   month = 'December',
-  year = 2023,
-  events = defaultEvents,
+  year = new Date().getFullYear(),
+  events = [],
   highlightedDays = [4, 20],
   startOffset = 3, // Days to skip for first week (0 = Sunday)
   daysInMonth = 31,
@@ -96,11 +79,11 @@ export default function ParentCalendarWidget({
           <div className="flex flex-col gap-4">
             {/* Calendar Controls */}
             <div className="flex items-center justify-between px-2 mb-2">
-              <button className="hover:bg-white/5 p-2 rounded-full transition-colors">
+              <button disabled title="Calendar navigation not yet implemented" className="hover:bg-white/5 p-2 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                 <span className="material-symbols-outlined text-white">chevron_left</span>
               </button>
               <p className="text-white text-lg font-bold leading-tight">{month} {year}</p>
-              <button className="hover:bg-white/5 p-2 rounded-full transition-colors">
+              <button disabled title="Calendar navigation not yet implemented" className="hover:bg-white/5 p-2 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                 <span className="material-symbols-outlined text-white">chevron_right</span>
               </button>
             </div>

@@ -420,7 +420,7 @@ function CoachSidebar({ user, onSignOut }: { user: SidebarUser; onSignOut?: () =
           <span className="material-symbols-outlined text-[22px]">logout</span>
           <p className="text-sm font-medium">Sign Out</p>
         </button>
-        <button className="w-full flex items-center justify-center gap-2 rounded-lg py-3 bg-primary text-black font-bold text-sm tracking-wide mt-2">
+        <button disabled title="Coming soon" className="w-full flex items-center justify-center gap-2 rounded-lg py-3 bg-primary text-black font-bold text-sm tracking-wide mt-2 disabled:opacity-50 disabled:cursor-not-allowed">
           <span className="material-symbols-outlined text-[20px]">person_add</span>
           Add Athlete
         </button>

@@ -15,16 +15,9 @@ interface ProgramRankingsWidgetProps {
   zoneColor?: 'orange' | 'red' | 'blue' | 'green' | 'purple';
 }
 
-const defaultPrograms: Program[] = [
-  { name: 'North Shore', state: 'TX', record: '15-1', d1Count: 162 },
-  { name: 'Duncanville', state: 'TX', record: '14-1', d1Count: 145 },
-  { name: 'Westlake', state: 'TX', record: '13-1', d1Count: 98 },
-  { name: 'Bishop Gorman', state: 'NV', record: '12-0', d1Count: 110 },
-];
-
 export default function ProgramRankingsWidget({
   zone = 'Southwest',
-  programs = defaultPrograms,
+  programs = [],
   zoneColor = 'orange',
 }: ProgramRankingsWidgetProps) {
   const colorClasses = {
@@ -64,7 +57,7 @@ export default function ProgramRankingsWidget({
           <Link
             key={idx}
             className="group flex items-center gap-4 bg-[#1A1A1A] hover:bg-[#252525] border border-transparent hover:border-primary/30 transition-all duration-200 rounded-lg p-4"
-            href="#"
+            href="/programs"
           >
             <div className="flex flex-col items-center justify-center w-8 shrink-0">
               <span className="text-primary font-mono text-xl font-bold">#{idx + 1}</span>
@@ -95,7 +88,7 @@ export default function ProgramRankingsWidget({
       <div className="flex justify-end pt-2">
         <Link
           className="group flex items-center gap-1 text-sm font-medium text-primary hover:text-white transition-colors"
-          href="#"
+          href="/programs"
         >
           View all zone programs
           <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">

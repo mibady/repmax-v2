@@ -14,14 +14,8 @@ interface RecruitingCalendarWidgetProps {
   showActiveWindow?: boolean;
 }
 
-const defaultEvents: CalendarEvent[] = [
-  { title: 'Portal Window Closes', date: 'Jan 16', urgency: 'urgent' },
-  { title: 'National Signing Day', date: 'Feb 5', urgency: 'upcoming' },
-  { title: 'Spring Portal Opens', date: 'Apr 1', urgency: 'future' },
-];
-
 export default function RecruitingCalendarWidget({
-  events = defaultEvents,
+  events = [],
   activeWindow = 'Transfer Portal Window',
   showActiveWindow = true,
 }: RecruitingCalendarWidgetProps) {
@@ -47,6 +41,11 @@ export default function RecruitingCalendarWidget({
 
       {/* Calendar Rows */}
       <div className="flex flex-col space-y-5">
+        {events.length === 0 && (
+          <div className="text-center py-4">
+            <p className="text-gray-500 text-sm">No upcoming events</p>
+          </div>
+        )}
         {events.map((event, idx) => (
           <div key={idx} className="group flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">

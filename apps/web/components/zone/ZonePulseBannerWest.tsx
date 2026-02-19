@@ -17,7 +17,7 @@ export default function ZonePulseBannerWest({
   athleteCount = 81,
   eventCount = 3,
   portalStatus = 'open',
-  signingDayCountdown = '14d 2h',
+  signingDayCountdown = '',
 }: ZonePulseBannerWestProps) {
   return (
     <>

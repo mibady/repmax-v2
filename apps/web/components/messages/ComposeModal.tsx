@@ -22,44 +22,15 @@ interface ComposeModalProps {
     attachments: File[];
   }) => void;
   defaultRecipient?: Recipient;
+  recipients?: Recipient[];
 }
-
-const MOCK_RECIPIENTS: Recipient[] = [
-  {
-    id: '1',
-    name: 'Coach Williams',
-    organization: 'TCU',
-    role: 'Head Coach',
-    isCompliant: true,
-  },
-  {
-    id: '2',
-    name: 'Coach Wilson',
-    organization: 'Duke',
-    role: 'Assistant Coach',
-    isCompliant: true,
-  },
-  {
-    id: '3',
-    name: 'Coach Martinez',
-    organization: 'Oklahoma State',
-    role: 'Recruiting Coordinator',
-    isCompliant: false,
-  },
-  {
-    id: '4',
-    name: 'Coach Thompson',
-    organization: 'Baylor',
-    role: 'Position Coach',
-    isCompliant: true,
-  },
-];
 
 export function ComposeModal({
   isOpen,
   onClose,
   onSend,
   defaultRecipient,
+  recipients = [],
 }: ComposeModalProps) {
   const [recipient, setRecipient] = useState<Recipient | null>(defaultRecipient || null);
   const [recipientSearch, setRecipientSearch] = useState('');
@@ -82,7 +53,7 @@ export function ComposeModal({
     }
   }, [isOpen, defaultRecipient]);
 
-  const filteredRecipients = MOCK_RECIPIENTS.filter(
+  const filteredRecipients = recipients.filter(
     (r) =>
       r.name.toLowerCase().includes(recipientSearch.toLowerCase()) ||
       r.organization.toLowerCase().includes(recipientSearch.toLowerCase())
@@ -199,6 +170,11 @@ export function ComposeModal({
                     className="w-full pl-10 pr-4 py-2.5 bg-[#2A2A2E] border border-[#3F3F46] rounded-lg text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-[#d4af35]"
                   />
                 </div>
+                {showRecipientDropdown && recipients.length === 0 && (
+                  <div className="absolute z-10 w-full mt-1 bg-[#2A2A2E] border border-[#3F3F46] rounded-lg shadow-xl p-4 text-center">
+                    <p className="text-sm text-gray-500">No recipients available</p>
+                  </div>
+                )}
                 {showRecipientDropdown && filteredRecipients.length > 0 && (
                   <div className="absolute z-10 w-full mt-1 bg-[#2A2A2E] border border-[#3F3F46] rounded-lg shadow-xl max-h-48 overflow-y-auto">
                     {filteredRecipients.map((r) => (

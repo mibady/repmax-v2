@@ -16,51 +16,9 @@ interface ClassRankingsWidgetProps {
   rankings?: ClassRanking[];
 }
 
-const defaultRankings: ClassRanking[] = [
-  {
-    rank: 1,
-    school: 'Texas A&M',
-    logoGradient: 'from-red-800 to-red-600',
-    commits: 24,
-    stars: [
-      { count: 1, rating: 5 },
-      { count: 14, rating: 4 },
-    ],
-    isHighlighted: true,
-  },
-  {
-    rank: 2,
-    school: 'Kentucky',
-    logoGradient: 'from-blue-600 to-blue-800',
-    commits: 18,
-    stars: [{ count: 6, rating: 4 }],
-  },
-  {
-    rank: 3,
-    school: 'Indiana',
-    logoGradient: 'from-red-700 to-red-900',
-    commits: 16,
-    stars: [{ count: 4, rating: 4 }],
-  },
-  {
-    rank: 4,
-    school: 'Baylor',
-    logoGradient: 'from-green-700 to-green-900',
-    commits: 15,
-    stars: [{ count: 3, rating: 4 }],
-  },
-  {
-    rank: 5,
-    school: 'Arizona',
-    logoGradient: 'from-blue-700 to-red-700',
-    commits: 14,
-    stars: [{ count: 2, rating: 4 }],
-  },
-];
-
 export default function ClassRankingsWidget({
   classYear = 2026,
-  rankings = defaultRankings,
+  rankings = [],
 }: ClassRankingsWidgetProps) {
   return (
     <div className="w-full max-w-[450px] bg-background-dark border border-white/10 rounded-xl overflow-hidden shadow-2xl flex flex-col">
@@ -92,6 +50,13 @@ export default function ClassRankingsWidget({
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5 text-sm">
+            {rankings.length === 0 && (
+              <tr>
+                <td colSpan={4} className="py-8 text-center text-gray-500 text-sm">
+                  No rankings available
+                </td>
+              </tr>
+            )}
             {rankings.map((ranking) => (
               <tr
                 key={ranking.rank}

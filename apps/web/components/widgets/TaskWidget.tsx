@@ -10,15 +10,13 @@ interface Task {
   completed: boolean;
 }
 
-const mockTasks: Task[] = [
-  { id: '1', title: 'Review weekly player stats', priority: 'high', dueDate: 'Today', completed: false },
-  { id: '2', title: 'Schedule physio for Mike', priority: 'medium', dueDate: 'Oct 24', completed: false },
-  { id: '3', title: 'Update training cycle PDF', priority: 'low', dueDate: 'Oct 25', completed: false },
-  { id: '4', title: 'Call sponsor rep', priority: 'low', dueDate: 'Done', completed: true },
-];
+interface TaskWidgetProps {
+  tasks?: Task[];
+  onAddTask?: (title: string) => void;
+}
 
-export default function TaskWidget() {
-  const [tasks, setTasks] = useState<Task[]>(mockTasks);
+export default function TaskWidget({ tasks: initialTasks = [], onAddTask }: TaskWidgetProps) {
+  const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [newTask, setNewTask] = useState('');
 
   const toggleTask = (id: string) => {
@@ -56,7 +54,10 @@ export default function TaskWidget() {
               {activeTasks}
             </span>
           </div>
-          <button className="text-xs font-medium text-[#D4AF37] hover:text-[#e5c14d] transition-colors duration-200 flex items-center gap-0.5">
+          <button
+            onClick={() => onAddTask?.("New task")}
+            className="text-xs font-medium text-[#D4AF37] hover:text-[#e5c14d] transition-colors duration-200 flex items-center gap-0.5"
+          >
             <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>add</span>
             Add
           </button>
@@ -64,6 +65,11 @@ export default function TaskWidget() {
 
         {/* Task List */}
         <div className="flex flex-col max-h-[400px] overflow-y-auto">
+          {tasks.length === 0 && (
+            <div className="p-6 text-center">
+              <p className="text-gray-500 text-xs">No tasks</p>
+            </div>
+          )}
           {tasks.map((task) => {
             const styles = getPriorityStyles(task.priority, task.completed);
             return (

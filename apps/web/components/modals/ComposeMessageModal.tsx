@@ -14,22 +14,17 @@ interface ComposeMessageModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSend?: (data: { recipient: Recipient | null; subject: string; message: string }) => void;
+  recipients?: Recipient[];
 }
 
-const suggestedRecipients: Recipient[] = [
-  { id: '1', initials: 'CW', name: 'Coach Williams', organization: 'TCU', role: 'Head Coach' },
-  { id: '2', initials: 'CW', name: 'Coach Wilson', organization: 'Duke', role: 'Assistant Coach' },
-  { id: '3', initials: 'CW', name: 'Coach Willis', organization: 'Ohio State', role: 'Recruiter' },
-];
-
-export default function ComposeMessageModal({ isOpen, onClose, onSend }: ComposeMessageModalProps) {
-  const [searchQuery, setSearchQuery] = useState('Coach W');
-  const [selectedRecipient, setSelectedRecipient] = useState<Recipient | null>(suggestedRecipients[0]);
+export default function ComposeMessageModal({ isOpen, onClose, onSend, recipients = [] }: ComposeMessageModalProps) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedRecipient, setSelectedRecipient] = useState<Recipient | null>(null);
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [showDropdown, setShowDropdown] = useState(true);
 
-  const filteredRecipients = suggestedRecipients.filter(
+  const filteredRecipients = recipients.filter(
     (r) =>
       r.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       r.organization.toLowerCase().includes(searchQuery.toLowerCase())

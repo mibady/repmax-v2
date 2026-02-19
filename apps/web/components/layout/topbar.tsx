@@ -125,7 +125,7 @@ function AthleteTopbar({ user, title, unreadNotifications, availableRoles, onRol
           </div>
         )}
         <div className="h-8 w-[1px] bg-[#333] mx-2" />
-        <button className="relative p-2 text-text-muted hover:text-white transition-colors rounded-lg hover:bg-white/5">
+        <button disabled aria-label="Notifications" className="relative p-2 text-text-muted hover:text-white transition-colors rounded-lg hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed">
           <span className="material-symbols-outlined">notifications</span>
           {unreadNotifications !== undefined && unreadNotifications > 0 && (
             <span className="absolute top-2 right-2 size-2 bg-primary rounded-full ring-2 ring-background-dark" />
@@ -149,11 +149,12 @@ function RecruiterTopbar({ title, unreadNotifications }: Omit<TopbarProps, 'role
           </div>
           <input
             type="text"
-            className="block w-64 pl-10 pr-3 py-2 border border-white/5 rounded-lg leading-5 bg-[#141414] text-gray-300 placeholder-gray-500 focus:outline-none focus:bg-[#1c1c1c] focus:ring-1 focus:ring-primary/50 focus:border-primary/50 sm:text-sm transition-colors"
-            placeholder="Search athletes, schools..."
+            disabled
+            className="block w-64 pl-10 pr-3 py-2 border border-white/5 rounded-lg leading-5 bg-[#141414] text-gray-300 placeholder-gray-500 focus:outline-none focus:bg-[#1c1c1c] focus:ring-1 focus:ring-primary/50 focus:border-primary/50 sm:text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            placeholder="Search coming soon"
           />
         </div>
-        <button className="relative p-2 text-gray-400 hover:text-white transition-colors">
+        <button disabled aria-label="Notifications" className="relative p-2 text-gray-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
           <span className="material-symbols-outlined">notifications</span>
           {unreadNotifications !== undefined && unreadNotifications > 0 && (
             <span className="absolute top-1.5 right-1.5 size-2 bg-red-500 rounded-full border-2 border-[#0a0a0a]" />
@@ -171,7 +172,7 @@ function ParentTopbar({ user, title, unreadNotifications }: Omit<TopbarProps, 'r
         <h2 className="text-xl font-bold text-white">{title || "Marcus's Recruiting Journey"}</h2>
       </div>
       <div className="flex items-center gap-4">
-        <button className="relative p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5">
+        <button disabled aria-label="Notifications" className="relative p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed">
           <span className="material-symbols-outlined">notifications</span>
           {unreadNotifications !== undefined && unreadNotifications > 0 && (
             <span className="absolute top-2 right-2 size-2 bg-primary rounded-full ring-2 ring-[#050505]" />
@@ -210,15 +211,16 @@ function CoachTopbar({ title, unreadNotifications }: Omit<TopbarProps, 'role' | 
         <div className="relative w-80">
           <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/40 text-[20px]">search</span>
           <input
-            className="w-full bg-[#1F1F22] border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-all text-white placeholder:text-white/30"
-            placeholder="Search athletes, coaches, or scouts..."
+            disabled
+            className="w-full bg-[#1F1F22] border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-all text-white placeholder:text-white/30 disabled:opacity-50 disabled:cursor-not-allowed"
+            placeholder="Search coming soon"
             type="text"
           />
         </div>
       </div>
       <div className="flex items-center gap-6">
         <h2 className="text-white text-lg font-semibold">{title || 'Team Dashboard'}</h2>
-        <button className="relative p-2 text-white/60 hover:text-white transition-colors">
+        <button disabled aria-label="Notifications" className="relative p-2 text-white/60 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
           <span className="material-symbols-outlined">notifications</span>
           {unreadNotifications !== undefined && unreadNotifications > 0 && (
             <span className="absolute top-1.5 right-1.5 size-2 bg-primary rounded-full border-2 border-[#050505]" />
@@ -242,11 +244,12 @@ function ClubTopbar({ user, title, unreadNotifications }: Omit<TopbarProps, 'rol
           </div>
           <input
             type="text"
-            className="block w-64 pl-10 pr-3 py-2 border border-white/5 rounded-lg leading-5 bg-[#141414] text-gray-300 placeholder-gray-500 focus:outline-none focus:bg-[#1c1c1c] focus:ring-1 focus:ring-primary/50 focus:border-primary/50 sm:text-sm transition-colors"
-            placeholder="Search events, athletes..."
+            disabled
+            className="block w-64 pl-10 pr-3 py-2 border border-white/5 rounded-lg leading-5 bg-[#141414] text-gray-300 placeholder-gray-500 focus:outline-none focus:bg-[#1c1c1c] focus:ring-1 focus:ring-primary/50 focus:border-primary/50 sm:text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            placeholder="Search coming soon"
           />
         </div>
-        <button className="relative p-2 text-gray-400 hover:text-white transition-colors">
+        <button disabled aria-label="Notifications" className="relative p-2 text-gray-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
           <span className="material-symbols-outlined">notifications</span>
           {unreadNotifications !== undefined && unreadNotifications > 0 && (
             <span className="absolute top-1.5 right-1.5 size-2 bg-primary rounded-full border-2 border-[#0a0a0a]" />
@@ -286,11 +289,12 @@ function AdminTopbar({ title, unreadNotifications }: Omit<TopbarProps, 'role' | 
           </div>
           <input
             type="text"
-            className="block w-64 pl-10 pr-3 py-2 border border-white/5 rounded-lg leading-5 bg-[#141414] text-gray-300 placeholder-gray-500 focus:outline-none focus:bg-[#1c1c1c] focus:ring-1 focus:ring-primary/50 focus:border-primary/50 sm:text-sm transition-colors"
-            placeholder="Search users, flags..."
+            disabled
+            className="block w-64 pl-10 pr-3 py-2 border border-white/5 rounded-lg leading-5 bg-[#141414] text-gray-300 placeholder-gray-500 focus:outline-none focus:bg-[#1c1c1c] focus:ring-1 focus:ring-primary/50 focus:border-primary/50 sm:text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            placeholder="Search coming soon"
           />
         </div>
-        <button className="relative p-2 text-gray-400 hover:text-white transition-colors">
+        <button disabled aria-label="Notifications" className="relative p-2 text-gray-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
           <span className="material-symbols-outlined">notifications</span>
           {unreadNotifications !== undefined && unreadNotifications > 0 && (
             <span className="absolute top-1.5 right-1.5 size-2 bg-red-500 rounded-full border-2 border-[#0a0a0a]" />

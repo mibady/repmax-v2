@@ -13,38 +13,17 @@ interface TrendingAthlete {
   imageUrl: string;
 }
 
-const mockAthletes: TrendingAthlete[] = [
-  {
-    id: '1',
-    name: 'Marcus Johnson',
-    position: 'QB',
-    stars: 5,
-    rank: 1,
-    viewChange: '+250%',
-    views: 47,
-    shortlists: 5,
-    imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD2bMS4mWNS5cGJ_aoxaliwiGtBzuEZDtYufl-RgcuFRtCmpYhQpV8msvKATx5AJ_hgK5y0TNIaaTzkBKvGWUq4IGCJmsPNOrNIBGfacC8aJDX2GlD-UETe-IUIZvtloY5f43dbeLt7krQymjLxiJUHN5SROjJru_5ZDPdGEEpftfQYP6UgTFmc_ozUjlKupZun7yjEHDOpAhn13yLgpAgHtWTWKZUXsrW-RD4AM448NHqWbRPdaufROcypgZhgZ_3Y1kE6MFMA4ZA',
-  },
-  {
-    id: '2',
-    name: 'David Chen',
-    position: 'WR',
-    stars: 4,
-    isTrending: true,
-    views: 32,
-    shortlists: 2,
-    imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDtbJ5Jv6Y2m0Jl4OwIaejAg8MNBbnpbE1A1Ry8IZ7dpOUrHJyneABuLMIUUpu14kQKrmgrva30ZjBF8E02sgl5nKaqMEHlYXXqN1_gXnBRlDkjBzGR_XAUOjG8FRy4sQv737Fbs5BnoEqHYmjgy05Ld9eIKGOJMyBTEkFSS8lXQr14k3b-k6FwraxUZoYGh5nbKuepf4LP1lMlC59D59LEZx8EcQm9piSkeVurZQMB2DNu1q_tJtsyL86_I5gV1URyve03y9eDMLo',
-  },
-  {
-    id: '3',
-    name: 'Sarah Williams',
-    position: 'PG',
-    stars: 4,
-    views: 28,
-    shortlists: 1,
-    imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCHws2fHCbX7hXvivpDIeZe3-cwOcdkvbZNVKo-9TLp-e36Qx8q6gJlcFQxf3FgL_SHzp0JtHhbIq-DOu2impXiJDlrtUOplBLHH1L1Nwid-VTvuAfc6Wm1slXq8A4_5W_hQnOZtEEfFo_5Kai8ab5d-jQi5A8AhnxRah9AB_WVjajr1q-9nwWeWnPdVsNBQ3OiPnbCegCpOjGH5O7cXXQ5xR_FbJy-1p3Fn_mx8RCkhHIkVhIp2eeCloONjoAX-zUVRqHWEtWyOCE',
-  },
-];
+function getPlaceholderGradient(id: string): string {
+  const gradients = [
+    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+    'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+    'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+    'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+  ];
+  const index = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % gradients.length;
+  return gradients[index];
+}
 
 function renderStars(count: number) {
   return (
@@ -62,7 +41,11 @@ function renderStars(count: number) {
   );
 }
 
-export default function TrendingAthletesWidget() {
+interface TrendingAthletesWidgetProps {
+  athletes?: TrendingAthlete[];
+}
+
+export default function TrendingAthletesWidget({ athletes = [] }: TrendingAthletesWidgetProps) {
   return (
     <div className="w-full max-w-4xl flex flex-col gap-0 bg-[#1F1F22] rounded-2xl shadow-2xl border border-white/5 overflow-hidden">
       {/* Header */}
@@ -79,7 +62,12 @@ export default function TrendingAthletesWidget() {
 
       {/* List Container */}
       <div className="flex flex-col gap-3 p-6 bg-[#1F1F22]">
-        {mockAthletes.map((athlete) => (
+        {athletes.length === 0 && (
+          <div className="p-8 text-center">
+            <p className="text-gray-500 text-sm">No trending athletes</p>
+          </div>
+        )}
+        {athletes.map((athlete) => (
           <div
             key={athlete.id}
             className="group relative flex flex-col md:flex-row items-start md:items-center justify-between gap-4 rounded-xl bg-[#1A1A1A] hover:bg-[#222222] p-4 transition-all duration-300 border border-transparent hover:border-[#D4AF37]/20 shadow-sm"
@@ -89,7 +77,7 @@ export default function TrendingAthletesWidget() {
               <div className="relative shrink-0">
                 <div
                   className="size-16 rounded-xl bg-cover bg-center shadow-inner"
-                  style={{ backgroundImage: `url('${athlete.imageUrl}')` }}
+                  style={{ backgroundImage: athlete.imageUrl && !athlete.imageUrl.includes('googleusercontent.com') ? `url('${athlete.imageUrl}')` : getPlaceholderGradient(athlete.id) }}
                 ></div>
                 {athlete.rank && (
                   <div className="absolute -bottom-2 -right-2 bg-[#1A1A1A] rounded-full p-1">
@@ -147,7 +135,7 @@ export default function TrendingAthletesWidget() {
 
       {/* Footer Link */}
       <div className="bg-[#1A1A1A] p-4 text-center border-t border-white/5">
-        <Link href="#" className="text-xs text-zinc-500 hover:text-[#D4AF37] transition-colors font-medium uppercase tracking-widest">
+        <Link href="/recruiter/prospects" className="text-xs text-zinc-500 hover:text-[#D4AF37] transition-colors font-medium uppercase tracking-widest">
           View All Trends
         </Link>
       </div>

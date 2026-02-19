@@ -158,13 +158,13 @@ export function MessageThread({
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button className="p-2 rounded-lg hover:bg-[#1a1a1a] transition-colors">
+          <button disabled aria-label="View profile" title="View profile" className="p-2 rounded-lg hover:bg-[#1a1a1a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
             <User className="w-5 h-5 text-gray-400" />
           </button>
-          <button className="p-2 rounded-lg hover:bg-[#1a1a1a] transition-colors">
+          <button disabled aria-label="Search messages" title="Search messages" className="p-2 rounded-lg hover:bg-[#1a1a1a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
             <Search className="w-5 h-5 text-gray-400" />
           </button>
-          <button className="p-2 rounded-lg hover:bg-[#1a1a1a] transition-colors">
+          <button disabled aria-label="More options" title="More options" className="p-2 rounded-lg hover:bg-[#1a1a1a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
             <MoreVertical className="w-5 h-5 text-gray-400" />
           </button>
         </div>
@@ -246,7 +246,7 @@ export function MessageThread({
       {/* Input */}
       <div className="px-6 py-4 border-t border-[#27272a] bg-[#1A1A1A]">
         <div className="flex items-end gap-3">
-          <button className="p-2 rounded-lg hover:bg-[#2a2a2d] transition-colors">
+          <button disabled aria-label="Add attachment" title="Add attachment" className="p-2 rounded-lg hover:bg-[#2a2a2d] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
             <Plus className="w-5 h-5 text-gray-400" />
           </button>
           <div className="flex-1 relative">
@@ -261,7 +261,7 @@ export function MessageThread({
               style={{ height: 'auto' }}
             />
           </div>
-          <button className="p-2 rounded-lg hover:bg-[#2a2a2d] transition-colors">
+          <button disabled aria-label="Add emoji" title="Add emoji" className="p-2 rounded-lg hover:bg-[#2a2a2d] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
             <Smile className="w-5 h-5 text-gray-400" />
           </button>
           <button
