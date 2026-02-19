@@ -399,3 +399,48 @@ This project existed before tracking was set up.
 
 ### Linear
 - NGE-56 → In Progress (68 violations resolved, polish ongoing)
+
+---
+
+## Session 9 — 2026-02-18
+
+### Completed
+- **User Journey & UX Plan** — comprehensive spec covering 10 journeys across 6 roles, inventorying 78 UX gaps (52 dead handlers, 18 missing pages, 8 broken links), with 3-phase execution roadmap
+- **Phase A: Dead Handler Hardening** — resolved all 52 dead interactive handlers across 19 files:
+  - **Athlete pages (5 files):** Wired shortlist arrow → offers link, Message button → router.push('/messages'), View/Download doc buttons → window.open(doc.url). Disabled Upload Film, Take Photo, Filter, Share, Edit, more_vert. Fixed missing `router` declaration in analytics. Removed unused `useRef` import from film.
+  - **Recruiter pages (6 files):** Fixed broken board→pipeline links in compare page. Disabled Export Data, View Detail, Schedule Visit, View All Staff, View All, Filter, tag management buttons. Replaced interactive more_vert with disabled spans.
+  - **Public pages (5 files):** Fixed pricing navbar links (Features→/#features, Pricing→/pricing, Login→/login). Converted Get Started to Link→/signup. Converted footer Contact/Privacy/Terms to Links. Removed cursor-pointer from social icons and avatars. Wired public athlete Add to Shortlist/Contact Coach → login redirect. Disabled Load More and Sort on positions page. Disabled mobile hamburger on zones page.
+  - **Shared components (2 files):** Fixed sidebar nav (campaigns→communications, analytics→reports). Disabled Export and tune/filter on zone map page.
+  - **Bug fix:** Removed `doc.file_url` fallback (property doesn't exist on AthleteDocument type)
+
+### Audit Snapshot
+- Pages: 42
+- API routes: 42
+- Components: 25
+- Server actions: 9 files
+- Hooks: 35
+- Tests: 353/353 passing (31 test files)
+- Commits: 69 total (3 this session)
+- Build: pass
+
+### Decisions Made
+- Phase A (wire/disable existing) prioritized over Phase B (create missing pages) — maximum impact with zero new files
+- Film player deferred to Phase C (major feature) — highlight cards link to external Hudl URLs which work correctly
+- Disabled buttons use `disabled title="Coming soon"` + `opacity-50 cursor-not-allowed` pattern consistently
+- Zone map radio toggles left as CSS-only (peer-checked) — no JS state needed since they don't drive data yet
+
+### Known Issues
+- 4 pre-existing lint warnings unchanged
+- 18 missing pages identified in spec (Phase B: recruiter/search, recruiter/calendar, etc.)
+- 8 major features deferred to Phase C (film player, notification center, search, board/Kanban)
+- Zone map radio toggles are visual-only (no data filtering)
+
+### Next Session Should
+- Run `/prime` to load context
+- Phase B: Create stub pages for 18 missing routes (recruiter/search, recruiter/calendar, recruiter/settings, etc.)
+- Phase C: Major features — film player with `<video>` element, notification center, search
+- NGE-55: Mobile app (Expo) — highest priority remaining Linear issue
+- NGE-56: Polish continues (Phase A done, B and C remain)
+
+### Linear
+- NGE-56 → In Progress (Phase A complete — 52 dead handlers resolved, Phases B+C remain)
