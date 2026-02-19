@@ -40,6 +40,29 @@ interface CleanResult {
   duration: number;
 }
 
+// Zone mapping: UI codes (UPPERCASE) → DB enum values (Title Case)
+function toDbZone(uiZone: string | undefined): string | null {
+  if (!uiZone) return null;
+  const map: Record<string, string> = {
+    'WEST': 'West',
+    'SOUTHWEST': 'Southwest',
+    'MIDWEST': 'Midwest',
+    'SOUTHEAST': 'Southeast',
+    'NORTHEAST': 'Northeast',
+    'MID-ATLANTIC': 'Mid-Atlantic',
+  };
+  return map[uiZone.toUpperCase()] || null;
+}
+
+/** Parse height string like "6'2\"" to total inches (74) */
+function parseHeightToInches(height: string | number | undefined): number | null {
+  if (height === undefined || height === null) return null;
+  if (typeof height === 'number') return height;
+  const match = height.match(/(\d+)'(\d+)/);
+  if (!match) return null;
+  return parseInt(match[1]) * 12 + parseInt(match[2]);
+}
+
 // User ID mapping (email -> auth user UUID)
 const userIdMap: Map<string, string> = new Map();
 
@@ -77,7 +100,9 @@ function getSupabaseClient(): SupabaseClient {
 async function seedUser(supabase: SupabaseClient, userData: TestUserData): Promise<string> {
   console.log(`  Creating user: ${userData.email}`);
 
-  // 1. Create auth user
+  // 1. Create auth user (or find existing)
+  let userId: string;
+
   const { data: authData, error: authError } = await supabase.auth.admin.createUser({
     email: userData.email,
     password: userData.password,
@@ -90,73 +115,116 @@ async function seedUser(supabase: SupabaseClient, userData: TestUserData): Promi
   });
 
   if (authError) {
-    throw new Error(`Failed to create auth user ${userData.email}: ${authError.message}`);
+    // If user already exists, look up their ID and continue to ensure profile/role records exist
+    if (authError.message.includes('already been registered')) {
+      const existingId = userIdMap.get(userData.email);
+      if (existingId) {
+        userId = existingId;
+        console.log(`  ↻ Auth exists, ensuring profile/role records for ${userData.email}`);
+      } else {
+        throw new Error(`Auth user exists but not found in userIdMap: ${userData.email}`);
+      }
+    } else {
+      throw new Error(`Failed to create auth user ${userData.email}: ${authError.message}`);
+    }
+  } else {
+    userId = authData.user.id;
   }
 
-  const userId = authData.user.id;
   userIdMap.set(userData.email, userId);
 
-  // 2. Create profile
-  const { error: profileError } = await supabase.from('profiles').insert({
-    id: userId,
-    user_id: userId,
-    role: userData.activeRole,
-    full_name: userData.fullName,
-  });
+  // 2. Create profile (skip if already exists) — capture real profile ID
+  let profileId: string;
 
-  if (profileError) {
-    throw new Error(`Failed to create profile for ${userData.email}: ${profileError.message}`);
-  }
+  const { data: existingProfile } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('user_id', userId)
+    .single();
 
-  // 3. Create role-specific profiles
-  if (userData.athleteProfile) {
-    const { error } = await supabase.from('athletes').insert({
-      profile_id: userId,
-      primary_position: userData.athleteProfile.position,
-      class_year: userData.athleteProfile.classYear,
-      high_school: userData.athleteProfile.school,
-      city: userData.city,
-      state: userData.state,
-      zone: userData.zone,
-      height_inches: userData.athleteProfile.height,
-      weight_lbs: userData.athleteProfile.weight,
-      forty_yard_time: userData.athleteProfile.fortyYard,
-      vertical_inches: userData.athleteProfile.vertical,
-      gpa: userData.athleteProfile.gpa,
-      sat_score: userData.athleteProfile.sat,
-      act_score: userData.athleteProfile.act,
-      verified: userData.athleteProfile.verified,
+  if (existingProfile) {
+    profileId = existingProfile.id;
+  } else {
+    const { error: profileError } = await supabase.from('profiles').insert({
+      id: userId,
+      user_id: userId,
+      role: userData.activeRole,
+      full_name: userData.fullName,
     });
 
-    if (error) {
-      console.warn(`  Warning: athletes insert failed: ${error.message}`);
+    if (profileError) {
+      throw new Error(`Failed to create profile for ${userData.email}: ${profileError.message}`);
+    }
+    profileId = userId;
+  }
+
+  // Store real profile ID for entity map lookups
+  profileIdMap.set(userData.email, profileId);
+
+  // 3. Create role-specific profiles (skip if already exists)
+  if (userData.athleteProfile) {
+    const { data: existingAthlete } = await supabase
+      .from('athletes').select('id').eq('profile_id', profileId).single();
+
+    if (!existingAthlete) {
+      const { error } = await supabase.from('athletes').insert({
+        profile_id: profileId,
+        primary_position: userData.athleteProfile.position,
+        class_year: userData.athleteProfile.classYear,
+        high_school: userData.athleteProfile.school,
+        city: userData.city,
+        state: userData.state,
+        zone: toDbZone(userData.zone) as any,
+        height_inches: parseHeightToInches(userData.athleteProfile.height),
+        weight_lbs: userData.athleteProfile.weight,
+        forty_yard_time: userData.athleteProfile.fortyYard,
+        vertical_inches: userData.athleteProfile.vertical,
+        gpa: userData.athleteProfile.gpa,
+        sat_score: userData.athleteProfile.sat,
+        act_score: userData.athleteProfile.act,
+        verified: userData.athleteProfile.verified,
+      });
+
+      if (error) {
+        console.warn(`  Warning: athletes insert failed: ${error.message}`);
+      }
     }
   }
 
   if (userData.recruiterProfile) {
-    const { error } = await supabase.from('coaches').insert({
-      profile_id: userId,
-      school_name: userData.recruiterProfile.school,
-      division: 'D1',
-      conference: userData.recruiterProfile.conference,
-      title: userData.recruiterProfile.title,
-    });
+    const { data: existingCoach } = await supabase
+      .from('coaches').select('id').eq('profile_id', profileId).single();
 
-    if (error) {
-      console.warn(`  Warning: coaches insert failed: ${error.message}`);
+    if (!existingCoach) {
+      const { error } = await supabase.from('coaches').insert({
+        profile_id: profileId,
+        school_name: userData.recruiterProfile.school,
+        division: 'D1',
+        conference: userData.recruiterProfile.conference,
+        title: userData.recruiterProfile.title,
+      });
+
+      if (error) {
+        console.warn(`  Warning: coaches insert failed: ${error.message}`);
+      }
     }
   }
 
   if (userData.coachProfile) {
-    const { error } = await supabase.from('coaches').insert({
-      profile_id: userId,
-      school_name: userData.coachProfile.school,
-      division: 'D1',
-      title: 'Head Coach',
-    });
+    const { data: existingCoach } = await supabase
+      .from('coaches').select('id').eq('profile_id', profileId).single();
 
-    if (error) {
-      console.warn(`  Warning: coaches insert failed: ${error.message}`);
+    if (!existingCoach) {
+      const { error } = await supabase.from('coaches').insert({
+        profile_id: profileId,
+        school_name: userData.coachProfile.school,
+        division: 'D1',
+        title: 'Head Coach',
+      });
+
+      if (error) {
+        console.warn(`  Warning: coaches insert failed: ${error.message}`);
+      }
     }
   }
 
@@ -171,6 +239,9 @@ export async function seedTestUsers(): Promise<SeedResult> {
   console.log('Starting user seed process...\n');
 
   const supabase = getSupabaseClient();
+
+  // Pre-populate userIdMap so existing users can be found during upsert
+  await buildUserIdMap(supabase);
 
   for (const userData of testUserData) {
     try {
@@ -206,12 +277,28 @@ async function buildEntityMaps(supabase: SupabaseClient): Promise<void> {
     await buildUserIdMap(supabase);
   }
 
-  // Build athleteIdMap: email -> athletes.id
+  // Resolve real profile IDs (profiles.id may differ from auth user_id)
   for (const [email, userId] of userIdMap) {
+    if (!profileIdMap.has(email)) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('user_id', userId)
+        .single();
+
+      if (profile) {
+        profileIdMap.set(email, profile.id);
+      }
+    }
+  }
+
+  // Build athleteIdMap: email -> athletes.id (using real profile_id)
+  for (const [email, profId] of profileIdMap) {
+    if (athleteIdMap.has(email)) continue;
     const { data: athlete } = await supabase
       .from('athletes')
       .select('id')
-      .eq('profile_id', userId)
+      .eq('profile_id', profId)
       .single();
 
     if (athlete) {
@@ -219,29 +306,17 @@ async function buildEntityMaps(supabase: SupabaseClient): Promise<void> {
     }
   }
 
-  // Build coachIdMap: email -> coaches.id
-  for (const [email, userId] of userIdMap) {
+  // Build coachIdMap: email -> coaches.id (using real profile_id)
+  for (const [email, profId] of profileIdMap) {
+    if (coachIdMap.has(email)) continue;
     const { data: coach } = await supabase
       .from('coaches')
       .select('id')
-      .eq('profile_id', userId)
+      .eq('profile_id', profId)
       .single();
 
     if (coach) {
       coachIdMap.set(email, coach.id);
-    }
-  }
-
-  // Build profileIdMap: email -> profiles.id (same as auth user id for our seed data)
-  for (const [email, userId] of userIdMap) {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('id', userId)
-      .single();
-
-    if (profile) {
-      profileIdMap.set(email, profile.id);
     }
   }
 
@@ -338,12 +413,10 @@ export async function seedCoachTasks(): Promise<SeedResult> {
       const { error } = await supabase.from('coach_tasks').insert({
         coach_id: coachId,
         athlete_id: athleteId || null,
-        title: task.title,
-        description: task.description,
+        text: task.title,
         due_date: task.dueDate,
         priority: task.priority,
-        status: task.status,
-        created_at: task.createdAt,
+        completed: task.status === 'completed',
       });
 
       if (error) {
@@ -400,14 +473,11 @@ export async function seedTestData(): Promise<void> {
 
       views.push({
         athlete_id: athleteId,
-        viewer_id: viewerId,
+        viewer_profile_id: viewerId,
         viewer_role: 'recruiter',
-        viewer_zone: recruiter.zone || 'SOUTHWEST',
+        viewer_zone: toDbZone(recruiter.zone) || 'Southwest',
         viewer_school: recruiter.recruiterProfile?.school || null,
-        viewer_division: 'D1',
-        viewer_state: recruiter.state || null,
-        source: sources[i % 3],
-        duration_seconds: Math.floor(Math.random() * 120) + 10,
+        section_viewed: ['overview', 'measurables', 'highlights', 'academics'][i % 4],
         created_at: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString(),
       });
     }
@@ -425,7 +495,6 @@ export async function seedTestData(): Promise<void> {
     const coachId = coachIdMap.get(recruiter.email);
     if (!coachId) continue;
 
-    const pipelineStatuses = ['identified', 'contacted', 'evaluating'] as const;
     const priorities = ['high', 'medium', 'low'] as const;
 
     for (let i = 0; i < Math.min(5, athletes.length); i++) {
@@ -438,7 +507,6 @@ export async function seedTestData(): Promise<void> {
         athlete_id: athleteId,
         notes: `Priority prospect - ${athlete.athleteProfile?.position || 'ATH'}`,
         priority: priorities[i % 3],
-        pipeline_status: pipelineStatuses[i % 3],
       });
 
       if (error && !error.message.includes('duplicate')) {
@@ -490,7 +558,6 @@ export async function seedRelationships(): Promise<SeedResult> {
 
   // 2. Create shortlists: TCU → 15 athletes, ASU → 10 athletes
   if (tcuCoachId) {
-    const pipelineStatuses = ['identified', 'contacted', 'evaluating'] as const;
     for (let i = 0; i < Math.min(15, realAthletes.length); i++) {
       try {
         const { error } = await supabase.from('shortlists').insert({
@@ -498,7 +565,6 @@ export async function seedRelationships(): Promise<SeedResult> {
           athlete_id: realAthletes[i].id,
           notes: `TCU target - ${realAthletes[i].primary_position || 'ATH'} from ${realAthletes[i].high_school || 'Unknown HS'}`,
           priority: i < 5 ? 'high' : i < 10 ? 'medium' : 'low',
-          pipeline_status: pipelineStatuses[i % 3],
         });
         if (!error) created.push(`Shortlist: TCU → ${realAthletes[i].id}`);
       } catch (e) {
@@ -509,7 +575,6 @@ export async function seedRelationships(): Promise<SeedResult> {
   }
 
   if (asuCoachId) {
-    const pipelineStatuses = ['identified', 'contacted', 'evaluating'] as const;
     for (let i = 0; i < Math.min(10, realAthletes.length); i++) {
       try {
         const { error } = await supabase.from('shortlists').insert({
@@ -517,7 +582,6 @@ export async function seedRelationships(): Promise<SeedResult> {
           athlete_id: realAthletes[i].id,
           notes: `ASU target - ${realAthletes[i].primary_position || 'ATH'}`,
           priority: i < 3 ? 'high' : 'medium',
-          pipeline_status: pipelineStatuses[i % 3],
         });
         if (!error) created.push(`Shortlist: ASU → ${realAthletes[i].id}`);
       } catch (e) {
@@ -537,14 +601,14 @@ export async function seedRelationships(): Promise<SeedResult> {
   }> = [];
 
   if (tcuProfileId) {
-    viewerEntries.push({ email: 'coach.williams@test.repmax.com', profileId: tcuProfileId, school: 'TCU', zone: 'SOUTHWEST', state: 'TX' });
+    viewerEntries.push({ email: 'coach.williams@test.repmax.com', profileId: tcuProfileId, school: 'TCU', zone: 'Southwest', state: 'TX' });
   }
   if (asuProfileId) {
-    viewerEntries.push({ email: 'coach.martinez@test.repmax.com', profileId: asuProfileId, school: 'Arizona State', zone: 'SOUTHWEST', state: 'AZ' });
+    viewerEntries.push({ email: 'coach.martinez@test.repmax.com', profileId: asuProfileId, school: 'Arizona State', zone: 'Southwest', state: 'AZ' });
   }
 
   if (viewerEntries.length > 0) {
-    const sources = ['search', 'shortlist', 'direct'] as const;
+    const sections = ['overview', 'measurables', 'highlights', 'academics'] as const;
     const viewRows = [];
 
     for (let day = 0; day < 30; day++) {
@@ -554,14 +618,11 @@ export async function seedRelationships(): Promise<SeedResult> {
         const viewer = viewerEntries[Math.floor(Math.random() * viewerEntries.length)];
         viewRows.push({
           athlete_id: athlete.id,
-          viewer_id: viewer.profileId,
+          viewer_profile_id: viewer.profileId,
           viewer_role: 'recruiter',
           viewer_school: viewer.school,
-          viewer_division: 'D1',
-          viewer_state: viewer.state,
           viewer_zone: viewer.zone,
-          source: sources[Math.floor(Math.random() * sources.length)],
-          duration_seconds: Math.floor(Math.random() * 180) + 10,
+          section_viewed: sections[Math.floor(Math.random() * sections.length)],
           created_at: new Date(Date.now() - day * 24 * 60 * 60 * 1000 - Math.random() * 86400000).toISOString(),
         });
       }
@@ -592,7 +653,7 @@ export async function seedRelationships(): Promise<SeedResult> {
     { name: 'Washington', division: 'D1' },
     { name: 'Colorado', division: 'D1' },
   ];
-  const scholarshipTypes = ['full', 'partial', 'preferred_walk_on'] as const;
+  const scholarshipTypes = ['full', 'partial', 'preferred-walk-on'] as const;
 
   const topAthletes = realAthletes.slice(0, Math.min(20, realAthletes.length));
   let offerCount = 0;
@@ -664,7 +725,7 @@ export async function seedRelationships(): Promise<SeedResult> {
     const baseViews = 50 + Math.floor(Math.random() * 50);
 
     zoneRows.push({
-      zone: 'WEST',
+      zone: 'West',
       date: dateStr,
       total_views: baseViews,
       unique_athletes_viewed: Math.floor(baseViews * 0.6),
@@ -673,7 +734,7 @@ export async function seedRelationships(): Promise<SeedResult> {
       new_commits: Math.floor(Math.random() * 2),
       hot_positions: ['QB', 'WR', 'DB'].slice(0, 1 + Math.floor(Math.random() * 3)),
       active_schools: ['USC', 'UCLA', 'Oregon', 'TCU', 'Arizona State'].slice(0, 2 + Math.floor(Math.random() * 4)),
-      activity_level: baseViews > 75 ? 'high' : baseViews > 50 ? 'medium' : 'low',
+      activity_level: baseViews > 75 ? 'high' : baseViews > 50 ? 'moderate' : 'low',
       week_over_week_change: parseFloat((Math.random() * 20 - 10).toFixed(1)),
     });
   }
@@ -823,44 +884,47 @@ export async function seedClubData(): Promise<SeedResult> {
     await buildEntityMaps(supabase);
   }
 
-  const mikeTorresUserId = userIdMap.get('mike.torres@test.repmax.com');
+  const mikeTorresCoachId = coachIdMap.get('mike.torres@test.repmax.com');
 
-  if (!mikeTorresUserId) {
-    console.log('  Mike Torres user not found. Skipping club seeding.');
+  if (!mikeTorresCoachId) {
+    console.log('  Mike Torres coach record not found. Skipping club seeding.');
     return { success: true, created, errors, duration: Date.now() - startTime };
   }
 
-  // 1. Create tournaments
+  // 1. Create tournaments (club_id = Mike Torres' coaches.id)
   const tournamentData = [
     {
       name: 'Winter Classic 2026',
-      start_date: '2026-02-15T09:00:00Z',
-      end_date: '2026-02-16T18:00:00Z',
+      start_date: '2026-02-15',
+      end_date: '2026-02-16',
       location: 'Austin, TX',
-      teams_registered: 12,
-      teams_capacity: 16,
-      total_collected: 4500,
-      status: 'upcoming',
+      division: '7v7',
+      format: 'pool_play',
+      registration_fee_cents: 37500,
+      max_teams: 16,
+      status: 'registration_open' as const,
     },
     {
       name: 'Spring Showcase 2026',
-      start_date: '2026-04-10T09:00:00Z',
-      end_date: '2026-04-12T18:00:00Z',
+      start_date: '2026-04-10',
+      end_date: '2026-04-12',
       location: 'San Antonio, TX',
-      teams_registered: 8,
-      teams_capacity: 32,
-      total_collected: 2400,
-      status: 'upcoming',
+      division: '7v7',
+      format: 'bracket',
+      registration_fee_cents: 37500,
+      max_teams: 32,
+      status: 'registration_open' as const,
     },
     {
       name: 'Fall Championship 2025',
-      start_date: '2025-11-01T09:00:00Z',
-      end_date: '2025-11-02T18:00:00Z',
+      start_date: '2025-11-01',
+      end_date: '2025-11-02',
       location: 'Dallas, TX',
-      teams_registered: 24,
-      teams_capacity: 24,
-      total_collected: 9600,
-      status: 'completed',
+      division: '7v7',
+      format: 'pool_play',
+      registration_fee_cents: 40000,
+      max_teams: 24,
+      status: 'completed' as const,
     },
   ];
 
@@ -871,7 +935,7 @@ export async function seedClubData(): Promise<SeedResult> {
       const { data, error } = await supabase
         .from('tournaments')
         .insert({
-          organizer_id: mikeTorresUserId,
+          club_id: mikeTorresCoachId,
           ...t,
         })
         .select('id')
@@ -889,67 +953,84 @@ export async function seedClubData(): Promise<SeedResult> {
     }
   }
 
-  // 2. Create athlete verifications (pending, for 3 athletes)
-  const verificationAthletes = [
-    'jaylen.washington@test.repmax.com',
-    'deshawn.harris@test.repmax.com',
-    'sofia.rodriguez@test.repmax.com',
+  // 2. Create tournament teams (for the Fall Championship — completed tournament)
+  const teamData = [
+    { team_name: 'Riverside Elite', coach_name: 'Marcus Johnson', division: '7v7', athlete_count: 12, verified_count: 12, payment_status: 'completed' as const, pool: 'A', seed: 1 },
+    { team_name: 'Houston Select', coach_name: 'David Park', division: '7v7', athlete_count: 11, verified_count: 10, payment_status: 'completed' as const, pool: 'A', seed: 2 },
+    { team_name: 'Dallas Thunder', coach_name: 'Chris Williams', division: '7v7', athlete_count: 13, verified_count: 13, payment_status: 'completed' as const, pool: 'B', seed: 1 },
+    { team_name: 'SA Wildcats', coach_name: 'Roberto Garza', division: '7v7', athlete_count: 10, verified_count: 8, payment_status: 'pending' as const, pool: 'B', seed: 2 },
+    { team_name: 'Austin Grizzlies', coach_name: 'Tom Baker', division: '7v7', athlete_count: 12, verified_count: 12, payment_status: 'completed' as const, pool: 'C', seed: 1 },
   ];
-  const verificationTypes = ['identity', 'academic', 'athletic'] as const;
 
-  for (let i = 0; i < verificationAthletes.length; i++) {
-    const athleteProfileId = profileIdMap.get(verificationAthletes[i]);
-    if (!athleteProfileId) continue;
+  const teamIds: string[] = [];
+  const fallTournamentId = tournamentIds[2]; // Fall Championship
 
-    try {
-      const { error } = await supabase.from('athlete_verifications').insert({
-        athlete_id: athleteProfileId,
-        club_id: mikeTorresUserId,
-        type: verificationTypes[i],
-        status: 'pending',
-        created_at: new Date(Date.now() - (i + 1) * 12 * 60 * 60 * 1000).toISOString(),
-      });
+  if (fallTournamentId) {
+    for (const team of teamData) {
+      try {
+        const { data, error } = await supabase
+          .from('tournament_teams')
+          .insert({ tournament_id: fallTournamentId, ...team })
+          .select('id')
+          .single();
 
-      if (error) throw new Error(error.message);
+        if (error) throw new Error(error.message);
+        if (data) teamIds.push(data.id);
 
-      created.push(`Verification: ${verificationAthletes[i]} (${verificationTypes[i]})`);
-      console.log(`  ✓ Verification: ${verificationAthletes[i]} (${verificationTypes[i]})`);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      errors.push(`Verification ${verificationAthletes[i]}: ${message}`);
-      console.log(`  ✗ Verification ${verificationAthletes[i]}: ${message}`);
+        created.push(`Team: ${team.team_name}`);
+        console.log(`  ✓ Team: ${team.team_name}`);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        errors.push(`Team ${team.team_name}: ${message}`);
+        console.log(`  ✗ Team ${team.team_name}: ${message}`);
+      }
     }
   }
 
-  // 3. Create tournament payments
-  if (tournamentIds.length > 0) {
-    const paymentData = [
-      { description: 'Team registration — Riverside Elite', amount: 375, status: 'completed', daysAgo: 5 },
-      { description: 'Team registration — Houston Select', amount: 375, status: 'completed', daysAgo: 3 },
-      { description: 'Team registration — Dallas Thunder', amount: 375, status: 'pending', daysAgo: 1 },
-      { description: 'Referee fee — Pool Play', amount: 800, status: 'completed', daysAgo: 7 },
-      { description: 'Field rental deposit', amount: 1200, status: 'completed', daysAgo: 14 },
+  // 3. Create athlete verifications (tied to tournament teams)
+  if (teamIds.length >= 2) {
+    const verifications = [
+      { tournament_team_id: teamIds[0], athlete_name: 'Jaylen Washington', verification_method: 'document_upload', status: 'verified' as const, identity_check: true, age_check: true, eligibility_check: true },
+      { tournament_team_id: teamIds[0], athlete_name: 'DeShawn Harris', verification_method: 'document_upload', status: 'pending_review' as const, identity_check: true, age_check: null, eligibility_check: null },
+      { tournament_team_id: teamIds[1], athlete_name: 'Sofia Rodriguez', verification_method: 'in_person', status: 'age_check_needed' as const, identity_check: true, age_check: false, eligibility_check: true },
     ];
 
-    for (const p of paymentData) {
+    for (const v of verifications) {
       try {
-        const { error } = await supabase.from('tournament_payments').insert({
-          organizer_id: mikeTorresUserId,
-          tournament_id: tournamentIds[0],
-          description: p.description,
-          amount: p.amount,
-          status: p.status,
-          created_at: new Date(Date.now() - p.daysAgo * 24 * 60 * 60 * 1000).toISOString(),
-        });
-
+        const { error } = await supabase.from('athlete_verifications').insert(v);
         if (error) throw new Error(error.message);
 
-        created.push(`Payment: ${p.description}`);
-        console.log(`  ✓ Payment: ${p.description}`);
+        created.push(`Verification: ${v.athlete_name} (${v.status})`);
+        console.log(`  ✓ Verification: ${v.athlete_name} (${v.status})`);
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
-        errors.push(`Payment ${p.description}: ${message}`);
-        console.log(`  ✗ Payment ${p.description}: ${message}`);
+        errors.push(`Verification ${v.athlete_name}: ${message}`);
+        console.log(`  ✗ Verification ${v.athlete_name}: ${message}`);
+      }
+    }
+  }
+
+  // 4. Create tournament payments (tied to tournament teams)
+  if (teamIds.length >= 3) {
+    const payments = [
+      { tournament_team_id: teamIds[0], amount_cents: 37500, status: 'completed' as const, paid_at: new Date(Date.now() - 5 * 86400000).toISOString() },
+      { tournament_team_id: teamIds[1], amount_cents: 37500, status: 'completed' as const, paid_at: new Date(Date.now() - 3 * 86400000).toISOString() },
+      { tournament_team_id: teamIds[2], amount_cents: 37500, status: 'completed' as const, paid_at: new Date(Date.now() - 7 * 86400000).toISOString() },
+      { tournament_team_id: teamIds[3], amount_cents: 37500, status: 'pending' as const, paid_at: null },
+      { tournament_team_id: teamIds[4], amount_cents: 40000, status: 'completed' as const, paid_at: new Date(Date.now() - 14 * 86400000).toISOString() },
+    ];
+
+    for (const p of payments) {
+      try {
+        const { error } = await supabase.from('tournament_payments').insert(p);
+        if (error) throw new Error(error.message);
+
+        created.push(`Payment: team ${p.tournament_team_id.slice(0, 8)}... $${p.amount_cents / 100}`);
+        console.log(`  ✓ Payment: $${p.amount_cents / 100} (${p.status})`);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        errors.push(`Payment: ${message}`);
+        console.log(`  ✗ Payment: ${message}`);
       }
     }
   }
@@ -1040,19 +1121,32 @@ function getProfileName(athlete: any): string | undefined {
 async function buildUserIdMap(supabase: SupabaseClient): Promise<void> {
   console.log('Building user ID map from auth...');
 
-  const { data, error } = await supabase.auth.admin.listUsers();
-
-  if (error) {
-    console.warn(`  Warning: Failed to list auth users: ${error.message}`);
-    return;
-  }
-
   const testEmails = new Set(testUserData.map((u) => u.email));
+  let page = 1;
+  const perPage = 1000;
 
-  for (const user of data.users) {
-    if (user.email && testEmails.has(user.email)) {
-      userIdMap.set(user.email, user.id);
+  while (true) {
+    const { data, error } = await supabase.auth.admin.listUsers({
+      page,
+      perPage,
+    });
+
+    if (error) {
+      console.warn(`  Warning: Failed to list auth users (page ${page}): ${error.message}`);
+      return;
     }
+
+    for (const user of data.users) {
+      if (user.email && testEmails.has(user.email)) {
+        userIdMap.set(user.email, user.id);
+      }
+    }
+
+    // Stop when we've found all test emails or exhausted pages
+    if (userIdMap.size >= testEmails.size || data.users.length < perPage) {
+      break;
+    }
+    page++;
   }
 
   console.log(`  Found ${userIdMap.size} existing users\n`);

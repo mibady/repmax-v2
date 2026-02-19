@@ -282,3 +282,70 @@ This project existed before tracking was set up.
 ### Linear
 - NGE-51 → Done (Parent dashboard backend — parent_links table + seed)
 - NGE-52 → Done (Club dashboard backend — 3 tables + 6 tests)
+
+---
+
+## Session 7 — 2026-02-18
+
+### Completed
+- **Phase 0: Client Data Import & Demo Setup** (NGE-43)
+  - Fixed 3 seed-loader bugs: `scholarship_type` enum (hyphen), `recruiting_zone` case sensitivity (toDbZone helper), `activity_level` constraint ('moderate')
+  - Recovered 34 missing prospects from JotForm MCP (168 → 202 total in staging)
+  - Loaded 202 prospects into `import_prospects_staging` via Python parser → JSON → TypeScript loader
+  - Migrated staging → production: 207 athlete profiles created (4 new + 203 existing)
+  - Fixed seed-loader for re-runnability:
+    - `buildUserIdMap()` pagination (was returning max 50, now handles 200+)
+    - `seedUser()` handles existing auth users (upsert-safe, resolves real profile.id vs auth user_id mismatch)
+    - `buildEntityMaps()` resolves profile.id → athlete/coach FKs correctly
+    - Height parsing: added `parseHeightToInches()` for "6'2" → 74
+  - Fixed 3 schema mismatches in seed-loader:
+    - `coach_tasks`: `text` (not `title`/`description`), `completed` (not `status`)
+    - `profile_views`: `viewer_profile_id` (not `viewer_id`), `section_viewed` (not `duration_seconds`)
+    - `shortlists`: removed `pipeline_status` (not in schema)
+  - Fixed club seed to match current schema:
+    - `tournaments.club_id` → FK to `coaches.id` (not `organizer_id`)
+    - `tournament_payments` → keyed by `tournament_team_id`, `amount_cents`
+    - `athlete_verifications` → keyed by `tournament_team_id`, `athlete_name`, checks
+  - Created missing DB tables: `zone_activity`, `class_rankings` (in migration but not applied to remote)
+  - Full seed: 22 users, 4 highlights, 6 coach tasks, 33 shortlists, 246 profile views, 35 offers, 15 messages, 30 days zone activity, 10 class rankings, 1 parent link, 3 tournaments, 5 teams, 3 verifications, 5 payments — **0 errors**
+- All quality gates pass: tsc 0 errors, lint 0 new warnings, 343/343 tests, build success
+
+### Files Modified
+- `test/seed/seed-loader.ts` — major overhaul (pagination, upsert-safe, schema alignment, height parsing)
+- `supabase/import/batch5_recovered.sql` — new file (34 recovered prospects)
+- `supabase/import/staging-loader.ts` — new file (JSON → Supabase batch loader)
+- `supabase/import/staging-data.json` — generated (202 prospect rows)
+
+### Final Table Counts
+| Table | Count |
+|-------|-------|
+| profiles | 215 |
+| athletes | 207 (192 imported + 15 test) |
+| coaches | 4 |
+| highlights | 140 (136 imported + 4 test) |
+| shortlists | 33 |
+| profile_views | 246 |
+| offers | 35 |
+| messages | 15 |
+| coach_tasks | 6 |
+| zone_activity | 30 |
+| class_rankings | 10 |
+| parent_links | 1 |
+| tournaments | 3 |
+| tournament_teams | 5 |
+| athlete_verifications | 3 |
+| tournament_payments | 5 |
+
+### Known Issues
+- 4 pre-existing lint warnings unchanged (useCallback deps, img tag, font-display, custom font)
+- Some test user profiles created by auth trigger have `profile.id != user_id` — seed-loader now handles this
+- `zone_activity` and `class_rankings` tables were in migration SQL but not applied to remote — created via Supabase MCP
+
+### Next Session Should
+- Run `/prime` to load context
+- NGE-55: Mobile app (Expo) — highest priority remaining issue
+- NGE-56: Polish — rankings, notifications, etc.
+- Only 2 issues remain (20/22 done)
+
+### Linear
+- NGE-43 → Done (Phase 0: 207 real prospects imported + full demo seed with 0 errors)
