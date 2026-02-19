@@ -491,3 +491,61 @@ This project existed before tracking was set up.
 
 ### Linear
 - NGE-56 → In Progress (Phase A+B complete, Phase C remains)
+
+---
+
+## Session 11 — 2026-02-19
+
+### Completed
+- **Phase C: Feature Build** — notifications, search, video player + 4 API route tests
+  - **Notification system:** `GET/PATCH /api/notifications` route (fetch + mark read), `NotificationDropdown` component with realtime via `useNotifications` hook, wired into all 6 role topbars
+  - **Global search:** `GET /api/search?q=` route (athlete name/position ilike), `SearchInput` component with 300ms debounce, results link to `/card/{id}`, wired into 4 topbars
+  - **Video player:** `VideoPlayerModal` component with `<video controls autoPlay>`, dark overlay, Escape/click-to-close. Wired into athlete film page (play buttons open inline modal instead of external link)
+  - **Layout wiring:** Added `userId` prop to Topbar, passed from layout.tsx for notification queries
+  - **API route tests (4 new files, 32 tests):**
+    - `coach-tasks-post.test.ts` — 9 tests (auth, validation, DB errors, success with optional fields)
+    - `shortlists-patch.test.ts` — 9 tests (auth, priority enum, 404 paths, update combos)
+    - `club-events.test.ts` — 6 tests (auth, capacity validation, DB error, success)
+    - `club-verifications.test.ts` — 8 tests (auth, status/UUID validation, 404, approve/reject)
+- **Dead Elements Fix** — wired all 14 Critical + High dead UI elements across 9 files
+  - **Film page (5 fixes):** Created `AddHighlightModal` component. Wired 3 upload buttons (header, drop zone, empty state) → open modal calling `useHighlights().add()`. Edit button → edit modal with `update()`. Options menu (more_vert) → dropdown with Edit + Delete calling `remove()`. Toast feedback on success/error.
+  - **Coach roster detail (2 fixes):** "Message Athlete" → `router.push('/messages')`. "Remove from Roster" → confirm dialog + `DELETE /api/shortlists?athlete_id=` + redirect.
+  - **Message attachment (1 fix):** Attachment button → hidden `<input type="file">` + filename chip display with remove.
+  - **Document filter + share (2 fixes):** Filter button → type dropdown (pdf/image/other) with checkbox toggles + badge count. Share button → `navigator.clipboard.writeText(url)` + "Copied!" feedback.
+  - **Analytics export (1 fix):** "Full Report" → generates CSV from `grouped` data, downloads via Blob/URL.createObjectURL.
+  - **Visit scheduling (1 fix):** "Schedule Visit" → modal form (athlete_id, date, type, time, notes) calling `useCampusVisits().createVisit()`.
+  - **Compare export (1 fix):** "Export Data" → generates CSV from comparison table, downloads via Blob.
+  - **Sidebar Add Athlete (1 fix):** Coach sidebar "Add Athlete" → `router.push('/recruiter/pipeline')`.
+
+### Audit Snapshot
+- Pages: 63
+- API routes: 48 (+2: notifications, search)
+- Components: 29 (+4: notification-dropdown, search-input, video-player-modal, add-highlight-modal)
+- Server actions: 9 files
+- Hooks: 35
+- Tests: 385/385 passing (33 test files, +4 new)
+- Commits: 76 total (3 this session)
+- Migrations: 9
+- Build: pass
+
+### Decisions Made
+- Notification dropdown is self-contained (owns its own data via useNotifications hook + realtime subscription)
+- Film upload is URL-based (not file upload) — athletes paste YouTube/Hudl links, matching existing highlight schema
+- Message attachment shows file picker + filename chip but actual upload-to-storage is deferred (visual feedback only)
+- Analytics CSV export uses the `grouped` data already loaded on the page (no extra API call)
+
+### Known Issues
+- 6 pre-existing lint warnings unchanged
+- Message attachment is visual-only (file not uploaded to storage on send)
+- Schedule Visit modal requires raw athlete_id input (no search/autocomplete yet)
+- 15 Medium + 9 Low dead elements remain (placeholders, secondary features)
+
+### Next Session Should
+- Run `/prime` to load context
+- NGE-55: Mobile app (Expo) — highest priority remaining Linear issue
+- NGE-56: Polish — 15 Medium dead elements (recruiter filter, view detail, tag management, etc.)
+- Consider athlete search/autocomplete for visit scheduling modal
+- Consider message attachment upload to Supabase Storage
+
+### Linear
+- NGE-56 → In Progress (Phase A+B+C complete, dead elements Critical+High resolved, Medium+Low remain)
