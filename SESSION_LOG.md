@@ -349,3 +349,53 @@ This project existed before tracking was set up.
 
 ### Linear
 - NGE-43 → Done (Phase 0: 207 real prospects imported + full demo seed with 0 errors)
+
+## Session 8 — 2026-02-18
+
+### Completed
+- **Gap Analysis: Deep-scan of entire codebase** — found 68 prototype violations (12 Critical, 25 High, 24 Medium, 7 Low) across API routes, components, hooks, and pages
+- **Production Hardening: Zero-mock sweep** — resolved all 68 violations via 4-agent team build
+  - **Security hardening (14 files):** Expanded middleware to 13 dashboard prefixes, removed placeholder Supabase URLs, added `getUser()` + 401 to athletes/MCP routes, added admin role enforcement to all admin routes, added Stripe webhook secret check
+  - **API mock removal (15 files):** Deleted hardcoded zones/rankings/events/assignments arrays, removed `is_mock` flag project-wide, removed `Math.random()` from all routes, added Zod validation to mutation endpoints and server actions
+  - **UI component fixes (15 files):** Converted 12 widgets from zero-prop hardcoded to prop-driven pattern, removed all `MOCK_*` constants, disabled non-functional toolbar buttons/bells/search inputs, replaced dead `href="#"` links
+  - **Page/hook fixes (18 files):** Removed mock timeline data, random timestamps, hardcoded trends from pages. Removed `isMock` state from hooks. Replaced mock athlete-documents hook with real API calls. Added error surfacing to admin hooks and catch blocks. Created error/loading boundaries. Added privacy/terms/support stubs. Deleted dead alt page. Updated copyright to 2026.
+  - **Test updates (7 files):** Updated all 7 failing test files to account for new auth checks, admin role enforcement, Zod validation, and feature-flags rewrite. Added 10 new test cases.
+
+### Audit Snapshot
+- Pages: 42
+- API routes: 42
+- Components: 25
+- Server actions: 9 files
+- Hooks: 35
+- Tests: 353/353 passing (31 test files)
+- Commits: 65 total (5 this session)
+- Build: pass
+
+### Audit Results (12/12 checks passed — 100% compliance)
+- 0 `is_mock` in API routes
+- 0 `Math.random()` in routes/pages
+- 0 `MOCK_*` constants in components
+- 0 mock variable names in codebase
+- 0 placeholder Supabase URLs
+- All admin routes enforce role check
+- All MCP routes enforce auth
+- 0 dead `href="#"` in widgets
+- Error/loading boundaries exist (root + dashboard)
+- Stub pages created (privacy, terms, support)
+- Dead `alt/page.tsx` deleted
+- 0 `isMock` in hooks
+
+### Known Issues
+- 4 pre-existing lint warnings unchanged (useCallback deps, img tag, font-display, custom font)
+- Feature flags route returns empty array (no `feature_flags` DB table yet)
+- Recruiter assignments route returns 501 (zone assignments not yet implemented)
+
+### Next Session Should
+- Run `/prime` to load context
+- NGE-55: Mobile app (Expo) — highest priority remaining issue
+- NGE-56: Polish — rankings, notifications, remaining UI wiring
+- Consider creating `feature_flags` and `zone_assignments` DB tables if needed
+- Only 2 Linear issues remain (20/22 done)
+
+### Linear
+- NGE-56 → In Progress (68 violations resolved, polish ongoing)
