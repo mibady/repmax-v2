@@ -48,7 +48,7 @@ export async function getMyHighlights(): Promise<Highlight[]> {
 
   if (error) {
     console.error("Error fetching highlights:", error);
-    return [];
+    throw new Error(`Failed to fetch highlights: ${error.message}`);
   }
 
   return highlights || [];
@@ -65,7 +65,7 @@ export async function getAthleteHighlights(athleteId: string): Promise<Highlight
 
   if (error) {
     console.error("Error fetching athlete highlights:", error);
-    return [];
+    throw new Error(`Failed to fetch athlete highlights: ${error.message}`);
   }
 
   return highlights || [];

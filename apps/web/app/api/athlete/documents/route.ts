@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
 // GET /api/athlete/documents - Fetch athlete's documents
 export async function GET() {
@@ -107,14 +108,25 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
+    const documentSchema = z.object({
+      title: z.string().min(1, "Title is required"),
+      document_type: z.enum(["transcript", "test_score", "medical", "eligibility", "other"]).default("other"),
+      file_url: z.string().url("Valid file URL is required"),
+    });
+
+    const parsed = documentSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid request body", details: parsed.error.flatten() }, { status: 400 });
+    }
+
     // Insert document record
     const { data: doc, error } = await supabase
       .from("documents")
       .insert({
         athlete_id: athlete.id,
-        title: body.title,
-        document_type: body.document_type || "other",
-        file_url: body.file_url,
+        title: parsed.data.title,
+        document_type: parsed.data.document_type,
+        file_url: parsed.data.file_url,
         verified: false,
       })
       .select()

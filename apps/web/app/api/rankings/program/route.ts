@@ -106,34 +106,9 @@ export async function GET(request: NextRequest) {
       ...p,
     }));
 
-    // If no data, return mock
-    if (rankedPrograms.length === 0) {
-      const mockPrograms = [
-        { school_name: "Georgia", conference: "SEC", division: "D1" },
-        { school_name: "Alabama", conference: "SEC", division: "D1" },
-        { school_name: "Ohio State", conference: "Big Ten", division: "D1" },
-        { school_name: "Michigan", conference: "Big Ten", division: "D1" },
-        { school_name: "Texas", conference: "SEC", division: "D1" },
-      ].map((p, i) => ({
-        rank: i + 1,
-        ...p,
-        avg_rank: i + 1,
-        avg_points: (300 - i * 15).toFixed(2),
-        total_commits: 60 - i * 5,
-        years_ranked: 3,
-      }));
-
-      return NextResponse.json({
-        programs: mockPrograms,
-        metric: params.metric,
-        is_mock: true,
-      });
-    }
-
     return NextResponse.json({
       programs: rankedPrograms,
       metric: params.metric,
-      is_mock: false,
     });
   } catch (error) {
     console.error("Program rankings API error:", error);

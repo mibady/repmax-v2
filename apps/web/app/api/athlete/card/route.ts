@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { z } from "zod";
 
 function formatHeight(inches: number | null): string {
   if (!inches) return "";
@@ -143,6 +144,36 @@ export async function PUT(request: Request) {
     }
 
     const body = await request.json();
+
+    const cardUpdateSchema = z.object({
+      name: z.string().optional(),
+      position: z.string().optional(),
+      secondaryPosition: z.string().nullable().optional(),
+      classYear: z.number().optional(),
+      highSchool: z.string().optional(),
+      city: z.string().optional(),
+      state: z.string().optional(),
+      bio: z.string().nullable().optional(),
+      zone: z.string().optional(),
+      heightInches: z.number().nullable().optional(),
+      weightLbs: z.number().nullable().optional(),
+      wingspan: z.string().nullable().optional(),
+      fortyYardDash: z.number().nullable().optional(),
+      benchPress: z.string().nullable().optional(),
+      squat: z.string().nullable().optional(),
+      vertical: z.string().nullable().optional(),
+      gpa: z.number().nullable().optional(),
+      sat: z.string().nullable().optional(),
+      act: z.string().nullable().optional(),
+      major: z.string().nullable().optional(),
+      hudlLink: z.string().nullable().optional(),
+      youtubeLink: z.string().nullable().optional(),
+    }).partial();
+
+    const parsed = cardUpdateSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid request body", details: parsed.error.flatten() }, { status: 400 });
+    }
 
     // Update profile name
     if (body.name) {

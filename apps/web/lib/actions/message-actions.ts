@@ -3,12 +3,24 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { z } from "zod";
+
+const sendMessageSchema = z.object({
+  recipientId: z.string().uuid("Invalid recipient ID"),
+  body: z.string().min(1, "Message body is required"),
+  subject: z.string().optional(),
+});
 
 export async function sendMessage(
   recipientId: string,
   body: string,
   subject?: string
 ) {
+  const parsed = sendMessageSchema.safeParse({ recipientId, body, subject });
+  if (!parsed.success) {
+    return { error: parsed.error.errors[0]?.message || "Invalid input" };
+  }
+
   const supabase = await createClient();
 
   const {
@@ -32,9 +44,9 @@ export async function sendMessage(
 
   const { error } = await supabase.from("messages").insert({
     sender_id: senderProfile.id,
-    recipient_id: recipientId,
-    body,
-    subject,
+    recipient_id: parsed.data.recipientId,
+    body: parsed.data.body,
+    subject: parsed.data.subject,
   });
 
   if (error) {

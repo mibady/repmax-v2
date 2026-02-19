@@ -4,8 +4,15 @@ import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { z } from "zod";
 
 type CommType = "call" | "visit" | "email" | "message";
+
+const logCommSchema = z.object({
+  athleteId: z.string().uuid("Invalid athlete ID"),
+  commType: z.enum(["call", "visit", "email", "message"]),
+  summary: z.string().min(1, "Summary is required"),
+});
 
 async function getCoachId() {
   const supabase = await createClient();
@@ -45,6 +52,11 @@ export async function logCommunication(
   commType: CommType,
   summary: string
 ) {
+  const parsed = logCommSchema.safeParse({ athleteId, commType, summary });
+  if (!parsed.success) {
+    return { error: parsed.error.errors[0]?.message || "Invalid input" };
+  }
+
   const result = await getCoachId();
   if ("error" in result) return { error: result.error };
 
@@ -52,9 +64,9 @@ export async function logCommunication(
 
   const { error } = await supabase.from("communication_log").insert({
     recruiter_id: coachId,
-    athlete_id: athleteId,
-    comm_type: commType,
-    summary,
+    athlete_id: parsed.data.athleteId,
+    comm_type: parsed.data.commType,
+    summary: parsed.data.summary,
   });
 
   if (error) {

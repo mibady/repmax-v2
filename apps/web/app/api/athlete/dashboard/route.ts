@@ -160,33 +160,8 @@ export async function GET() {
         };
       });
 
-    // Get upcoming calendar events (mock for now - would need events table)
-    // These represent NCAA recruiting calendar events
-    const now = new Date();
-    const calendarEvents = [
-      {
-        id: "1",
-        title: "National Signing Day",
-        date: getNextDateForMonth(now, 2, 7), // February 7
-        type: "signing" as const,
-        priority: "high" as const,
-      },
-      {
-        id: "2",
-        title: "Spring Evaluation Period",
-        date: getNextDateForMonth(now, 4, 15), // April 15
-        type: "camp" as const,
-      },
-      {
-        id: "3",
-        title: "Dead Period Ends",
-        date: getNextDateForMonth(now, 1, 15), // January 15
-        type: "other" as const,
-      },
-    ]
-      .filter((e) => new Date(e.date) >= now)
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-      .slice(0, 3);
+    // TODO: Create events table for athlete calendar events
+    const calendarEvents: unknown[] = [];
 
     return NextResponse.json({
       profile: athleteProfile,
@@ -203,18 +178,3 @@ export async function GET() {
   }
 }
 
-// Helper to get next occurrence of a month/day
-function getNextDateForMonth(
-  from: Date,
-  month: number,
-  day: number
-): string {
-  const year = from.getFullYear();
-  let date = new Date(year, month - 1, day);
-
-  if (date < from) {
-    date = new Date(year + 1, month - 1, day);
-  }
-
-  return date.toISOString().split("T")[0];
-}

@@ -54,47 +54,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Failed to fetch rankings" }, { status: 500 });
     }
 
-    // If no data, return mock data for development
-    if (!rankings || rankings.length === 0) {
-      const mockSchools = [
-        { name: "Georgia", conference: "SEC", division: "D1" },
-        { name: "Alabama", conference: "SEC", division: "D1" },
-        { name: "Ohio State", conference: "Big Ten", division: "D1" },
-        { name: "Texas", conference: "SEC", division: "D1" },
-        { name: "Notre Dame", conference: "Independent", division: "D1" },
-        { name: "USC", conference: "Big Ten", division: "D1" },
-        { name: "LSU", conference: "SEC", division: "D1" },
-        { name: "Oregon", conference: "Big Ten", division: "D1" },
-        { name: "Penn State", conference: "Big Ten", division: "D1" },
-        { name: "Michigan", conference: "Big Ten", division: "D1" },
-      ];
-
-      const mockRankings = mockSchools.slice(0, params.limit).map((school, i) => ({
-        school_name: school.name,
-        division: school.division,
-        conference: school.conference,
-        class_year: params.year || new Date().getFullYear(),
-        overall_rank: i + 1,
-        conference_rank: Math.floor(i / 3) + 1,
-        total_commits: 20 - i,
-        five_stars: Math.max(0, 5 - i),
-        four_stars: 10 - Math.floor(i / 2),
-        three_stars: 5 + Math.floor(i / 2),
-        avg_rating: (4.5 - i * 0.05).toFixed(2),
-        points: (300 - i * 10).toFixed(2),
-      }));
-
-      return NextResponse.json({
-        rankings: mockRankings,
-        year: params.year || new Date().getFullYear(),
-        is_mock: true,
-      });
-    }
-
     return NextResponse.json({
-      rankings,
+      rankings: rankings || [],
       year: params.year || new Date().getFullYear(),
-      is_mock: false,
     });
   } catch (error) {
     console.error("Class rankings API error:", error);

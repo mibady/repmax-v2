@@ -176,7 +176,7 @@ export async function GET() {
         name: "You",
         region: "All Regions",
         rank: 1,
-        calls: 0, // Would need a calls table
+        calls: null, // Would need a calls table
         emails: messagesThisWeek || 0,
         visits: visitsThisWeek,
         commits: pipelineCounts.committed,
@@ -196,7 +196,7 @@ export async function GET() {
         comparison: "this quarter",
       },
       avgTimeToCommit: {
-        value: "N/A", // Would need timestamps on status changes
+        value: null, // Would need timestamps on status changes
         change: 0,
       },
     };

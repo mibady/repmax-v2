@@ -75,11 +75,15 @@ export async function removeFromShortlist(athleteId: string) {
     .eq("user_id", user.id)
     .single();
 
+  if (!profile) {
+    return { error: "Profile not found" };
+  }
+
   // Get coach ID
   const { data: coach } = await supabase
     .from("coaches")
     .select("id")
-    .eq("profile_id", profile?.id)
+    .eq("profile_id", profile.id)
     .single();
 
   if (!coach) {
@@ -123,11 +127,15 @@ export async function updateShortlistPriority(
     .eq("user_id", user.id)
     .single();
 
+  if (!profile) {
+    return { error: "Profile not found" };
+  }
+
   // Get coach ID
   const { data: coach } = await supabase
     .from("coaches")
     .select("id")
-    .eq("profile_id", profile?.id)
+    .eq("profile_id", profile.id)
     .single();
 
   if (!coach) {
@@ -172,11 +180,15 @@ export async function updateShortlistStatus(
     .eq("user_id", user.id)
     .single();
 
+  if (!profile) {
+    return { error: "Profile not found" };
+  }
+
   // Get coach ID
   const { data: coach } = await supabase
     .from("coaches")
     .select("id")
-    .eq("profile_id", profile?.id)
+    .eq("profile_id", profile.id)
     .single();
 
   if (!coach) {
@@ -217,11 +229,15 @@ export async function getShortlist() {
     .eq("user_id", user.id)
     .single();
 
+  if (!profile) {
+    return [];
+  }
+
   // Get coach ID
   const { data: coach } = await supabase
     .from("coaches")
     .select("id")
-    .eq("profile_id", profile?.id)
+    .eq("profile_id", profile.id)
     .single();
 
   if (!coach) {

@@ -3,6 +3,15 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { z } from "zod";
+
+const createVisitSchema = z.object({
+  athleteId: z.string().uuid("Invalid athlete ID"),
+  visitDate: z.string().min(1, "Visit date is required"),
+  visitType: z.enum(["official", "unofficial"]),
+  visitTime: z.string().optional(),
+  notes: z.string().optional(),
+});
 
 async function getCoachId() {
   const supabase = await createClient();
@@ -44,6 +53,11 @@ export async function createVisit(
   visitTime?: string,
   notes?: string
 ) {
+  const parsed = createVisitSchema.safeParse({ athleteId, visitDate, visitType, visitTime, notes });
+  if (!parsed.success) {
+    return { error: parsed.error.errors[0]?.message || "Invalid input" };
+  }
+
   const result = await getCoachId();
   if ("error" in result) return { error: result.error };
 
@@ -51,12 +65,12 @@ export async function createVisit(
 
   const { error } = await supabase.from("campus_visits").insert({
     recruiter_id: coachId,
-    athlete_id: athleteId,
-    visit_date: visitDate,
-    visit_time: visitTime || null,
-    visit_type: visitType,
+    athlete_id: parsed.data.athleteId,
+    visit_date: parsed.data.visitDate,
+    visit_time: parsed.data.visitTime || null,
+    visit_type: parsed.data.visitType,
     status: "pending",
-    notes: notes || null,
+    notes: parsed.data.notes || null,
   });
 
   if (error) {

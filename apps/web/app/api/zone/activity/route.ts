@@ -49,35 +49,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Failed to fetch zone activity" }, { status: 500 });
     }
 
-    // If no data, return empty with defaults
-    if (!activity || activity.length === 0) {
-      // Return mock data for development
-      const zones = params.zone
-        ? [params.zone]
-        : ["West", "Southwest", "Midwest", "Southeast", "Northeast", "Mid-Atlantic"];
-
-      const mockData = zones.map(zone => ({
-        zone,
-        date: new Date().toISOString().split("T")[0],
-        total_views: Math.floor(Math.random() * 500) + 100,
-        unique_athletes_viewed: Math.floor(Math.random() * 100) + 20,
-        unique_coaches_active: Math.floor(Math.random() * 50) + 10,
-        new_offers: Math.floor(Math.random() * 10),
-        new_commits: Math.floor(Math.random() * 5),
-        hot_positions: ["QB", "WR", "RB"].slice(0, Math.floor(Math.random() * 3) + 1),
-        activity_level: ["moderate", "high", "very_high"][Math.floor(Math.random() * 3)],
-        week_over_week_change: (Math.random() * 40 - 10).toFixed(1),
-      }));
-
-      return NextResponse.json({
-        data: mockData,
-        period_days: params.days,
-        is_mock: true,
-      });
-    }
-
     // Aggregate by zone if getting all zones
-    if (!params.zone) {
+    if (!params.zone && activity && activity.length > 0) {
       const byZone: Record<string, typeof activity[0]> = {};
       activity.forEach(a => {
         if (!byZone[a.zone] || new Date(a.date) > new Date(byZone[a.zone].date)) {
@@ -88,14 +61,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         data: Object.values(byZone),
         period_days: params.days,
-        is_mock: false,
       });
     }
 
     return NextResponse.json({
-      data: activity,
+      data: activity || [],
       period_days: params.days,
-      is_mock: false,
     });
   } catch (error) {
     console.error("Zone activity API error:", error);
