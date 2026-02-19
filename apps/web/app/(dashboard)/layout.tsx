@@ -34,6 +34,22 @@ function getPageTitle(pathname: string): string {
     users: 'User Management',
     moderation: 'Content Moderation',
     flags: 'Feature Flags',
+    roster: 'Roster',
+    tasks: 'Team Tasks',
+    profile: 'Profile',
+    schools: 'Schools',
+    calendar: 'Calendar',
+    activity: 'Activity',
+    resources: 'Resources',
+    events: 'Events',
+    verifications: 'Verifications',
+    athletes: 'Athletes',
+    payments: 'Payments',
+    recruiting: 'Recruiting',
+    schedule: 'Schedule',
+    scouts: 'Scouts',
+    help: 'Help Center',
+    new: 'Create New',
   };
 
   return titleMap[lastSegment] || 'Dashboard';

@@ -319,7 +319,7 @@ function ParentSidebar({ user, onSignOut }: { user: SidebarUser; onSignOut?: () 
         </div>
         <nav className="space-y-1">
           {parentNavItems.map((item) => {
-            const isActive = pathname === item.href || (item.href !== '/dashboard/parent' && pathname.startsWith(item.href));
+            const isActive = pathname === item.href || (item.href !== '/parent' && pathname.startsWith(item.href));
             return (
               <Link
                 key={item.href}
@@ -384,7 +384,7 @@ function CoachSidebar({ user, onSignOut }: { user: SidebarUser; onSignOut?: () =
         </div>
         <nav className="flex flex-col gap-1">
           {coachNavItems.map((item) => {
-            const isActive = pathname === item.href || (item.href !== '/dashboard/coach' && pathname.startsWith(item.href));
+            const isActive = pathname === item.href || (item.href !== '/coach' && pathname.startsWith(item.href));
             return (
               <Link
                 key={item.href}
@@ -453,7 +453,7 @@ function ClubSidebar({ user, onSignOut }: { user: SidebarUser; onSignOut?: () =>
 
         <nav className="flex flex-col gap-1">
           {clubNavItems.map((item) => {
-            const isActive = pathname === item.href || (item.href !== '/dashboard/club' && pathname.startsWith(item.href));
+            const isActive = pathname === item.href || (item.href !== '/club' && pathname.startsWith(item.href));
             return (
               <Link
                 key={item.href}

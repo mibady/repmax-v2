@@ -68,7 +68,7 @@ export default function CoachDashboardPage() {
   }, [selectedAthletes]);
 
   const handleEditAthlete = useCallback((athleteId: string) => {
-    window.location.href = `/dashboard/coach/roster/${athleteId}/edit`;
+    window.location.href = `/coach/roster/${athleteId}/edit`;
   }, []);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -128,7 +128,7 @@ export default function CoachDashboardPage() {
             <p className="text-slate-400">{metrics?.totalAthletes || roster.length} Athletes</p>
           </div>
           <Link
-            href="/dashboard/coach/roster/new"
+            href="/coach/roster/new"
             className="flex items-center gap-2 bg-primary text-black font-bold px-4 py-2.5 rounded-lg hover:bg-primary/90 transition-colors"
           >
             <span className="material-symbols-outlined text-[20px]">person_add</span>
@@ -291,7 +291,7 @@ export default function CoachDashboardPage() {
                           <td className="px-4 py-3 text-right">
                             <div className="flex items-center justify-end gap-2">
                               <Link
-                                href={`/dashboard/coach/roster/${athlete.id}`}
+                                href={`/coach/roster/${athlete.id}`}
                                 className="p-1.5 rounded hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
                               >
                                 <span className="material-symbols-outlined text-[18px]">visibility</span>
@@ -325,7 +325,7 @@ export default function CoachDashboardPage() {
             <div className="bg-[#1F1F22] rounded-xl border border-white/5">
               <div className="p-4 border-b border-white/5 flex justify-between items-center">
                 <h3 className="font-bold text-white text-sm">Team Tasks</h3>
-                <Link href="/dashboard/coach/tasks" className="text-xs text-primary hover:text-primary/80">View All</Link>
+                <Link href="/coach/tasks" className="text-xs text-primary hover:text-primary/80">View All</Link>
               </div>
               <div className="divide-y divide-white/5">
                 {tasks.length === 0 ? (

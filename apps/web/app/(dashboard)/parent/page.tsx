@@ -128,7 +128,7 @@ export default function ParentDashboardPage() {
                 <span className="material-symbols-outlined text-primary">history</span>
                 Recent Activity
               </h3>
-              <Link href="/dashboard/parent/activity" className="text-xs font-semibold text-primary hover:text-primary/80">View All</Link>
+              <Link href="/parent/activity" className="text-xs font-semibold text-primary hover:text-primary/80">View All</Link>
             </div>
             <div className="divide-y divide-white/5">
               {activity.length === 0 ? (
@@ -168,7 +168,7 @@ export default function ParentDashboardPage() {
                 <span className="material-symbols-outlined text-primary">school</span>
                 College Interest
               </h3>
-              <Link href="/dashboard/parent/schools" className="text-xs font-semibold text-primary hover:text-primary/80">
+              <Link href="/parent/schools" className="text-xs font-semibold text-primary hover:text-primary/80">
                 View All
               </Link>
             </div>
@@ -204,7 +204,7 @@ export default function ParentDashboardPage() {
               <span className="material-symbols-outlined text-primary">calendar_month</span>
               Recruiting Calendar
             </h3>
-            <Link href="/dashboard/parent/calendar" className="text-xs font-semibold text-primary hover:text-primary/80">
+            <Link href="/parent/calendar" className="text-xs font-semibold text-primary hover:text-primary/80">
               View Full Calendar
             </Link>
           </div>
@@ -245,7 +245,7 @@ export default function ParentDashboardPage() {
 
         {/* Quick Actions */}
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Link href="/dashboard/parent/profile" className="bg-[#1F1F22] rounded-xl p-5 border border-white/5 hover:border-primary/30 transition-colors group">
+          <Link href="/parent/profile" className="bg-[#1F1F22] rounded-xl p-5 border border-white/5 hover:border-primary/30 transition-colors group">
             <div className="size-12 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center mb-3">
               <span className="material-symbols-outlined text-[24px]">person</span>
             </div>
@@ -253,7 +253,7 @@ export default function ParentDashboardPage() {
             <p className="text-xs text-slate-500">See what coaches see</p>
           </Link>
 
-          <Link href="/dashboard/messages" className="bg-[#1F1F22] rounded-xl p-5 border border-white/5 hover:border-primary/30 transition-colors group">
+          <Link href="/messages" className="bg-[#1F1F22] rounded-xl p-5 border border-white/5 hover:border-primary/30 transition-colors group">
             <div className="size-12 rounded-lg bg-green-500/20 text-green-400 flex items-center justify-center mb-3">
               <span className="material-symbols-outlined text-[24px]">chat_bubble</span>
             </div>
@@ -261,7 +261,7 @@ export default function ParentDashboardPage() {
             <p className="text-xs text-slate-500">View coach communications</p>
           </Link>
 
-          <Link href="/dashboard/parent/resources" className="bg-[#1F1F22] rounded-xl p-5 border border-white/5 hover:border-primary/30 transition-colors group">
+          <Link href="/parent/resources" className="bg-[#1F1F22] rounded-xl p-5 border border-white/5 hover:border-primary/30 transition-colors group">
             <div className="size-12 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center mb-3">
               <span className="material-symbols-outlined text-[24px]">school</span>
             </div>
@@ -269,7 +269,7 @@ export default function ParentDashboardPage() {
             <p className="text-xs text-slate-500">NCAA eligibility info</p>
           </Link>
 
-          <Link href="/dashboard/parent/resources" className="bg-[#1F1F22] rounded-xl p-5 border border-white/5 hover:border-primary/30 transition-colors group">
+          <Link href="/parent/resources" className="bg-[#1F1F22] rounded-xl p-5 border border-white/5 hover:border-primary/30 transition-colors group">
             <div className="size-12 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center mb-3">
               <span className="material-symbols-outlined text-[24px]">gavel</span>
             </div>

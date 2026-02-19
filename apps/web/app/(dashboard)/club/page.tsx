@@ -157,14 +157,14 @@ export default function ClubDashboardPage() {
       {/* Quick Actions */}
       <div className="flex flex-wrap gap-3">
         <Link
-          href="/dashboard/club/events/new"
+          href="/club/events/new"
           className="flex items-center gap-2 px-4 py-2.5 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
         >
           <span className="material-symbols-outlined text-xl">add</span>
           Create Tournament
         </Link>
         <Link
-          href="/dashboard/club/verifications"
+          href="/club/verifications"
           className="flex items-center gap-2 px-4 py-2.5 bg-[#1F1F22] text-white font-medium rounded-lg border border-white/10 hover:bg-white/5 transition-colors"
         >
           <span className="material-symbols-outlined text-xl">verified_user</span>
@@ -176,7 +176,7 @@ export default function ClubDashboardPage() {
           )}
         </Link>
         <Link
-          href="/dashboard/club/athletes"
+          href="/club/athletes"
           className="flex items-center gap-2 px-4 py-2.5 bg-[#1F1F22] text-white font-medium rounded-lg border border-white/10 hover:bg-white/5 transition-colors"
         >
           <span className="material-symbols-outlined text-xl">groups</span>
@@ -190,7 +190,7 @@ export default function ClubDashboardPage() {
           <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
             <h2 className="text-white font-bold">Tournament Overview</h2>
             <Link
-              href="/dashboard/club/events"
+              href="/club/events"
               className="text-primary text-sm font-medium hover:underline"
             >
               View all
@@ -202,7 +202,7 @@ export default function ClubDashboardPage() {
                 <span className="material-symbols-outlined text-slate-600 text-4xl mb-2">event</span>
                 <p className="text-slate-500">No tournaments yet</p>
                 <Link
-                  href="/dashboard/club/events/new"
+                  href="/club/events/new"
                   className="mt-3 inline-block text-primary text-sm font-medium hover:underline"
                 >
                   Create your first tournament
@@ -276,7 +276,7 @@ export default function ClubDashboardPage() {
             {verifications.length > 0 && (
               <div className="px-5 py-3 border-t border-white/5">
                 <Link
-                  href="/dashboard/club/verifications"
+                  href="/club/verifications"
                   className="text-primary text-sm font-medium hover:underline"
                 >
                   Review all verifications
@@ -290,7 +290,7 @@ export default function ClubDashboardPage() {
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
               <h2 className="text-white font-bold">Recent Payments</h2>
               <Link
-                href="/dashboard/club/payments"
+                href="/club/payments"
                 className="text-primary text-sm font-medium hover:underline"
               >
                 View all
