@@ -214,7 +214,23 @@ export default function AthleteAnalyticsPage() {
                 <h3 className="text-white text-lg font-bold">Profile Views Over Time</h3>
                 <p className="text-gray-400 text-sm">Last {selectedDays} Days</p>
               </div>
-              <button disabled title="Export coming soon" className="text-sm text-primary hover:text-white transition-colors flex items-center gap-1 opacity-50 cursor-not-allowed">
+              <button
+                onClick={() => {
+                  const headers = ['Date', 'Views'];
+                  const rows = grouped
+                    ? Object.entries(grouped).map(([date, count]) => `${date},${count}`)
+                    : [];
+                  const csvContent = [headers.join(','), ...rows].join('\n');
+                  const blob = new Blob([csvContent], { type: 'text/csv' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `analytics-report-${selectedDays}d.csv`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+                className="text-sm text-primary hover:text-white transition-colors flex items-center gap-1"
+              >
                 Full Report <span className="material-symbols-outlined text-sm">arrow_forward</span>
               </button>
             </div>

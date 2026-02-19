@@ -42,8 +42,10 @@ export function MessageThread({
 }: MessageThreadProps) {
   const [newMessage, setNewMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -58,6 +60,7 @@ export function MessageThread({
         await onSendMessage(newMessage.trim());
       }
       setNewMessage('');
+      setSelectedFile(null);
     } catch (err) {
       console.error('Failed to send message:', err);
     } finally {
@@ -246,10 +249,37 @@ export function MessageThread({
       {/* Input */}
       <div className="px-6 py-4 border-t border-[#27272a] bg-[#1A1A1A]">
         <div className="flex items-end gap-3">
-          <button disabled aria-label="Add attachment" title="Add attachment" className="p-2 rounded-lg hover:bg-[#2a2a2d] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-            <Plus className="w-5 h-5 text-gray-400" />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            aria-label="Add attachment"
+            title="Add attachment"
+            className="p-2 rounded-lg hover:bg-[#2a2a2d] transition-colors text-gray-400 hover:text-white"
+          >
+            <Plus className="w-5 h-5" />
           </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) setSelectedFile(file);
+              e.target.value = '';
+            }}
+          />
           <div className="flex-1 relative">
+            {selectedFile && (
+              <div className="flex items-center gap-2 mb-2 px-3 py-1.5 bg-[#0a0a0a] border border-[#27272a] rounded-lg text-sm text-gray-300">
+                <span className="material-symbols-outlined text-[16px] text-primary">attach_file</span>
+                <span className="truncate flex-1">{selectedFile.name}</span>
+                <button
+                  onClick={() => setSelectedFile(null)}
+                  className="text-gray-500 hover:text-white transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[16px]">close</span>
+                </button>
+              </div>
+            )}
             <textarea
               ref={inputRef}
               value={newMessage}

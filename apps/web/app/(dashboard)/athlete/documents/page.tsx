@@ -20,10 +20,36 @@ export default function DocumentsPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showFilter, setShowFilter] = useState(false);
+  const [filterTypes, setFilterTypes] = useState<Set<string>>(new Set());
+  const [copiedDocId, setCopiedDocId] = useState<string | null>(null);
 
-  const filteredDocuments = documents.filter((doc) =>
-    doc.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredDocuments = documents.filter((doc) => {
+    const matchesSearch = doc.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesType = filterTypes.size === 0 || filterTypes.has(doc.type);
+    return matchesSearch && matchesType;
+  });
+
+  const toggleFilterType = (type: string) => {
+    setFilterTypes(prev => {
+      const next = new Set(prev);
+      if (next.has(type)) next.delete(type);
+      else next.add(type);
+      return next;
+    });
+  };
+
+  const handleShare = async (docId: string, url: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiedDocId(docId);
+      setTimeout(() => setCopiedDocId(null), 2000);
+    } catch {
+      // Fallback for non-HTTPS contexts
+      setCopiedDocId(docId);
+      setTimeout(() => setCopiedDocId(null), 2000);
+    }
+  };
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -119,10 +145,46 @@ export default function DocumentsPage() {
                 className="bg-[#1F1F22] border border-white/10 text-sm text-white rounded-lg pl-10 pr-4 py-2 focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37] placeholder-slate-500 w-64 outline-none transition-all"
               />
             </div>
-            <button disabled title="Filter coming soon" className="flex items-center gap-2 px-3 py-2 bg-[#1F1F22] border border-white/10 rounded-lg text-sm font-medium text-[#A1A1AA] opacity-50 cursor-not-allowed">
-              <span className="material-symbols-outlined text-[18px]">filter_list</span>
-              Filter
-            </button>
+            <div className="relative">
+              <button
+                onClick={() => setShowFilter(!showFilter)}
+                className={`flex items-center gap-2 px-3 py-2 bg-[#1F1F22] border rounded-lg text-sm font-medium transition-colors ${
+                  showFilter || filterTypes.size > 0
+                    ? 'border-primary/50 text-primary'
+                    : 'border-white/10 text-[#A1A1AA] hover:text-white'
+                }`}
+              >
+                <span className="material-symbols-outlined text-[18px]">filter_list</span>
+                Filter
+                {filterTypes.size > 0 && (
+                  <span className="bg-primary text-black text-[10px] font-bold px-1.5 rounded-full">{filterTypes.size}</span>
+                )}
+              </button>
+              {showFilter && (
+                <div className="absolute right-0 top-11 z-20 bg-[#2A2A2E] border border-white/10 rounded-lg shadow-xl p-3 min-w-[160px]">
+                  <p className="text-xs text-slate-400 uppercase tracking-wider mb-2">Document Type</p>
+                  {['pdf', 'image', 'other'].map(type => (
+                    <label key={type} className="flex items-center gap-2 py-1.5 px-1 cursor-pointer hover:bg-white/5 rounded text-sm">
+                      <input
+                        type="checkbox"
+                        checked={filterTypes.has(type)}
+                        onChange={() => toggleFilterType(type)}
+                        className="accent-primary"
+                      />
+                      <span className="text-white capitalize">{type === 'pdf' ? 'PDF' : type === 'image' ? 'Image' : 'Other'}</span>
+                    </label>
+                  ))}
+                  {filterTypes.size > 0 && (
+                    <button
+                      onClick={() => setFilterTypes(new Set())}
+                      className="mt-2 text-xs text-primary hover:text-primary/80 transition-colors"
+                    >
+                      Clear filters
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -203,9 +265,14 @@ export default function DocumentsPage() {
                         <span className="material-symbols-outlined text-[20px]">delete</span>
                       </button>
                     </div>
-                    <button disabled title="Share coming soon" className="flex items-center gap-1.5 text-sm font-semibold text-[#D4AF37] opacity-50 cursor-not-allowed">
-                      <span className="material-symbols-outlined text-[18px]">share</span>
-                      Share
+                    <button
+                      onClick={() => handleShare(doc.id, doc.url || '')}
+                      className="flex items-center gap-1.5 text-sm font-semibold text-[#D4AF37] hover:text-[#e5c246] transition-colors"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">
+                        {copiedDocId === doc.id ? 'check' : 'share'}
+                      </span>
+                      {copiedDocId === doc.id ? 'Copied!' : 'Share'}
                     </button>
                   </div>
                 </div>

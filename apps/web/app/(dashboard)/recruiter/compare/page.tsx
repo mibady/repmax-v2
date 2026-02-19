@@ -275,7 +275,23 @@ export default function ComparePage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <button disabled title="Export coming soon" className="flex items-center gap-2 rounded-lg border border-[#2A2A2E] bg-[#1F1F22] px-4 py-2 text-sm font-semibold text-white opacity-50 cursor-not-allowed">
+          <button
+            onClick={() => {
+              const headers = ['Name', 'Position', 'Class', 'Rating', 'Height', 'Weight', '40-Yard', 'Vertical', 'GPA', 'Eligibility'];
+              const rows = athletesWithHighlights.map(a =>
+                [a.name, a.position, a.classYear, a.rating, a.stats.height, a.stats.weight, a.stats.fortyYard, a.stats.verticalJump, a.stats.gpa, a.stats.eligibility].join(',')
+              );
+              const csvContent = [headers.join(','), ...rows].join('\n');
+              const blob = new Blob([csvContent], { type: 'text/csv' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `athlete-comparison-${new Date().toISOString().slice(0,10)}.csv`;
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
+            className="flex items-center gap-2 rounded-lg border border-[#2A2A2E] bg-[#1F1F22] px-4 py-2 text-sm font-semibold text-white hover:bg-[#2A2A2E] transition-colors"
+          >
             <span className="material-symbols-outlined text-[20px]">download</span>
             Export Data
           </button>

@@ -1,13 +1,34 @@
 'use client';
 
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import { useAthlete } from '@/lib/hooks';
 
 export default function CoachRosterDetailPage(): React.JSX.Element {
   const params = useParams();
+  const router = useRouter();
   const id = params.id as string;
   const { athlete, isLoading, error } = useAthlete(id);
+  const [isRemoving, setIsRemoving] = useState(false);
+
+  const handleRemoveFromRoster = async () => {
+    if (!confirm('Remove this athlete from your roster? This cannot be undone.')) return;
+    setIsRemoving(true);
+    try {
+      const res = await fetch(`/api/shortlists?athlete_id=${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        router.push('/coach/roster');
+      } else {
+        const data = await res.json();
+        alert(data.error || 'Failed to remove athlete');
+      }
+    } catch {
+      alert('Failed to remove athlete');
+    } finally {
+      setIsRemoving(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -124,18 +145,19 @@ export default function CoachRosterDetailPage(): React.JSX.Element {
             Edit
           </Link>
           <button
-            disabled
-            className="flex items-center gap-2 bg-[#2A2A2E] text-slate-500 font-medium px-4 py-2.5 rounded-lg cursor-not-allowed"
+            onClick={() => router.push('/messages')}
+            className="flex items-center gap-2 bg-[#2A2A2E] text-white font-medium px-4 py-2.5 rounded-lg hover:bg-[#3A3A3E] transition-colors"
           >
             <span className="material-symbols-outlined text-[20px]">mail</span>
-            Message
+            Message Athlete
           </button>
           <button
-            disabled
-            className="flex items-center gap-2 bg-[#2A2A2E] text-slate-500 font-medium px-4 py-2.5 rounded-lg cursor-not-allowed"
+            onClick={handleRemoveFromRoster}
+            disabled={isRemoving}
+            className="flex items-center gap-2 bg-[#2A2A2E] text-red-400 font-medium px-4 py-2.5 rounded-lg hover:bg-red-500/10 transition-colors disabled:opacity-50"
           >
             <span className="material-symbols-outlined text-[20px]">person_remove</span>
-            Remove
+            {isRemoving ? 'Removing...' : 'Remove from Roster'}
           </button>
         </div>
       </div>

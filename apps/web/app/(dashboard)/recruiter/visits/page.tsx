@@ -8,8 +8,17 @@ import { useState } from 'react';
 const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 export default function CampusVisitsPage() {
-  const { visits, stats, isLoading, error, getEventsForDay, updateVisit, cancelVisit } = useCampusVisits();
+  const { visits, stats, isLoading, error, getEventsForDay, updateVisit, cancelVisit, createVisit } = useCampusVisits();
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [isScheduling, setIsScheduling] = useState(false);
+  const [scheduleForm, setScheduleForm] = useState({
+    athlete_id: '',
+    visit_date: '',
+    visit_type: 'unofficial' as 'official' | 'unofficial',
+    visit_time: '',
+    notes: '',
+  });
 
   // Calendar calculations
   const year = currentMonth.getFullYear();
@@ -62,7 +71,10 @@ export default function CampusVisitsPage() {
             Manage your recruiting calendar and upcoming prospect visits.
           </p>
         </div>
-        <button disabled title="Visit scheduling coming soon" className="flex items-center justify-center gap-2 rounded-lg h-10 px-4 bg-primary/50 text-[#121214] text-sm font-bold cursor-not-allowed">
+        <button
+          onClick={() => setShowScheduleModal(true)}
+          className="flex items-center justify-center gap-2 rounded-lg h-10 px-4 bg-primary text-[#121214] text-sm font-bold hover:bg-primary/90 transition-colors"
+        >
           <span className="material-symbols-outlined text-[20px]">add</span>
           <span className="hidden sm:inline">Schedule Visit</span>
         </button>
@@ -379,6 +391,105 @@ export default function CampusVisitsPage() {
           </div>
         </div>
       </div>
+
+      {/* Schedule Visit Modal */}
+      {showScheduleModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/80" onClick={() => !isScheduling && setShowScheduleModal(false)} />
+          <div className="relative z-10 w-full max-w-md mx-4 bg-[#1F1F22] border border-white/10 rounded-xl shadow-2xl">
+            <div className="flex items-center justify-between p-6 pb-0">
+              <h2 className="text-xl font-bold text-white">Schedule Campus Visit</h2>
+              <button onClick={() => !isScheduling && setShowScheduleModal(false)} className="text-gray-400 hover:text-white">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                if (!scheduleForm.athlete_id || !scheduleForm.visit_date) return;
+                setIsScheduling(true);
+                try {
+                  const result = await createVisit({
+                    athlete_id: scheduleForm.athlete_id,
+                    visit_date: scheduleForm.visit_date,
+                    visit_type: scheduleForm.visit_type,
+                    ...(scheduleForm.visit_time ? { visit_time: scheduleForm.visit_time } : {}),
+                    ...(scheduleForm.notes ? { notes: scheduleForm.notes } : {}),
+                  });
+                  if (result.error) {
+                    alert(result.error);
+                  } else {
+                    setShowScheduleModal(false);
+                    setScheduleForm({ athlete_id: '', visit_date: '', visit_type: 'unofficial', visit_time: '', notes: '' });
+                  }
+                } finally {
+                  setIsScheduling(false);
+                }
+              }}
+              className="p-6 flex flex-col gap-4"
+            >
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-medium text-slate-400">Athlete ID <span className="text-red-400">*</span></label>
+                <input
+                  type="text"
+                  value={scheduleForm.athlete_id}
+                  onChange={(e) => setScheduleForm(f => ({ ...f, athlete_id: e.target.value }))}
+                  placeholder="Enter athlete ID"
+                  required
+                  className="w-full px-3 py-2.5 bg-[#2A2A2E] border border-white/10 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:border-primary/50"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-medium text-slate-400">Visit Date <span className="text-red-400">*</span></label>
+                <input
+                  type="date"
+                  value={scheduleForm.visit_date}
+                  onChange={(e) => setScheduleForm(f => ({ ...f, visit_date: e.target.value }))}
+                  required
+                  className="w-full px-3 py-2.5 bg-[#2A2A2E] border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary/50"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-medium text-slate-400">Visit Type</label>
+                <select
+                  value={scheduleForm.visit_type}
+                  onChange={(e) => setScheduleForm(f => ({ ...f, visit_type: e.target.value as 'official' | 'unofficial' }))}
+                  className="w-full px-3 py-2.5 bg-[#2A2A2E] border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary/50"
+                >
+                  <option value="unofficial">Unofficial Visit</option>
+                  <option value="official">Official Visit</option>
+                </select>
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-medium text-slate-400">Time</label>
+                <input
+                  type="time"
+                  value={scheduleForm.visit_time}
+                  onChange={(e) => setScheduleForm(f => ({ ...f, visit_time: e.target.value }))}
+                  className="w-full px-3 py-2.5 bg-[#2A2A2E] border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary/50"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-medium text-slate-400">Notes</label>
+                <textarea
+                  value={scheduleForm.notes}
+                  onChange={(e) => setScheduleForm(f => ({ ...f, notes: e.target.value }))}
+                  placeholder="Optional notes..."
+                  rows={2}
+                  className="w-full px-3 py-2.5 bg-[#2A2A2E] border border-white/10 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:border-primary/50 resize-none"
+                />
+              </div>
+              <div className="flex items-center justify-end gap-3 mt-2">
+                <button type="button" onClick={() => setShowScheduleModal(false)} className="px-4 py-2.5 text-sm text-slate-400 hover:text-white" disabled={isScheduling}>Cancel</button>
+                <button type="submit" disabled={isScheduling} className="flex items-center gap-2 px-6 py-2.5 bg-primary text-black font-bold text-sm rounded-lg hover:bg-primary/90 disabled:opacity-50">
+                  {isScheduling && <span className="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>}
+                  Schedule Visit
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       <style jsx>{`
         ::-webkit-scrollbar {

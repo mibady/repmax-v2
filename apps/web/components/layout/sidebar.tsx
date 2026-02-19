@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 export type UserRole = 'athlete' | 'parent' | 'coach' | 'recruiter' | 'club' | 'admin';
 
@@ -362,6 +362,7 @@ function ParentSidebar({ user, onSignOut }: { user: SidebarUser; onSignOut?: () 
 
 function CoachSidebar({ user, onSignOut }: { user: SidebarUser; onSignOut?: () => void }) {
   const pathname = usePathname();
+  const router = useRouter();
 
   return (
     <aside className="w-64 border-r border-white/10 flex flex-col justify-between p-4 bg-[#050505] h-full">
@@ -420,7 +421,10 @@ function CoachSidebar({ user, onSignOut }: { user: SidebarUser; onSignOut?: () =
           <span className="material-symbols-outlined text-[22px]">logout</span>
           <p className="text-sm font-medium">Sign Out</p>
         </button>
-        <button disabled title="Coming soon" className="w-full flex items-center justify-center gap-2 rounded-lg py-3 bg-primary text-black font-bold text-sm tracking-wide mt-2 disabled:opacity-50 disabled:cursor-not-allowed">
+        <button
+          onClick={() => router.push('/recruiter/pipeline')}
+          className="w-full flex items-center justify-center gap-2 rounded-lg py-3 bg-primary text-black font-bold text-sm tracking-wide mt-2 hover:bg-primary/90 transition-colors"
+        >
           <span className="material-symbols-outlined text-[20px]">person_add</span>
           Add Athlete
         </button>
