@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useProfileViews, useGeographicViews } from '@/lib/hooks';
 
 interface KpiCard {
@@ -69,6 +70,7 @@ function formatTimeAgo(dateString: string): string {
 }
 
 export default function AthleteAnalyticsPage() {
+  const router = useRouter();
   const [selectedDays, setSelectedDays] = useState(30);
   const { summary, grouped, recent, isLoading, error } = useProfileViews({ days: selectedDays, groupBy: 'day' });
   const { data: geoData } = useGeographicViews({ days: selectedDays });
@@ -212,7 +214,7 @@ export default function AthleteAnalyticsPage() {
                 <h3 className="text-white text-lg font-bold">Profile Views Over Time</h3>
                 <p className="text-gray-400 text-sm">Last {selectedDays} Days</p>
               </div>
-              <button className="text-sm text-primary hover:text-white transition-colors flex items-center gap-1">
+              <button disabled title="Export coming soon" className="text-sm text-primary hover:text-white transition-colors flex items-center gap-1 opacity-50 cursor-not-allowed">
                 Full Report <span className="material-symbols-outlined text-sm">arrow_forward</span>
               </button>
             </div>
@@ -382,7 +384,7 @@ export default function AthleteAnalyticsPage() {
                       <div className="col-span-3 md:col-span-2 text-right text-gray-400 text-sm">{viewer.time}</div>
                       {!viewer.isBlurred && (
                         <div className="col-span-0 md:col-span-2 hidden md:flex justify-end">
-                          <button className="text-xs text-white bg-surface-border hover:bg-white hover:text-black px-3 py-1.5 rounded transition-colors">Message</button>
+                          <button onClick={() => router.push('/messages')} className="text-xs text-white bg-surface-border hover:bg-white hover:text-black px-3 py-1.5 rounded transition-colors">Message</button>
                         </div>
                       )}
                     </div>

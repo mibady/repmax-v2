@@ -422,7 +422,7 @@ export default function ProspectDetailPage() {
             <div className="bg-[#2a271d] p-5 rounded-xl border border-[#433d28]">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-white font-semibold text-sm">Tags</h3>
-                <button className="text-[#c3b998] hover:text-white">
+                <button disabled title="Tag management coming soon" className="text-[#c3b998] opacity-50 cursor-not-allowed">
                   <span className="material-symbols-outlined text-[20px]">edit</span>
                 </button>
               </div>
@@ -438,7 +438,7 @@ export default function ProspectDetailPage() {
                     {athlete.zone}
                   </span>
                 )}
-                <button className="px-3 py-1 rounded-full border border-dashed border-[#c3b998]/50 text-[#c3b998] text-xs font-medium hover:text-white hover:border-white transition-colors">
+                <button disabled title="Tag management coming soon" className="px-3 py-1 rounded-full border border-dashed border-[#c3b998]/50 text-[#c3b998] text-xs font-medium opacity-50 cursor-not-allowed">
                   + Add
                 </button>
               </div>
@@ -470,7 +470,7 @@ export default function ProspectDetailPage() {
           <div className="bg-[#2a271d] rounded-xl border border-[#433d28] p-6">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-white font-semibold">Activity Timeline</h3>
-              <button className="bg-[#363225] hover:bg-[#363225]/80 text-white text-xs px-3 py-1.5 rounded-lg border border-[#433d28] transition-colors">
+              <button disabled title="Activity filter coming soon" className="bg-[#363225] text-white text-xs px-3 py-1.5 rounded-lg border border-[#433d28] opacity-50 cursor-not-allowed">
                 Filter
               </button>
             </div>

@@ -223,7 +223,7 @@ export default function EditCardPage() {
                     >
                       {isUploading ? "Uploading..." : "Upload Photo"}
                     </button>
-                    <button className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-sm font-medium hover:bg-white/10 transition-colors">
+                    <button disabled title="Camera not yet supported" className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-sm font-medium hover:bg-white/10 transition-colors opacity-50 cursor-not-allowed">
                       Take Photo
                     </button>
                   </div>

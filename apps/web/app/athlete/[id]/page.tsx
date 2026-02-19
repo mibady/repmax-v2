@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAthlete } from "@/lib/hooks";
 import { ZONE_COLORS, getPlaceholderImage } from "@/lib/data/zone-data";
@@ -29,6 +29,7 @@ function LoadingSkeleton() {
 
 export default function AthletePage() {
   const params = useParams();
+  const router = useRouter();
   const athleteId = params.id as string;
 
   const { athlete, isLoading, error } = useAthlete(athleteId);
@@ -101,7 +102,7 @@ export default function AthletePage() {
             {/* Avatar & Identity Section */}
             <div className="px-6 relative -mt-16 flex flex-col items-center text-center">
               {/* Avatar */}
-              <div className="relative group cursor-pointer">
+              <div className="relative group">
                 <div className={`w-24 h-24 rounded-full border-4 ${colors.border} shadow-lg p-0.5 bg-[#121212] overflow-hidden relative z-10 transition-transform duration-300 group-hover:scale-105`}>
                   <img
                     alt={`Portrait of ${fullName}`}
@@ -244,7 +245,7 @@ export default function AthletePage() {
                     <span className={`material-symbols-outlined ${colors.text} text-[20px]`}>smart_display</span>
                     <h2 className="text-sm font-bold tracking-wider text-gray-400 uppercase">Highlights</h2>
                   </div>
-                  <span className={`text-xs ${colors.text} font-medium cursor-pointer hover:underline`}>View All</span>
+                  <Link href={`/athlete/${athleteId}#highlights`} className={`text-xs ${colors.text} font-medium cursor-pointer hover:underline`}>View All</Link>
                 </div>
                 <div className="relative w-full aspect-video rounded-2xl overflow-hidden group cursor-pointer border border-white/10">
                   <div
@@ -293,11 +294,11 @@ export default function AthletePage() {
 
             {/* Sticky Footer Actions */}
             <div className="p-6 bg-[#0a0a0a]/95 backdrop-blur-xl border-t border-white/5 flex flex-col gap-4">
-              <button className={`w-full h-12 ${colors.bg.replace("/10", "")} hover:opacity-90 text-black font-bold rounded-full flex items-center justify-center gap-2 transition-all transform active:scale-95 shadow-lg`}>
+              <button onClick={() => router.push('/login?returnTo=/athlete/' + athleteId)} className={`w-full h-12 ${colors.bg.replace("/10", "")} hover:opacity-90 text-black font-bold rounded-full flex items-center justify-center gap-2 transition-all transform active:scale-95 shadow-lg`}>
                 <span className="material-symbols-outlined text-[20px]">add</span>
                 Add to Shortlist
               </button>
-              <button className={`w-full h-12 bg-transparent ${colors.border} border ${colors.text} hover:${colors.bg} font-bold rounded-full flex items-center justify-center gap-2 transition-all active:scale-95`}>
+              <button onClick={() => router.push('/login?returnTo=/athlete/' + athleteId)} className={`w-full h-12 bg-transparent ${colors.border} border ${colors.text} hover:${colors.bg} font-bold rounded-full flex items-center justify-center gap-2 transition-all active:scale-95`}>
                 <span className="material-symbols-outlined text-[20px]">mail</span>
                 Contact Coach
               </button>

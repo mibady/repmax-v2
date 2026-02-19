@@ -149,7 +149,7 @@ export default function ZoneLandingPage() {
                 </div>
               </div>
               {/* Mobile Menu Button */}
-              <button className="md:hidden text-white">
+              <button disabled title="Mobile menu coming soon" className="md:hidden text-white opacity-50">
                 <span className="material-symbols-outlined">menu</span>
               </button>
             </div>

@@ -218,7 +218,7 @@ function EmptyState() {
           Add athletes from your recruiting board to start comparing their stats side by side.
         </p>
         <Link
-          href="/recruiter/board"
+          href="/recruiter/pipeline"
           className="inline-flex items-center gap-2 rounded-lg bg-[#D4AF37] px-6 py-3 text-sm font-bold text-[#050505] hover:bg-yellow-500 transition-colors"
         >
           <span className="material-symbols-outlined text-[20px]">group</span>
@@ -275,12 +275,12 @@ export default function ComparePage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 rounded-lg border border-[#2A2A2E] bg-[#1F1F22] px-4 py-2 text-sm font-semibold text-white hover:bg-[#2A2A2E] transition-colors">
+          <button disabled title="Export coming soon" className="flex items-center gap-2 rounded-lg border border-[#2A2A2E] bg-[#1F1F22] px-4 py-2 text-sm font-semibold text-white opacity-50 cursor-not-allowed">
             <span className="material-symbols-outlined text-[20px]">download</span>
             Export Data
           </button>
           <Link
-            href="/recruiter/board"
+            href="/recruiter/pipeline"
             className="flex items-center gap-2 rounded-lg bg-[#D4AF37] px-4 py-2 text-sm font-bold text-[#050505] hover:bg-yellow-500 transition-colors shadow-[0_0_15px_rgba(212,175,55,0.3)]"
           >
             <span className="material-symbols-outlined text-[20px]">add</span>
@@ -352,7 +352,7 @@ export default function ComparePage() {
                     {athletesWithHighlights.length < 4 && (
                       <th className="w-[240px] min-w-[240px] p-4 border-b border-[#2A2A2E] align-middle bg-[#151517]">
                         <Link
-                          href="/recruiter/board"
+                          href="/recruiter/pipeline"
                           className="flex flex-col items-center justify-center h-full min-h-[140px] rounded-lg border-2 border-dashed border-[#2A2A2E] bg-transparent group hover:border-[#D4AF37]/50 hover:bg-[#1F1F22] transition-all cursor-pointer"
                         >
                           <div className="size-10 rounded-full bg-[#2A2A2E] flex items-center justify-center text-gray-400 group-hover:text-[#D4AF37] transition-colors mb-2">

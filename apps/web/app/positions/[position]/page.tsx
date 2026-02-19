@@ -253,7 +253,7 @@ export default function PositionLandingPage() {
             </p>
             <div className="flex items-center gap-2">
               <span className="text-xs text-gray-500">Sort by:</span>
-              <select className="bg-transparent border-none text-white text-sm font-medium focus:outline-none cursor-pointer">
+              <select disabled title="Sort coming soon" className="bg-transparent border-none text-white text-sm font-medium focus:outline-none opacity-50 cursor-not-allowed">
                 <option>Rating</option>
                 <option>Name</option>
                 <option>Class Year</option>
@@ -303,7 +303,7 @@ export default function PositionLandingPage() {
           {/* Load More */}
           {filteredProspects.length > 0 && (
             <div className="flex justify-center mt-4">
-              <button className="flex items-center gap-2 text-[#c3b998] hover:text-white transition-colors">
+              <button disabled title="All prospects shown" className="flex items-center gap-2 text-[#c3b998] opacity-50 cursor-not-allowed">
                 <span className="text-sm font-medium">Load More Prospects</span>
                 <span className="material-symbols-outlined text-lg">arrow_downward</span>
               </button>

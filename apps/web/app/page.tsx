@@ -380,9 +380,9 @@ export default function Page() {
                         The ultimate data-driven platform connecting elite talent with top-tier programs. Built for the modern athlete.
                     </p>
 <div className="flex gap-4">
-<span className="text-text-grey hover:text-white transition-colors cursor-pointer"><span className="material-symbols-outlined text-xl">thumb_up</span></span>
-<span className="text-text-grey hover:text-white transition-colors cursor-pointer"><span className="material-symbols-outlined text-xl">smart_display</span></span>
-<span className="text-text-grey hover:text-white transition-colors cursor-pointer"><span className="material-symbols-outlined text-xl">share</span></span>
+<span className="text-text-grey"><span className="material-symbols-outlined text-xl">thumb_up</span></span>
+<span className="text-text-grey"><span className="material-symbols-outlined text-xl">smart_display</span></span>
+<span className="text-text-grey"><span className="material-symbols-outlined text-xl">share</span></span>
 </div>
 </div>
 <div className="flex flex-col gap-4">
@@ -397,12 +397,12 @@ export default function Page() {
 <span className="text-sm text-text-grey">About</span>
 <span className="text-sm text-text-grey">Careers</span>
 <span className="text-sm text-text-grey">Blog</span>
-<span className="text-sm text-text-grey">Contact</span>
+<Link href="/support" className="text-sm text-text-grey hover:text-primary transition-colors">Contact</Link>
 </div>
 <div className="flex flex-col gap-4">
 <h3 className="text-sm font-bold text-white uppercase tracking-wider">Legal</h3>
-<span className="text-sm text-text-grey">Privacy</span>
-<span className="text-sm text-text-grey">Terms</span>
+<Link href="/privacy" className="text-sm text-text-grey hover:text-primary transition-colors">Privacy</Link>
+<Link href="/terms" className="text-sm text-text-grey hover:text-primary transition-colors">Terms</Link>
 <span className="text-sm text-text-grey">Security</span>
 </div>
 </div>

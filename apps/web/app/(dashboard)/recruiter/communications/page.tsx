@@ -277,9 +277,9 @@ export default function CommunicationsPage() {
                           <span className="text-sm text-[#aaa] font-mono">{log.datetime}</span>
                         </td>
                         <td className="py-4 px-6 text-right">
-                          <button className="text-[#666] hover:text-white transition-colors">
+                          <span className="text-[#666] opacity-50" title="Row actions coming soon">
                             <span className="material-symbols-outlined text-[20px]">more_vert</span>
-                          </button>
+                          </span>
                         </td>
                       </tr>
                     );

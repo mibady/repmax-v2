@@ -110,7 +110,7 @@ export default async function AthleteCardPage({
         {/* Avatar & Identity Section */}
         <div className="px-6 relative -mt-16 flex flex-col items-center text-center">
           {/* Avatar */}
-          <div className="relative group cursor-pointer">
+          <div className="relative group">
             <div className="w-24 h-24 rounded-full border-4 border-primary shadow-glow p-0.5 bg-card-dark overflow-hidden relative z-10 transition-transform duration-300 group-hover:scale-105">
               <Image
                 src={athlete.avatarUrl}
@@ -310,7 +310,7 @@ export default async function AthleteCardPage({
                   Highlights
                 </h2>
               </div>
-              <span className="text-xs text-primary font-medium cursor-pointer hover:underline">
+              <span className="text-xs text-primary font-medium opacity-50">
                 View All
               </span>
             </div>

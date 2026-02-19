@@ -90,9 +90,9 @@ function HighlightCard({
           <h3 className="text-white text-lg font-bold leading-tight group-hover:text-primary transition-colors cursor-pointer">
             {highlight.title}
           </h3>
-          <button className="text-gray-500 hover:text-white transition-colors">
+          <span className="text-gray-500" title="Options coming soon">
             <span className="material-symbols-outlined">more_vert</span>
-          </button>
+          </span>
         </div>
         {highlight.description && (
           <p className="text-gray-400 text-sm line-clamp-2">{highlight.description}</p>
@@ -105,7 +105,7 @@ function HighlightCard({
             </span>
             <span>{formatDate(highlight.created_at)}</span>
           </div>
-          <button className="text-primary hover:text-white text-xs font-bold uppercase tracking-wider">
+          <button disabled title="Edit coming soon" className="text-primary text-xs font-bold uppercase tracking-wider opacity-50 cursor-not-allowed">
             Edit
           </button>
         </div>
@@ -146,7 +146,7 @@ function EmptyState() {
       <p className="text-gray-400 mb-6 max-w-md">
         Upload your first highlight reel to start showcasing your skills to college recruiters.
       </p>
-      <button className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-black font-bold text-sm px-6 py-3 rounded-lg transition-all">
+      <button disabled title="Upload coming soon" className="flex items-center justify-center gap-2 bg-primary/50 text-black font-bold text-sm px-6 py-3 rounded-lg cursor-not-allowed">
         <span className="material-symbols-outlined text-xl">upload_file</span>
         <span>Upload Your First Highlight</span>
       </button>
@@ -170,7 +170,7 @@ export default function FilmManagementPage() {
                 : 'Manage and organize your game film for recruiters'}
             </p>
           </div>
-          <button className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-black font-bold text-sm px-6 py-3 rounded-lg transition-all shadow-[0_0_15px_rgba(212,175,53,0.2)]">
+          <button disabled title="Upload coming soon" className="flex items-center justify-center gap-2 bg-primary/50 text-black font-bold text-sm px-6 py-3 rounded-lg cursor-not-allowed">
             <span className="material-symbols-outlined text-xl">upload_file</span>
             <span>Upload Film</span>
           </button>
@@ -178,7 +178,7 @@ export default function FilmManagementPage() {
 
         {/* Upload Zone */}
         <section className="w-full">
-          <div className="group relative flex flex-col items-center justify-center w-full h-48 rounded-xl border-2 border-dashed border-[#333] hover:border-primary/50 bg-[#1F1F22]/50 hover:bg-[#1F1F22] transition-all cursor-pointer">
+          <div title="Upload coming soon" className="group relative flex flex-col items-center justify-center w-full h-48 rounded-xl border-2 border-dashed border-[#333] bg-[#1F1F22]/50 transition-all opacity-60">
             <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
               <div className="bg-[#2A2A2E] p-3 rounded-full mb-3 group-hover:scale-110 transition-transform duration-300">
                 <span className="material-symbols-outlined text-primary text-3xl">cloud_upload</span>

@@ -51,13 +51,13 @@ export default function Page() {
 </div>
 {/*  Desktop Links  */}
 <div className="hidden md:flex items-center gap-8">
-<Link className="text-sm font-medium text-gray-300 hover:text-primary transition-colors" href="/">Features</Link>
+<Link className="text-sm font-medium text-gray-300 hover:text-primary transition-colors" href="/#features">Features</Link>
 <Link className="text-sm font-medium text-gray-300 hover:text-primary transition-colors" href="/">About</Link>
-<Link className="text-sm font-medium text-primary transition-colors" href="/">Pricing</Link>
-<Link className="text-sm font-medium text-gray-300 hover:text-primary transition-colors" href="/">Login</Link>
-<button className="bg-primary hover:bg-primary-hover text-background-dark text-sm font-bold py-2.5 px-6 rounded-full transition-all">
+<Link className="text-sm font-medium text-primary transition-colors" href="/pricing">Pricing</Link>
+<Link className="text-sm font-medium text-gray-300 hover:text-primary transition-colors" href="/login">Login</Link>
+<Link href="/signup" className="bg-primary hover:bg-primary-hover text-background-dark text-sm font-bold py-2.5 px-6 rounded-full transition-all">
                     Get Started
-                </button>
+                </Link>
 </div>
 {/*  Mobile Menu Icon  */}
 <div className="md:hidden text-white">

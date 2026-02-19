@@ -147,9 +147,9 @@ export default function AthleteDashboardPage() {
                     <span className="material-symbols-outlined text-[20px]">bookmark</span>
                     Shortlists
                   </div>
-                  <span className="text-text-muted hover:text-white cursor-pointer">
+                  <Link href="/athlete/offers" className="text-text-muted hover:text-white cursor-pointer">
                     <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
-                  </span>
+                  </Link>
                 </div>
                 <div className="flex items-end gap-3">
                   <div className="text-4xl font-bold text-white data-point">{stats?.shortlistCount || 0}</div>

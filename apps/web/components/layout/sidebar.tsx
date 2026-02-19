@@ -45,9 +45,9 @@ const athleteSettingsItems: NavItem[] = [
 const recruiterNavItems: NavItem[] = [
   { icon: 'view_kanban', label: 'Pipeline', href: '/recruiter/pipeline' },
   { icon: 'groups', label: 'Athletes', href: '/recruiter/prospects' },
-  { icon: 'campaign', label: 'Campaigns', href: '/recruiter/campaigns' },
+  { icon: 'campaign', label: 'Campaigns', href: '/recruiter/communications' },
   { icon: 'chat_bubble', label: 'Messages', href: '/messages' },
-  { icon: 'analytics', label: 'Analytics', href: '/recruiter/analytics' },
+  { icon: 'analytics', label: 'Analytics', href: '/recruiter/reports' },
 ];
 
 const recruiterSettingsItems: NavItem[] = [
