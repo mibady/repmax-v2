@@ -444,3 +444,50 @@ This project existed before tracking was set up.
 
 ### Linear
 - NGE-56 → In Progress (Phase A complete — 52 dead handlers resolved, Phases B+C remain)
+
+---
+
+## Session 10 — 2026-02-18
+
+### Completed
+- **Phase B: Sub-page Build** — built 15 functional sub-pages + 6 placeholders + 4 API routes for coach, parent, and club dashboards
+  - **URL fixes (5 files):** Fixed 18 broken `/dashboard/{role}/...` links → `/{role}/...` across coach (4), parent (7), club (7) pages. Fixed 3 sidebar `isActive` checks. Added 16 titleMap entries to layout.
+  - **Coach sub-pages (5 pages + 2 APIs):** Full roster list with filters/export, add-athlete search page, athlete detail view, shortlist edit form, full task list with create. New APIs: `PATCH /api/shortlists/[id]`, `POST /api/coach/tasks`.
+  - **Parent sub-pages (5 pages):** Child profile overview, college interest tracker, recruiting calendar with date blocks, activity feed with colored type icons, static NCAA resources page.
+  - **Club sub-pages (5 pages + 2 APIs):** Tournament list with status filters, create-tournament form, verification queue with approve/reject, athletes derived from verifications, payment history with revenue summary. New APIs: `POST /api/club/events`, `PATCH /api/club/verifications`.
+  - **Placeholder pages (6):** Coming Soon pages for Recruiting, Schedule, Scouts, Analytics, Settings, Help Center.
+- **Team build:** 5 parallel builders (fixes, coach, parent, club, placeholders) + validator
+- All quality gates pass: tsc 0 errors, lint 0 new warnings, 353/353 tests, build success
+
+### Audit Snapshot
+- Pages: 63 (+21 from Session 9)
+- API routes: 46 (+4)
+- Components: 25
+- Server actions: 9 files
+- Hooks: 35
+- Tests: 353/353 passing (31 test files)
+- Commits: 73 total (3 this session)
+- Migrations: 9
+- Build: pass
+
+### Decisions Made
+- Club pages use `bg-[#141414]` (not `bg-[#1F1F22]`) to match existing club dashboard style
+- Coach pages use `bg-[#1F1F22]` to match existing coach dashboard style
+- Placeholder pages point back to their role's main dashboard (not a generic home)
+- All badge components duplicated inline per page (no shared component) to match existing pattern
+
+### Known Issues
+- 5 pre-existing lint warnings unchanged (1 new: `<img>` tag in parent/profile)
+- Club API routes insert into `tournaments`/`verifications` tables — may need schema validation if column names differ
+- Coach roster/[id] uses `useAthlete(id)` which queries Supabase directly (not the dashboard API)
+- No tests added for new API routes (POST /api/coach/tasks, PATCH /api/shortlists/[id], POST /api/club/events, PATCH /api/club/verifications)
+
+### Next Session Should
+- Run `/prime` to load context
+- Phase C: Major features — film player, notification center, search
+- Add tests for the 4 new API routes (coach tasks POST, shortlists PATCH, club events POST, club verifications PATCH)
+- NGE-55: Mobile app (Expo) — highest priority remaining Linear issue
+- NGE-56: Polish continues (Phase B done, Phase C remains)
+
+### Linear
+- NGE-56 → In Progress (Phase A+B complete, Phase C remains)
