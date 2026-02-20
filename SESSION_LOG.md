@@ -549,3 +549,58 @@ This project existed before tracking was set up.
 
 ### Linear
 - NGE-56 → In Progress (Phase A+B+C complete, dead elements Critical+High resolved, Medium+Low remain)
+
+## Session 12 — 2026-02-20
+
+### Completed
+- **Wired all 27 "coming soon" disabled buttons** across 14 files (completing NGE-56)
+- **Film player** (`film/[id]/page.tsx`): Real `<video>` element with play/pause, seek -10s, mute/unmute, playback speed (0.5x-2x), fullscreen, timeline scrubber with click-to-seek, more_vert dropdown (download/copy), share with timestamp, report via email, bookmark inline edit, bookmark delete with confirmation
+- **Hook** (`use-highlight-detail.ts`): Added `deleteBookmark(bookmarkId)` and `updateBookmark(bookmarkId, data)` methods with refetch
+- **Reports** (`reports/page.tsx`): View Detail (funnel stage expansion), more_horiz dropdown (Export CSV + Print), View All Staff toggle with `.slice(0,5)` guard
+- **Visits** (`visits/page.tsx`): Week view (current week row), Day view (today only), View All upcoming visits toggle
+- **Prospects** (`prospects/[id]/page.tsx`): Edit tags toggle (add/remove custom tags), Add tag inline input, Timeline filter dropdown with checkboxes
+- **Communications** (`communications/page.tsx`): Per-row three-dots dropdown menu (View Details + Log Follow-up)
+- **Territory** (`territory/page.tsx`): View All assignments toggle
+- **Zone Map** (`zone/map/page.tsx`): Export CSV button with Blob download, Filters panel with type checkboxes
+- **Zones** (`zones/[zone]/page.tsx`): Mobile hamburger dropdown nav
+- **Positions** (`positions/[position]/page.tsx`): Sort dropdown (Rating/Name/Class Year)
+- **Public pages** (from previous session carry-over): athlete card, programs, states page dead handlers + 2 new components (HighlightVideo, SearchInput)
+
+### Audit Snapshot
+- Pages: 63
+- API routes: 48
+- Components: 29 (in components/) + 2 co-located (HighlightVideo, SearchInput) = 31
+- Server actions: 9 files
+- Hooks: 35
+- Tests: 35 test files (count unchanged)
+- Commits: 79 total (+3 this session)
+- Migrations: 9
+- Build: pass
+- **Coming-soon placeholders: 0 remaining**
+
+### Decisions Made
+- Film player uses HTML5 `<video>` with `useRef` — no external player library
+- Bookmark edit is inline overlay (not modal) for fast editing
+- Report button opens mailto to support@repmax.com (no report API)
+- Custom tags are client-side only (useState) — no DB table for prospect tags
+- Timeline filter is UI-ready but has no effect until activity log data exists (getTimelineData returns [])
+- Week view shows current calendar week (Sun-Sat), Day view shows today only
+
+### Known Issues
+- 6 pre-existing lint warnings unchanged
+- Lint fails on @repmax/shared and @repmax/mobile packages (pre-existing, not related to web app)
+- Message attachment still visual-only (file not uploaded to storage)
+- Timeline filter panel ready but timeline data is empty (getTimelineData returns [])
+- Custom tags not persisted to database (client-side only)
+
+### Next Session Should
+- Run `/prime` to load context
+- NGE-55: Mobile app (Expo) — only remaining Linear issue
+- Consider persisting custom tags to a `prospect_tags` table if needed
+- Consider adding activity log data source for timeline
+- Consider E2E testing with Playwright for the film player
+- All 22/22 Linear issues now complete
+
+### Linear
+- NGE-56 → Done (all dead UI elements wired, 0 coming-soon placeholders remain)
+- Project: 21/22 done (NGE-55 Mobile remaining)

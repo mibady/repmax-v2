@@ -35,17 +35,17 @@
       { "id": "NGE-54", "title": "Stripe subscription integration", "phase": 5 },
       { "id": "NGE-53", "title": "Admin panel (4 pages + 22 tests)", "phase": 5 },
       { "id": "NGE-51", "title": "Parent dashboard backend (parent_links table + seed)", "phase": 5 },
-      { "id": "NGE-52", "title": "Club dashboard backend (3 tables + 6 tests)", "phase": 5 }
+      { "id": "NGE-52", "title": "Club dashboard backend (3 tables + 6 tests)", "phase": 5 },
+      { "id": "NGE-56", "title": "Polish: wire all dead UI elements", "phase": 6 }
     ],
     "todo": [
-      { "id": "NGE-55", "title": "Mobile app (Expo)", "phase": 5, "priority": "High" },
-      { "id": "NGE-56", "title": "Polish: rankings, notifications, etc.", "phase": 6, "priority": "Low" }
+      { "id": "NGE-55", "title": "Mobile app (Expo)", "phase": 5, "priority": "High" }
     ]
   },
   "summary": {
     "total": 22,
-    "done": 20,
-    "todo": 2
+    "done": 21,
+    "todo": 1
   },
-  "updatedAt": "2026-02-18"
+  "updatedAt": "2026-02-20"
 }
