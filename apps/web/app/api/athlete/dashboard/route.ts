@@ -160,8 +160,23 @@ export async function GET() {
         };
       });
 
-    // TODO: Create events table for athlete calendar events
-    const calendarEvents: unknown[] = [];
+    // Query upcoming athlete events
+    const { data: rawEvents } = await supabase
+      .from("athlete_events")
+      .select("*")
+      .eq("athlete_id", athlete.id)
+      .gte("event_date", new Date().toISOString().split("T")[0])
+      .order("event_date", { ascending: true })
+      .limit(10);
+
+    const calendarEvents = (rawEvents || []).map((evt) => ({
+      id: evt.id,
+      title: evt.title,
+      date: evt.event_date,
+      type: evt.event_type,
+      location: evt.location || null,
+      description: evt.description || null,
+    }));
 
     return NextResponse.json({
       profile: athleteProfile,
