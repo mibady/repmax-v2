@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { rateLimit } from "@/lib/utils/rate-limit";
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
@@ -13,6 +14,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     if (userError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { success } = await rateLimit(user.id);
+    if (!success) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
 
     const { searchParams } = new URL(request.url);

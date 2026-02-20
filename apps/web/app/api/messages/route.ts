@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { rateLimit } from "@/lib/utils/rate-limit";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -20,6 +21,11 @@ export async function GET(request: Request) {
     } = await supabase.auth.getUser();
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { success } = await rateLimit(user.id);
+    if (!success) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
 
     // Get profile
@@ -85,6 +91,11 @@ export async function POST(request: Request) {
     } = await supabase.auth.getUser();
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { success: rateLimitOk } = await rateLimit(user.id);
+    if (!rateLimitOk) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
 
     // Get profile
