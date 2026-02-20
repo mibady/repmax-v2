@@ -44,17 +44,18 @@
       { "id": "NGE-169", "title": "Recruiter pricing page: role-aware tabs + new tiers" },
       { "id": "NGE-170", "title": "School pricing page + checkout flow" },
       { "id": "NGE-171", "title": "Tournament booking + registration payment flow" },
-      { "id": "NGE-172", "title": "Dashr booking + checkout flow" }
+      { "id": "NGE-172", "title": "Dashr booking + checkout flow" },
+      { "id": "NGE-173", "title": "Stripe product catalog: create 22 prices + 2 coupons in Stripe Dashboard" }
     ],
-    "todo": [
-      { "id": "NGE-55", "title": "Mobile app (Expo)", "phase": 5, "priority": "High" },
-      { "id": "NGE-173", "title": "Stripe product catalog: create 22 prices + 2 coupons in Stripe Dashboard", "priority": "High", "depends": [] }
+    "todo": [],
+    "removed": [
+      { "id": "NGE-55", "title": "Mobile app (Expo)", "reason": "Removed from Linear" }
     ]
   },
   "summary": {
-    "total": 31,
-    "done": 29,
-    "todo": 2
+    "total": 30,
+    "done": 30,
+    "todo": 0
   },
   "updatedAt": "2026-02-21"
 }
