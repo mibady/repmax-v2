@@ -25,12 +25,12 @@ describe('API /api/admin/feature-flags', () => {
   // GET Tests
   // ==========================================
 
-  it('GET returns 401 when unauthenticated', async () => {
+  it('GET returns 403 when unauthenticated', async () => {
     mockUnauthenticated();
     const res = await GET();
-    expect(res.status).toBe(401);
+    expect(res.status).toBe(403);
     const body = await res.json();
-    expect(body.error).toBe('Unauthorized');
+    expect(body.error).toBe('Forbidden');
   });
 
   it('GET returns 403 when not admin', async () => {
@@ -63,21 +63,39 @@ describe('API /api/admin/feature-flags', () => {
   // PUT Tests
   // ==========================================
 
-  it('PUT returns 501 not implemented', async () => {
-    const res = await PUT();
-    expect(res.status).toBe(501);
+  it('PUT returns 403 when unauthenticated', async () => {
+    mockUnauthenticated();
+    const request = new NextRequest(
+      new URL('http://localhost/api/admin/feature-flags'),
+      {
+        method: 'PUT',
+        body: JSON.stringify({ id: '00000000-0000-0000-0000-000000000001', enabled: true }),
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+    const res = await PUT(request);
+    expect(res.status).toBe(403);
     const body = await res.json();
-    expect(body.error).toBe('Feature flags not yet implemented');
+    expect(body.error).toBe('Forbidden');
   });
 
   // ==========================================
   // POST Tests
   // ==========================================
 
-  it('POST returns 501 not implemented', async () => {
-    const res = await POST();
-    expect(res.status).toBe(501);
+  it('POST returns 403 when unauthenticated', async () => {
+    mockUnauthenticated();
+    const request = new NextRequest(
+      new URL('http://localhost/api/admin/feature-flags'),
+      {
+        method: 'POST',
+        body: JSON.stringify({ key: 'test', label: 'Test Flag', enabled: false }),
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+    const res = await POST(request);
+    expect(res.status).toBe(403);
     const body = await res.json();
-    expect(body.error).toBe('Feature flags not yet implemented');
+    expect(body.error).toBe('Forbidden');
   });
 });

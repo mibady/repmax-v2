@@ -186,8 +186,8 @@ export default function TermsPage(): React.JSX.Element {
           <h2 className="text-white text-lg font-semibold mt-8 mb-3">18. Contact</h2>
           <p>
             If you have questions about these Terms of Service, please contact us at{' '}
-            <a href="mailto:support@repmax.com" className="text-primary hover:underline">
-              support@repmax.com
+            <a href="mailto:support@repmax.io" className="text-primary hover:underline">
+              support@repmax.io
             </a>.
           </p>
         </section>

@@ -425,7 +425,7 @@ export default function RecruiterFilmPlayerPage() {
                 </div>
               </button>
               <button onClick={() => {
-                window.open(`mailto:support@repmax.com?subject=Video Report: ${encodeURIComponent(highlight.title)}&body=${encodeURIComponent(`I'd like to report an issue with video: ${window.location.href}`)}`);
+                window.open(`mailto:support@repmax.io?subject=Video Report: ${encodeURIComponent(highlight.title)}&body=${encodeURIComponent(`I'd like to report an issue with video: ${window.location.href}`)}`);
               }} className="flex md:flex-col items-center gap-2 p-3 rounded-lg hover:bg-[#1A1A1A] text-left md:text-center min-w-max transition-colors group">
                 <div className="size-10 rounded-full bg-[#1A1A1A] group-hover:bg-[#333] flex items-center justify-center text-white transition-colors border border-[#333]">
                   <span className="material-symbols-outlined text-[20px]">flag</span>

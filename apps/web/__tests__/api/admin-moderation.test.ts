@@ -127,7 +127,7 @@ describe('API /api/admin/moderation', () => {
     expect(body.error).toBeDefined();
   });
 
-  it('POST returns 501 for approve action (not yet implemented)', async () => {
+  it('POST returns 200 for approve action', async () => {
     mockAuthenticated(adminUser);
     setupModerationMocks();
 
@@ -135,14 +135,15 @@ describe('API /api/admin/moderation', () => {
       new URL('http://localhost/api/admin/moderation'),
       {
         method: 'POST',
-        body: JSON.stringify({ itemId: '1', action: 'approve' }),
+        body: JSON.stringify({ itemId: '00000000-0000-0000-0000-000000000001', action: 'approve' }),
         headers: { 'Content-Type': 'application/json' },
       }
     );
     const res = await POST(request);
-    expect(res.status).toBe(501);
+    expect(res.status).toBe(200);
     const body = await res.json();
-    expect(body.error).toBe('approve action not yet implemented');
+    expect(body.success).toBe(true);
+    expect(body.message).toBe('Content approved successfully');
   });
 
   it('POST accepts valid remove action', async () => {
@@ -153,7 +154,7 @@ describe('API /api/admin/moderation', () => {
       new URL('http://localhost/api/admin/moderation'),
       {
         method: 'POST',
-        body: JSON.stringify({ itemId: '1', action: 'remove' }),
+        body: JSON.stringify({ itemId: '00000000-0000-0000-0000-000000000001', action: 'remove' }),
         headers: { 'Content-Type': 'application/json' },
       }
     );

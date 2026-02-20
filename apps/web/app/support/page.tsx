@@ -21,12 +21,12 @@ export default function SupportPage(): React.JSX.Element {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
         <a
-          href="mailto:support@repmax.com"
+          href="mailto:support@repmax.io"
           className="bg-[#1F1F22] rounded-xl border border-white/5 p-6 hover:border-primary/30 transition-colors"
         >
           <span className="material-symbols-outlined text-primary text-[28px] mb-3">mail</span>
           <h3 className="text-white font-semibold mb-1">Email Support</h3>
-          <p className="text-gray-400 text-sm">support@repmax.com</p>
+          <p className="text-gray-400 text-sm">support@repmax.io</p>
         </a>
         <Link
           href="/help"

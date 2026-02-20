@@ -96,7 +96,7 @@ export default function PrivacyPage(): React.JSX.Element {
             <li>Withdraw consent where processing is based on consent</li>
           </ul>
           <p className="mt-2">
-            To exercise these rights, contact us at support@repmax.com.
+            To exercise these rights, contact us at support@repmax.io.
           </p>
         </section>
 
@@ -131,7 +131,7 @@ export default function PrivacyPage(): React.JSX.Element {
             Privacy Act (CCPA), including the right to know what personal information we collect, the
             right to request deletion, and the right to opt out of the sale of personal information.
             As noted above, we do not sell personal information. To submit a CCPA request, contact us
-            at support@repmax.com.
+            at support@repmax.io.
           </p>
         </section>
 
@@ -149,8 +149,8 @@ export default function PrivacyPage(): React.JSX.Element {
           <h2 className="text-white text-lg font-semibold mt-8 mb-3">12. Contact Us</h2>
           <p>
             If you have questions or concerns about this Privacy Policy, please contact us at{' '}
-            <a href="mailto:support@repmax.com" className="text-primary hover:underline">
-              support@repmax.com
+            <a href="mailto:support@repmax.io" className="text-primary hover:underline">
+              support@repmax.io
             </a>.
           </p>
         </section>

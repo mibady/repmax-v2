@@ -64,7 +64,7 @@ export default function HelpCenterPage(): React.JSX.Element {
             Our support team is here to assist you.
           </p>
           <a
-            href="mailto:support@repmax.com"
+            href="mailto:support@repmax.io"
             className="inline-flex items-center gap-2 bg-primary text-black font-bold text-sm px-5 py-2.5 rounded-lg hover:bg-primary/90 transition-colors"
           >
             <span className="material-symbols-outlined text-[18px]">mail</span>

@@ -100,7 +100,7 @@ export const TEST_PASSWORD = 'TestPass123!';
 export const jaylenWashington: TestUser = {
   id: 'athlete-001',
   repmaxId: 'REP-JW-2026',
-  email: 'jaylen.washington@test.repmax.com',
+  email: 'jaylen.washington@test.repmax.io',
   password: TEST_PASSWORD,
   fullName: 'Jaylen Washington',
   roles: ['athlete'],
@@ -133,7 +133,7 @@ export const jaylenWashington: TestUser = {
 export const marcusThompson: TestUser = {
   id: 'athlete-002',
   repmaxId: 'REP-MT-2026',
-  email: 'marcus.thompson@test.repmax.com',
+  email: 'marcus.thompson@test.repmax.io',
   password: TEST_PASSWORD,
   fullName: 'Marcus Thompson',
   roles: ['athlete'],
@@ -159,7 +159,7 @@ export const marcusThompson: TestUser = {
 export const deshawnHarris: TestUser = {
   id: 'athlete-003',
   repmaxId: 'REP-DH-2026',
-  email: 'deshawn.harris@test.repmax.com',
+  email: 'deshawn.harris@test.repmax.io',
   password: TEST_PASSWORD,
   fullName: 'DeShawn Harris',
   roles: ['athlete'],
@@ -189,7 +189,7 @@ export const deshawnHarris: TestUser = {
 export const sofiaRodriguez: TestUser = {
   id: 'athlete-004',
   repmaxId: 'REP-SR-2026',
-  email: 'sofia.rodriguez@test.repmax.com',
+  email: 'sofia.rodriguez@test.repmax.io',
   password: TEST_PASSWORD,
   fullName: 'Sofia Rodriguez',
   roles: ['athlete', 'club'],
@@ -221,7 +221,7 @@ export const sofiaRodriguez: TestUser = {
 export const tylerChen: TestUser = {
   id: 'athlete-005',
   repmaxId: 'REP-TC-2027',
-  email: 'tyler.chen@test.repmax.com',
+  email: 'tyler.chen@test.repmax.io',
   password: TEST_PASSWORD,
   fullName: 'Tyler Chen',
   roles: ['athlete'],
@@ -245,7 +245,7 @@ export const tylerChen: TestUser = {
 export const andreMitchell: TestUser = {
   id: 'roster-001',
   repmaxId: 'REP-AM-2026',
-  email: 'andre.mitchell@test.repmax.com',
+  email: 'andre.mitchell@test.repmax.io',
   password: TEST_PASSWORD,
   fullName: 'Andre Mitchell',
   roles: ['athlete'],
@@ -268,7 +268,7 @@ export const andreMitchell: TestUser = {
 export const devonBrooks: TestUser = {
   id: 'roster-002',
   repmaxId: 'REP-DB-2026',
-  email: 'devon.brooks@test.repmax.com',
+  email: 'devon.brooks@test.repmax.io',
   password: TEST_PASSWORD,
   fullName: 'Devon Brooks',
   roles: ['athlete'],
@@ -291,7 +291,7 @@ export const devonBrooks: TestUser = {
 export const ryanPark: TestUser = {
   id: 'roster-003',
   repmaxId: 'REP-RP-2026',
-  email: 'ryan.park@test.repmax.com',
+  email: 'ryan.park@test.repmax.io',
   password: TEST_PASSWORD,
   fullName: 'Ryan Park',
   roles: ['athlete'],
@@ -313,7 +313,7 @@ export const ryanPark: TestUser = {
 export const carlosMendez: TestUser = {
   id: 'roster-004',
   repmaxId: 'REP-CM-2026',
-  email: 'carlos.mendez@test.repmax.com',
+  email: 'carlos.mendez@test.repmax.io',
   password: TEST_PASSWORD,
   fullName: 'Carlos Mendez',
   roles: ['athlete'],
@@ -336,7 +336,7 @@ export const carlosMendez: TestUser = {
 export const jamalCarter: TestUser = {
   id: 'roster-005',
   repmaxId: 'REP-JC-2026',
-  email: 'jamal.carter@test.repmax.com',
+  email: 'jamal.carter@test.repmax.io',
   password: TEST_PASSWORD,
   fullName: 'Jamal Carter',
   roles: ['athlete'],
@@ -359,7 +359,7 @@ export const jamalCarter: TestUser = {
 export const tylerGreen: TestUser = {
   id: 'roster-006',
   repmaxId: 'REP-TG-2026',
-  email: 'tyler.green@test.repmax.com',
+  email: 'tyler.green@test.repmax.io',
   password: TEST_PASSWORD,
   fullName: 'Tyler Green',
   roles: ['athlete'],
@@ -381,7 +381,7 @@ export const tylerGreen: TestUser = {
 export const noahWilliams: TestUser = {
   id: 'roster-007',
   repmaxId: 'REP-NW-2027',
-  email: 'noah.williams@test.repmax.com',
+  email: 'noah.williams@test.repmax.io',
   password: TEST_PASSWORD,
   fullName: 'Noah Williams',
   roles: ['athlete'],
@@ -404,7 +404,7 @@ export const noahWilliams: TestUser = {
 export const isaiahBrown: TestUser = {
   id: 'roster-008',
   repmaxId: 'REP-IB-2027',
-  email: 'isaiah.brown@test.repmax.com',
+  email: 'isaiah.brown@test.repmax.io',
   password: TEST_PASSWORD,
   fullName: 'Isaiah Brown',
   roles: ['athlete'],
@@ -426,7 +426,7 @@ export const isaiahBrown: TestUser = {
 export const michaelLee: TestUser = {
   id: 'roster-009',
   repmaxId: 'REP-ML-2026',
-  email: 'michael.lee@test.repmax.com',
+  email: 'michael.lee@test.repmax.io',
   password: TEST_PASSWORD,
   fullName: 'Michael Lee',
   roles: ['athlete'],
@@ -448,7 +448,7 @@ export const michaelLee: TestUser = {
 export const diegoSantos: TestUser = {
   id: 'roster-010',
   repmaxId: 'REP-DS-2027',
-  email: 'diego.santos@test.repmax.com',
+  email: 'diego.santos@test.repmax.io',
   password: TEST_PASSWORD,
   fullName: 'Diego Santos',
   roles: ['athlete'],
@@ -479,7 +479,7 @@ export const diegoSantos: TestUser = {
 export const lisaWashington: TestUser = {
   id: 'parent-001',
   repmaxId: 'REP-LW-0001',
-  email: 'lisa.washington@test.repmax.com',
+  email: 'lisa.washington@test.repmax.io',
   password: TEST_PASSWORD,
   fullName: 'Lisa Washington',
   roles: ['parent'],
@@ -501,7 +501,7 @@ export const lisaWashington: TestUser = {
 export const karenThompson: TestUser = {
   id: 'parent-002',
   repmaxId: 'REP-KT-0001',
-  email: 'karen.thompson@test.repmax.com',
+  email: 'karen.thompson@test.repmax.io',
   password: TEST_PASSWORD,
   fullName: 'Karen Thompson',
   roles: ['parent'],
@@ -526,7 +526,7 @@ export const karenThompson: TestUser = {
 export const coachDavis: TestUser = {
   id: 'coach-001',
   repmaxId: 'REP-CD-0001',
-  email: 'coach.davis@test.repmax.com',
+  email: 'coach.davis@test.repmax.io',
   password: TEST_PASSWORD,
   fullName: 'James Davis',
   roles: ['coach'],
@@ -556,7 +556,7 @@ export const coachDavis: TestUser = {
 export const coachWilliams: TestUser = {
   id: 'recruiter-001',
   repmaxId: 'REP-BW-0001',
-  email: 'coach.williams@test.repmax.com',
+  email: 'coach.williams@test.repmax.io',
   password: TEST_PASSWORD,
   fullName: 'Brian Williams',
   roles: ['recruiter'],
@@ -581,7 +581,7 @@ export const coachWilliams: TestUser = {
 export const coachMartinez: TestUser = {
   id: 'recruiter-002',
   repmaxId: 'REP-AM-0001',
-  email: 'coach.martinez@test.repmax.com',
+  email: 'coach.martinez@test.repmax.io',
   password: TEST_PASSWORD,
   fullName: 'Alex Martinez',
   roles: ['recruiter'],
@@ -611,7 +611,7 @@ export const coachMartinez: TestUser = {
 export const mikeTorres: TestUser = {
   id: 'club-001',
   repmaxId: 'REP-MT-0001',
-  email: 'mike.torres@test.repmax.com',
+  email: 'mike.torres@test.repmax.io',
   password: TEST_PASSWORD,
   fullName: 'Mike Torres',
   roles: ['club'],
@@ -637,7 +637,7 @@ export const mikeTorres: TestUser = {
 export const adminUser: TestUser = {
   id: 'admin-001',
   repmaxId: 'REP-ADMIN-0001',
-  email: 'admin@repmax.com',
+  email: 'admin@repmax.io',
   password: TEST_PASSWORD,
   fullName: 'Admin User',
   roles: ['admin'],

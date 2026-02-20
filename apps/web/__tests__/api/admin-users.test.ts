@@ -25,7 +25,7 @@ describe('API /api/admin/users', () => {
       {
         id: 'admin-001',
         full_name: 'Admin User',
-        email: 'admin@repmax.com',
+        email: 'admin@repmax.io',
         role: 'admin',
         avatar_url: null,
         created_at: '2026-01-01T00:00:00Z',

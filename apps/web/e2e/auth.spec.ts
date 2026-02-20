@@ -108,7 +108,7 @@ test.describe('Authenticated Navigation', () => {
 
   test.skip('should redirect to dashboard after sign in', async ({ page }) => {
     await page.goto('/sign-in');
-    await page.getByLabel(/email/i).fill('jaylen.washington@test.repmax.com');
+    await page.getByLabel(/email/i).fill('jaylen.washington@test.repmax.io');
     await page.getByLabel(/password/i).fill('TestPassword123!');
     await page.getByRole('button', { name: /sign in/i }).click();
 
