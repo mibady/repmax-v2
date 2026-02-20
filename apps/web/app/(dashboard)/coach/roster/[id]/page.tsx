@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { useAthlete } from '@/lib/hooks';
 
 export default function CoachRosterDetailPage(): React.JSX.Element {
@@ -18,13 +19,14 @@ export default function CoachRosterDetailPage(): React.JSX.Element {
     try {
       const res = await fetch(`/api/shortlists?athlete_id=${id}`, { method: 'DELETE' });
       if (res.ok) {
+        toast.success('Athlete removed from roster');
         router.push('/coach/roster');
       } else {
         const data = await res.json();
-        alert(data.error || 'Failed to remove athlete');
+        toast.error(data.error || 'Failed to remove athlete');
       }
     } catch {
-      alert('Failed to remove athlete');
+      toast.error('Failed to remove athlete');
     } finally {
       setIsRemoving(false);
     }

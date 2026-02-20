@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useCampusVisits } from '@/lib/hooks';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -406,7 +407,9 @@ export default function CampusVisitsPage() {
                               onClick={async () => {
                                 const result = await updateVisit(visit.id, { status: 'confirmed' });
                                 if (result.error) {
-                                  alert(result.error);
+                                  toast.error(result.error);
+                                } else {
+                                  toast.success('Visit confirmed');
                                 }
                               }}
                               className="flex-1 rounded bg-primary/10 py-1.5 text-xs font-medium text-primary hover:bg-primary/20 transition"
@@ -417,7 +420,9 @@ export default function CampusVisitsPage() {
                               onClick={async () => {
                                 const result = await cancelVisit(visit.id);
                                 if (result.error) {
-                                  alert(result.error);
+                                  toast.error(result.error);
+                                } else {
+                                  toast.success('Visit cancelled');
                                 }
                               }}
                               className="rounded bg-white/5 px-3 py-1.5 text-[#A1A1AA] hover:text-white hover:bg-white/10 transition"
@@ -438,7 +443,9 @@ export default function CampusVisitsPage() {
                               onClick={async () => {
                                 const result = await cancelVisit(visit.id);
                                 if (result.error) {
-                                  alert(result.error);
+                                  toast.error(result.error);
+                                } else {
+                                  toast.success('Visit cancelled');
                                 }
                               }}
                               className="rounded bg-white/5 px-3 py-1.5 text-[#A1A1AA] hover:text-white hover:bg-white/10 transition"
@@ -483,8 +490,9 @@ export default function CampusVisitsPage() {
                     ...(scheduleForm.notes ? { notes: scheduleForm.notes } : {}),
                   });
                   if (result.error) {
-                    alert(result.error);
+                    toast.error(result.error);
                   } else {
+                    toast.success('Visit scheduled');
                     setShowScheduleModal(false);
                     setScheduleForm({ athlete_id: '', visit_date: '', visit_type: 'unofficial', visit_time: '', notes: '' });
                   }

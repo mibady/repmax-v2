@@ -8,24 +8,28 @@ const resources = [
     color: 'bg-blue-500/20 text-blue-400',
     title: 'Eligibility Requirements',
     description: 'Learn about GPA requirements, test scores, and core courses needed for NCAA eligibility.',
+    url: 'https://web3.ncaa.org/ecwr3/',
   },
   {
     icon: 'gavel',
     color: 'bg-purple-500/20 text-purple-400',
     title: 'NCAA Recruiting Rules',
     description: 'Understand contact periods, official visits, and communication rules for each division.',
+    url: 'https://www.ncaa.org/sports/2014/10/28/recruiting.aspx',
   },
   {
     icon: 'event',
     color: 'bg-green-500/20 text-green-400',
     title: 'Important Dates',
     description: 'Key deadlines for registration, eligibility center, and recruiting periods.',
+    url: 'https://www.ncaa.org/sports/2015/2/5/important-dates.aspx',
   },
   {
     icon: 'link',
     color: 'bg-orange-500/20 text-orange-400',
     title: 'Helpful Links',
     description: 'External resources including NCAA Eligibility Center, scholarship databases, and recruiting guides.',
+    url: 'https://www.ncaa.org/student-athletes/future/helpful-links',
   },
 ];
 
@@ -54,7 +58,7 @@ export default function ParentResourcesPage(): JSX.Element {
               </div>
               <h3 className="text-white font-semibold mb-2">{resource.title}</h3>
               <p className="text-slate-400 text-sm mb-4">{resource.description}</p>
-              <a href="#" className="text-sm font-semibold text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-1">
+              <a href={resource.url} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-1">
                 Learn More
                 <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
               </a>

@@ -124,7 +124,7 @@ export default function StateLandingPage() {
               <div className="text-[#c3b998] flex border-none items-center justify-center pl-4 rounded-l-full">
                 <span className="material-symbols-outlined">search</span>
               </div>
-              <input className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-full text-white focus:outline-0 focus:ring-0 border-none bg-transparent h-full placeholder:text-[#666] px-4 pl-2 text-sm font-normal leading-normal" placeholder="Search athletes..." value={search} onChange={(e) => setSearch(e.target.value)} />
+              <input className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-full text-white focus:outline-0 focus:ring-0 border-none bg-transparent h-full placeholder:text-[#666] px-4 pl-2 text-sm font-normal leading-normal" placeholder="Search programs..." value={search} onChange={(e) => setSearch(e.target.value)} />
             </div>
           </label>
           <div className="flex gap-2">
