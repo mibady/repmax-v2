@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { useAthlete } from "@/lib/hooks";
+import { useAthlete, useHighlights } from "@/lib/hooks";
 import { ZONE_COLORS, getPlaceholderImage } from "@/lib/data/zone-data";
 import type { ZoneCode } from "@/lib/data/zone-data";
 
@@ -33,6 +33,8 @@ export default function AthletePage() {
   const athleteId = params.id as string;
 
   const { athlete, isLoading, error } = useAthlete(athleteId);
+  const { highlights } = useHighlights(athleteId);
+  const firstHighlight = highlights?.[0];
 
   if (error) {
     return (
@@ -247,7 +249,7 @@ export default function AthletePage() {
                   </div>
                   <Link href={`/athlete/${athleteId}#highlights`} className={`text-xs ${colors.text} font-medium cursor-pointer hover:underline`}>View All</Link>
                 </div>
-                <div className="relative w-full aspect-video rounded-2xl overflow-hidden group cursor-pointer border border-white/10">
+                <div className="relative w-full aspect-video rounded-2xl overflow-hidden group cursor-pointer border border-white/10" onClick={() => firstHighlight?.video_url && window.open(firstHighlight.video_url, '_blank')}>
                   <div
                     className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 bg-gradient-to-br from-gray-800 to-gray-900"
                     style={{ backgroundImage: undefined }}

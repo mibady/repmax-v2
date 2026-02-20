@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import SearchInput from './SearchInput';
 import { notFound } from 'next/navigation';
 
 // Placeholder gradient generator for avatar images
@@ -58,14 +59,7 @@ export default async function ProgramSpotlightPage({ params }: { params: Promise
           </div>
           <div className="flex items-center gap-4">
             {/* Search */}
-            <div className="hidden sm:flex items-center rounded-full bg-[#1F1F22] px-3 py-1.5 ring-1 ring-white/5 focus-within:ring-[#D4AF37]/50 transition-all">
-              <span className="material-symbols-outlined text-gray-500 text-[20px]">search</span>
-              <input
-                className="bg-transparent border-none text-sm text-white placeholder-gray-500 focus:ring-0 w-48"
-                placeholder="Search programs..."
-                type="text"
-              />
-            </div>
+            <SearchInput />
             {/* User Avatar */}
             <div className="relative size-9 rounded-full bg-[#1F1F22] overflow-hidden ring-1 ring-white/10">
               <div

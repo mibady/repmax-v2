@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useMcpPrograms, useMcpCalendar, useMcpZones } from "@/lib/hooks";
@@ -86,12 +87,18 @@ export default function StateLandingPage() {
   const { calendar } = useMcpCalendar();
   const { zones } = useMcpZones();
 
+  const [search, setSearch] = useState("");
+
   // Find the zone info for this state
   const zoneInfo = zones.find(z => z.zone_code === zoneCode);
 
   // Get total recruits from the zone (as a rough estimate for the state)
   const totalRecruits = zoneInfo?.total_recruits || 0;
   const estimatedStateRecruits = Math.floor(totalRecruits / (zoneInfo?.states?.length || 1));
+
+  const filteredPrograms = programs.filter((p) =>
+    p.team_name.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="bg-[#050505] text-white font-[family-name:var(--font-inter)] relative flex min-h-screen w-full flex-col overflow-x-hidden">
@@ -117,7 +124,7 @@ export default function StateLandingPage() {
               <div className="text-[#c3b998] flex border-none items-center justify-center pl-4 rounded-l-full">
                 <span className="material-symbols-outlined">search</span>
               </div>
-              <input className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-full text-white focus:outline-0 focus:ring-0 border-none bg-transparent h-full placeholder:text-[#666] px-4 pl-2 text-sm font-normal leading-normal" placeholder="Search athletes..." />
+              <input className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-full text-white focus:outline-0 focus:ring-0 border-none bg-transparent h-full placeholder:text-[#666] px-4 pl-2 text-sm font-normal leading-normal" placeholder="Search athletes..." value={search} onChange={(e) => setSearch(e.target.value)} />
             </div>
           </label>
           <div className="flex gap-2">
@@ -200,9 +207,9 @@ export default function StateLandingPage() {
               <span className="material-symbols-outlined text-4xl mb-2">error</span>
               <p>Error loading programs</p>
             </div>
-          ) : programs.length > 0 ? (
+          ) : filteredPrograms.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {programs.slice(0, 4).map((program) => (
+              {filteredPrograms.slice(0, 4).map((program) => (
                 <ProgramCard key={program.id} program={program} />
               ))}
             </div>

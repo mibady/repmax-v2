@@ -1,8 +1,10 @@
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Tables } from "@/types/database";
 import CardActions from "./CardActions";
+import HighlightVideo from "./HighlightVideo";
 
 type AthleteWithProfile = Tables<"athletes"> & {
   profile: Tables<"profiles"> | null;
@@ -71,9 +73,11 @@ export default async function AthleteCardPage({
       thumbnail: typedAthlete.highlights[0].thumbnail_url ||
         "https://lh3.googleusercontent.com/aida-public/AB6AXuD0kL36A2BWxzFzDUEhlWJflUxzoToTl3AVBx8LzI8iXl6P_Z2w19x4UrmKu2VUVyUBN16sRxKirK-0xo1Q3OEi-cm8wO11Ss4uNOiRuWCTvioea_8BO16HCcKknhuyrRjhmh0AB2SG28LVgZu0kgYmiqig0zn4MTbOoRAf5NbTSu-kU5DvK6uoxxTYuIRZU9QWNLIHWpwN_G6Pd7A38-TGI-yTko6oAGBpneHDt5iI0UzinakkTymm-Gr4TeQk9oco8CsaakatJMs",
       title: typedAthlete.highlights[0].title,
+      videoUrl: typedAthlete.highlights[0].video_url || null,
     } : {
       thumbnail: "https://lh3.googleusercontent.com/aida-public/AB6AXuD0kL36A2BWxzFzDUEhlWJflUxzoToTl3AVBx8LzI8iXl6P_Z2w19x4UrmKu2VUVyUBN16sRxKirK-0xo1Q3OEi-cm8wO11Ss4uNOiRuWCTvioea_8BO16HCcKknhuyrRjhmh0AB2SG28LVgZu0kgYmiqig0zn4MTbOoRAf5NbTSu-kU5DvK6uoxxTYuIRZU9QWNLIHWpwN_G6Pd7A38-TGI-yTko6oAGBpneHDt5iI0UzinakkTymm-Gr4TeQk9oco8CsaakatJMs",
       title: "No highlights uploaded yet",
+      videoUrl: null,
     },
   };
 
@@ -310,31 +314,15 @@ export default async function AthleteCardPage({
                   Highlights
                 </h2>
               </div>
-              <span className="text-xs text-primary font-medium opacity-50">
+              <Link href={`/athlete/${athlete.id}#highlights`} className="text-xs text-primary font-medium hover:underline">
                 View All
-              </span>
+              </Link>
             </div>
-            <div className="relative w-full aspect-video rounded-2xl overflow-hidden group cursor-pointer border border-white/10">
-              <div
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                style={{
-                  backgroundImage: `url('${athlete.highlightVideo.thumbnail}')`,
-                }}
-              />
-              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-14 h-14 rounded-full bg-primary/90 flex items-center justify-center pl-1 shadow-glow group-hover:scale-110 transition-transform">
-                  <span className="material-symbols-outlined text-black text-[32px] font-bold">
-                    play_arrow
-                  </span>
-                </div>
-              </div>
-              <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md px-2 py-1 rounded-md">
-                <p className="text-[10px] text-white font-medium">
-                  {athlete.highlightVideo.title}
-                </p>
-              </div>
-            </div>
+            <HighlightVideo
+              thumbnail={athlete.highlightVideo.thumbnail}
+              title={athlete.highlightVideo.title}
+              videoUrl={athlete.highlightVideo.videoUrl}
+            />
           </section>
         </div>
 
