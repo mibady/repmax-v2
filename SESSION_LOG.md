@@ -604,3 +604,67 @@ This project existed before tracking was set up.
 ### Linear
 - NGE-56 → Done (all dead UI elements wired, 0 coming-soon placeholders remain)
 - Project: 21/22 done (NGE-55 Mobile remaining)
+
+---
+
+## Session 13 — 2026-02-20
+
+### Completed
+- **Complete Pricing & Stripe Product Catalog** — master reference for all 6 product lines (18 Stripe products, 22 price objects, 2 coupons)
+- **5 spec files created:**
+  - `specs/pricing-catalog.md` — master pricing reference (all 6 specs)
+  - `specs/recruiter-pricing-plan.md` — Spec B: 4-tier recruiter subs ($0/$99/$299/$399)
+  - `specs/school-b2b-plan.md` — Spec C: 3-tier annual school B2B subs ($1,500–$3,500/yr)
+  - `specs/tournament-events-plan.md` — Spec D: 3 organizer tiers + variable registration fees
+  - `specs/dashr-combines-plan.md` — Spec E: 5 Dashr products ($79.99–$199)
+- **Code implementation:**
+  - `getPriceId()` expanded from 3 legacy slugs to 25 (all specs A–E)
+  - New `createOneTimeCheckout()` function for event/Dashr products (Stripe mode: payment)
+  - New `createRegistrationPayment()` function for tournament variable-amount PaymentIntents with 5% platform fee
+  - Webhook handler: added `checkout.session.completed` for payment mode → `one_time_purchases` table
+  - Webhook handler: added `payment_intent.succeeded` → tournament registration fee tracking
+  - `.env.example` updated with all 22 new Stripe env vars organized by spec
+- **Linear tracking:** Added NGE-165 through NGE-173 (9 new issues with dependency chains)
+- **Prior session cleanup:** Committed 26 files of uncommitted work from Sessions 11-12 (UI pages, API routes, migration, dependencies)
+- **Lint fix:** Fixed `prefer-const` error in recruiter assignments route
+
+### Audit Snapshot
+- Pages: 63
+- API routes: 48
+- Components: 29
+- Server actions: 9 files
+- Hooks: 35
+- Tests: 33 test files, 385/385 passing
+- Spec files: 16
+- Commits: 85 total (+6 this session)
+- Migrations: 10
+- Build: pass
+
+### Decisions Made
+- `getPriceId()` keeps legacy slugs (pro/team/scout) alongside new role-specific slugs — existing subscribers need migration path
+- One-time payments use `createOneTimeCheckout()` (Stripe Checkout mode:payment), tournament registration fees use `createRegistrationPayment()` (Stripe PaymentIntents — variable amounts)
+- Platform fee for tournaments is 5% by default, stored on `tournaments.platform_fee_rate`, negotiable per organizer
+- No Stripe Connect required for MVP — platform fee tracked in ledger model, manual payouts
+- Parent portal is free (bundled with athlete subscription) — no Stripe products needed
+- `SUBSCRIPTION_SLUGS` set removed (unused) — subscription mode determined by existing `createCheckoutSession` flow
+
+### Known Issues
+- 5 pre-existing lint warnings unchanged
+- A linter hook keeps renaming env vars in subscription-actions.ts (adding `_MONTHLY_`/`_ANNUAL_` suffixes) — reverted each time; may need hook investigation
+- `one_time_purchases` and `tournament_registrations` tables referenced in webhook but may not exist yet in DB — need migrations
+- Stripe products not yet created in Stripe Dashboard (NGE-173)
+- 22 new env vars have placeholder values — need real Stripe Price IDs after products created
+
+### Next Session Should
+- Run `/prime` to load context
+- **NGE-173:** Create 22 Stripe Price objects + 2 coupons in Stripe Dashboard, then populate env vars
+- **NGE-165:** Recruiter pricing page — role-aware tabs with new 4-tier pricing
+- **NGE-166:** School B2B pricing page + checkout flow
+- **NGE-167–168:** Tournament + Dashr booking flows
+- **NGE-55:** Mobile app (Expo) — still pending
+- Create DB migrations for `one_time_purchases` and `tournament_registrations` tables
+- Investigate linter hook that renames env vars in subscription-actions.ts
+
+### Linear
+- NGE-165 through NGE-173 added to tracking (9 new issues)
+- Project: 21/31 done (10 todo, up from 1)
