@@ -12,6 +12,8 @@ export default function CampusVisitsPage() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [isScheduling, setIsScheduling] = useState(false);
+  const [viewMode, setViewMode] = useState<'month' | 'week' | 'day'>('month');
+  const [showAllVisits, setShowAllVisits] = useState(false);
   const [scheduleForm, setScheduleForm] = useState({
     athlete_id: '',
     visit_date: '',
@@ -141,13 +143,9 @@ export default function CampusVisitsPage() {
                     </button>
                   </div>
                   <div className="flex bg-[#1F1F22] rounded-lg p-1 border border-white/5 text-xs font-medium">
-                    <button className="px-3 py-1 rounded-md bg-white/10 text-white">Month</button>
-                    <button className="px-3 py-1 rounded-md text-[#A1A1AA] hover:text-white hover:bg-white/5">
-                      Week
-                    </button>
-                    <button className="px-3 py-1 rounded-md text-[#A1A1AA] hover:text-white hover:bg-white/5">
-                      Day
-                    </button>
+                    <button onClick={() => setViewMode('month')} className={`px-3 py-1 rounded-md ${viewMode === 'month' ? "bg-white/10 text-white" : "text-[#A1A1AA] hover:text-white hover:bg-white/5"}`}>Month</button>
+                    <button onClick={() => setViewMode('week')} className={`px-3 py-1 rounded-md ${viewMode === 'week' ? "bg-white/10 text-white" : "text-[#A1A1AA] hover:text-white hover:bg-white/5"}`}>Week</button>
+                    <button onClick={() => setViewMode('day')} className={`px-3 py-1 rounded-md ${viewMode === 'day' ? "bg-white/10 text-white" : "text-[#A1A1AA] hover:text-white hover:bg-white/5"}`}>Day</button>
                   </div>
                 </div>
               </div>
@@ -166,72 +164,139 @@ export default function CampusVisitsPage() {
                   ))}
                 </div>
 
-                {/* Calendar Grid */}
-                <div className="grid grid-cols-7 auto-rows-[minmax(100px,auto)] bg-[#1F1F22]">
-                  {/* Previous Month Days */}
-                  {prevMonthDays.map((day) => (
-                    <div
-                      key={`prev-${day}`}
-                      className="border-b border-r border-white/5 p-2 text-[#A1A1AA]/30 bg-white/[0.01]"
-                    >
-                      {day}
-                    </div>
-                  ))}
-
-                  {/* Current Month Days */}
-                  {currentMonthDays.map((day) => {
-                    const events = getEventsForDay(day);
-                    const isToday = day === todayDay;
-
-                    return (
-                      <div
-                        key={day}
-                        className="border-b border-r border-white/5 p-2 relative group hover:bg-white/[0.02] transition-colors"
-                      >
-                        {isToday ? (
-                          <div className="size-7 flex items-center justify-center rounded-full bg-primary text-[#121214] font-bold text-sm mb-1 shadow-lg shadow-primary/20">
-                            {day}
-                          </div>
-                        ) : (
-                          <span className="text-sm text-[#A1A1AA] font-medium block mb-1">{day}</span>
-                        )}
-
-                        {events.map((event, idx) => {
-                          const bgColor =
-                            event.type === 'official'
-                              ? 'bg-primary/20 border-primary text-primary'
-                              : event.type === 'unofficial'
-                                ? 'bg-blue-500/20 border-blue-500 text-blue-200'
-                                : 'bg-purple-500/20 border-purple-500 text-purple-200';
-
-                          return (
-                            <div
-                              key={idx}
-                              className={`${bgColor} border-l-2 rounded-r px-2 py-1 text-xs mb-1 cursor-pointer hover:brightness-110`}
-                            >
-                              <p className="font-semibold truncate">{event.title}</p>
-                              {event.type !== 'event' && (
-                                <p className="text-[10px] truncate opacity-70">
-                                  {event.type === 'official' ? 'Official Visit' : 'Unofficial'}
-                                </p>
-                              )}
-                            </div>
-                          );
-                        })}
+                {viewMode === 'day' ? (
+                  /* Day View — show only today */
+                  <div className="p-4">
+                    <div className="bg-white/[0.02] rounded-lg p-4 min-h-[200px]">
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="size-8 flex items-center justify-center rounded-full bg-primary text-[#121214] font-bold text-sm">
+                          {today.getDate()}
+                        </div>
+                        <span className="text-white font-medium">{today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</span>
                       </div>
-                    );
-                  })}
-
-                  {/* Next Month Days */}
-                  {nextMonthDays.map((day) => (
-                    <div
-                      key={`next-${day}`}
-                      className="border-b border-r border-white/5 p-2 text-[#A1A1AA]/30 bg-white/[0.01]"
-                    >
-                      {day}
+                      {(() => {
+                        const events = isCurrentMonth ? getEventsForDay(today.getDate()) : [];
+                        return events.length === 0 ? (
+                          <p className="text-[#A1A1AA] text-sm">No visits scheduled for today.</p>
+                        ) : (
+                          <div className="flex flex-col gap-2">
+                            {events.map((event, idx) => {
+                              const bgColor = event.type === 'official' ? 'bg-primary/20 border-primary text-primary' : event.type === 'unofficial' ? 'bg-blue-500/20 border-blue-500 text-blue-200' : 'bg-purple-500/20 border-purple-500 text-purple-200';
+                              return (
+                                <div key={idx} onClick={() => { const el = document.getElementById(`visit-${event.title.replace(/\s+/g, "-")}`); if (el) el.scrollIntoView({ behavior: "smooth", block: "center" }); }} className={`${bgColor} border-l-2 rounded-r px-3 py-2 text-sm cursor-pointer hover:brightness-110`}>
+                                  <p className="font-semibold">{event.title}</p>
+                                  {event.type !== 'event' && <p className="text-xs opacity-70">{event.type === 'official' ? 'Official Visit' : 'Unofficial'}</p>}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        );
+                      })()}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ) : viewMode === 'week' ? (
+                  /* Week View — show the current week row */
+                  <div className="grid grid-cols-7 auto-rows-[minmax(150px,auto)] bg-[#1F1F22]">
+                    {(() => {
+                      const todayDayOfWeek = today.getDay();
+                      const weekDays = Array.from({ length: 7 }, (_, i) => {
+                        const d = new Date(today);
+                        d.setDate(today.getDate() - todayDayOfWeek + i);
+                        return d;
+                      });
+                      return weekDays.map((d) => {
+                        const isThisMonth = d.getMonth() === month && d.getFullYear() === year;
+                        const dayNum = d.getDate();
+                        const events = isThisMonth ? getEventsForDay(dayNum) : [];
+                        const isTodayCell = d.toDateString() === today.toDateString();
+                        return (
+                          <div key={d.toISOString()} className={`border-b border-r border-white/5 p-2 ${!isThisMonth ? 'bg-white/[0.01]' : ''} hover:bg-white/[0.02] transition-colors`}>
+                            {isTodayCell ? (
+                              <div className="size-7 flex items-center justify-center rounded-full bg-primary text-[#121214] font-bold text-sm mb-1 shadow-lg shadow-primary/20">{dayNum}</div>
+                            ) : (
+                              <span className={`text-sm font-medium block mb-1 ${isThisMonth ? 'text-[#A1A1AA]' : 'text-[#A1A1AA]/30'}`}>{dayNum}</span>
+                            )}
+                            {events.map((event, idx) => {
+                              const bgColor = event.type === 'official' ? 'bg-primary/20 border-primary text-primary' : event.type === 'unofficial' ? 'bg-blue-500/20 border-blue-500 text-blue-200' : 'bg-purple-500/20 border-purple-500 text-purple-200';
+                              return (
+                                <div key={idx} onClick={() => { const el = document.getElementById(`visit-${event.title.replace(/\s+/g, "-")}`); if (el) el.scrollIntoView({ behavior: "smooth", block: "center" }); }} className={`${bgColor} border-l-2 rounded-r px-2 py-1 text-xs mb-1 cursor-pointer hover:brightness-110`}>
+                                  <p className="font-semibold truncate">{event.title}</p>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        );
+                      });
+                    })()}
+                  </div>
+                ) : (
+                  /* Month View (default) */
+                  <div className="grid grid-cols-7 auto-rows-[minmax(100px,auto)] bg-[#1F1F22]">
+                    {/* Previous Month Days */}
+                    {prevMonthDays.map((day) => (
+                      <div
+                        key={`prev-${day}`}
+                        className="border-b border-r border-white/5 p-2 text-[#A1A1AA]/30 bg-white/[0.01]"
+                      >
+                        {day}
+                      </div>
+                    ))}
+
+                    {/* Current Month Days */}
+                    {currentMonthDays.map((day) => {
+                      const events = getEventsForDay(day);
+                      const isToday = day === todayDay;
+
+                      return (
+                        <div
+                          key={day}
+                          className="border-b border-r border-white/5 p-2 relative group hover:bg-white/[0.02] transition-colors"
+                        >
+                          {isToday ? (
+                            <div className="size-7 flex items-center justify-center rounded-full bg-primary text-[#121214] font-bold text-sm mb-1 shadow-lg shadow-primary/20">
+                              {day}
+                            </div>
+                          ) : (
+                            <span className="text-sm text-[#A1A1AA] font-medium block mb-1">{day}</span>
+                          )}
+
+                          {events.map((event, idx) => {
+                            const bgColor =
+                              event.type === 'official'
+                                ? 'bg-primary/20 border-primary text-primary'
+                                : event.type === 'unofficial'
+                                  ? 'bg-blue-500/20 border-blue-500 text-blue-200'
+                                  : 'bg-purple-500/20 border-purple-500 text-purple-200';
+
+                            return (
+                              <div
+                                key={idx}
+                                onClick={() => { const el = document.getElementById(`visit-${event.title.replace(/\s+/g, "-")}`); if (el) el.scrollIntoView({ behavior: "smooth", block: "center" }); }} title={`${event.title} - ${event.type === "official" ? "Official" : "Unofficial"} Visit`} className={`${bgColor} border-l-2 rounded-r px-2 py-1 text-xs mb-1 cursor-pointer hover:brightness-110`}
+                              >
+                                <p className="font-semibold truncate">{event.title}</p>
+                                {event.type !== 'event' && (
+                                  <p className="text-[10px] truncate opacity-70">
+                                    {event.type === 'official' ? 'Official Visit' : 'Unofficial'}
+                                  </p>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      );
+                    })}
+
+                    {/* Next Month Days */}
+                    {nextMonthDays.map((day) => (
+                      <div
+                        key={`next-${day}`}
+                        className="border-b border-r border-white/5 p-2 text-[#A1A1AA]/30 bg-white/[0.01]"
+                      >
+                        {day}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Color Key Legend */}
@@ -255,7 +320,7 @@ export default function CampusVisitsPage() {
             <div className="xl:col-span-4 flex flex-col gap-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-bold text-white">Upcoming Visits</h3>
-                <button disabled title="Coming soon" className="text-xs text-primary font-medium opacity-50 cursor-not-allowed">View All</button>
+                <button onClick={() => setShowAllVisits(!showAllVisits)} className="text-xs text-primary font-medium hover:text-[#b08d1a] transition-colors">{showAllVisits ? 'Show Less' : `View All (${visits.length})`}</button>
               </div>
               {visits.length === 0 ? (
                 <div className="bg-[#1F1F22] rounded-xl border border-white/5 p-8 text-center">
@@ -267,9 +332,10 @@ export default function CampusVisitsPage() {
                 </div>
               ) : (
                 <div className="flex flex-col gap-3">
-                  {visits.slice(0, 5).map((visit) => (
+                  {(showAllVisits ? visits : visits.slice(0, 5)).map((visit) => (
                     <div
                       key={visit.id}
+                      id={`visit-${visit.athleteName.replace(/\s+/g, "-")}`}
                       className={`flex flex-col p-4 rounded-xl bg-[#1F1F22] border-l-4 ${
                         visit.visitType === 'official' ? 'border-primary' : 'border-blue-500'
                       } shadow-sm hover:shadow-md transition-all group`}

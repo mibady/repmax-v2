@@ -227,6 +227,8 @@ export default function TerritoryAssignmentsPage() {
   const isLoading = zonesLoading || assignmentsLoading;
   const error = zonesError || assignmentsError;
 
+  const [showAllAssignments, setShowAllAssignments] = useState(false);
+
   const assignedZones = zones.filter(z => getAssignmentForZone(z.zone_code));
   const unassignedZones = zones.filter(z => !getAssignmentForZone(z.zone_code));
 
@@ -363,7 +365,7 @@ export default function TerritoryAssignmentsPage() {
                 <div className="mb-8">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-sm font-bold text-white uppercase tracking-wider">Active Assignments</h3>
-                    <button disabled title="Coming soon" className="text-xs text-[#D4AF37] font-medium opacity-50 cursor-not-allowed">View All</button>
+                    <button onClick={() => setShowAllAssignments(!showAllAssignments)} className="text-xs text-[#D4AF37] font-medium hover:text-[#b08d1a] transition-colors">{showAllAssignments ? 'Show Less' : 'View All'}</button>
                   </div>
                   <div className="flex flex-col gap-3">
                     {assignedZones.map(zone => (

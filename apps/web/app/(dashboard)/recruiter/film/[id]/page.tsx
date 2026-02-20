@@ -3,7 +3,7 @@
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useHighlightDetail } from '@/lib/hooks';
-import { useState } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Loader2 } from 'lucide-react';
 
 interface AddBookmarkModalProps {
@@ -78,12 +78,80 @@ export default function RecruiterFilmPlayerPage() {
   const router = useRouter();
   const highlightId = params.id as string;
 
-  const { highlight, bookmarks, isLoading, error, formatTimestamp, formatHeight, createBookmark } =
+  const { highlight, bookmarks, isLoading, error, formatTimestamp, formatHeight, createBookmark, deleteBookmark, updateBookmark } =
     useHighlightDetail(highlightId);
 
-  const [currentTime, _setCurrentTime] = useState(0); // eslint-disable-line @typescript-eslint/no-unused-vars
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
+  const [showSpeedMenu, setShowSpeedMenu] = useState(false);
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [showAddBookmark, setShowAddBookmark] = useState(false);
   const [isCreatingBookmark, setIsCreatingBookmark] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [editingBookmarkId, setEditingBookmarkId] = useState<string | null>(null);
+  const [editBookmarkNotes, setEditBookmarkNotes] = useState('');
+
+  const togglePlay = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.paused) {
+      video.play();
+      setIsPlaying(true);
+    } else {
+      video.pause();
+      setIsPlaying(false);
+    }
+  }, []);
+
+  const seekBack = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.currentTime = Math.max(0, video.currentTime - 10);
+  }, []);
+
+  const toggleMute = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = !video.muted;
+    setIsMuted(video.muted);
+  }, []);
+
+  const changeSpeed = useCallback((speed: number) => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.playbackRate = speed;
+    setPlaybackSpeed(speed);
+    setShowSpeedMenu(false);
+  }, []);
+
+  const toggleFullscreen = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      video.requestFullscreen();
+    }
+  }, []);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const handleTimeUpdate = () => setCurrentTime(Math.floor(video.currentTime));
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+    video.addEventListener('timeupdate', handleTimeUpdate);
+    video.addEventListener('play', handlePlay);
+    video.addEventListener('pause', handlePause);
+    return () => {
+      video.removeEventListener('timeupdate', handleTimeUpdate);
+      video.removeEventListener('play', handlePlay);
+      video.removeEventListener('pause', handlePause);
+    };
+  }, [highlight]);
 
   const handleAddBookmark = async (data: { notes: string; label?: string }) => {
     setIsCreatingBookmark(true);
@@ -148,10 +216,19 @@ export default function RecruiterFilmPlayerPage() {
         <div className="w-full max-w-[960px] mx-auto flex flex-col gap-6">
           {/* Video Player Component */}
           <div className="group/player relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/10">
-            {/* Video/Thumbnail */}
-            {highlight.thumbnail_url ? (
+            {/* Real Video Element */}
+            {highlight.video_url ? (
+              <video
+                ref={videoRef}
+                src={highlight.video_url}
+                poster={highlight.thumbnail_url || undefined}
+                className="absolute inset-0 w-full h-full object-contain"
+                onClick={togglePlay}
+                playsInline
+              />
+            ) : highlight.thumbnail_url ? (
               <div
-                className="absolute inset-0 bg-cover bg-center opacity-90 transition-opacity duration-300"
+                className="absolute inset-0 bg-cover bg-center opacity-90"
                 style={{ backgroundImage: `url('${highlight.thumbnail_url}')` }}
               ></div>
             ) : (
@@ -162,12 +239,14 @@ export default function RecruiterFilmPlayerPage() {
             {/* Video Overlay Gradient */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none"></div>
 
-            {/* Centered Play Button */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none group-hover/player:scale-105 transition-transform duration-300">
-              <button className="pointer-events-auto flex items-center justify-center size-20 rounded-full bg-primary/90 hover:bg-primary text-[#0f0f0f] shadow-[0_0_30px_rgba(237,188,29,0.3)] transition-all backdrop-blur-sm">
-                <span className="material-symbols-outlined text-[40px] ml-1">play_arrow</span>
-              </button>
-            </div>
+            {/* Centered Play Button — shown when paused */}
+            {!isPlaying && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none group-hover/player:scale-105 transition-transform duration-300">
+                <button onClick={togglePlay} className="pointer-events-auto flex items-center justify-center size-20 rounded-full bg-primary/90 text-[#0f0f0f] shadow-[0_0_30px_rgba(237,188,29,0.3)] hover:bg-primary transition-all backdrop-blur-sm">
+                  <span className="material-symbols-outlined text-[40px] ml-1">play_arrow</span>
+                </button>
+              </div>
+            )}
 
             {/* Top Controls (Title Overlay) */}
             <div className="absolute top-0 left-0 right-0 p-6 flex justify-between items-start opacity-0 group-hover/player:opacity-100 transition-opacity duration-300">
@@ -177,17 +256,40 @@ export default function RecruiterFilmPlayerPage() {
                   {highlight.view_count} views
                 </span>
               </div>
-              <button className="text-white/80 hover:text-white hover:bg-white/10 p-2 rounded-full transition-colors">
-                <span className="material-symbols-outlined">more_vert</span>
-              </button>
+              <div className="relative">
+                <button onClick={() => setShowMoreMenu(!showMoreMenu)} className="text-white/80 hover:text-white hover:bg-white/10 p-2 rounded-full transition-colors">
+                  <span className="material-symbols-outlined">more_vert</span>
+                </button>
+                {showMoreMenu && (
+                  <div className="absolute right-0 top-full mt-1 w-48 bg-[#1a1a1a] border border-[#333] rounded-lg shadow-xl z-50 py-1">
+                    <button onClick={() => { window.open(highlight.video_url, '_blank'); setShowMoreMenu(false); }} className="w-full px-4 py-2 text-left text-sm text-white hover:bg-white/5 flex items-center gap-2">
+                      <span className="material-symbols-outlined text-[18px]">file_download</span>
+                      Download Video
+                    </button>
+                    <button onClick={() => { navigator.clipboard.writeText(window.location.href); setCopied(true); setTimeout(() => setCopied(false), 2000); setShowMoreMenu(false); }} className="w-full px-4 py-2 text-left text-sm text-white hover:bg-white/5 flex items-center gap-2">
+                      <span className="material-symbols-outlined text-[18px]">link</span>
+                      {copied ? 'Copied!' : 'Copy Link'}
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Bottom Control Bar */}
             <div className="absolute bottom-0 left-0 right-0 bg-[#0f0f0f]/90 backdrop-blur-md px-6 py-4 translate-y-full group-hover/player:translate-y-0 transition-transform duration-300 ease-out">
               {/* Timeline Scrubber */}
-              <div className="relative w-full h-1.5 bg-white/20 rounded-full mb-4 cursor-pointer group/timeline">
+              <div
+                className="relative w-full h-1.5 bg-white/20 rounded-full mb-4 cursor-pointer group/timeline"
+                onClick={(e) => {
+                  const video = videoRef.current;
+                  if (!video || !duration) return;
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const pct = (e.clientX - rect.left) / rect.width;
+                  video.currentTime = pct * duration;
+                }}
+              >
                 {/* Progress */}
-                <div className="absolute top-0 left-0 h-full w-[25%] bg-primary rounded-full relative">
+                <div className="absolute top-0 left-0 h-full bg-primary rounded-full" style={{ width: duration ? `${(currentTime / duration) * 100}%` : '0%' }}>
                   <div className="absolute -right-1.5 top-1/2 -translate-y-1/2 size-3 bg-white rounded-full scale-0 group-hover/timeline:scale-100 transition-transform shadow-sm"></div>
                 </div>
                 {/* Bookmark Dots on Timeline */}
@@ -197,6 +299,11 @@ export default function RecruiterFilmPlayerPage() {
                     className="absolute top-1/2 -translate-y-1/2 size-2 bg-primary rounded-full hover:scale-150 transition-transform cursor-pointer ring-2 ring-black/50"
                     style={{ left: `${marker.position}%` }}
                     title={marker.title}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const video = videoRef.current;
+                      if (video && duration) video.currentTime = (marker.position / 100) * duration;
+                    }}
                   ></div>
                 ))}
               </div>
@@ -204,15 +311,15 @@ export default function RecruiterFilmPlayerPage() {
               {/* Controls Row */}
               <div className="flex items-center justify-between text-white">
                 <div className="flex items-center gap-4">
-                  <button className="hover:text-primary transition-colors">
-                    <span className="material-symbols-outlined text-[28px]">pause</span>
+                  <button onClick={togglePlay} className="hover:text-primary transition-colors">
+                    <span className="material-symbols-outlined text-[28px]">{isPlaying ? 'pause' : 'play_arrow'}</span>
                   </button>
-                  <button className="hover:text-primary transition-colors">
+                  <button onClick={seekBack} className="hover:text-primary transition-colors">
                     <span className="material-symbols-outlined text-[24px]">replay_10</span>
                   </button>
                   <div className="flex items-center gap-2 group/volume">
-                    <button className="hover:text-primary transition-colors">
-                      <span className="material-symbols-outlined text-[24px]">volume_up</span>
+                    <button onClick={toggleMute} className="hover:text-primary transition-colors">
+                      <span className="material-symbols-outlined text-[24px]">{isMuted ? 'volume_off' : 'volume_up'}</span>
                     </button>
                   </div>
                   <span className="font-mono text-sm tracking-wide text-white/90">
@@ -221,10 +328,22 @@ export default function RecruiterFilmPlayerPage() {
                   </span>
                 </div>
                 <div className="flex items-center gap-4">
-                  <button className="hover:text-primary transition-colors" title="Settings">
-                    <span className="material-symbols-outlined text-[24px]">settings</span>
-                  </button>
-                  <button className="hover:text-primary transition-colors" title="Fullscreen">
+                  <div className="relative">
+                    <button onClick={() => setShowSpeedMenu(!showSpeedMenu)} className="hover:text-primary transition-colors flex items-center gap-1">
+                      <span className="material-symbols-outlined text-[24px]">settings</span>
+                      {playbackSpeed !== 1 && <span className="text-xs font-mono text-primary">{playbackSpeed}x</span>}
+                    </button>
+                    {showSpeedMenu && (
+                      <div className="absolute bottom-full right-0 mb-2 w-32 bg-[#1a1a1a] border border-[#333] rounded-lg shadow-xl z-50 py-1">
+                        {[0.5, 0.75, 1, 1.25, 1.5, 2].map((speed) => (
+                          <button key={speed} onClick={() => changeSpeed(speed)} className={`w-full px-4 py-1.5 text-left text-sm hover:bg-white/5 ${playbackSpeed === speed ? 'text-primary font-bold' : 'text-white'}`}>
+                            {speed}x
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <button onClick={toggleFullscreen} className="hover:text-primary transition-colors">
                     <span className="material-symbols-outlined text-[24px]">fullscreen</span>
                   </button>
                 </div>
@@ -262,7 +381,7 @@ export default function RecruiterFilmPlayerPage() {
             </div>
             {/* Primary Action Buttons */}
             <div className="flex items-center gap-3">
-              <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#333] hover:bg-[#444] text-white text-sm font-medium transition-colors border border-transparent hover:border-white/10">
+              <button onClick={() => window.open(highlight.video_url, "_blank")} title="Download video" className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#333] hover:bg-[#444] text-white text-sm font-medium transition-colors border border-transparent hover:border-white/10">
                 <span className="material-symbols-outlined text-[20px]">file_download</span>
                 Download
               </button>
@@ -282,25 +401,32 @@ export default function RecruiterFilmPlayerPage() {
           <div className="grid md:grid-cols-[200px_1fr] gap-8">
             {/* Quick Actions Toolbar (Left) */}
             <div className="flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-visible py-2 md:py-0">
-              <button className="flex md:flex-col items-center gap-2 p-3 rounded-lg hover:bg-[#1A1A1A] text-left md:text-center min-w-max transition-colors group">
+              <button onClick={() => {
+                const url = `${window.location.href}${window.location.href.includes('?') ? '&' : '?'}t=${currentTime}`;
+                navigator.clipboard.writeText(url);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+              }} className="flex md:flex-col items-center gap-2 p-3 rounded-lg hover:bg-[#1A1A1A] text-left md:text-center min-w-max transition-colors group">
                 <div className="size-10 rounded-full bg-[#1A1A1A] group-hover:bg-[#333] flex items-center justify-center text-white transition-colors border border-[#333]">
                   <span className="material-symbols-outlined text-[20px]">share</span>
                 </div>
                 <div className="flex flex-col md:items-center">
-                  <span className="text-sm font-medium text-white">Share</span>
+                  <span className="text-sm font-medium text-white">{copied ? 'Copied!' : 'Share'}</span>
                   <span className="text-xs text-gray-500">at {formatTimestamp(currentTime)}</span>
                 </div>
               </button>
-              <button className="flex md:flex-col items-center gap-2 p-3 rounded-lg hover:bg-[#1A1A1A] text-left md:text-center min-w-max transition-colors group">
+              <button onClick={() => { navigator.clipboard.writeText(window.location.href); setCopied(true); setTimeout(() => setCopied(false), 2000); }} className="flex md:flex-col items-center gap-2 p-3 rounded-lg hover:bg-[#1A1A1A] text-left md:text-center min-w-max transition-colors group">
                 <div className="size-10 rounded-full bg-[#1A1A1A] group-hover:bg-[#333] flex items-center justify-center text-white transition-colors border border-[#333]">
                   <span className="material-symbols-outlined text-[20px]">link</span>
                 </div>
                 <div className="flex flex-col md:items-center">
-                  <span className="text-sm font-medium text-white">Copy Link</span>
+                  <span className="text-sm font-medium text-white">{copied ? "Copied!" : "Copy Link"}</span>
                   <span className="text-xs text-gray-500">to clipboard</span>
                 </div>
               </button>
-              <button className="flex md:flex-col items-center gap-2 p-3 rounded-lg hover:bg-[#1A1A1A] text-left md:text-center min-w-max transition-colors group">
+              <button onClick={() => {
+                window.open(`mailto:support@repmax.com?subject=Video Report: ${encodeURIComponent(highlight.title)}&body=${encodeURIComponent(`I'd like to report an issue with video: ${window.location.href}`)}`);
+              }} className="flex md:flex-col items-center gap-2 p-3 rounded-lg hover:bg-[#1A1A1A] text-left md:text-center min-w-max transition-colors group">
                 <div className="size-10 rounded-full bg-[#1A1A1A] group-hover:bg-[#333] flex items-center justify-center text-white transition-colors border border-[#333]">
                   <span className="material-symbols-outlined text-[20px]">flag</span>
                 </div>
@@ -349,13 +475,38 @@ export default function RecruiterFilmPlayerPage() {
                       }`}
                     >
                       <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
-                        <button className="text-gray-400 hover:text-white">
+                        <button onClick={() => {
+                          setEditingBookmarkId(bookmark.id);
+                          setEditBookmarkNotes(bookmark.notes || bookmark.label || '');
+                        }} className="text-gray-400 hover:text-primary transition-colors">
                           <span className="material-symbols-outlined text-[18px]">edit</span>
                         </button>
-                        <button className="text-gray-400 hover:text-red-400">
+                        <button onClick={async () => {
+                          if (confirm('Delete this bookmark?')) {
+                            try { await deleteBookmark(bookmark.id); } catch (err) { console.error('Failed to delete bookmark:', err); }
+                          }
+                        }} className="text-gray-400 hover:text-red-400 transition-colors">
                           <span className="material-symbols-outlined text-[18px]">delete</span>
                         </button>
                       </div>
+                      {editingBookmarkId === bookmark.id && (
+                        <div className="absolute inset-0 bg-[#1a1a1a]/95 rounded-lg flex items-center p-4 z-10">
+                          <form onSubmit={async (e) => {
+                            e.preventDefault();
+                            try { await updateBookmark(bookmark.id, { notes: editBookmarkNotes }); setEditingBookmarkId(null); } catch (err) { console.error('Failed to update bookmark:', err); }
+                          }} className="flex items-center gap-2 w-full">
+                            <input
+                              type="text"
+                              value={editBookmarkNotes}
+                              onChange={(e) => setEditBookmarkNotes(e.target.value)}
+                              className="flex-1 px-3 py-2 bg-[#0f0f0f] border border-[#333] rounded-lg text-white text-sm focus:border-primary focus:outline-none"
+                              autoFocus
+                            />
+                            <button type="submit" className="px-3 py-2 bg-primary text-[#0f0f0f] rounded-lg text-sm font-medium hover:bg-[#dcae18]">Save</button>
+                            <button type="button" onClick={() => setEditingBookmarkId(null)} className="px-3 py-2 text-gray-400 hover:text-white text-sm">Cancel</button>
+                          </form>
+                        </div>
+                      )}
                       <div className="flex gap-4">
                         <div className="flex-shrink-0 w-16 pt-1">
                           <span

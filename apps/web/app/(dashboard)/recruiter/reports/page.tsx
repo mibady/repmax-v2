@@ -2,6 +2,7 @@
 
 import { Loader2 } from 'lucide-react';
 import { useRecruitingReports, type StaffMember } from '@/lib/hooks';
+import { useState } from 'react';
 
 function getRankBadgeColor(rank?: number) {
   if (rank === 1) return 'bg-[#D4AF37]';
@@ -12,6 +13,10 @@ function getRankBadgeColor(rank?: number) {
 
 export default function RecruitingReportsPage() {
   const { funnel, stats, staffActivity, zoneCoverage, isLoading, error } = useRecruitingReports();
+  const [activeFilters, setActiveFilters] = useState<Record<string, boolean>>({ classOf2025: false, varsityProgram: false, thisQuarter: false });
+  const [showFunnelDetail, setShowFunnelDetail] = useState(false);
+  const [showStaffOptions, setShowStaffOptions] = useState(false);
+  const [showAllStaff, setShowAllStaff] = useState(false);
 
   return (
     <div className="flex flex-col h-full min-h-0">
@@ -22,15 +27,15 @@ export default function RecruitingReportsPage() {
           <p className="text-[#A1A1AA]">Pipeline analytics and staff performance metrics</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button className="flex items-center gap-2 rounded-full border border-[#2A2A2E] bg-[#1F1F22] px-4 py-1.5 text-sm font-medium text-white hover:border-[#D4AF37]/50 transition-colors">
+          <button onClick={() => setActiveFilters(f => ({ ...f, classOf2025: !f.classOf2025 }))} className={`flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-medium text-white transition-colors ${activeFilters.classOf2025 ? "border-[#D4AF37] bg-white/10" : "border-[#2A2A2E] bg-[#1F1F22] hover:border-[#D4AF37]/50"}`}>
             <span>Class of 2025</span>
             <span className="material-symbols-outlined text-[16px]">expand_more</span>
           </button>
-          <button className="flex items-center gap-2 rounded-full border border-[#2A2A2E] bg-[#1F1F22] px-4 py-1.5 text-sm font-medium text-white hover:border-[#D4AF37]/50 transition-colors">
+          <button onClick={() => setActiveFilters(f => ({ ...f, varsityProgram: !f.varsityProgram }))} className={`flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-medium text-white transition-colors ${activeFilters.varsityProgram ? "border-[#D4AF37] bg-white/10" : "border-[#2A2A2E] bg-[#1F1F22] hover:border-[#D4AF37]/50"}`}>
             <span>Varsity Program</span>
             <span className="material-symbols-outlined text-[16px]">expand_more</span>
           </button>
-          <button className="flex items-center gap-2 rounded-full border border-[#2A2A2E] bg-[#1F1F22] px-4 py-1.5 text-sm font-medium text-white hover:border-[#D4AF37]/50 transition-colors">
+          <button onClick={() => setActiveFilters(f => ({ ...f, thisQuarter: !f.thisQuarter }))} className={`flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-medium text-white transition-colors ${activeFilters.thisQuarter ? "border-[#D4AF37] bg-white/10" : "border-[#2A2A2E] bg-[#1F1F22] hover:border-[#D4AF37]/50"}`}>
             <span className="material-symbols-outlined text-[16px] text-[#D4AF37]">calendar_today</span>
             <span>This Quarter</span>
           </button>
@@ -56,7 +61,7 @@ export default function RecruitingReportsPage() {
                   <span className="material-symbols-outlined text-[#D4AF37]">filter_list</span>
                   Pipeline Funnel
                 </h3>
-                <button disabled title="Detail view coming soon" className="text-xs text-[#D4AF37] font-medium opacity-50 cursor-not-allowed">View Detail</button>
+                <button onClick={() => setShowFunnelDetail(!showFunnelDetail)} className="text-xs text-[#D4AF37] font-medium hover:text-[#b08d1a] transition-colors">{showFunnelDetail ? 'Hide Detail' : 'View Detail'}</button>
               </div>
               <div className="min-w-[800px] flex flex-col">
                 {/* Funnel Bars */}
@@ -99,6 +104,21 @@ export default function RecruitingReportsPage() {
                   })}
                 </div>
               </div>
+              {showFunnelDetail && (
+                <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-3 border-t border-[#333333] pt-4">
+                  {funnel.map((stage, index) => (
+                    <div key={stage.stage} className="bg-[#2A2A2E] rounded-lg p-3 flex items-center gap-3">
+                      <div className={`size-10 rounded-lg flex items-center justify-center text-white font-bold text-lg font-mono ${index === funnel.length - 1 ? 'bg-[#D4AF37]/20 text-[#D4AF37]' : 'bg-white/5'}`}>
+                        {stage.count}
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-white text-sm font-medium">{stage.stage}</span>
+                        {index > 0 && <span className="text-[#A1A1AA] text-xs">{stage.conversionRate}% conversion</span>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </section>
 
             {/* Stats Row */}
@@ -169,9 +189,33 @@ export default function RecruitingReportsPage() {
               <div className="rounded-xl border border-[#333333] bg-[#1F1F22] overflow-hidden flex flex-col h-full">
                 <div className="p-5 border-b border-[#333333] flex justify-between items-center">
                   <h3 className="font-semibold text-white">Staff Activity Leaderboard</h3>
-                  <span className="text-[#A1A1AA] opacity-50" title="Options coming soon">
-                    <span className="material-symbols-outlined">more_horiz</span>
-                  </span>
+                  <div className="relative">
+                    <button onClick={() => setShowStaffOptions(!showStaffOptions)} className="text-[#A1A1AA] hover:text-white transition-colors p-1 rounded hover:bg-white/5">
+                      <span className="material-symbols-outlined">more_horiz</span>
+                    </button>
+                    {showStaffOptions && (
+                      <div className="absolute right-0 top-full mt-1 w-48 bg-[#2A2A2E] border border-[#333333] rounded-lg shadow-xl z-50 py-1">
+                        <button onClick={() => {
+                          const headers = ['Recruiter', 'Region', 'Calls', 'Emails', 'Visits', 'Commits'];
+                          const rows = staffActivity.map((s: StaffMember) => [s.name, s.region, s.calls, s.emails, s.visits, s.commits].join(','));
+                          const csv = [headers.join(','), ...rows].join('\n');
+                          const blob = new Blob([csv], { type: 'text/csv' });
+                          const url = URL.createObjectURL(blob);
+                          const a = document.createElement('a');
+                          a.href = url; a.download = 'staff-activity.csv'; a.click();
+                          URL.revokeObjectURL(url);
+                          setShowStaffOptions(false);
+                        }} className="w-full px-4 py-2 text-left text-sm text-white hover:bg-white/5 flex items-center gap-2">
+                          <span className="material-symbols-outlined text-[18px]">download</span>
+                          Export CSV
+                        </button>
+                        <button onClick={() => { window.print(); setShowStaffOptions(false); }} className="w-full px-4 py-2 text-left text-sm text-white hover:bg-white/5 flex items-center gap-2">
+                          <span className="material-symbols-outlined text-[18px]">print</span>
+                          Print
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div className="overflow-x-auto flex-1">
                   {staffActivity.length === 0 ? (
@@ -190,7 +234,7 @@ export default function RecruitingReportsPage() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-[#333333]">
-                        {staffActivity.map((staff: StaffMember) => (
+                        {(showAllStaff ? staffActivity : staffActivity.slice(0, 5)).map((staff: StaffMember) => (
                           <tr key={staff.id} className="hover:bg-[#2A2A2E]/30 transition-colors group cursor-pointer">
                             <td className="px-5 py-4">
                               <div className="flex items-center gap-3">
@@ -228,7 +272,7 @@ export default function RecruitingReportsPage() {
                   )}
                 </div>
                 <div className="p-3 border-t border-[#333333] flex justify-center">
-                  <button disabled title="Staff directory coming soon" className="text-xs font-medium text-[#A1A1AA] opacity-50 cursor-not-allowed">View All Staff</button>
+                  <button onClick={() => setShowAllStaff(!showAllStaff)} className="text-xs font-medium text-[#D4AF37] hover:text-[#b08d1a] transition-colors">{showAllStaff ? 'Show Less' : `View All Staff (${staffActivity.length})`}</button>
                 </div>
               </div>
 

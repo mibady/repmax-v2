@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useMcpZone, useMcpCalendar } from "@/lib/hooks";
@@ -94,8 +95,19 @@ export default function ZoneLandingPage() {
   const { zone, prospects, programs, isLoading, error } = useMcpZone(zoneCode || null);
   const { calendar } = useMcpCalendar();
 
+  const [search, setSearch] = useState("");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   const zoneName = zoneCode ? ZONE_DISPLAY_NAMES[zoneCode] : "Unknown";
   const colors = zoneCode ? ZONE_COLORS[zoneCode] : ZONE_COLORS.SOUTHWEST;
+
+  const filteredProspects = prospects.filter((p) =>
+    p.full_name.toLowerCase().includes(search.toLowerCase()) ||
+    p.position.toLowerCase().includes(search.toLowerCase())
+  );
+  const filteredPrograms = programs.filter((p) =>
+    p.team_name.toLowerCase().includes(search.toLowerCase())
+  );
 
   if (error) {
     return (
@@ -141,6 +153,8 @@ export default function ZoneLandingPage() {
                       className="h-9 w-40 rounded-lg bg-[#1a1a1a] border-none py-1 pl-9 pr-2 text-sm text-white placeholder-gray-500 focus:ring-1 focus:ring-orange-500 transition-all"
                       placeholder="Search"
                       type="text"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
                     />
                   </div>
                   <Link href="/signup" className="h-9 rounded-lg bg-orange-500 px-5 text-sm font-bold text-white transition hover:bg-orange-600 flex items-center">
@@ -149,10 +163,19 @@ export default function ZoneLandingPage() {
                 </div>
               </div>
               {/* Mobile Menu Button */}
-              <button disabled title="Mobile menu coming soon" className="md:hidden text-white opacity-50">
-                <span className="material-symbols-outlined">menu</span>
+              <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="md:hidden text-white hover:text-orange-400 transition-colors">
+                <span className="material-symbols-outlined">{isMobileMenuOpen ? 'close' : 'menu'}</span>
               </button>
             </div>
+            {isMobileMenuOpen && (
+              <div className="md:hidden border-t border-[#2a2a2a] bg-[#111] py-3 px-4 flex flex-col gap-2">
+                <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="text-sm text-gray-300 hover:text-white py-2 px-3 rounded-lg hover:bg-white/5 transition-colors">Home</Link>
+                <Link href="/positions" onClick={() => setIsMobileMenuOpen(false)} className="text-sm text-gray-300 hover:text-white py-2 px-3 rounded-lg hover:bg-white/5 transition-colors">Positions</Link>
+                <Link href="/zones" onClick={() => setIsMobileMenuOpen(false)} className="text-sm text-gray-300 hover:text-white py-2 px-3 rounded-lg hover:bg-white/5 transition-colors">Zones</Link>
+                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="text-sm text-gray-300 hover:text-white py-2 px-3 rounded-lg hover:bg-white/5 transition-colors">Login</Link>
+                <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)} className="text-sm text-orange-400 font-bold py-2 px-3 rounded-lg hover:bg-orange-500/10 transition-colors">Sign Up</Link>
+              </div>
+            )}
           </div>
         </header>
 
@@ -220,8 +243,10 @@ export default function ZoneLandingPage() {
                 <LoadingSkeleton />
               ) : prospects.length > 0 ? (
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                  {prospects.slice(0, 4).map((athlete) => (
-                    <AthleteCard key={athlete.id} athlete={athlete} />
+                  {filteredProspects.slice(0, 4).map((athlete) => (
+                    <Link key={athlete.id} href={`/athlete/${athlete.id}`} className="block">
+                      <AthleteCard athlete={athlete} />
+                    </Link>
                   ))}
                 </div>
               ) : (
@@ -257,8 +282,10 @@ export default function ZoneLandingPage() {
                     </div>
                   ) : programs.length > 0 ? (
                     <div className="flex flex-col gap-3">
-                      {programs.slice(0, 5).map((program, idx) => (
-                        <ProgramCard key={program.id} program={program} rank={idx + 1} />
+                      {filteredPrograms.slice(0, 5).map((program, idx) => (
+                        <Link key={program.id} href={`/programs/${program.id}`} className="block">
+                          <ProgramCard program={program} rank={idx + 1} />
+                        </Link>
                       ))}
                     </div>
                   ) : (

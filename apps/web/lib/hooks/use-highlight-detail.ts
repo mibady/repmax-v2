@@ -35,6 +35,8 @@ interface UseHighlightDetailReturn {
     rating?: number;
     tags?: string[];
   }) => Promise<void>;
+  deleteBookmark: (bookmarkId: string) => Promise<void>;
+  updateBookmark: (bookmarkId: string, data: { label?: string; notes?: string; rating?: number; tags?: string[] }) => Promise<void>;
   formatTimestamp: (seconds: number) => string;
   formatHeight: (inches: number | null) => string;
 }
@@ -121,6 +123,54 @@ const [_isPending, startTransition] = useTransition();
     [highlightId]
   );
 
+  const deleteBookmark = useCallback(
+    async (bookmarkId: string) => {
+      const res = await fetch(`/api/film/bookmarks?id=${bookmarkId}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to delete bookmark");
+      }
+
+      // Refetch bookmarks
+      if (highlightId) {
+        const bookmarksRes = await fetch(`/api/film/bookmarks?highlight_id=${highlightId}`);
+        if (bookmarksRes.ok) {
+          const bookmarksData = await bookmarksRes.json();
+          setBookmarks(bookmarksData.bookmarks || []);
+        }
+      }
+    },
+    [highlightId]
+  );
+
+  const updateBookmark = useCallback(
+    async (bookmarkId: string, data: { label?: string; notes?: string; rating?: number; tags?: string[] }) => {
+      const res = await fetch("/api/film/bookmarks", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: bookmarkId, ...data }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to update bookmark");
+      }
+
+      // Refetch bookmarks
+      if (highlightId) {
+        const bookmarksRes = await fetch(`/api/film/bookmarks?highlight_id=${highlightId}`);
+        if (bookmarksRes.ok) {
+          const bookmarksData = await bookmarksRes.json();
+          setBookmarks(bookmarksData.bookmarks || []);
+        }
+      }
+    },
+    [highlightId]
+  );
+
   const formatTimestamp = useCallback((seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -141,6 +191,8 @@ const [_isPending, startTransition] = useTransition();
     error,
     refetch: fetchData,
     createBookmark,
+    deleteBookmark,
+    updateBookmark,
     formatTimestamp,
     formatHeight,
   };

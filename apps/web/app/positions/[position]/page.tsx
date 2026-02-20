@@ -109,6 +109,7 @@ export default function PositionLandingPage() {
 
   const [selectedZone, setSelectedZone] = useState<string>("All");
   const [minStars, setMinStars] = useState<number>(0);
+  const [sortBy, setSortBy] = useState<string>("Rating");
 
   const { zones } = useMcpZones();
   const { prospects, isLoading, error, refetch } = useMcpProspectsByPosition(position, 50);
@@ -118,6 +119,10 @@ export default function PositionLandingPage() {
     if (selectedZone !== "All" && p.zone_code !== selectedZone) return false;
     if (minStars > 0 && p.star_rating < minStars) return false;
     return true;
+  }).sort((a, b) => {
+    if (sortBy === "Name") return a.full_name.localeCompare(b.full_name);
+    if (sortBy === "Class Year") return (a.class_year || 0) - (b.class_year || 0);
+    return b.star_rating - a.star_rating; // Rating (default, desc)
   });
 
   // Zone abbreviations for filter buttons
@@ -253,7 +258,11 @@ export default function PositionLandingPage() {
             </p>
             <div className="flex items-center gap-2">
               <span className="text-xs text-gray-500">Sort by:</span>
-              <select disabled title="Sort coming soon" className="bg-transparent border-none text-white text-sm font-medium focus:outline-none opacity-50 cursor-not-allowed">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="bg-transparent border-none text-white text-sm font-medium focus:outline-none cursor-pointer"
+              >
                 <option>Rating</option>
                 <option>Name</option>
                 <option>Class Year</option>

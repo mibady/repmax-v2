@@ -241,6 +241,13 @@ export default function ProspectDetailPage() {
   const { athlete, isLoading, error } = useAthlete(athleteId);
   const { shortlist, add, remove, isInShortlist, updateStatus } = useShortlist();
   const [toast, setToast] = useState<string | null>(null);
+  const [isEditingTags, setIsEditingTags] = useState(false);
+  const [customTags, setCustomTags] = useState<string[]>([]);
+  const [newTagInput, setNewTagInput] = useState('');
+  const [showTimelineFilter, setShowTimelineFilter] = useState(false);
+  const [timelineFilters, setTimelineFilters] = useState<Record<string, boolean>>({
+    calls: true, emails: true, visits: true, offers: true, notes: true,
+  });
 
   const shortlistItem = shortlist.find(item => item.athlete_id === athleteId);
   const isOnShortlist = isInShortlist(athleteId);
@@ -422,8 +429,8 @@ export default function ProspectDetailPage() {
             <div className="bg-[#2a271d] p-5 rounded-xl border border-[#433d28]">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-white font-semibold text-sm">Tags</h3>
-                <button disabled title="Tag management coming soon" className="text-[#c3b998] opacity-50 cursor-not-allowed">
-                  <span className="material-symbols-outlined text-[20px]">edit</span>
+                <button onClick={() => setIsEditingTags(!isEditingTags)} className={`transition-colors ${isEditingTags ? 'text-primary' : 'text-[#c3b998] hover:text-primary'}`}>
+                  <span className="material-symbols-outlined text-[20px]">{isEditingTags ? 'check' : 'edit'}</span>
                 </button>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -438,9 +445,32 @@ export default function ProspectDetailPage() {
                     {athlete.zone}
                   </span>
                 )}
-                <button disabled title="Tag management coming soon" className="px-3 py-1 rounded-full border border-dashed border-[#c3b998]/50 text-[#c3b998] text-xs font-medium opacity-50 cursor-not-allowed">
-                  + Add
-                </button>
+                {customTags.map((tag) => (
+                  <span key={tag} className="px-3 py-1 rounded-full bg-[#363225] text-[#c3b998] text-xs font-medium border border-[#433d28] flex items-center gap-1">
+                    {tag}
+                    {isEditingTags && (
+                      <button onClick={() => setCustomTags(prev => prev.filter(t => t !== tag))} className="text-red-400 hover:text-red-300 ml-1">
+                        <span className="material-symbols-outlined text-[14px]">close</span>
+                      </button>
+                    )}
+                  </span>
+                ))}
+                {isEditingTags ? (
+                  <form onSubmit={(e) => { e.preventDefault(); const trimmed = newTagInput.trim(); if (trimmed && !customTags.includes(trimmed)) { setCustomTags(prev => [...prev, trimmed]); setNewTagInput(''); } }} className="flex items-center">
+                    <input
+                      type="text"
+                      value={newTagInput}
+                      onChange={(e) => setNewTagInput(e.target.value)}
+                      placeholder="New tag..."
+                      className="px-3 py-1 rounded-full bg-[#363225] text-white text-xs border border-[#433d28] focus:border-primary focus:outline-none w-24"
+                      autoFocus
+                    />
+                  </form>
+                ) : (
+                  <button onClick={() => setIsEditingTags(true)} className="px-3 py-1 rounded-full border border-dashed border-[#c3b998]/50 text-[#c3b998] text-xs font-medium hover:border-primary hover:text-primary transition-colors">
+                    + Add
+                  </button>
+                )}
               </div>
             </div>
 
@@ -470,9 +500,22 @@ export default function ProspectDetailPage() {
           <div className="bg-[#2a271d] rounded-xl border border-[#433d28] p-6">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-white font-semibold">Activity Timeline</h3>
-              <button disabled title="Activity filter coming soon" className="bg-[#363225] text-white text-xs px-3 py-1.5 rounded-lg border border-[#433d28] opacity-50 cursor-not-allowed">
-                Filter
-              </button>
+              <div className="relative">
+                <button onClick={() => setShowTimelineFilter(!showTimelineFilter)} className={`bg-[#363225] text-white text-xs px-3 py-1.5 rounded-lg border transition-colors flex items-center gap-1 ${showTimelineFilter ? 'border-primary' : 'border-[#433d28] hover:border-primary/50'}`}>
+                  <span className="material-symbols-outlined text-[16px]">filter_list</span>
+                  Filter
+                </button>
+                {showTimelineFilter && (
+                  <div className="absolute right-0 top-full mt-1 w-44 bg-[#363225] border border-[#433d28] rounded-lg shadow-xl z-50 p-2">
+                    {Object.entries(timelineFilters).map(([key, checked]) => (
+                      <label key={key} className="flex items-center gap-2 px-2 py-1.5 text-sm text-white hover:bg-white/5 rounded cursor-pointer capitalize">
+                        <input type="checkbox" checked={checked} onChange={() => setTimelineFilters(f => ({ ...f, [key]: !f[key] }))} className="accent-primary" />
+                        {key}
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
             <div className="relative space-y-8 pl-2">
               {timelineData.length === 0 ? (

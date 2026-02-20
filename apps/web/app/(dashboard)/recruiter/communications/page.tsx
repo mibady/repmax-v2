@@ -47,6 +47,7 @@ export default function CommunicationsPage() {
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   // Debounced search
   const debouncedSearch = useCallback(
@@ -276,10 +277,31 @@ export default function CommunicationsPage() {
                         <td className="py-4 px-6">
                           <span className="text-sm text-[#aaa] font-mono">{log.datetime}</span>
                         </td>
-                        <td className="py-4 px-6 text-right">
-                          <span className="text-[#666] opacity-50" title="Row actions coming soon">
+                        <td className="py-4 px-6 text-right relative">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setOpenMenuId(openMenuId === log.id ? null : log.id); }}
+                            className="text-[#666] hover:text-white transition-colors"
+                          >
                             <span className="material-symbols-outlined text-[20px]">more_vert</span>
-                          </span>
+                          </button>
+                          {openMenuId === log.id && (
+                            <div className="absolute right-6 top-full mt-1 w-44 bg-[#1F1F22] border border-[#333] rounded-lg shadow-xl z-50 overflow-hidden">
+                              <button
+                                onClick={() => { window.location.href = `/recruiter/prospects/${log.prospect.name.replace(/\s+/g, '-').toLowerCase()}`; setOpenMenuId(null); }}
+                                className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-[#aaa] hover:text-white hover:bg-[#2A2A2E] transition-colors text-left"
+                              >
+                                <span className="material-symbols-outlined text-[16px]">person</span>
+                                View Details
+                              </button>
+                              <button
+                                onClick={() => { window.location.href = '/recruiter/communications'; setOpenMenuId(null); }}
+                                className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-[#aaa] hover:text-white hover:bg-[#2A2A2E] transition-colors text-left"
+                              >
+                                <span className="material-symbols-outlined text-[16px]">reply</span>
+                                Log Follow-up
+                              </button>
+                            </div>
+                          )}
                         </td>
                       </tr>
                     );

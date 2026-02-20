@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
 import { useMcpZones } from '@/lib/hooks';
 import { ZONE_COLORS, ZONE_DISPLAY_NAMES, type ZoneCode } from '@/lib/data/zone-data';
+import { useState } from 'react';
 
 interface TrendingItem {
   type: 'spike' | 'activity' | 'event' | 'offer' | 'report';
@@ -43,6 +44,11 @@ const ZONE_SHORT_CODES: Record<string, string> = {
 
 export default function ZoneMapPage() {
   const { zones, isLoading, error, refetch } = useMcpZones();
+  const [selectedView, setSelectedView] = useState<'prospects' | 'programs' | 'events' | 'recruiters'>('prospects');
+  const [showFilters, setShowFilters] = useState(false);
+  const [activeFilterTypes, setActiveFilterTypes] = useState<Record<string, boolean>>({
+    spike: true, activity: true, event: true, offer: true, report: true,
+  });
 
   // Calculate totals
   const totalAthletes = zones.reduce((sum, z) => sum + z.total_recruits, 0);
@@ -81,19 +87,19 @@ export default function ZoneMapPage() {
       <div className="flex-shrink-0 flex items-center justify-between px-6 py-3 border-b border-[#232931] bg-[#0a0e12]/80 backdrop-blur">
         <div className="flex bg-[#1a2028] p-1 rounded-lg">
           <label className="cursor-pointer">
-            <input defaultChecked className="peer sr-only" name="view" type="radio" />
+            <input checked={selectedView === "prospects"} onChange={() => setSelectedView("prospects")} className="peer sr-only" name="view" type="radio" />
             <span className="block px-4 py-1.5 rounded-md text-sm font-medium text-slate-400 peer-checked:bg-[#2c3540] peer-checked:text-white transition-all">Prospects</span>
           </label>
           <label className="cursor-pointer">
-            <input className="peer sr-only" name="view" type="radio" />
+            <input checked={selectedView === "programs"} onChange={() => setSelectedView("programs")} className="peer sr-only" name="view" type="radio" />
             <span className="block px-4 py-1.5 rounded-md text-sm font-medium text-slate-400 peer-checked:bg-[#2c3540] peer-checked:text-white transition-all">Programs</span>
           </label>
           <label className="cursor-pointer">
-            <input className="peer sr-only" name="view" type="radio" />
+            <input checked={selectedView === "events"} onChange={() => setSelectedView("events")} className="peer sr-only" name="view" type="radio" />
             <span className="block px-4 py-1.5 rounded-md text-sm font-medium text-slate-400 peer-checked:bg-[#2c3540] peer-checked:text-white transition-all">Events</span>
           </label>
           <label className="cursor-pointer">
-            <input className="peer sr-only" name="view" type="radio" />
+            <input checked={selectedView === "recruiters"} onChange={() => setSelectedView("recruiters")} className="peer sr-only" name="view" type="radio" />
             <span className="block px-4 py-1.5 rounded-md text-sm font-medium text-slate-400 peer-checked:bg-[#2c3540] peer-checked:text-white transition-all">Recruiters</span>
           </label>
         </div>
@@ -109,7 +115,21 @@ export default function ZoneMapPage() {
             <span className={`material-symbols-outlined text-[16px] ${isLoading ? 'animate-spin' : ''}`}>refresh</span>
             Refresh
           </button>
-          <button disabled title="Export coming soon" className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary/50 text-xs font-medium text-white/60 cursor-not-allowed">
+          <button
+            onClick={() => {
+              const headers = ['Zone Code', 'Total Recruits', 'Blue Chip Count', 'Upcoming Events (30d)'];
+              const rows = zones.map(z => [z.zone_code, z.total_recruits, z.blue_chip_count, z.upcoming_events_30d].join(','));
+              const csv = [headers.join(','), ...rows].join('\n');
+              const blob = new Blob([csv], { type: 'text/csv' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = 'zone-data-export.csv';
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary hover:bg-primary/80 text-xs font-medium text-white transition-colors"
+          >
             <span className="material-symbols-outlined text-[16px]">download</span>
             Export
           </button>
@@ -229,15 +249,28 @@ export default function ZoneMapPage() {
           <div className="p-5 border-b border-[#232931]">
             <div className="flex items-center justify-between mb-1">
               <h2 className="text-lg font-bold text-white tracking-tight">Zone Activity</h2>
-              <span className="text-primary/50" title="Filters coming soon">
+              <button onClick={() => setShowFilters(!showFilters)} className={`transition-colors ${showFilters ? 'text-primary' : 'text-primary/50 hover:text-primary'}`}>
                 <span className="material-symbols-outlined text-[20px]">tune</span>
-              </span>
+              </button>
             </div>
             <p className="text-xs text-slate-500">Live intelligence updates across zones</p>
+            {showFilters && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {Object.entries(typeConfig).map(([type, config]) => (
+                  <button
+                    key={type}
+                    onClick={() => setActiveFilterTypes(prev => ({ ...prev, [type]: !prev[type] }))}
+                    className={`text-[10px] font-mono px-2 py-1 rounded border transition-colors ${activeFilterTypes[type] ? 'border-primary/40 text-primary bg-primary/10' : 'border-[#232931] text-slate-500 bg-transparent'}`}
+                  >
+                    {config.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
-            {displayTrendingItems.map((item, idx) => {
+            {displayTrendingItems.filter(item => activeFilterTypes[item.type] !== false).map((item, idx) => {
               const config = typeConfig[item.type];
               const colorClasses = {
                 red: 'border-red-500 text-red-400 bg-red-500/10',
