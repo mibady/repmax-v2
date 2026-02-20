@@ -39,13 +39,22 @@
       { "id": "NGE-56", "title": "Polish: wire all dead UI elements", "phase": 6 }
     ],
     "todo": [
-      { "id": "NGE-55", "title": "Mobile app (Expo)", "phase": 5, "priority": "High" }
+      { "id": "NGE-55", "title": "Mobile app (Expo)", "phase": 5, "priority": "High" },
+      { "id": "NGE-165", "title": "Recruiter pricing: 4-tier subscriptions (Spec B)", "priority": "High", "depends": ["NGE-54"] },
+      { "id": "NGE-166", "title": "School B2B subscriptions: 3 annual tiers (Spec C)", "priority": "High", "depends": ["NGE-54"] },
+      { "id": "NGE-167", "title": "Tournament/Events: organizer tiers + registration fees (Spec D)", "priority": "High", "depends": ["NGE-54"] },
+      { "id": "NGE-168", "title": "Dashr Combines: 5 one-time products (Spec E)", "priority": "High", "depends": ["NGE-54"] },
+      { "id": "NGE-169", "title": "Recruiter pricing page: role-aware tabs + new tiers", "priority": "Medium", "depends": ["NGE-165"] },
+      { "id": "NGE-170", "title": "School pricing page + checkout flow", "priority": "Medium", "depends": ["NGE-166"] },
+      { "id": "NGE-171", "title": "Tournament booking + registration payment flow", "priority": "Medium", "depends": ["NGE-167"] },
+      { "id": "NGE-172", "title": "Dashr booking + checkout flow", "priority": "Medium", "depends": ["NGE-168"] },
+      { "id": "NGE-173", "title": "Stripe product catalog: create 22 prices + 2 coupons in Stripe Dashboard", "priority": "High", "depends": [] }
     ]
   },
   "summary": {
-    "total": 22,
+    "total": 31,
     "done": 21,
-    "todo": 1
+    "todo": 10
   },
   "updatedAt": "2026-02-20"
 }

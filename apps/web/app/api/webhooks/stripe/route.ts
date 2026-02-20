@@ -56,11 +56,11 @@ export async function POST(request: Request) {
         const session = event.data.object as Stripe.Checkout.Session;
 
         if (session.mode === "subscription" && session.subscription) {
+          // Subscription checkout (Specs A, B, C)
           const subscription = await stripe.subscriptions.retrieve(
             session.subscription as string
           );
 
-          // Get profile ID from metadata
           const profileId = session.metadata?.profile_id;
           const planId = session.metadata?.plan_id;
 
@@ -78,6 +78,50 @@ export async function POST(request: Request) {
               ).toISOString(),
             });
           }
+        } else if (session.mode === "payment") {
+          // One-time payment checkout (Specs D organizer, E)
+          const profileId = session.metadata?.profile_id;
+          const productType = session.metadata?.product_type;
+          const productSlug = session.metadata?.product_slug;
+
+          if (profileId && productType) {
+            await supabase.from("one_time_purchases").insert({
+              profile_id: profileId,
+              product_type: productType,
+              product_slug: productSlug || null,
+              stripe_session_id: session.id,
+              stripe_payment_intent_id:
+                typeof session.payment_intent === "string"
+                  ? session.payment_intent
+                  : null,
+              amount_cents: session.amount_total || 0,
+              status: "completed",
+              metadata: session.metadata,
+            });
+          }
+        }
+        break;
+      }
+
+      case "payment_intent.succeeded": {
+        // Tournament registration fees (Spec D variable amounts)
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        const tournamentId = paymentIntent.metadata?.tournament_id;
+        const schoolId = paymentIntent.metadata?.school_id;
+
+        if (tournamentId && schoolId) {
+          await supabase
+            .from("tournament_registrations")
+            .update({
+              payment_status: "paid",
+              stripe_payment_intent_id: paymentIntent.id,
+              platform_fee_cents: parseInt(
+                paymentIntent.metadata?.platform_fee_cents || "0",
+                10
+              ),
+            })
+            .eq("tournament_id", tournamentId)
+            .eq("school_id", schoolId);
         }
         break;
       }
