@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { createCheckoutSession } from '@/lib/actions/subscription-actions';
+import { createCheckoutSession, createOneTimeCheckout } from '@/lib/actions/subscription-actions';
+import PricingTabs from './_components/PricingTabs';
 
 export default function Page() {
   const router = useRouter();
@@ -29,6 +30,26 @@ export default function Page() {
 
       if ('redirectTo' in result && result.redirectTo) {
         router.push(result.redirectTo);
+      }
+    } catch {
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setLoadingPlan(null);
+    }
+  }
+
+  async function handleOneTimeCheckout(productSlug: string) {
+    setLoadingPlan(productSlug);
+    setError(null);
+    try {
+      const result = await createOneTimeCheckout(productSlug);
+      if ('error' in result && result.error) {
+        setError(result.error);
+        return;
+      }
+      if ('sessionUrl' in result && result.sessionUrl) {
+        window.location.href = result.sessionUrl;
+        return;
       }
     } catch {
       setError('Something went wrong. Please try again.');
@@ -82,154 +103,11 @@ export default function Page() {
   <p className="text-red-400 text-sm">{error}</p>
 </div>
 )}
-{/*  Pricing Grid  */}
-<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 w-full max-w-7xl mx-auto items-stretch">
-{/*  STARTER CARD  */}
-<div className="group relative flex flex-col rounded-3xl bg-card-dark border border-white/10 p-6 md:p-8 hover:-translate-y-2 transition-transform duration-300">
-<div className="mb-6 space-y-2">
-<h3 className="text-white text-lg font-bold tracking-wide">STARTER</h3>
-<p className="text-text-muted text-xs font-normal">For the casual fan</p>
-<div className="pt-4 flex items-baseline gap-1">
-<span className="text-4xl font-bold font-mono text-white">$0</span>
-<span className="text-gray-500 font-medium">/mo</span>
-</div>
-</div>
-<ul className="flex-1 space-y-4 mb-8">
-<li className="flex items-start gap-3 text-sm text-gray-300">
-<span className="material-symbols-outlined text-gray-500 text-[20px] feature-check">check</span>
-<span>Basic Access</span>
-</li>
-<li className="flex items-start gap-3 text-sm text-gray-300">
-<span className="material-symbols-outlined text-gray-500 text-[20px] feature-check">check</span>
-<span>Limited Search Queries</span>
-</li>
-<li className="flex items-start gap-3 text-sm text-gray-300">
-<span className="material-symbols-outlined text-gray-500 text-[20px] feature-check">check</span>
-<span>Public Profiles Only</span>
-</li>
-</ul>
-<button
-  onClick={() => handleCheckout('starter')}
-  disabled={loadingPlan === 'starter'}
-  className="w-full py-3 px-6 rounded-full border border-white/20 hover:bg-white/5 text-white text-sm font-bold transition-colors disabled:opacity-50"
->
-                    {loadingPlan === 'starter' ? 'Loading...' : 'Start Free'}
-                </button>
-</div>
-{/*  PRO CARD (Highlighted)  */}
-<div className="group relative flex flex-col rounded-3xl bg-card-dark border-2 border-primary shadow-glow p-6 md:p-8 hover:-translate-y-2 transition-transform duration-300 z-10 transform md:scale-105 xl:scale-110 xl:-mt-4 xl:mb-4">
-<div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-background-dark text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">
-                    Most Popular
-                </div>
-<div className="mb-6 space-y-2">
-<h3 className="text-primary text-lg font-bold tracking-wide">PRO</h3>
-<p className="text-text-muted text-xs font-normal">For the serious recruiter</p>
-<div className="pt-4 flex items-baseline gap-1">
-<span className="text-4xl font-bold font-mono text-white">$9.99</span>
-<span className="text-gray-500 font-medium">/mo</span>
-</div>
-</div>
-<ul className="flex-1 space-y-4 mb-8">
-<li className="flex items-start gap-3 text-sm text-white font-medium">
-<span className="material-symbols-outlined text-primary text-[20px] feature-check">check</span>
-<span>Full Player Database</span>
-</li>
-<li className="flex items-start gap-3 text-sm text-white font-medium">
-<span className="material-symbols-outlined text-primary text-[20px] feature-check">check</span>
-<span>Advanced Metrics &amp; Stats</span>
-</li>
-<li className="flex items-start gap-3 text-sm text-white font-medium">
-<span className="material-symbols-outlined text-primary text-[20px] feature-check">check</span>
-<span>Unlimited Search</span>
-</li>
-<li className="flex items-start gap-3 text-sm text-white font-medium">
-<span className="material-symbols-outlined text-primary text-[20px] feature-check">check</span>
-<span>Export Data (CSV)</span>
-</li>
-</ul>
-<button
-  onClick={() => handleCheckout('pro')}
-  disabled={loadingPlan === 'pro'}
-  className="w-full py-3 px-6 rounded-full bg-primary hover:bg-primary-hover text-background-dark text-sm font-bold transition-colors shadow-lg shadow-primary/20 disabled:opacity-50"
->
-                    {loadingPlan === 'pro' ? 'Loading...' : 'Go Pro'}
-                </button>
-</div>
-{/*  TEAM CARD  */}
-<div className="group relative flex flex-col rounded-3xl bg-card-dark border border-white/10 p-6 md:p-8 hover:-translate-y-2 transition-transform duration-300 hover:border-accent-green/50">
-<div className="mb-6 space-y-2">
-<h3 className="text-accent-green text-lg font-bold tracking-wide">TEAM</h3>
-<p className="text-text-muted text-xs font-normal">For the coaching staff</p>
-<div className="pt-4 flex items-baseline gap-1">
-<span className="text-4xl font-bold font-mono text-white">$29.99</span>
-<span className="text-gray-500 font-medium">/mo</span>
-</div>
-</div>
-<ul className="flex-1 space-y-4 mb-8">
-<li className="flex items-start gap-3 text-sm text-gray-300">
-<span className="material-symbols-outlined text-accent-green text-[20px] feature-check">check</span>
-<span>5 Team Seats</span>
-</li>
-<li className="flex items-start gap-3 text-sm text-gray-300">
-<span className="material-symbols-outlined text-accent-green text-[20px] feature-check">check</span>
-<span>Collaboration Tools</span>
-</li>
-<li className="flex items-start gap-3 text-sm text-gray-300">
-<span className="material-symbols-outlined text-accent-green text-[20px] feature-check">check</span>
-<span>Shared Watchlists</span>
-</li>
-<li className="flex items-start gap-3 text-sm text-gray-300">
-<span className="material-symbols-outlined text-accent-green text-[20px] feature-check">check</span>
-<span>Priority Support</span>
-</li>
-</ul>
-<button
-  onClick={() => handleCheckout('team')}
-  disabled={loadingPlan === 'team'}
-  className="w-full py-3 px-6 rounded-full bg-[#1F2937] hover:bg-[#374151] border border-accent-green/30 text-white text-sm font-bold transition-colors disabled:opacity-50"
->
-                    {loadingPlan === 'team' ? 'Loading...' : 'Get Team'}
-                </button>
-</div>
-{/*  SCOUT CARD  */}
-<div className="group relative flex flex-col rounded-3xl bg-card-dark border border-white/10 p-6 md:p-8 hover:-translate-y-2 transition-transform duration-300 hover:border-accent-purple/50">
-<div className="mb-6 space-y-2">
-<h3 className="text-accent-purple text-lg font-bold tracking-wide">SCOUT</h3>
-<p className="text-text-muted text-xs font-normal">For agencies &amp; media</p>
-<div className="pt-4 flex items-baseline gap-1">
-<span className="text-3xl font-bold font-mono text-white">Contact</span>
-</div>
-</div>
-<ul className="flex-1 space-y-4 mb-8">
-<li className="flex items-start gap-3 text-sm text-gray-300">
-<span className="material-symbols-outlined text-accent-purple text-[20px] feature-check">check</span>
-<span>API Access</span>
-</li>
-<li className="flex items-start gap-3 text-sm text-gray-300">
-<span className="material-symbols-outlined text-accent-purple text-[20px] feature-check">check</span>
-<span>Custom Reporting</span>
-</li>
-<li className="flex items-start gap-3 text-sm text-gray-300">
-<span className="material-symbols-outlined text-accent-purple text-[20px] feature-check">check</span>
-<span>Dedicated Account Manager</span>
-</li>
-<li className="flex items-start gap-3 text-sm text-gray-300">
-<span className="material-symbols-outlined text-accent-purple text-[20px] feature-check">check</span>
-<span>SSO Integration</span>
-</li>
-</ul>
-<button
-  onClick={() => window.location.href = 'mailto:sales@repmax.com?subject=Scout Plan Inquiry'}
-  className="w-full py-3 px-6 rounded-full bg-[#1F2937] hover:bg-[#374151] border border-accent-purple/30 text-white text-sm font-bold transition-colors"
->
-                    Contact Sales
-                </button>
-</div>
-</div>
-{/*  Billing Note  */}
-<div className="mt-12 text-center">
-<p className="text-text-muted text-sm font-light">All plans billed monthly. Cancel anytime.</p>
-</div>
+<PricingTabs
+  loadingSlug={loadingPlan}
+  onCheckout={handleCheckout}
+  onOneTimeCheckout={handleOneTimeCheckout}
+/>
 {/*  FAQ Section  */}
 <div className="mt-24 max-w-3xl w-full mx-auto">
 <h2 className="text-2xl font-bold text-center mb-10 text-white">Frequently Asked Questions</h2>
@@ -237,11 +115,11 @@ export default function Page() {
 {/*  Question 1  */}
 <details className="group bg-card-dark rounded-xl border border-white/5 overflow-hidden transition-all duration-300 open:border-primary/30 open:bg-[#252529]">
 <summary className="flex justify-between items-center p-6 cursor-pointer list-none">
-<span className="font-medium text-white group-hover:text-primary transition-colors">Is the Starter plan really free forever?</span>
+<span className="font-medium text-white group-hover:text-primary transition-colors">Are the free plans really free forever?</span>
 <span className="material-symbols-outlined transition-transform duration-300 group-open:rotate-180 text-gray-400">expand_more</span>
 </summary>
 <div className="px-6 pb-6 text-gray-400 text-sm leading-relaxed">
-                        Yes, the Starter plan is completely free and always will be. It gives you basic access to public profiles and a limited number of search queries per day, perfect for casual fans keeping up with their team&apos;s recruiting class.
+                        Yes. Both the Athlete Basic and Recruiter Free plans are completely free and always will be. They give you basic access to get started, and you can upgrade anytime to unlock more features.
                     </div>
 </details>
 {/*  Question 2  */}
@@ -251,7 +129,7 @@ export default function Page() {
 <span className="material-symbols-outlined transition-transform duration-300 group-open:rotate-180 text-gray-400">expand_more</span>
 </summary>
 <div className="px-6 pb-6 text-gray-400 text-sm leading-relaxed">
-                        Absolutely. You can upgrade to Pro or Team at any time to unlock more features immediately. Downgrades are effective at the end of your current billing cycle.
+                        Absolutely. You can upgrade or switch plans at any time within your category. Upgrades take effect immediately and downgrades apply at the end of your current billing cycle. Annual plans offer ~17% savings on subscription products.
                     </div>
 </details>
 {/*  Question 3  */}
@@ -261,7 +139,7 @@ export default function Page() {
 <span className="material-symbols-outlined transition-transform duration-300 group-open:rotate-180 text-gray-400">expand_more</span>
 </summary>
 <div className="px-6 pb-6 text-gray-400 text-sm leading-relaxed">
-                        We accept all major credit cards (Visa, Mastercard, American Express) as well as PayPal. For Team and Scout plans, we can also support invoice-based billing for annual contracts.
+                        We accept all major credit cards (Visa, Mastercard, American Express) as well as PayPal. For enterprise and school plans, we can also support invoice-based billing for annual contracts.
                     </div>
 </details>
 {/*  Question 4  */}
@@ -271,7 +149,7 @@ export default function Page() {
 <span className="material-symbols-outlined transition-transform duration-300 group-open:rotate-180 text-gray-400">expand_more</span>
 </summary>
 <div className="px-6 pb-6 text-gray-400 text-sm leading-relaxed">
-                        No, our standard plans are month-to-month. You can cancel at any time without penalty. Long-term contracts are only required for custom enterprise solutions under the Scout plan.
+                        No. Subscription plans (Athletes, Recruiters) are month-to-month and can be canceled anytime. School plans are billed annually. Events and Dashr products are one-time purchases with no recurring charges. Long-term contracts are only required for enterprise solutions.
                     </div>
 </details>
 </div>

@@ -271,6 +271,7 @@ export type Database = {
           has_api_access: boolean;
           has_export: boolean;
           active: boolean;
+          target_role: string | null;
           created_at: string;
         };
         Insert: {
@@ -285,6 +286,7 @@ export type Database = {
           has_api_access?: boolean;
           has_export?: boolean;
           active?: boolean;
+          target_role?: string | null;
           created_at?: string;
         };
         Update: {
@@ -299,6 +301,7 @@ export type Database = {
           has_api_access?: boolean;
           has_export?: boolean;
           active?: boolean;
+          target_role?: string | null;
           created_at?: string;
         };
       };
