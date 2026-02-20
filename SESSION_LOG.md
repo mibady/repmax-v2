@@ -667,4 +667,61 @@ This project existed before tracking was set up.
 
 ### Linear
 - NGE-165 through NGE-173 added to tracking (9 new issues)
+
+---
+
+## Session 14 — 2026-02-21
+
+### Completed
+- **5-tab pricing page** — rebuilt `/pricing` from 4-card recruiter grid to tabbed layout (Athletes, Recruiters, Schools, Events, Dashr)
+- **DB migration 011** — added `target_role` column to `subscription_plans`, inserted 16 new plan rows, deactivated legacy `pro`/`team` slugs
+- **3 new components** — `PricingTabs` (tab bar + role-aware defaults), `PricingCard` (4 billing modes), `BillingToggle` (monthly/annual with ~17% badge)
+- **Typed plan data** — `pricing-plans.ts` with full definitions for all 22 Stripe prices across 5 categories
+- **Monthly/annual toggle** — Athletes and Recruiters tabs show toggle; Schools/Events/Dashr show fixed pricing
+- **Role-aware default tab** — athlete→Athletes, recruiter/coach→Recruiters, club→Events, guests→Athletes
+- **Domain rename** — changed all `repmax.com` references to `repmax.io` across 9 files (pages, tests, e2e)
+- **Quality gates pass** — tsc clean, lint clean, 385/385 tests, build success
+
+### Audit Snapshot
+- Pages: 63
+- API routes: 48
+- Components: 29
+- Server actions: 9 files
+- Hooks: 35
+- Tests: 35 test files, 385/385 passing
+- Migrations: 11
+- Commits: 88 total (+3 this session)
+- Build: pass
+
+### Decisions Made
+- Unified 5-tab pricing page instead of separate pages per role (NGE-169–172 collapsed into one)
+- Legacy `pro`/`team` DB rows deactivated (`active=false`) but NOT deleted — existing subscribers unaffected
+- School plans annual-only (no monthly option), Events/Dashr one-time only (no toggle)
+- Enterprise card uses mailto: link, not Stripe checkout
+- `repmax.io` is the canonical domain (was `repmax.com`)
+
+### Known Issues
+- NGE-173 still pending — 22 Stripe Price objects need to be created in Stripe Dashboard and env vars populated
+- `one_time_purchases` and `tournament_registrations` DB tables still missing (referenced in webhook)
+- 5 pre-existing lint warnings unchanged
+- Migration 011 needs to be applied to Supabase (`supabase db push`)
+
+### Next Session Should
+- Run `/prime` to load context
+- **NGE-173:** Create 22 Stripe Price objects + 2 coupons in Stripe Dashboard, populate env vars
+- **NGE-55:** Mobile app (Expo) — only remaining feature issue
+- Apply migration 011 to Supabase: `supabase db push`
+- Create DB migrations for `one_time_purchases` and `tournament_registrations` tables
+- Consider E2E testing of checkout flows once Stripe prices are live
+
+### Linear
+- NGE-165 → Done (Recruiter pricing: 4-tier subscriptions)
+- NGE-166 → Done (School B2B subscriptions: 3 annual tiers)
+- NGE-167 → Done (Tournament/Events: organizer tiers)
+- NGE-168 → Done (Dashr Combines: 5 one-time products)
+- NGE-169 → Done (Recruiter pricing page: role-aware tabs)
+- NGE-170 → Done (School pricing page + checkout flow)
+- NGE-171 → Done (Tournament booking + registration payment flow)
+- NGE-172 → Done (Dashr booking + checkout flow)
+- Progress: 29/31 done (94%), 2 remaining (NGE-55 mobile, NGE-173 Stripe catalog)
 - Project: 21/31 done (10 todo, up from 1)
