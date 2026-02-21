@@ -66,3 +66,8 @@ Desktop.ini
 
 # Supabase temp
 supabase/.temp/
+.gemini/
+GEMINI.md
+ZERO_MOCK_AUDIT_RESULTS.txt
+journey-results/
+apps/web/journeys/.last-failures.json
