@@ -51,22 +51,22 @@ Add to `test/seed/data/users.ts`:
 **Offers** (so coach dashboard shows "athletes with offers"):
 ```typescript
 export const offerData: OfferData[] = [
-  { athleteEmail: 'jaylen.washington@test.repmax.com', schoolName: 'Alabama', division: 'D1', scholarshipType: 'full', committed: false },
-  { athleteEmail: 'jaylen.washington@test.repmax.com', schoolName: 'Georgia', division: 'D1', scholarshipType: 'partial', committed: false },
-  { athleteEmail: 'marcus.thompson@test.repmax.com', schoolName: 'TCU', division: 'D1', scholarshipType: 'preferred-walk-on', committed: false },
-  { athleteEmail: 'deshawn.jackson@test.repmax.com', schoolName: 'Ohio State', division: 'D1', scholarshipType: 'full', committed: true },
-  { athleteEmail: 'deshawn.jackson@test.repmax.com', schoolName: 'Michigan', division: 'D1', scholarshipType: 'full', committed: false },
-  { athleteEmail: 'sofia.rodriguez@test.repmax.com', schoolName: 'USC', division: 'D1', scholarshipType: 'partial', committed: false },
+  { athleteEmail: 'jaylen.washington@test.repmax.io', schoolName: 'Alabama', division: 'D1', scholarshipType: 'full', committed: false },
+  { athleteEmail: 'jaylen.washington@test.repmax.io', schoolName: 'Georgia', division: 'D1', scholarshipType: 'partial', committed: false },
+  { athleteEmail: 'marcus.thompson@test.repmax.io', schoolName: 'TCU', division: 'D1', scholarshipType: 'preferred-walk-on', committed: false },
+  { athleteEmail: 'deshawn.jackson@test.repmax.io', schoolName: 'Ohio State', division: 'D1', scholarshipType: 'full', committed: true },
+  { athleteEmail: 'deshawn.jackson@test.repmax.io', schoolName: 'Michigan', division: 'D1', scholarshipType: 'full', committed: false },
+  { athleteEmail: 'sofia.rodriguez@test.repmax.io', schoolName: 'USC', division: 'D1', scholarshipType: 'partial', committed: false },
 ];
 ```
 
 **Messages** (so messages page isn't empty):
 ```typescript
 export const messageData: MessageData[] = [
-  { senderEmail: 'brian.williams@test.repmax.com', recipientEmail: 'jaylen.washington@test.repmax.com', subject: 'TCU Football Interest', body: 'Hi Jaylen, I reviewed your film and would love to discuss our program...', read: true },
-  { senderEmail: 'jaylen.washington@test.repmax.com', recipientEmail: 'brian.williams@test.repmax.com', subject: 'Re: TCU Football Interest', body: 'Thank you Coach Williams! I would love to learn more about TCU...', read: false },
-  { senderEmail: 'alex.martinez@test.repmax.com', recipientEmail: 'deshawn.jackson@test.repmax.com', subject: 'ASU Recruiting', body: 'DeShawn, your measurables are exactly what we look for...', read: false },
-  { senderEmail: 'brian.williams@test.repmax.com', recipientEmail: 'sofia.rodriguez@test.repmax.com', subject: 'Combine Invite', body: 'Sofia, we would like to invite you to our spring combine...', read: false },
+  { senderEmail: 'brian.williams@test.repmax.io', recipientEmail: 'jaylen.washington@test.repmax.io', subject: 'TCU Football Interest', body: 'Hi Jaylen, I reviewed your film and would love to discuss our program...', read: true },
+  { senderEmail: 'jaylen.washington@test.repmax.io', recipientEmail: 'brian.williams@test.repmax.io', subject: 'Re: TCU Football Interest', body: 'Thank you Coach Williams! I would love to learn more about TCU...', read: false },
+  { senderEmail: 'alex.martinez@test.repmax.io', recipientEmail: 'deshawn.jackson@test.repmax.io', subject: 'ASU Recruiting', body: 'DeShawn, your measurables are exactly what we look for...', read: false },
+  { senderEmail: 'brian.williams@test.repmax.io', recipientEmail: 'sofia.rodriguez@test.repmax.io', subject: 'Combine Invite', body: 'Sofia, we would like to invite you to our spring combine...', read: false },
 ];
 ```
 

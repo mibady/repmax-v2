@@ -147,7 +147,7 @@ Modify `apps/web/app/pricing/page.tsx`:
   - "Start Free" → `handleCheckout('starter')`
   - "Go Pro" → `handleCheckout('pro')`
   - "Get Team" → `handleCheckout('team')`
-  - "Contact Sales" → `window.location.href = 'mailto:sales@repmax.com'`
+  - "Contact Sales" → `window.location.href = 'mailto:sales@repmax.io'`
 - Add loading spinner state per button
 
 ### Step 5: Update Subscription Action Tests

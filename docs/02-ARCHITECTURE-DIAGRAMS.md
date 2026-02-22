@@ -233,7 +233,7 @@ sequenceDiagram
 
     Note over A,Pub: PHASE 6: Public Sharing
     A->>App: Click Share → Copy Link
-    App-->>A: repmax.com/athletes/REP-ABC/card
+    App-->>A: repmax.io/athletes/REP-ABC/card
     A->>Pub: Shares on Twitter/text
     Pub->>DB: Fetch by repmax_id (public read)
     Pub-->>Pub: SSR render with OG tags

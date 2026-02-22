@@ -583,12 +583,12 @@ NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN=pk.eyJ...
 RESEND_API_KEY=re_...
 
 # RepMax MCP
-REPMAX_MCP_ENDPOINT=https://mcp.repmax.com
+REPMAX_MCP_ENDPOINT=https://mcp.repmax.io
 REPMAX_MCP_API_KEY=
 
 # App URLs
-NEXT_PUBLIC_APP_URL=https://app.repmax.com
-NEXT_PUBLIC_CARD_URL=https://card.repmax.com
+NEXT_PUBLIC_APP_URL=https://app.repmax.io
+NEXT_PUBLIC_CARD_URL=https://card.repmax.io
 ```
 
 ### First-Time Setup
@@ -2070,9 +2070,9 @@ Push to main → Vercel builds → Preview deployment
 
 ### Domain Setup
 
-- `repmax.com` — Marketing site
-- `app.repmax.com` — Web application
-- `card.repmax.com` — Public Companion Cards (or `repmax.com/card/[id]`)
+- `repmax.io` — Marketing site
+- `app.repmax.io` — Web application
+- `card.repmax.io` — Public Companion Cards (or `repmax.io/card/[id]`)
 
 ---
 

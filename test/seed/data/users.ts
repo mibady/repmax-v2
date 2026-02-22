@@ -63,6 +63,11 @@ export interface ClubProfileData {
   activeTournaments?: number;
 }
 
+export interface SchoolProfileData {
+  schoolName: string;
+  isVerified?: boolean;
+}
+
 export interface TestUserData {
   email: string;
   password: string;
@@ -78,6 +83,7 @@ export interface TestUserData {
   recruiterProfile?: RecruiterProfileData;
   coachProfile?: CoachProfileData;
   clubProfile?: ClubProfileData;
+  schoolProfile?: SchoolProfileData;
 }
 
 // ============================================
@@ -99,11 +105,11 @@ export interface HighlightData {
 
 export const highlightData: HighlightData[] = [
   {
-    athleteEmail: 'jaylen.washington@test.repmax.com',
+    athleteEmail: 'jaylen.washington@test.repmax.io',
     title: 'Junior Season Highlights 2025',
     description: 'Full junior year highlight reel - passing, rushing, and leadership moments.',
-    videoUrl: 'https://storage.repmax.com/films/jaylen-junior-highlights.mp4',
-    thumbnailUrl: 'https://storage.repmax.com/thumbnails/jaylen-junior-thumb.jpg',
+    videoUrl: 'https://storage.repmax.io/films/jaylen-junior-highlights.mp4',
+    thumbnailUrl: 'https://storage.repmax.io/thumbnails/jaylen-junior-thumb.jpg',
     durationSeconds: 245,
     viewCount: 1847,
     aiAnalyzed: true,
@@ -111,32 +117,32 @@ export const highlightData: HighlightData[] = [
     createdAt: '2025-11-15T10:00:00Z',
   },
   {
-    athleteEmail: 'jaylen.washington@test.repmax.com',
+    athleteEmail: 'jaylen.washington@test.repmax.io',
     title: 'Nike Elite 11 Regional - Camp Footage',
     description: 'Elite 11 regional camp performance footage.',
-    videoUrl: 'https://storage.repmax.com/films/jaylen-elite11-camp.mp4',
-    thumbnailUrl: 'https://storage.repmax.com/thumbnails/jaylen-elite11-thumb.jpg',
+    videoUrl: 'https://storage.repmax.io/films/jaylen-elite11-camp.mp4',
+    thumbnailUrl: 'https://storage.repmax.io/thumbnails/jaylen-elite11-thumb.jpg',
     durationSeconds: 180,
     viewCount: 523,
     aiAnalyzed: false,
     createdAt: '2025-06-22T14:30:00Z',
   },
   {
-    athleteEmail: 'jaylen.washington@test.repmax.com',
+    athleteEmail: 'jaylen.washington@test.repmax.io',
     title: 'Week 8 vs. Corona Centennial - Full Game',
     description: 'Full game film from rivalry matchup.',
-    videoUrl: 'https://storage.repmax.com/films/jaylen-week8-game.mp4',
-    thumbnailUrl: 'https://storage.repmax.com/thumbnails/jaylen-week8-thumb.jpg',
+    videoUrl: 'https://storage.repmax.io/films/jaylen-week8-game.mp4',
+    thumbnailUrl: 'https://storage.repmax.io/thumbnails/jaylen-week8-thumb.jpg',
     durationSeconds: 7200,
     viewCount: 312,
     aiAnalyzed: false,
     createdAt: '2025-10-20T08:00:00Z',
   },
   {
-    athleteEmail: 'deshawn.harris@test.repmax.com',
+    athleteEmail: 'deshawn.harris@test.repmax.io',
     title: 'Route Running Drills',
     description: 'Practice drill footage showing route tree mastery.',
-    videoUrl: 'https://storage.repmax.com/films/deshawn-routes.mp4',
+    videoUrl: 'https://storage.repmax.io/films/deshawn-routes.mp4',
     durationSeconds: 120,
     viewCount: 89,
     aiAnalyzed: false,
@@ -161,7 +167,7 @@ export interface TaskData {
 
 export const coachTasks: TaskData[] = [
   {
-    coachEmail: 'coach.davis@test.repmax.com',
+    coachEmail: 'coach.davis@test.repmax.io',
     title: 'Review film submissions',
     description: 'Review new film uploads from team members',
     dueDate: '2026-02-05T17:00:00Z',
@@ -170,27 +176,27 @@ export const coachTasks: TaskData[] = [
     createdAt: '2026-01-28T08:00:00Z',
   },
   {
-    coachEmail: 'coach.davis@test.repmax.com',
+    coachEmail: 'coach.davis@test.repmax.io',
     title: 'Call with Andre Mitchell family',
     description: 'Discuss recruiting process and upcoming visits',
-    athleteEmail: 'andre.mitchell@test.repmax.com',
+    athleteEmail: 'andre.mitchell@test.repmax.io',
     dueDate: '2026-02-03T15:00:00Z',
     priority: 'high',
     status: 'pending',
     createdAt: '2026-01-27T10:00:00Z',
   },
   {
-    coachEmail: 'coach.davis@test.repmax.com',
+    coachEmail: 'coach.davis@test.repmax.io',
     title: 'Update evaluation report',
     description: 'Complete mid-season evaluation for Devon Brooks',
-    athleteEmail: 'devon.brooks@test.repmax.com',
+    athleteEmail: 'devon.brooks@test.repmax.io',
     dueDate: '2026-02-07T12:00:00Z',
     priority: 'medium',
     status: 'in_progress',
     createdAt: '2026-01-25T14:00:00Z',
   },
   {
-    coachEmail: 'coach.davis@test.repmax.com',
+    coachEmail: 'coach.davis@test.repmax.io',
     title: 'Coordinate camp visit',
     description: 'Arrange transportation for summer camp',
     dueDate: '2026-02-10T09:00:00Z',
@@ -199,7 +205,7 @@ export const coachTasks: TaskData[] = [
     createdAt: '2026-01-24T11:00:00Z',
   },
   {
-    coachEmail: 'coach.davis@test.repmax.com',
+    coachEmail: 'coach.davis@test.repmax.io',
     title: 'Send highlight reels to colleges',
     description: 'Distribute updated highlights to target schools',
     dueDate: '2026-02-01T17:00:00Z',
@@ -208,7 +214,7 @@ export const coachTasks: TaskData[] = [
     createdAt: '2026-01-20T09:00:00Z',
   },
   {
-    coachEmail: 'coach.davis@test.repmax.com',
+    coachEmail: 'coach.davis@test.repmax.io',
     title: 'Schedule team meeting',
     description: 'Plan weekly recruiting update meeting',
     dueDate: '2026-02-02T16:00:00Z',
@@ -227,7 +233,7 @@ export const testUserData: TestUserData[] = [
   // GROUP A: CORE TEST ATHLETES (5)
   // ============================================
   {
-    email: 'jaylen.washington@test.repmax.com',
+    email: 'jaylen.washington@test.repmax.io',
     password: TEST_PASSWORD,
     fullName: 'Jaylen Washington',
     repmaxId: 'REP-JW-2026',
@@ -254,7 +260,7 @@ export const testUserData: TestUserData[] = [
     },
   },
   {
-    email: 'marcus.thompson@test.repmax.com',
+    email: 'marcus.thompson@test.repmax.io',
     password: TEST_PASSWORD,
     fullName: 'Marcus Thompson',
     repmaxId: 'REP-MT-2026',
@@ -274,7 +280,7 @@ export const testUserData: TestUserData[] = [
     },
   },
   {
-    email: 'deshawn.harris@test.repmax.com',
+    email: 'deshawn.harris@test.repmax.io',
     password: TEST_PASSWORD,
     fullName: 'DeShawn Harris',
     repmaxId: 'REP-DH-2026',
@@ -298,7 +304,7 @@ export const testUserData: TestUserData[] = [
     },
   },
   {
-    email: 'sofia.rodriguez@test.repmax.com',
+    email: 'sofia.rodriguez@test.repmax.io',
     password: TEST_PASSWORD,
     fullName: 'Sofia Rodriguez',
     repmaxId: 'REP-SR-2026',
@@ -323,7 +329,7 @@ export const testUserData: TestUserData[] = [
     },
   },
   {
-    email: 'tyler.chen@test.repmax.com',
+    email: 'tyler.chen@test.repmax.io',
     password: TEST_PASSWORD,
     fullName: 'Tyler Chen',
     repmaxId: 'REP-TC-2027',
@@ -345,7 +351,7 @@ export const testUserData: TestUserData[] = [
   // GROUP B: COACH DAVIS'S ROSTER (10)
   // ============================================
   {
-    email: 'andre.mitchell@test.repmax.com',
+    email: 'andre.mitchell@test.repmax.io',
     password: TEST_PASSWORD,
     fullName: 'Andre Mitchell',
     repmaxId: 'REP-AM-2026',
@@ -366,7 +372,7 @@ export const testUserData: TestUserData[] = [
     },
   },
   {
-    email: 'devon.brooks@test.repmax.com',
+    email: 'devon.brooks@test.repmax.io',
     password: TEST_PASSWORD,
     fullName: 'Devon Brooks',
     repmaxId: 'REP-DB-2026',
@@ -387,7 +393,7 @@ export const testUserData: TestUserData[] = [
     },
   },
   {
-    email: 'ryan.park@test.repmax.com',
+    email: 'ryan.park@test.repmax.io',
     password: TEST_PASSWORD,
     fullName: 'Ryan Park',
     repmaxId: 'REP-RP-2026',
@@ -407,7 +413,7 @@ export const testUserData: TestUserData[] = [
     },
   },
   {
-    email: 'carlos.mendez@test.repmax.com',
+    email: 'carlos.mendez@test.repmax.io',
     password: TEST_PASSWORD,
     fullName: 'Carlos Mendez',
     repmaxId: 'REP-CM-2026',
@@ -428,7 +434,7 @@ export const testUserData: TestUserData[] = [
     },
   },
   {
-    email: 'jamal.carter@test.repmax.com',
+    email: 'jamal.carter@test.repmax.io',
     password: TEST_PASSWORD,
     fullName: 'Jamal Carter',
     repmaxId: 'REP-JC-2026',
@@ -449,7 +455,7 @@ export const testUserData: TestUserData[] = [
     },
   },
   {
-    email: 'tyler.green@test.repmax.com',
+    email: 'tyler.green@test.repmax.io',
     password: TEST_PASSWORD,
     fullName: 'Tyler Green',
     repmaxId: 'REP-TG-2026',
@@ -469,7 +475,7 @@ export const testUserData: TestUserData[] = [
     },
   },
   {
-    email: 'noah.williams@test.repmax.com',
+    email: 'noah.williams@test.repmax.io',
     password: TEST_PASSWORD,
     fullName: 'Noah Williams',
     repmaxId: 'REP-NW-2027',
@@ -490,7 +496,7 @@ export const testUserData: TestUserData[] = [
     },
   },
   {
-    email: 'isaiah.brown@test.repmax.com',
+    email: 'isaiah.brown@test.repmax.io',
     password: TEST_PASSWORD,
     fullName: 'Isaiah Brown',
     repmaxId: 'REP-IB-2027',
@@ -510,7 +516,7 @@ export const testUserData: TestUserData[] = [
     },
   },
   {
-    email: 'michael.lee@test.repmax.com',
+    email: 'michael.lee@test.repmax.io',
     password: TEST_PASSWORD,
     fullName: 'Michael Lee',
     repmaxId: 'REP-ML-2026',
@@ -530,7 +536,7 @@ export const testUserData: TestUserData[] = [
     },
   },
   {
-    email: 'diego.santos@test.repmax.com',
+    email: 'diego.santos@test.repmax.io',
     password: TEST_PASSWORD,
     fullName: 'Diego Santos',
     repmaxId: 'REP-DS-2027',
@@ -555,7 +561,7 @@ export const testUserData: TestUserData[] = [
   // PARENTS (2)
   // ============================================
   {
-    email: 'lisa.washington@test.repmax.com',
+    email: 'lisa.washington@test.repmax.io',
     password: TEST_PASSWORD,
     fullName: 'Lisa Washington',
     repmaxId: 'REP-LW-0001',
@@ -566,11 +572,11 @@ export const testUserData: TestUserData[] = [
     zone: 'WEST',
     parentProfile: {
       relationship: 'mother',
-      linkedAthleteEmail: 'jaylen.washington@test.repmax.com',
+      linkedAthleteEmail: 'jaylen.washington@test.repmax.io',
     },
   },
   {
-    email: 'karen.thompson@test.repmax.com',
+    email: 'karen.thompson@test.repmax.io',
     password: TEST_PASSWORD,
     fullName: 'Karen Thompson',
     repmaxId: 'REP-KT-0001',
@@ -588,7 +594,7 @@ export const testUserData: TestUserData[] = [
   // COACH (1)
   // ============================================
   {
-    email: 'coach.davis@test.repmax.com',
+    email: 'coach.davis@test.repmax.io',
     password: TEST_PASSWORD,
     fullName: 'James Davis',
     repmaxId: 'REP-CD-0001',
@@ -608,7 +614,7 @@ export const testUserData: TestUserData[] = [
   // RECRUITERS (2)
   // ============================================
   {
-    email: 'coach.williams@test.repmax.com',
+    email: 'coach.williams@test.repmax.io',
     password: TEST_PASSWORD,
     fullName: 'Brian Williams',
     repmaxId: 'REP-BW-0001',
@@ -627,7 +633,7 @@ export const testUserData: TestUserData[] = [
     },
   },
   {
-    email: 'coach.martinez@test.repmax.com',
+    email: 'coach.martinez@test.repmax.io',
     password: TEST_PASSWORD,
     fullName: 'Alex Martinez',
     repmaxId: 'REP-AM-0001',
@@ -650,7 +656,7 @@ export const testUserData: TestUserData[] = [
   // CLUB ORGANIZER (1)
   // ============================================
   {
-    email: 'mike.torres@test.repmax.com',
+    email: 'mike.torres@test.repmax.io',
     password: TEST_PASSWORD,
     fullName: 'Mike Torres',
     repmaxId: 'REP-MT-0001',
@@ -666,10 +672,29 @@ export const testUserData: TestUserData[] = [
   },
 
   // ============================================
+  // SCHOOL ADMIN (1)
+  // ============================================
+  {
+    email: 'school.admin@test.repmax.io',
+    password: TEST_PASSWORD,
+    fullName: 'Sarah Jenkins',
+    repmaxId: 'REP-SA-0001',
+    roles: ['school'],
+    activeRole: 'school',
+    city: 'Los Angeles',
+    state: 'CA',
+    zone: 'WEST',
+    schoolProfile: {
+      schoolName: 'Westside High School',
+      isVerified: true,
+    },
+  },
+
+  // ============================================
   // ADMIN (1)
   // ============================================
   {
-    email: 'admin@repmax.com',
+    email: 'admin@repmax.io',
     password: TEST_PASSWORD,
     fullName: 'Admin User',
     repmaxId: 'REP-ADMIN-0001',
@@ -696,27 +721,27 @@ export function getAthletes(): TestUserData[] {
 
 export function getCoreAthletes(): TestUserData[] {
   const coreEmails = [
-    'jaylen.washington@test.repmax.com',
-    'marcus.thompson@test.repmax.com',
-    'deshawn.harris@test.repmax.com',
-    'sofia.rodriguez@test.repmax.com',
-    'tyler.chen@test.repmax.com',
+    'jaylen.washington@test.repmax.io',
+    'marcus.thompson@test.repmax.io',
+    'deshawn.harris@test.repmax.io',
+    'sofia.rodriguez@test.repmax.io',
+    'tyler.chen@test.repmax.io',
   ];
   return testUserData.filter((u) => coreEmails.includes(u.email));
 }
 
 export function getRosterAthletes(): TestUserData[] {
   const rosterEmails = [
-    'andre.mitchell@test.repmax.com',
-    'devon.brooks@test.repmax.com',
-    'ryan.park@test.repmax.com',
-    'carlos.mendez@test.repmax.com',
-    'jamal.carter@test.repmax.com',
-    'tyler.green@test.repmax.com',
-    'noah.williams@test.repmax.com',
-    'isaiah.brown@test.repmax.com',
-    'michael.lee@test.repmax.com',
-    'diego.santos@test.repmax.com',
+    'andre.mitchell@test.repmax.io',
+    'devon.brooks@test.repmax.io',
+    'ryan.park@test.repmax.io',
+    'carlos.mendez@test.repmax.io',
+    'jamal.carter@test.repmax.io',
+    'tyler.green@test.repmax.io',
+    'noah.williams@test.repmax.io',
+    'isaiah.brown@test.repmax.io',
+    'michael.lee@test.repmax.io',
+    'diego.santos@test.repmax.io',
   ];
   return testUserData.filter((u) => rosterEmails.includes(u.email));
 }

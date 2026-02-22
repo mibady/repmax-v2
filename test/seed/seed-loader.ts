@@ -551,10 +551,10 @@ export async function seedRelationships(): Promise<SeedResult> {
   console.log(`  Found ${realAthletes.length} real CA athletes\n`);
 
   // TCU and ASU recruiter IDs
-  const tcuCoachId = coachIdMap.get('coach.williams@test.repmax.com');
-  const asuCoachId = coachIdMap.get('coach.martinez@test.repmax.com');
-  const tcuProfileId = profileIdMap.get('coach.williams@test.repmax.com');
-  const asuProfileId = profileIdMap.get('coach.martinez@test.repmax.com');
+  const tcuCoachId = coachIdMap.get('coach.williams@test.repmax.io');
+  const asuCoachId = coachIdMap.get('coach.martinez@test.repmax.io');
+  const tcuProfileId = profileIdMap.get('coach.williams@test.repmax.io');
+  const asuProfileId = profileIdMap.get('coach.martinez@test.repmax.io');
 
   // 2. Create shortlists: TCU → 15 athletes, ASU → 10 athletes
   if (tcuCoachId) {
@@ -601,10 +601,10 @@ export async function seedRelationships(): Promise<SeedResult> {
   }> = [];
 
   if (tcuProfileId) {
-    viewerEntries.push({ email: 'coach.williams@test.repmax.com', profileId: tcuProfileId, school: 'TCU', zone: 'Southwest', state: 'TX' });
+    viewerEntries.push({ email: 'coach.williams@test.repmax.io', profileId: tcuProfileId, school: 'TCU', zone: 'Southwest', state: 'TX' });
   }
   if (asuProfileId) {
-    viewerEntries.push({ email: 'coach.martinez@test.repmax.com', profileId: asuProfileId, school: 'Arizona State', zone: 'Southwest', state: 'AZ' });
+    viewerEntries.push({ email: 'coach.martinez@test.repmax.io', profileId: asuProfileId, school: 'Arizona State', zone: 'Southwest', state: 'AZ' });
   }
 
   if (viewerEntries.length > 0) {
@@ -820,8 +820,8 @@ export async function seedParentLinks(): Promise<SeedResult> {
   // Link Lisa Washington → Jaylen Washington
   const parentLinks = [
     {
-      parentEmail: 'lisa.washington@test.repmax.com',
-      athleteEmail: 'jaylen.washington@test.repmax.com',
+      parentEmail: 'lisa.washington@test.repmax.io',
+      athleteEmail: 'jaylen.washington@test.repmax.io',
       relationship: 'mother',
     },
   ];
@@ -884,7 +884,7 @@ export async function seedClubData(): Promise<SeedResult> {
     await buildEntityMaps(supabase);
   }
 
-  const mikeTorresCoachId = coachIdMap.get('mike.torres@test.repmax.com');
+  const mikeTorresCoachId = coachIdMap.get('mike.torres@test.repmax.io');
 
   if (!mikeTorresCoachId) {
     console.log('  Mike Torres coach record not found. Skipping club seeding.');
