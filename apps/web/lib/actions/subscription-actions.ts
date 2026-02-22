@@ -2,14 +2,7 @@
 
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import Stripe from "stripe";
-
-function getStripe() {
-  if (!process.env.STRIPE_SECRET_KEY) {
-    throw new Error("STRIPE_SECRET_KEY is not set");
-  }
-  return new Stripe(process.env.STRIPE_SECRET_KEY);
-}
+import { getStripe } from "@/lib/stripe";
 
 function getPriceId(planSlug: string): string | undefined {
   const map: Record<string, string | undefined> = {
@@ -18,21 +11,21 @@ function getPriceId(planSlug: string): string | undefined {
     team: process.env.STRIPE_TEAM_PRICE_ID,
     scout: process.env.STRIPE_SCOUT_PRICE_ID,
     // Spec A: Athlete
-    "athlete-premium": process.env.STRIPE_ATHLETE_PREMIUM_PRICE_ID,
-    "athlete-pro": process.env.STRIPE_ATHLETE_PRO_PRICE_ID,
+    "athlete-premium": process.env.STRIPE_ATHLETE_PREMIUM_MONTHLY_PRICE_ID,
+    "athlete-pro": process.env.STRIPE_ATHLETE_PRO_MONTHLY_PRICE_ID,
     "athlete-premium-annual": process.env.STRIPE_ATHLETE_PREMIUM_ANNUAL_PRICE_ID,
     "athlete-pro-annual": process.env.STRIPE_ATHLETE_PRO_ANNUAL_PRICE_ID,
     // Spec B: Recruiter
-    "recruiter-pro": process.env.STRIPE_RECRUITER_PRO_PRICE_ID,
-    "recruiter-team": process.env.STRIPE_RECRUITER_TEAM_PRICE_ID,
-    "recruiter-ai": process.env.STRIPE_RECRUITER_AI_PRICE_ID,
+    "recruiter-pro": process.env.STRIPE_RECRUITER_PRO_MONTHLY_PRICE_ID,
+    "recruiter-team": process.env.STRIPE_RECRUITER_TEAM_MONTHLY_PRICE_ID,
+    "recruiter-ai": process.env.STRIPE_RECRUITER_AI_MONTHLY_PRICE_ID,
     "recruiter-pro-annual": process.env.STRIPE_RECRUITER_PRO_ANNUAL_PRICE_ID,
     "recruiter-team-annual": process.env.STRIPE_RECRUITER_TEAM_ANNUAL_PRICE_ID,
     "recruiter-ai-annual": process.env.STRIPE_RECRUITER_AI_ANNUAL_PRICE_ID,
     // Spec C: Schools
-    "school-small": process.env.STRIPE_SCHOOL_SMALL_PRICE_ID,
-    "school-medium": process.env.STRIPE_SCHOOL_MEDIUM_PRICE_ID,
-    "school-large": process.env.STRIPE_SCHOOL_LARGE_PRICE_ID,
+    "school-small": process.env.STRIPE_SCHOOL_SMALL_ANNUAL_PRICE_ID,
+    "school-medium": process.env.STRIPE_SCHOOL_MEDIUM_ANNUAL_PRICE_ID,
+    "school-large": process.env.STRIPE_SCHOOL_LARGE_ANNUAL_PRICE_ID,
     // Spec D: Events
     "event-basic": process.env.STRIPE_EVENT_BASIC_PRICE_ID,
     "event-standard": process.env.STRIPE_EVENT_STANDARD_PRICE_ID,
@@ -129,6 +122,18 @@ export async function createCheckoutSession(planSlug: string) {
     return { error: "Profile not found" };
   }
 
+  // Prevent duplicate subscriptions
+  const { data: activeSub } = await supabase
+    .from("subscriptions")
+    .select("id")
+    .eq("profile_id", profile.id)
+    .eq("status", "active")
+    .maybeSingle();
+
+  if (activeSub && !PAYMENT_SLUGS.has(planSlug)) {
+    return { error: "You already have an active subscription. Manage it via the billing portal." };
+  }
+
   // For free plans, create subscription directly
   if (plan.price_cents === 0) {
     const { error } = await supabase.from("subscriptions").insert({
@@ -162,7 +167,7 @@ export async function createCheckoutSession(planSlug: string) {
 
     if (!stripeCustomerId) {
       const customer = await stripe.customers.create({
-        email: user.email!,
+        email: user.email || undefined,
         metadata: { profile_id: profile.id },
       });
       stripeCustomerId = customer.id;
@@ -176,10 +181,11 @@ export async function createCheckoutSession(planSlug: string) {
     }
 
     const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
+    const mode = PAYMENT_SLUGS.has(planSlug) ? "payment" : "subscription";
 
     const session = await stripe.checkout.sessions.create({
       customer: stripeCustomerId,
-      mode: "subscription",
+      mode,
       line_items: [{ price: priceId, quantity: 1 }],
       metadata: { profile_id: profile.id, plan_id: plan.id },
       success_url: `${baseUrl}/dashboard?checkout=success`,
@@ -275,7 +281,7 @@ export async function createOneTimeCheckout(
 
     if (!stripeCustomerId) {
       const customer = await stripe.customers.create({
-        email: user.email!,
+        email: user.email || undefined,
         metadata: { profile_id: profile.id },
       });
       stripeCustomerId = customer.id;
@@ -294,10 +300,10 @@ export async function createOneTimeCheckout(
       mode: "payment",
       line_items: [{ price: priceId, quantity }],
       metadata: {
+        ...metadata,
         profile_id: profile.id,
         product_type: productSlug.startsWith("dashr-") ? "dashr" : "event",
         product_slug: productSlug,
-        ...metadata,
       },
       success_url: `${baseUrl}/dashboard?checkout=success`,
       cancel_url: `${baseUrl}/dashboard?checkout=canceled`,
@@ -360,7 +366,7 @@ export async function createRegistrationPayment(
 
     if (!stripeCustomerId) {
       const customer = await stripe.customers.create({
-        email: user.email!,
+        email: user.email || undefined,
         metadata: { profile_id: profile.id },
       });
       stripeCustomerId = customer.id;

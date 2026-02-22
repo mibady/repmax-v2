@@ -1,13 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import Stripe from "stripe";
-
-function getStripe() {
-  if (!process.env.STRIPE_SECRET_KEY) {
-    throw new Error("STRIPE_SECRET_KEY is not set");
-  }
-  return new Stripe(process.env.STRIPE_SECRET_KEY);
-}
+import { getStripe } from "@/lib/stripe";
 
 export async function POST() {
   try {
@@ -35,7 +28,25 @@ export async function POST() {
       );
     }
 
-    if (!profile.stripe_customer_id) {
+    let stripeCustomerId = profile.stripe_customer_id;
+
+    // Check if user is a school admin - prioritize school billing
+    const { data: membership } = await supabase
+      .from("school_members")
+      .select("school_id, schools(stripe_customer_id)")
+      .eq("profile_id", profile.id)
+      .eq("role", "admin")
+      .maybeSingle();
+
+    if (membership?.schools) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const school: any = membership.schools;
+      if (school.stripe_customer_id) {
+        stripeCustomerId = school.stripe_customer_id;
+      }
+    }
+
+    if (!stripeCustomerId) {
       return NextResponse.json(
         { error: "No billing account found. Subscribe to a paid plan first." },
         { status: 404 }
@@ -46,7 +57,7 @@ export async function POST() {
     const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
 
     const session = await stripe.billingPortal.sessions.create({
-      customer: profile.stripe_customer_id,
+      customer: stripeCustomerId,
       return_url: `${baseUrl}/dashboard`,
     });
 
