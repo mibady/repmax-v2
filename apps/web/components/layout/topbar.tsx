@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { NotificationDropdown } from '@/components/ui/notification-dropdown';
 import { SearchInput } from '@/components/ui/search-input';
 
-export type UserRole = 'athlete' | 'parent' | 'coach' | 'recruiter' | 'club' | 'admin';
+export type UserRole = 'athlete' | 'parent' | 'coach' | 'recruiter' | 'club' | 'admin' | 'school';
 
 interface TopbarUser {
   name: string;
@@ -32,6 +32,7 @@ const ROLE_LABELS: Record<UserRole, string> = {
   recruiter: 'Recruiter',
   club: 'Club',
   admin: 'Admin',
+  school: 'School',
 };
 
 const ROLE_DASHBOARD_PATHS: Record<UserRole, string> = {
@@ -41,6 +42,7 @@ const ROLE_DASHBOARD_PATHS: Record<UserRole, string> = {
   recruiter: '/recruiter/pipeline',
   club: '/club',
   admin: '/admin',
+  school: '/school',
 };
 
 function RoleSwitcher({
@@ -181,10 +183,13 @@ function ParentTopbar({ user, title, userId }: Omit<TopbarProps, 'role'>) {
         <div className="h-8 w-[1px] bg-white/10 mx-2" />
         <div className="flex items-center gap-3">
           {user.avatarUrl ? (
-            <div
-              className="size-9 rounded-full bg-center bg-no-repeat bg-cover border-2 border-primary/30"
-              style={{ backgroundImage: `url('${user.avatarUrl}')` }}
-            />
+            <div className="size-9 rounded-full border-2 border-primary/30 overflow-hidden">
+              <img
+                src={user.avatarUrl}
+                alt={user.name}
+                className="size-full object-cover"
+              />
+            </div>
           ) : (
             <div className="size-9 rounded-full bg-primary/20 flex items-center justify-center text-white font-bold">
               {user.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
@@ -250,10 +255,13 @@ function ClubTopbar({ user, title, userId }: Omit<TopbarProps, 'role'>) {
         <div className="h-8 w-[1px] bg-white/10" />
         <div className="flex items-center gap-3">
           {user.avatarUrl ? (
-            <div
-              className="size-8 rounded-full bg-center bg-no-repeat bg-cover"
-              style={{ backgroundImage: `url('${user.avatarUrl}')` }}
-            />
+            <div className="size-8 rounded-full overflow-hidden">
+              <img
+                src={user.avatarUrl}
+                alt={user.name}
+                className="size-full object-cover"
+              />
+            </div>
           ) : (
             <div className="flex items-center justify-center size-8 rounded-full bg-primary/20">
               <span className="material-symbols-outlined text-primary text-sm">person</span>

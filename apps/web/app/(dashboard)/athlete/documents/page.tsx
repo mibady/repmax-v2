@@ -2,7 +2,9 @@
 
 import { useRef, useState } from 'react';
 import { Loader2 } from 'lucide-react';
-import { useAthleteDocuments, type AthleteDocument } from '@/lib/hooks';
+import { useAthleteDocuments, type AthleteDocument, useSubscription } from '@/lib/hooks';
+import { getAthleteTier } from '@/lib/utils/subscription-tier';
+import { UpgradeCTA } from '@/components/upgrade-cta';
 
 function getTypeIcon(type: AthleteDocument['type']) {
   switch (type) {
@@ -17,6 +19,8 @@ function getTypeIcon(type: AthleteDocument['type']) {
 
 export default function DocumentsPage() {
   const { documents, isLoading, error, uploadDocument, deleteDocument } = useAthleteDocuments();
+  const { subscription, isLoading: subLoading } = useSubscription();
+  const tier = getAthleteTier(subscription?.plan?.slug);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -76,6 +80,34 @@ export default function DocumentsPage() {
       console.error('Delete failed:', err);
     }
   };
+
+  if (isLoading || subLoading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="w-8 h-8 animate-spin text-[#D4AF37]" />
+      </div>
+    );
+  }
+
+  if (tier === 'basic') {
+    return (
+      <div className="p-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Page Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-black tracking-tight text-white">Documents</h1>
+            <p className="text-[#A1A1AA] mt-1">Manage and share your recruiting materials securely.</p>
+          </div>
+          <UpgradeCTA
+            icon="description"
+            title="Unlock Document Management"
+            description="Upgrade to Premium to securely store and share your recruiting documents, transcripts, and test scores."
+            ctaText="Upgrade to Premium"
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8">
@@ -187,13 +219,6 @@ export default function DocumentsPage() {
             </div>
           </div>
         </div>
-
-        {/* Loading State */}
-        {isLoading && (
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 animate-spin text-[#D4AF37]" />
-          </div>
-        )}
 
         {/* Error State */}
         {error && (

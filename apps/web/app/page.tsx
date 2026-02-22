@@ -109,8 +109,7 @@ export default function Page() {
 {/*  Image Header  */}
 <div className="relative h-64 w-full overflow-hidden">
 <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] to-transparent z-10"></div>
-<div className="w-full h-full" data-alt="Athletic football player in action pose holding a ball with intense focus" style={{background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)"}}>
-</div>
+<img src="/images/marketing/hero-athlete.png" alt="Athletic football player in action pose holding a ball with intense focus" className="w-full h-full object-cover" />
 <div className="absolute top-4 right-4 z-20 flex items-center gap-1 rounded bg-black/60 px-2 py-1 backdrop-blur-sm border border-primary/30">
 <span className="text-xs font-bold text-primary">ELITE 11</span>
 </div>
@@ -279,8 +278,8 @@ export default function Page() {
 <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
 {/*  Step 1  */}
 <div className="flex flex-col items-center text-center group">
-<div className="w-16 h-16 rounded-lg bg-[#050505] border border-primary/30 flex items-center justify-center text-3xl mb-6 shadow-gold-glow group-hover:scale-110 transition-transform duration-300">
-<span className="material-symbols-outlined text-primary">person_add</span>
+<div className="w-20 h-20 rounded-lg bg-[#050505] border border-primary/30 flex items-center justify-center text-3xl mb-6 shadow-gold-glow group-hover:scale-110 transition-transform duration-300 overflow-hidden">
+<img src="/images/marketing/step-id.png" alt="Create Your ID" className="w-full h-full object-cover" />
 </div>
 <span className="stats-font text-6xl font-bold text-white/5 absolute -z-10 -translate-y-6 select-none group-hover:text-white/10 transition-colors">01</span>
 <h3 className="text-xl font-bold text-white mb-3">Create Your ID</h3>
@@ -288,8 +287,8 @@ export default function Page() {
 </div>
 {/*  Step 2  */}
 <div className="flex flex-col items-center text-center group">
-<div className="w-16 h-16 rounded-lg bg-[#050505] border border-white/10 flex items-center justify-center text-3xl mb-6 group-hover:border-primary/30 group-hover:shadow-gold-glow group-hover:scale-110 transition-all duration-300">
-<span className="material-symbols-outlined text-white group-hover:text-primary transition-colors">upload_file</span>
+<div className="w-20 h-20 rounded-lg bg-[#050505] border border-white/10 flex items-center justify-center text-3xl mb-6 group-hover:border-primary/30 group-hover:shadow-gold-glow group-hover:scale-110 transition-all duration-300 overflow-hidden">
+<img src="/images/marketing/step-video.png" alt="Upload Highlights" className="w-full h-full object-cover" />
 </div>
 <span className="stats-font text-6xl font-bold text-white/5 absolute -z-10 -translate-y-6 select-none group-hover:text-white/10 transition-colors">02</span>
 <h3 className="text-xl font-bold text-white mb-3">Upload Highlights</h3>
@@ -297,8 +296,8 @@ export default function Page() {
 </div>
 {/*  Step 3  */}
 <div className="flex flex-col items-center text-center group">
-<div className="w-16 h-16 rounded-lg bg-[#050505] border border-white/10 flex items-center justify-center text-3xl mb-6 group-hover:border-primary/30 group-hover:shadow-gold-glow group-hover:scale-110 transition-all duration-300">
-<span className="material-symbols-outlined text-white group-hover:text-primary transition-colors">trophy</span>
+<div className="w-20 h-20 rounded-lg bg-[#050505] border border-white/10 flex items-center justify-center text-3xl mb-6 group-hover:border-primary/30 group-hover:shadow-gold-glow group-hover:scale-110 transition-all duration-300 overflow-hidden">
+<img src="/images/marketing/step-trophy.png" alt="Get Recruited" className="w-full h-full object-cover" />
 </div>
 <span className="stats-font text-6xl font-bold text-white/5 absolute -z-10 -translate-y-6 select-none group-hover:text-white/10 transition-colors">03</span>
 <h3 className="text-xl font-bold text-white mb-3">Get Recruited</h3>
@@ -316,8 +315,7 @@ export default function Page() {
 <div className="relative rounded-xl border border-white/10 bg-[#0A0A0A] overflow-hidden shadow-2xl">
 <div className="absolute top-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>
 <div className="p-1">
-<div className="w-full h-[300px] sm:h-[400px] rounded-lg opacity-90" data-alt="Dashboard interface screenshot showing charts, athlete list, and filtering options with a dark theme" style={{background: "linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)"}}>
-</div>
+<img src="/images/marketing/internal-dashboard.png" alt="Dashboard interface screenshot showing charts, athlete list, and filtering options with a dark theme" className="w-full h-[300px] sm:h-[400px] rounded-lg opacity-90 object-cover" />
 </div>
 </div>
 </div>
@@ -353,7 +351,10 @@ export default function Page() {
 </section>
 {/*  Final CTA  */}
 <section className="py-24 bg-surface-dark border-t border-white/5 relative overflow-hidden">
-<div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/10 via-background-dark/0 to-background-dark/0 opacity-50"></div>
+<div className="absolute inset-0 opacity-20 pointer-events-none">
+<img src="/images/marketing/cta-background.png" alt="Background" className="w-full h-full object-cover" />
+</div>
+<div className="absolute inset-0 bg-gradient-to-b from-surface-dark via-transparent to-surface-dark"></div>
 <div className="mx-auto max-w-4xl px-6 lg:px-8 text-center relative z-10">
 <h2 className="text-4xl sm:text-5xl font-black text-white mb-6 tracking-tight">Ready to Level Up?</h2>
 <p className="text-xl text-text-grey mb-10 max-w-2xl mx-auto">Join thousands of athletes and coaches transforming the recruitment process. Your future starts with verified data.</p>

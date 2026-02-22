@@ -16,7 +16,7 @@ function getPlaceholderGradient(seed: string): string {
 }
 
 // Static programs data for public pages
-const PROGRAMS: Record<string, { name: string; city: string; state: string; zone: string; record: string; d1Prospects: number; athletes: number; about: string }> = {
+const PROGRAMS: Record<string, { name: string; city: string; state: string; zone: string; record: string; d1Prospects: number; athletes: number; about: string; logo?: string; banner?: string }> = {
   'north-shore': {
     name: 'North Shore High School',
     city: 'Houston',
@@ -26,6 +26,8 @@ const PROGRAMS: Record<string, { name: string; city: string; state: string; zone
     d1Prospects: 159,
     athletes: 12,
     about: 'North Shore High School is a premier athletic institution dedicated to developing top-tier talent in the Greater Houston area. With a history of excellence and a steadfast commitment to player development, we strive to dominate the competition both on and off the field. Our program emphasizes discipline, teamwork, and academic achievement, ensuring our athletes are prepared for the collegiate level.',
+    logo: '/images/programs/north-shore/logo.png',
+    banner: '/images/programs/north-shore/stadium.png',
   },
 };
 
@@ -62,26 +64,43 @@ export default async function ProgramSpotlightPage({ params }: { params: Promise
             <SearchInput />
             {/* User Avatar */}
             <div className="relative size-9 rounded-full bg-[#1F1F22] overflow-hidden ring-1 ring-white/10">
-              <div
-                className="w-full h-full"
-                style={{ background: getPlaceholderGradient('user') }}
-              ></div>
+              <img
+                src="/images/athletes/placeholder/male-v1.png"
+                alt="User Avatar"
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
         </div>
       </header>
 
       <main className="flex-1">
-        <div className="mx-auto max-w-[1000px] px-4 py-8 md:px-6 md:py-12">
+        {/* Banner Section */}
+        {program.banner && (
+          <div className="relative w-full h-48 md:h-64 overflow-hidden">
+            <img
+              src={program.banner}
+              alt={`${program.name} stadium`}
+              className="w-full h-full object-cover opacity-60"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent"></div>
+          </div>
+        )}
+
+        <div className={`mx-auto max-w-[1000px] px-4 md:px-6 ${program.banner ? '-mt-16 md:-mt-20 relative z-10' : 'py-8 md:py-12'}`}>
           {/* Hero Section */}
           <section className="flex flex-col md:flex-row gap-6 md:gap-8 mb-10">
             {/* School Logo */}
             <div className="shrink-0">
-              <div className="size-32 md:size-40 rounded-xl bg-[#1F1F22] border border-white/5 p-1 shadow-2xl">
-                <div
-                  className="w-full h-full rounded-lg"
-                  style={{ background: getPlaceholderGradient(id) }}
-                ></div>
+              <div className="size-32 md:size-40 rounded-xl bg-[#1F1F22] border border-white/5 p-1 shadow-2xl backdrop-blur-sm overflow-hidden">
+                {program.logo ? (
+                  <img src={program.logo} alt={`${program.name} Logo`} className="w-full h-full rounded-lg object-contain" />
+                ) : (
+                  <div
+                    className="w-full h-full rounded-lg"
+                    style={{ background: getPlaceholderGradient(id) }}
+                  ></div>
+                )}
               </div>
             </div>
             {/* School Info */}

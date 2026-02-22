@@ -3,7 +3,9 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useProfileViews, useGeographicViews } from '@/lib/hooks';
+import { useProfileViews, useGeographicViews, useSubscription } from '@/lib/hooks';
+import { getAthleteTier } from '@/lib/utils/subscription-tier';
+import { UpgradeCTA } from '@/components/upgrade-cta';
 
 interface KpiCard {
   icon: string;
@@ -74,6 +76,8 @@ export default function AthleteAnalyticsPage() {
   const [selectedDays, setSelectedDays] = useState(30);
   const { summary, grouped, recent, isLoading, error } = useProfileViews({ days: selectedDays, groupBy: 'day' });
   const { data: geoData } = useGeographicViews({ days: selectedDays });
+  const { subscription, isLoading: subLoading } = useSubscription();
+  const tier = getAthleteTier(subscription?.plan?.slug);
 
   // Build KPI cards from real data
   const kpiCards: KpiCard[] = [
@@ -105,6 +109,11 @@ export default function AthleteAnalyticsPage() {
     },
   ];
 
+  // Filter KPIs by tier: premium/pro see everything, basic is gated (though basic shouldn't see this page at all due to early return)
+  const visibleKpiCards = tier === 'basic'
+    ? kpiCards.filter((c) => c.label === 'Profile Views' || c.label === 'Completeness')
+    : kpiCards;
+
   // Calculate viewer types from geographic data or use defaults
   const viewerTypes: ViewerSection[] = geoData?.by_role
     ? Object.entries(geoData.by_role).map(([role, count], idx) => ({
@@ -124,10 +133,40 @@ export default function AthleteAnalyticsPage() {
     logo: null as string | null,
     role: view.viewer_role || 'Unknown',
     time: formatTimeAgo(view.created_at),
-    isBlurred: idx > 1, // Blur viewers beyond first 2 (upgrade prompt)
-    blurLevel: idx > 1 ? idx : 0,
-    opacity: idx > 1 ? 100 - (idx * 20) : 100,
+    isBlurred: tier === 'pro' ? false : idx > 1, // Only Pro sees all names clearly
+    blurLevel: tier === 'pro' ? 0 : (idx > 1 ? idx : 0),
+    opacity: tier === 'pro' ? 100 : (idx > 1 ? 100 - (idx * 20) : 100),
   }));
+
+  if (isLoading || subLoading) {
+    return (
+      <div className="p-8">
+        <div className="max-w-7xl mx-auto">
+          <LoadingSkeleton />
+        </div>
+      </div>
+    );
+  }
+
+  if (tier === 'basic') {
+    return (
+      <div className="p-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="flex flex-col gap-2 mb-8">
+            <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">Performance Analytics</h1>
+            <p className="text-gray-400">Track your recruitment visibility and engagement metrics.</p>
+          </div>
+          <UpgradeCTA
+            icon="analytics"
+            title="Unlock Performance Analytics"
+            description="Upgrade to Premium to track who's viewing your profile and measure your recruitment visibility."
+            ctaText="Upgrade to Premium"
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8">
@@ -170,11 +209,8 @@ export default function AthleteAnalyticsPage() {
         )}
 
         {/* KPI Grid */}
-        {isLoading ? (
-          <LoadingSkeleton />
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            {kpiCards.map((card, idx) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            {visibleKpiCards.map((card, idx) => (
               <div key={idx} className="bg-surface-dark border border-surface-border rounded-xl p-6 relative overflow-hidden group hover:border-primary/50 transition-colors">
                 <div className="flex justify-between items-start mb-4">
                   <div className="p-2 rounded-lg bg-surface-border/50 text-white">
@@ -203,7 +239,6 @@ export default function AthleteAnalyticsPage() {
               </div>
             ))}
           </div>
-        )}
 
         {/* Main Chart Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
@@ -414,7 +449,7 @@ export default function AthleteAnalyticsPage() {
               </div>
 
               {/* Upgrade CTA Overlay */}
-              {topViewers.length > 2 && (
+              {tier !== 'pro' && topViewers.length > 2 && (
                 <div className="absolute bottom-0 left-0 right-0 h-[180px] flex items-center justify-center bg-gradient-to-t from-background-dark via-background-dark/90 to-transparent z-10">
                   <div className="text-center p-6 max-w-sm">
                     <div className="size-12 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-primary/30">

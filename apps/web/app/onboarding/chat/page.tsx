@@ -649,8 +649,13 @@ export default function OnboardingChatPage() {
       </main>
 
       {/* Right Panel: Progress Sidebar */}
-      <aside className="w-[400px] hidden xl:flex flex-col border-l border-surface-light/30 bg-[#080808]">
-        <div className="p-8 flex flex-col h-full gap-8 overflow-y-auto">
+      <aside className="w-[400px] hidden xl:flex flex-col border-l border-surface-light/30 bg-[#080808] relative overflow-hidden">
+        {/* Background Texture */}
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
+          <img src="/images/onboarding/sidebar-bg.png" alt="background" className="w-full h-full object-cover" />
+        </div>
+        
+        <div className="p-8 flex flex-col h-full gap-8 overflow-y-auto relative z-10">
           {/* Progress Section */}
           <div className="flex flex-col items-center justify-center py-4">
             <div className="relative size-40">
@@ -720,8 +725,8 @@ export default function OnboardingChatPage() {
             <div className="bg-gradient-to-br from-surface-dark to-[#151515] p-5 rounded-2xl border border-white/5 shadow-2xl">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="bg-primary/20 rounded-full size-12 flex items-center justify-center border-2 border-white/10">
-                    <span className="material-symbols-outlined text-primary">person</span>
+                  <div className="bg-primary/20 rounded-full size-12 flex items-center justify-center border-2 border-white/10 overflow-hidden">
+                    <img src="/images/athletes/placeholder/male-v1.png" alt="Avatar" className="w-full h-full object-cover" />
                   </div>
                   <div>
                     <h5 className="font-bold text-white text-sm">

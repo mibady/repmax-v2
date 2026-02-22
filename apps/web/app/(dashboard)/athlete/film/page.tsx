@@ -1,7 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useHighlights, type Highlight } from '@/lib/hooks';
+import Link from 'next/link';
+import { useHighlights, type Highlight, useSubscription } from '@/lib/hooks';
+import { getAthleteTier } from '@/lib/utils/subscription-tier';
+import { UpgradeCTA } from '@/components/upgrade-cta';
 import { VideoPlayerModal } from '@/components/ui/video-player-modal';
 import { AddHighlightModal } from '@/components/ui/add-highlight-modal';
 
@@ -178,6 +181,10 @@ function LoadingSkeleton() {
 
 export default function FilmManagementPage() {
   const { highlights, isLoading, error, add, update, remove, isPending, formatDuration, formatViews, refetch } = useHighlights();
+  const { subscription, isLoading: subLoading } = useSubscription();
+  const tier = getAthleteTier(subscription?.plan?.slug);
+  const maxHighlights = tier === 'basic' ? 3 : tier === 'premium' ? 5 : Infinity;
+  const atLimit = highlights.length >= maxHighlights;
   const [activeVideo, setActiveVideo] = useState<{ url: string; title: string } | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editHighlight, setEditHighlight] = useState<Highlight | null>(null);
@@ -247,33 +254,59 @@ export default function FilmManagementPage() {
                 : 'Manage and organize your game film for recruiters'}
             </p>
           </div>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="flex items-center justify-center gap-2 bg-primary text-black font-bold text-sm px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors"
-          >
-            <span className="material-symbols-outlined text-xl">upload_file</span>
-            <span>Upload Film</span>
-          </button>
+          {subLoading ? (
+            <div className="h-12 w-40 bg-[#1F1F22] rounded-lg animate-pulse" />
+          ) : atLimit ? (
+            <Link
+              href="/pricing"
+              className="flex items-center justify-center gap-2 bg-white/10 text-white font-bold text-sm px-6 py-3 rounded-lg hover:bg-white/20 transition-colors"
+            >
+              <span className="material-symbols-outlined text-xl">lock</span>
+              <span>Upgrade to Upload More</span>
+            </Link>
+          ) : (
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="flex items-center justify-center gap-2 bg-primary text-black font-bold text-sm px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors"
+            >
+              <span className="material-symbols-outlined text-xl">upload_file</span>
+              <span>Upload Film</span>
+            </button>
+          )}
         </header>
 
         {/* Upload Zone */}
-        <section className="w-full">
-          <div
-            onClick={() => setShowAddModal(true)}
-            className="group relative flex flex-col items-center justify-center w-full h-48 rounded-xl border-2 border-dashed border-[#333] bg-[#1F1F22]/50 hover:border-primary/50 hover:bg-[#1F1F22]/80 transition-all cursor-pointer"
-          >
-            <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
-              <div className="bg-[#2A2A2E] p-3 rounded-full mb-3 group-hover:scale-110 transition-transform duration-300">
-                <span className="material-symbols-outlined text-primary text-3xl">cloud_upload</span>
+        {subLoading ? (
+          <div className="w-full h-48 bg-[#1F1F22] rounded-xl animate-pulse" />
+        ) : atLimit ? (
+          <UpgradeCTA
+            inline
+            icon="movie"
+            title={`You\u2019ve reached your ${maxHighlights}-highlight limit`}
+            description={tier === 'basic'
+              ? 'Upgrade to Premium for up to 5 highlights, or Pro for unlimited uploads.'
+              : 'Upgrade to Pro for unlimited highlight uploads.'}
+            ctaText={tier === 'basic' ? 'Upgrade to Premium' : 'Upgrade to Pro'}
+          />
+        ) : (
+          <section className="w-full">
+            <div
+              onClick={() => setShowAddModal(true)}
+              className="group relative flex flex-col items-center justify-center w-full h-48 rounded-xl border-2 border-dashed border-[#333] bg-[#1F1F22]/50 hover:border-primary/50 hover:bg-[#1F1F22]/80 transition-all cursor-pointer"
+            >
+              <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
+                <div className="bg-[#2A2A2E] p-3 rounded-full mb-3 group-hover:scale-110 transition-transform duration-300">
+                  <span className="material-symbols-outlined text-primary text-3xl">cloud_upload</span>
+                </div>
+                <p className="mb-1 text-lg font-bold text-white">Upload New Footage</p>
+                <p className="mb-2 text-sm text-gray-400">Click to add a new highlight reel</p>
+                <p className="text-xs font-mono text-primary/80 uppercase tracking-wider bg-primary/10 px-2 py-1 rounded">
+                  MP4, MOV up to 2GB
+                </p>
               </div>
-              <p className="mb-1 text-lg font-bold text-white">Upload New Footage</p>
-              <p className="mb-2 text-sm text-gray-400">Click to add a new highlight reel</p>
-              <p className="text-xs font-mono text-primary/80 uppercase tracking-wider bg-primary/10 px-2 py-1 rounded">
-                MP4, MOV up to 2GB
-              </p>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* Error State */}
         {error && (
@@ -290,12 +323,12 @@ export default function FilmManagementPage() {
         )}
 
         {/* Film Grid */}
-        {isLoading ? (
+        {(isLoading || subLoading) ? (
           <LoadingSkeleton />
         ) : highlights.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-            <div className="bg-[#2A2A2E] p-4 rounded-full mb-4">
-              <span className="material-symbols-outlined text-primary text-4xl">movie</span>
+            <div className="size-48 rounded-2xl bg-[#1F1F22] border border-white/5 shadow-2xl overflow-hidden mb-6 group hover:border-primary/20 transition-all">
+              <img src="/images/marketing/film-room-empty.png" alt="Film Room Illustration" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
             </div>
             <h3 className="text-white text-xl font-bold mb-2">No highlights yet</h3>
             <p className="text-gray-400 mb-6 max-w-md">
