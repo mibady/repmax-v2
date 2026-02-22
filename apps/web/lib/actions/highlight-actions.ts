@@ -3,6 +3,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import type { Tables } from "@/types/database";
+import { getServerSubscription } from "@/lib/utils/subscription-server";
+import { getAthleteTier } from "@/lib/utils/subscription-tier";
 
 export type Highlight = Tables<"highlights">;
 
@@ -107,6 +109,20 @@ export async function createHighlight(data: {
 
   if (!athlete) {
     return { error: "Athlete profile not found" };
+  }
+
+  // Enforce tier-based limits
+  const sub = await getServerSubscription();
+  const tier = getAthleteTier(sub?.plan?.slug);
+  const maxHighlights = tier === 'basic' ? 3 : tier === 'premium' ? 5 : Infinity;
+
+  const { count } = await supabase
+    .from("highlights")
+    .select("*", { count: "exact", head: true })
+    .eq("athlete_id", athlete.id);
+
+  if ((count || 0) >= maxHighlights) {
+    return { error: `Maximum highlights reached for your tier (${maxHighlights}). Please upgrade.` };
   }
 
   const { data: highlight, error } = await supabase

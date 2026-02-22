@@ -109,22 +109,29 @@ function AthleteProfile({
     <div className="bg-[#2a271d] rounded-xl border border-[#433d28] overflow-hidden">
       {/* Hero Image & Header */}
       <div className="relative h-48 bg-gradient-to-t from-black/80 to-transparent">
-        <div
-          className="absolute inset-0 bg-center bg-cover bg-no-repeat opacity-60"
-          style={{ backgroundImage: `url("${avatarUrl}")` }}
+        <img
+          src="/images/marketing/profile-header-bg.png"
+          alt="Stadium background"
+          className="absolute inset-0 w-full h-full object-cover opacity-60"
         />
         <div className="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-[#2a271d] via-[#2a271d]/90 to-transparent pt-20">
           <div className="flex justify-between items-end">
-            <div>
-              <h1 className="text-3xl font-black text-white tracking-tight leading-none mb-1">
-                {name}
-              </h1>
-              <p className="text-[#c3b998] text-sm">
-                {athlete.high_school}, {athlete.state} | Class of {athlete.class_year}
-              </p>
+            <div className="flex items-center gap-4 relative z-10">
+              <div
+                className="size-16 rounded-full bg-center bg-cover bg-no-repeat border-2 border-primary/50"
+                style={{ backgroundImage: `url("${avatarUrl}")` }}
+              />
+              <div>
+                <h1 className="text-3xl font-black text-white tracking-tight leading-none mb-1">
+                  {name}
+                </h1>
+                <p className="text-[#c3b998] text-sm">
+                  {athlete.high_school}, {athlete.state} | Class of {athlete.class_year}
+                </p>
+              </div>
             </div>
             {athlete.star_rating && (
-              <div className="flex flex-col items-center bg-[#363225] p-2 rounded-lg border border-[#433d28] shadow-lg">
+              <div className="flex flex-col items-center bg-[#363225] p-2 rounded-lg border border-[#433d28] shadow-lg relative z-10">
                 <span className="text-primary font-black text-xl leading-none">* {athlete.star_rating}</span>
                 <span className="text-[10px] uppercase tracking-wider text-[#c3b998]">Rating</span>
               </div>

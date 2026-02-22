@@ -2,6 +2,8 @@ import { createClient } from "@/lib/supabase/server";
 import { rateLimit } from "@/lib/utils/rate-limit";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { getServerSubscription } from "@/lib/utils/subscription-server";
+import { getRecruiterTier } from "@/lib/utils/subscription-tier";
 
 const CreateMessageSchema = z.object({
   recipient_id: z.string().uuid(),
@@ -58,7 +60,7 @@ export async function GET(request: Request) {
 
     if (error) {
       console.error("Messages query error:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: "Failed to fetch messages" }, { status: 500 });
     }
 
     // Count unread
@@ -101,12 +103,37 @@ export async function POST(request: Request) {
     // Get profile
     const { data: profile } = await supabase
       .from("profiles")
-      .select("id")
+      .select("id, role")
       .eq("user_id", user.id)
       .single();
 
     if (!profile) {
       return NextResponse.json({ error: "Profile not found" }, { status: 404 });
+    }
+
+    // Enforce message limits for Recruiters
+    if (profile.role === 'recruiter') {
+      const sub = await getServerSubscription();
+      const tier = getRecruiterTier(sub?.plan?.slug);
+      
+      if (tier === 'pro') {
+        const startOfMonth = new Date();
+        startOfMonth.setDate(1);
+        startOfMonth.setHours(0, 0, 0, 0);
+
+        const { count } = await supabase
+          .from("messages")
+          .select("*", { count: "exact", head: true })
+          .eq("sender_id", profile.id)
+          .gte("created_at", startOfMonth.toISOString());
+
+        if ((count || 0) >= 50) {
+          return NextResponse.json(
+            { error: "Monthly message limit reached (50). Upgrade to Team for more." },
+            { status: 403 }
+          );
+        }
+      }
     }
 
     // Parse and validate body
@@ -146,7 +173,7 @@ export async function POST(request: Request) {
 
     if (error) {
       console.error("Message create error:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: "Failed to create message" }, { status: 500 });
     }
 
     return NextResponse.json(data, { status: 201 });
@@ -199,7 +226,7 @@ export async function PATCH(request: Request) {
 
     if (error) {
       console.error("Message update error:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: "Failed to update message" }, { status: 500 });
     }
 
     return NextResponse.json(data);

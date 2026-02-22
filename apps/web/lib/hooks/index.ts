@@ -236,3 +236,70 @@ export {
   type PaymentItem,
   type ClubMetrics,
 } from "./use-club-dashboard";
+
+// School Dashboard
+export {
+  useSchoolDashboard,
+  type School,
+  type SchoolMember,
+  type SchoolCredit,
+} from "./use-school-dashboard";
+
+// School Members
+export {
+  useSchoolMembers,
+  type SchoolMemberDetail,
+} from "./use-school-members";
+
+// Dashr Events
+export {
+  useDashrEvents,
+  type DashrEvent,
+  type DashrEventType,
+} from "./use-dashr-events";
+
+// Dashr Bookings
+export {
+  useDashrBookings,
+  type DashrBooking,
+} from "./use-dashr-bookings";
+
+// Public Tournaments
+export {
+  usePublicTournaments,
+  type PublicTournament,
+} from "./use-public-tournaments";
+
+// Tournament Detail
+export {
+  useTournamentDetail,
+  type TournamentDetail,
+  type TournamentRegistration,
+} from "./use-tournament-detail";
+
+// Tournament Registrations & Rosters
+export {
+  useRegistrations,
+  type Registration,
+  type RosterPlayer,
+} from "./use-registrations";
+
+// Tournament Brackets
+export {
+  useBrackets,
+  type TournamentBracket,
+  type BracketGameRecord,
+  type BracketSeed,
+} from "./use-brackets";
+
+// Tournament Venues
+export {
+  useTournamentVenues,
+  type TournamentVenue,
+} from "./use-tournament-venues";
+
+// Tournament Schedule
+export { useTournamentSchedule } from "./use-tournament-schedule";
+
+// Game Scoring
+export { useGameScoring, type ScoreEvent, type ScoreEventType } from "./use-game-scoring";

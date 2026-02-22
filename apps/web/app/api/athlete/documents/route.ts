@@ -1,10 +1,16 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { requireAthleteTier } from "@/lib/utils/subscription-server";
 
 // GET /api/athlete/documents - Fetch athlete's documents
 export async function GET() {
   try {
+    const { authorized } = await requireAthleteTier("premium");
+    if (!authorized) {
+      return NextResponse.json({ error: "Premium subscription required" }, { status: 403 });
+    }
+
     const supabase = await createClient();
 
     const {
@@ -75,6 +81,11 @@ export async function GET() {
 // POST /api/athlete/documents - Upload a new document
 export async function POST(request: NextRequest) {
   try {
+    const { authorized } = await requireAthleteTier("premium");
+    if (!authorized) {
+      return NextResponse.json({ error: "Premium subscription required" }, { status: 403 });
+    }
+
     const supabase = await createClient();
 
     const {
@@ -162,6 +173,11 @@ export async function POST(request: NextRequest) {
 // DELETE /api/athlete/documents - Delete a document
 export async function DELETE(request: NextRequest) {
   try {
+    const { authorized } = await requireAthleteTier("premium");
+    if (!authorized) {
+      return NextResponse.json({ error: "Premium subscription required" }, { status: 403 });
+    }
+
     const supabase = await createClient();
 
     const {

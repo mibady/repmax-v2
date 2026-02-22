@@ -2,7 +2,9 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { useShortlist } from '@/lib/hooks';
+import { useShortlist, useSubscription } from '@/lib/hooks';
+import { getRecruiterTier } from '@/lib/utils/subscription-tier';
+import { UpgradeCTA } from '@/components/upgrade-cta';
 import type { Tables } from '@/types/database';
 
 type Athlete = Tables<"athletes"> & {
@@ -231,7 +233,21 @@ function EmptyState() {
 
 export default function ComparePage() {
   const { shortlist, isLoading } = useShortlist();
+  const { subscription, isLoading: subLoading } = useSubscription();
+  const tier = getRecruiterTier(subscription?.plan?.slug);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  // Free tier: show upgrade CTA instead of comparison tool
+  if (!subLoading && tier === 'free') {
+    return (
+      <UpgradeCTA
+        icon="compare"
+        title="Unlock Athlete Comparison"
+        description="Upgrade to Pro to compare athletes side-by-side with detailed stats, combine data, and academic profiles."
+        ctaText="Upgrade to Pro"
+      />
+    );
+  }
 
   // Convert shortlist athletes to compare format
   const availableAthletes = shortlist.map(item => athleteToCompare(item.athlete as unknown as Athlete));

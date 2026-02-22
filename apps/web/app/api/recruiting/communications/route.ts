@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
+import { requireRecruiterTier } from "@/lib/utils/subscription-server";
 
 async function getCoachFromUser(supabase: Awaited<ReturnType<typeof createClient>>) {
   const {
@@ -35,6 +36,11 @@ async function getCoachFromUser(supabase: Awaited<ReturnType<typeof createClient
 
 export async function GET(request: Request) {
   try {
+    const { authorized } = await requireRecruiterTier("pro");
+    if (!authorized) {
+      return NextResponse.json({ error: "Pro subscription required" }, { status: 403 });
+    }
+
     const supabase = await createClient();
     const authResult = await getCoachFromUser(supabase);
 
@@ -337,6 +343,11 @@ const createLogSchema = z.object({
 // POST /api/recruiting/communications - Log a new communication
 export async function POST(request: NextRequest) {
   try {
+    const { authorized } = await requireRecruiterTier("pro");
+    if (!authorized) {
+      return NextResponse.json({ error: "Pro subscription required" }, { status: 403 });
+    }
+
     const supabase = await createClient();
     const authResult = await getCoachFromUser(supabase);
 

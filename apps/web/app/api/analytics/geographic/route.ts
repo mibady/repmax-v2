@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { requireAthleteTier } from "@/lib/utils/subscription-server";
 
 const querySchema = z.object({
   athlete_id: z.string().uuid().optional(),
@@ -11,6 +12,11 @@ const querySchema = z.object({
 // Returns geographic distribution of profile viewers
 export async function GET(request: NextRequest) {
   try {
+    const { authorized } = await requireAthleteTier("premium");
+    if (!authorized) {
+      return NextResponse.json({ error: "Premium subscription required" }, { status: 403 });
+    }
+
     const supabase = await createClient();
 
     // Check authentication

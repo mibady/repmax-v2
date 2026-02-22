@@ -269,9 +269,10 @@ export default function TerritoryAssignmentsPage() {
         {/* Simulated Map Container */}
         <div className="w-full h-full relative flex items-center justify-center p-12">
           <div className="relative w-full aspect-[4/3] max-w-4xl">
-            {/* Map placeholder */}
-            <div className="w-full h-full rounded-xl bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] flex items-center justify-center">
-              <span className="material-symbols-outlined text-[120px] text-white/10">map</span>
+            {/* Map Visualization */}
+            <div className="w-full h-full rounded-xl overflow-hidden border border-white/5 shadow-2xl">
+              <img src="/images/marketing/recruiting-map.png" alt="US Recruiting Map" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#080808] via-transparent to-transparent"></div>
             </div>
 
             {/* Zone Markers */}

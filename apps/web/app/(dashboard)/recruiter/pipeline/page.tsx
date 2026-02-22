@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useMemo } from "react";
-import { useShortlist, type PipelineStatus } from "@/lib/hooks";
+import { useShortlist, type PipelineStatus, useSubscription } from "@/lib/hooks";
+import { getRecruiterTier } from "@/lib/utils/subscription-tier";
 import type { Tables } from "@/types/database";
 import Link from "next/link";
 
@@ -217,10 +218,12 @@ function ProspectCardComponent({
   prospect,
   columnId,
   onStatusChange,
+  isViewOnly = false,
 }: {
   prospect: ProspectCard;
   columnId: string;
   onStatusChange: (athleteId: string, newStatus: PipelineStatus) => void;
+  isViewOnly?: boolean;
 }) {
   const isOffered = columnId === 'offered';
   const isCommitted = columnId === 'committed';
@@ -299,34 +302,36 @@ function ProspectCardComponent({
         <span className="font-mono text-[10px] text-gray-500">{prospect.lastActivity}</span>
       </div>
 
-      {/* Status change buttons */}
-      <div className="mt-2 pt-2 border-t border-white/5 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-opacity">
-        {prevStatus && (
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              onStatusChange(prospect.athleteId, prevStatus.id);
-            }}
-            className="flex items-center gap-1 text-[10px] text-gray-500 hover:text-white transition-colors"
-          >
-            <span className="material-symbols-outlined text-[12px]">arrow_back</span>
-            {prevStatus.title}
-          </button>
-        )}
-        {!prevStatus && <div />}
-        {nextStatus && (
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              onStatusChange(prospect.athleteId, nextStatus.id);
-            }}
-            className="flex items-center gap-1 text-[10px] text-gray-500 hover:text-white transition-colors"
-          >
-            {nextStatus.title}
-            <span className="material-symbols-outlined text-[12px]">arrow_forward</span>
-          </button>
-        )}
-      </div>
+      {/* Status change buttons — hidden for free tier (view-only) */}
+      {!isViewOnly && (
+        <div className="mt-2 pt-2 border-t border-white/5 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-opacity">
+          {prevStatus && (
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                onStatusChange(prospect.athleteId, prevStatus.id);
+              }}
+              className="flex items-center gap-1 text-[10px] text-gray-500 hover:text-white transition-colors"
+            >
+              <span className="material-symbols-outlined text-[12px]">arrow_back</span>
+              {prevStatus.title}
+            </button>
+          )}
+          {!prevStatus && <div />}
+          {nextStatus && (
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                onStatusChange(prospect.athleteId, nextStatus.id);
+              }}
+              className="flex items-center gap-1 text-[10px] text-gray-500 hover:text-white transition-colors"
+            >
+              {nextStatus.title}
+              <span className="material-symbols-outlined text-[12px]">arrow_forward</span>
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -382,20 +387,20 @@ function EmptyState() {
 
 export default function RecruiterPipelinePage() {
   const { shortlist, isLoading, updateStatus, isPending } = useShortlist();
+  const { subscription, isLoading: subLoading } = useSubscription();
+  const tier = getRecruiterTier(subscription?.plan?.slug);
+  const isViewOnly = tier === 'free';
 
-  // Filter state
+  // All hooks must be called before any early returns (React rules of hooks)
   const [classYearFilter, setClassYearFilter] = useState<string>('all');
   const [positionFilter, setPositionFilter] = useState<string>('all');
   const [zoneFilter, setZoneFilter] = useState<string>('all');
 
-  // Drag and drop state
   const [draggedAthleteId, setDraggedAthleteId] = useState<string | null>(null);
   const [dragOverColumnId, setDragOverColumnId] = useState<string | null>(null);
 
-  // Extract unique filter options from the full shortlist
   const filterOptions = useMemo(() => extractFilterOptions(shortlist), [shortlist]);
 
-  // Apply filters to shortlist
   const filteredShortlist = useMemo(
     () => filterShortlist(shortlist, {
       classYear: classYearFilter,
@@ -404,6 +409,14 @@ export default function RecruiterPipelinePage() {
     }),
     [shortlist, classYearFilter, positionFilter, zoneFilter]
   );
+
+  if (isLoading || subLoading) {
+    return (
+      <div className="flex flex-col h-full min-h-0">
+        <LoadingSkeleton />
+      </div>
+    );
+  }
 
   const pipelineData = mapShortlistToProspects(filteredShortlist);
   const totalProspects = pipelineData.reduce((sum, col) => sum + col.count, 0);
@@ -446,6 +459,14 @@ export default function RecruiterPipelinePage() {
 
   return (
     <div className="flex flex-col h-full min-h-0">
+      {/* Free-tier upgrade banner */}
+      {!subLoading && isViewOnly && (
+        <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 mb-4 flex items-center justify-between">
+          <span className="text-sm text-primary">Free tier — view-only pipeline. Upgrade to manage prospects.</span>
+          <a href="/pricing" className="text-xs font-bold text-primary hover:underline">Upgrade</a>
+        </div>
+      )}
+
       {/* Page Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-4">
@@ -536,13 +557,15 @@ export default function RecruiterPipelinePage() {
           )}
         </div>
 
-        <Link
-          href="/recruiter/prospects"
-          className="flex items-center gap-2 bg-primary hover:bg-[#d9b70b] text-[#050505] px-4 py-2 rounded-lg font-bold text-sm transition-colors shadow-lg shadow-primary/10"
-        >
-          <span className="material-symbols-outlined text-[20px] font-bold">add</span>
-          Add Prospect
-        </Link>
+        {!isViewOnly && (
+          <Link
+            href="/recruiter/prospects"
+            className="flex items-center gap-2 bg-primary hover:bg-[#d9b70b] text-[#050505] px-4 py-2 rounded-lg font-bold text-sm transition-colors shadow-lg shadow-primary/10"
+          >
+            <span className="material-symbols-outlined text-[20px] font-bold">add</span>
+            Add Prospect
+          </Link>
+        )}
       </div>
 
       {/* Kanban Board */}
@@ -585,15 +608,16 @@ export default function RecruiterPipelinePage() {
                   {column.prospects.map((prospect) => (
                     <div
                       key={prospect.id}
-                      draggable
-                      onDragStart={(e) => handleDragStart(e, prospect.athleteId)}
-                      onDragEnd={handleDragEnd}
+                      draggable={!isViewOnly}
+                      onDragStart={isViewOnly ? undefined : (e) => handleDragStart(e, prospect.athleteId)}
+                      onDragEnd={isViewOnly ? undefined : handleDragEnd}
                       className={`transition-opacity ${draggedAthleteId === prospect.athleteId ? 'opacity-40' : 'opacity-100'}`}
                     >
                       <ProspectCardComponent
                         prospect={prospect}
                         columnId={column.id}
                         onStatusChange={handleStatusChange}
+                        isViewOnly={isViewOnly}
                       />
                     </div>
                   ))}

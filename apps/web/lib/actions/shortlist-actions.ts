@@ -3,8 +3,14 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { requireRecruiterTier } from "@/lib/utils/subscription-server";
 
 export async function addToShortlist(athleteId: string, notes?: string) {
+  const { authorized } = await requireRecruiterTier("pro");
+  if (!authorized) {
+    return { error: "Pro recruiter subscription required" };
+  }
+
   const supabase = await createClient();
 
   const {
@@ -58,6 +64,11 @@ export async function addToShortlist(athleteId: string, notes?: string) {
 }
 
 export async function removeFromShortlist(athleteId: string) {
+  const { authorized } = await requireRecruiterTier("pro");
+  if (!authorized) {
+    return { error: "Pro recruiter subscription required" };
+  }
+
   const supabase = await createClient();
 
   const {
@@ -110,6 +121,11 @@ export async function updateShortlistPriority(
   athleteId: string,
   priority: "low" | "medium" | "high" | "top"
 ) {
+  const { authorized } = await requireRecruiterTier("pro");
+  if (!authorized) {
+    return { error: "Pro recruiter subscription required" };
+  }
+
   const supabase = await createClient();
 
   const {
@@ -163,6 +179,11 @@ export async function updateShortlistStatus(
   athleteId: string,
   pipelineStatus: PipelineStatus
 ) {
+  const { authorized } = await requireRecruiterTier("pro");
+  if (!authorized) {
+    return { error: "Pro recruiter subscription required" };
+  }
+
   const supabase = await createClient();
 
   const {

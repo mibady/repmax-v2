@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { requireRecruiterTier } from "@/lib/utils/subscription-server";
 
 const CreateShortlistSchema = z.object({
   athlete_id: z.string().uuid(),
@@ -71,6 +72,11 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const { authorized } = await requireRecruiterTier("pro");
+    if (!authorized) {
+      return NextResponse.json({ error: "Pro recruiter subscription required" }, { status: 403 });
+    }
+
     const supabase = await createClient();
 
     // Get current user
@@ -151,6 +157,11 @@ export async function POST(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
+    const { authorized } = await requireRecruiterTier("pro");
+    if (!authorized) {
+      return NextResponse.json({ error: "Pro recruiter subscription required" }, { status: 403 });
+    }
+
     const supabase = await createClient();
     const { searchParams } = new URL(request.url);
     const athleteId = searchParams.get("athlete_id");

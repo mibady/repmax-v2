@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { rateLimit } from "@/lib/utils/rate-limit";
+import { rateLimit, dailyRateLimit } from "@/lib/utils/rate-limit";
+import { getRecruiterTier } from "@/lib/utils/subscription-tier";
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
@@ -14,6 +15,27 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     if (userError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Check subscription tier for daily quota
+    const { data: subscription } = await supabase
+      .from('subscriptions')
+      .select('plan:subscription_plans(slug)')
+      .eq('profile_id', user.id)
+      .eq('status', 'active')
+      .maybeSingle();
+
+    const planSlug = (subscription?.plan as unknown as { slug: string } | null)?.slug ?? null;
+
+    // Free tier: enforce daily search limit (in addition to per-minute rate limit)
+    if (getRecruiterTier(planSlug) === 'free') {
+      const { success: dailyOk } = await dailyRateLimit(user.id);
+      if (!dailyOk) {
+        return NextResponse.json(
+          { error: "Daily search limit reached. Upgrade to Pro for unlimited searches." },
+          { status: 429 }
+        );
+      }
     }
 
     const { success } = await rateLimit(user.id);
