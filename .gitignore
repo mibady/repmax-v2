@@ -29,9 +29,6 @@ build
 # misc
 .DS_Store
 *.pem
-*.png
-*.jpg
-*.jpeg
 Thumbs.db
 
 # debug
@@ -47,27 +44,3 @@ yarn-error.log*
 .vercel
 
 # typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# claude code
-.claude/
-
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Desktop.ini
-*:Zone.Identifier
-
-# Supabase temp
-supabase/.temp/
-.gemini/
-GEMINI.md
-ZERO_MOCK_AUDIT_RESULTS.txt
-journey-results/
-apps/web/journeys/.last-failures.json
