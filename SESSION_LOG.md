@@ -725,3 +725,29 @@ This project existed before tracking was set up.
 - NGE-172 → Done (Dashr booking + checkout flow)
 - Progress: 29/31 done (94%), 2 remaining (NGE-55 mobile, NGE-173 Stripe catalog)
 - Project: 21/31 done (10 todo, up from 1)
+
+---
+
+## Session 15 — 2026-02-22
+
+### Completed
+- **Research & State Audit:** Identified the exact status of the "6 leftover tasks" related to the Mega Sprint.
+- **Task Discovery:** Confirmed that the Tournaments, School B2B, and Dashr systems are built but currently exist as untracked/staged files or pending migration verification.
+- **E2E Readiness:** Verified that E2E journey groups 13-18 are prepared in \`apps/web/journeys/\` but need to be executed against a live DB.
+- **Migration Audit:** Identified migrations 011-014 as pending application/verification on the remote Supabase instance.
+
+### Current State
+- **6 Leftover Task Inventory:**
+  1. **Tournaments:** \`apps/web/app/(app)/tournaments/\` (Built, needs validation)
+  2. **Schools:** \`apps/web/app/(dashboard)/school/\` (Built, needs validation)
+  3. **Dashr:** \`apps/web/app/(dashboard)/dashr/\` (Built, needs validation)
+  4. **APIs:** 48+ new routes in \`apps/web/app/api/\` (Built, needs validation)
+  5. **Stripe:** Pricing wired, needs live Price IDs and \`one_time_purchases\` table.
+  6. **Tests:** E2E groups 13-18 ready in \`apps/web/journeys/\`.
+
+### Next Session Should
+- **Step 1:** Apply pending migrations: \`supabase db push\` (verify migrations 011, 012, 013, 014).
+- **Step 2:** Populate live Stripe Price IDs in \`.env.local\`.
+- **Step 3:** Run E2E Journey groups 13-18 to confirm functional parity for new features.
+- **Step 4:** Execute full quality pipeline: \`npx tsx ~/.claude/scripts/quality-pipeline.ts --all\`.
+- **Pick up from:** Validating the **Tournaments System** (\`apps/web/app/(app)/tournaments/\`).

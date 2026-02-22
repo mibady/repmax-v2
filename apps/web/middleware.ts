@@ -63,13 +63,47 @@ export async function middleware(request: NextRequest) {
   );
 
   // API routes that require authentication
-  const protectedApiRoutes = ["/api/athletes", "/api/shortlists", "/api/messages"];
+  const protectedApiRoutes = [
+    "/api/athletes",
+    "/api/shortlists",
+    "/api/messages",
+    "/api/analytics",
+    "/api/athlete",
+    "/api/recruiting",
+    "/api/film",
+    "/api/tournaments",
+    "/api/dashr",
+    "/api/notifications",
+    "/api/onboarding",
+    "/api/recruiter",
+    "/api/coach",
+    "/api/club",
+    "/api/parent",
+    "/api/schools",
+  ];
   const isProtectedApi = protectedApiRoutes.some((route) =>
     pathname.startsWith(route)
   );
 
   // App routes that require authentication
-  const appRoutes = ["/dashboard", "/athlete", "/recruiter", "/coach", "/admin", "/parent", "/club", "/zone", "/messages", "/onboarding", "/settings", "/athletes", "/shortlist"];
+  const appRoutes = [
+    "/dashboard",
+    "/athlete",
+    "/recruiter",
+    "/coach",
+    "/admin",
+    "/parent",
+    "/club",
+    "/school",
+    "/dashr",
+    "/zone",
+    "/messages",
+    "/onboarding",
+    "/settings",
+    "/athletes",
+    "/shortlist",
+    "/tournaments",
+  ];
   const isAppRoute = appRoutes.some((route) => pathname.startsWith(route));
 
   // Redirect unauthenticated users from protected routes

@@ -50,6 +50,10 @@ function getPageTitle(pathname: string): string {
     scouts: 'Scouts',
     help: 'Help Center',
     new: 'Create New',
+    school: 'School Dashboard',
+    members: 'Members',
+    billing: 'Billing',
+    dashr: 'Dashr Events',
   };
 
   return titleMap[lastSegment] || 'Dashboard';
@@ -61,6 +65,7 @@ function getRoleFromPathname(pathname: string): UserRole {
   if (pathname.startsWith('/coach')) return 'coach';
   if (pathname.startsWith('/parent')) return 'parent';
   if (pathname.startsWith('/club')) return 'club';
+  if (pathname.startsWith('/school')) return 'school';
   return 'athlete';
 }
 
