@@ -97,7 +97,7 @@ export default function ClubEventsPage() {
             </div>
           ) : (
             filtered.map((tournament) => (
-              <div key={tournament.id} className="px-5 py-4 hover:bg-white/[0.02] transition-colors">
+              <Link key={tournament.id} href={`/club/events/${tournament.id}`} className="block px-5 py-4 hover:bg-white/[0.02] transition-colors">
                 <div className="flex items-start justify-between mb-2">
                   <div>
                     <h3 className="text-white font-semibold">{tournament.name}</h3>
@@ -128,7 +128,7 @@ export default function ClubEventsPage() {
                     style={{ width: `${Math.min((tournament.registrations / tournament.capacity) * 100, 100)}%` }}
                   />
                 </div>
-              </div>
+              </Link>
             ))
           )}
         </div>

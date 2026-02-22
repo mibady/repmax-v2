@@ -4,13 +4,24 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+const EVENT_TIERS = [
+  { value: 'basic', label: 'Basic', price: '$99' },
+  { value: 'standard', label: 'Standard', price: '$249' },
+  { value: 'premium', label: 'Premium', price: '$499' },
+] as const;
+
 export default function CreateTournamentPage() {
   const router = useRouter();
   const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [location, setLocation] = useState('');
   const [capacity, setCapacity] = useState('');
+  const [entryFee, setEntryFee] = useState('0');
+  const [registrationDeadline, setRegistrationDeadline] = useState('');
+  const [isPublic, setIsPublic] = useState(false);
+  const [eventTier, setEventTier] = useState<string>('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,15 +31,22 @@ export default function CreateTournamentPage() {
     setError(null);
 
     try {
+      const entryFeeCents = Math.round(parseFloat(entryFee || '0') * 100);
+
       const res = await fetch('/api/club/events', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name,
+          description: description || undefined,
           start_date: startDate,
           end_date: endDate,
           location,
           capacity: parseInt(capacity, 10),
+          entry_fee_cents: entryFeeCents,
+          registration_deadline: registrationDeadline || undefined,
+          is_public: isPublic,
+          event_tier: eventTier || undefined,
         }),
       });
 
@@ -44,6 +62,9 @@ export default function CreateTournamentPage() {
       setSubmitting(false);
     }
   }
+
+  const inputClass =
+    'w-full bg-[#1F1F22] text-white border border-white/10 rounded-lg px-3 py-2 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50';
 
   return (
     <div className="p-6 space-y-6">
@@ -81,7 +102,21 @@ export default function CreateTournamentPage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Spring Showcase 2026"
-              className="w-full bg-[#1F1F22] text-white border border-white/10 rounded-lg px-3 py-2 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50"
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="description" className="block text-white text-sm font-medium mb-1.5">
+              Description
+            </label>
+            <textarea
+              id="description"
+              rows={3}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Brief description of the tournament, rules, and what to expect..."
+              className={`${inputClass} resize-none`}
             />
           </div>
 
@@ -96,7 +131,7 @@ export default function CreateTournamentPage() {
                 required
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full bg-[#1F1F22] text-white border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className={inputClass}
               />
             </div>
             <div>
@@ -109,7 +144,7 @@ export default function CreateTournamentPage() {
                 required
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full bg-[#1F1F22] text-white border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className={inputClass}
               />
             </div>
           </div>
@@ -125,24 +160,97 @@ export default function CreateTournamentPage() {
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               placeholder="e.g. MetLife Stadium, East Rutherford, NJ"
-              className="w-full bg-[#1F1F22] text-white border border-white/10 rounded-lg px-3 py-2 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50"
+              className={inputClass}
             />
           </div>
 
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="capacity" className="block text-white text-sm font-medium mb-1.5">
+                Team Capacity
+              </label>
+              <input
+                id="capacity"
+                type="number"
+                required
+                min="1"
+                value={capacity}
+                onChange={(e) => setCapacity(e.target.value)}
+                placeholder="e.g. 32"
+                className={inputClass}
+              />
+            </div>
+            <div>
+              <label htmlFor="entryFee" className="block text-white text-sm font-medium mb-1.5">
+                Entry Fee ($)
+              </label>
+              <input
+                id="entryFee"
+                type="number"
+                min="0"
+                step="0.01"
+                value={entryFee}
+                onChange={(e) => setEntryFee(e.target.value)}
+                placeholder="0.00"
+                className={inputClass}
+              />
+              <p className="text-gray-500 text-xs mt-1">Leave at $0 for free entry</p>
+            </div>
+          </div>
+
           <div>
-            <label htmlFor="capacity" className="block text-white text-sm font-medium mb-1.5">
-              Team Capacity
+            <label htmlFor="registrationDeadline" className="block text-white text-sm font-medium mb-1.5">
+              Registration Deadline
             </label>
             <input
-              id="capacity"
-              type="number"
-              required
-              min="1"
-              value={capacity}
-              onChange={(e) => setCapacity(e.target.value)}
-              placeholder="e.g. 32"
-              className="w-full bg-[#1F1F22] text-white border border-white/10 rounded-lg px-3 py-2 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50"
+              id="registrationDeadline"
+              type="date"
+              value={registrationDeadline}
+              onChange={(e) => setRegistrationDeadline(e.target.value)}
+              className={inputClass}
             />
+            <p className="text-gray-500 text-xs mt-1">Optional. Leave blank for no deadline.</p>
+          </div>
+
+          <div>
+            <label htmlFor="eventTier" className="block text-white text-sm font-medium mb-1.5">
+              Event Tier
+            </label>
+            <select
+              id="eventTier"
+              value={eventTier}
+              onChange={(e) => setEventTier(e.target.value)}
+              className={inputClass}
+            >
+              <option value="">Select a tier (optional)</option>
+              {EVENT_TIERS.map((tier) => (
+                <option key={tier.value} value={tier.value}>
+                  {tier.label} ({tier.price})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              role="switch"
+              aria-checked={isPublic}
+              onClick={() => setIsPublic(!isPublic)}
+              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${
+                isPublic ? 'bg-primary' : 'bg-white/10'
+              }`}
+            >
+              <span
+                className={`pointer-events-none inline-block size-5 transform rounded-full bg-white shadow ring-0 transition ${
+                  isPublic ? 'translate-x-5' : 'translate-x-0'
+                }`}
+              />
+            </button>
+            <div>
+              <span className="text-white text-sm font-medium">Public Tournament</span>
+              <p className="text-gray-500 text-xs">Allow schools to discover and register for this tournament</p>
+            </div>
           </div>
 
           <div className="flex items-center gap-3 pt-2">
