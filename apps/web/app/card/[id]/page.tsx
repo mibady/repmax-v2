@@ -82,7 +82,7 @@ export default async function AthleteCardPage({
   };
 
   return (
-    <div className="bg-background-dark text-white min-h-screen flex items-center justify-center p-4 relative overflow-x-hidden">
+    <div className="bg-background-dark text-white min-h-screen flex justify-center py-8 px-4 relative overflow-x-hidden">
       {/* Ambient Background Effects */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px]" />
@@ -90,7 +90,7 @@ export default async function AthleteCardPage({
       </div>
 
       {/* Main Card Container */}
-      <main className="relative z-10 w-full max-w-[480px] bg-card-dark border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col">
+      <main className="relative z-10 w-full max-w-[480px] bg-card-dark border border-white/10 rounded-3xl shadow-2xl overflow-hidden">
         {/* Header Background */}
         <div className="h-32 w-full bg-gradient-to-b from-[#1a1a1a] to-card-dark relative">
           <div
@@ -212,7 +212,7 @@ export default async function AthleteCardPage({
         </div>
 
         {/* Scrollable Content Area */}
-        <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6">
+        <div className="p-6 flex flex-col gap-6">
           {/* Section: Measurables */}
           <section>
             <div className="flex items-center gap-2 mb-4">
