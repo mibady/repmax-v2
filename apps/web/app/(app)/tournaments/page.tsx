@@ -6,7 +6,7 @@ import { usePublicTournaments } from '@/lib/hooks';
 import { Loader2, Search, Calendar, MapPin, Users } from 'lucide-react';
 
 export default function PublicTournamentsPage() {
-  const { tournaments, isLoading, error: _error, filters, setDateFilter } = usePublicTournaments();
+  const { tournaments, isLoading, filters, setDateFilter } = usePublicTournaments();
   const [fromDate, setFromDate] = useState(filters.from || '');
   const [toDate, setToDate] = useState(filters.to || '');
 

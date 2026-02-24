@@ -101,7 +101,7 @@ export default function BracketsTab({ tournamentId, registrations }: BracketsTab
               <label className="block text-white text-sm font-medium mb-2">Bracket Type</label>
               <select
                 value={bracketType}
-                onChange={(e) => setBracketType(e.target.value as any)}
+                onChange={(e) => setBracketType(e.target.value as "single_elim" | "double_elim" | "round_robin" | "pool_play" | "pool_to_bracket")}
                 className="w-full bg-[#141414] text-white border border-white/10 rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-primary"
               >
                 <option value="single_elim">Single Elimination</option>

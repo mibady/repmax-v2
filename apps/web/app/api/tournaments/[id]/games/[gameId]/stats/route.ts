@@ -169,7 +169,7 @@ export async function GET(
     }
 
     return NextResponse.json({ stats: stats || [] });
-  } catch (_error) {
+  } catch {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

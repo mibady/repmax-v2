@@ -144,7 +144,7 @@ export async function POST(
       const { data: membership } = await supabase
         .from("school_members")
         .select("id")
-        .eq("school_id", (registration as any).school_id)
+        .eq("school_id", registration.school_id)
         .eq("profile_id", profile.id)
         .maybeSingle();
 
@@ -266,7 +266,7 @@ export async function DELETE(
       const { data: membership } = await supabase
         .from("school_members")
         .select("id")
-        .eq("school_id", (registration as any).school_id)
+        .eq("school_id", registration.school_id)
         .eq("profile_id", profile.id)
         .maybeSingle();
 

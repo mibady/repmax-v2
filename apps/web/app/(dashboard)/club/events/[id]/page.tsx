@@ -248,7 +248,7 @@ export default function ClubEventDetailPage() {
       {activeTab === 'schedule' && <ScheduleTab tournamentId={id} />}
 
       {/* Brackets Tab */}
-      {activeTab === 'brackets' && <BracketsTab tournamentId={id} registrations={registrations as any} />}
+      {activeTab === 'brackets' && <BracketsTab tournamentId={id} registrations={registrations} />}
 
       {/* Venues Tab */}
       {activeTab === 'venues' && <VenuesTab tournamentId={id} />}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useTournamentDetail } from '@/lib/hooks';
 
@@ -18,7 +18,6 @@ type Step = 'registration' | 'payment' | 'roster' | 'complete';
 
 export default function SchoolRegisterPage() {
   const { id: tournamentId } = useParams<{ id: string }>();
-  const router = useRouter();
   const { tournament, myRegistration, isLoading, error } = useTournamentDetail(tournamentId);
 
   const [step, setStep] = useState<Step>('registration');

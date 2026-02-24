@@ -13,7 +13,7 @@ export default function VenuesTab({ tournamentId }: VenuesTabProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [name, setName] = useState('');
   const [fieldNumber, setFieldNumber] = useState('');
-  const [surfaceType, setSurfaceType] = useState<any>('');
+  const [surfaceType, setSurfaceType] = useState<"grass" | "turf" | "indoor" | "">('');
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -85,7 +85,7 @@ export default function VenuesTab({ tournamentId }: VenuesTabProps) {
               <label className="block text-white text-xs font-medium mb-1.5 uppercase tracking-wider">Surface Type</label>
               <select
                 value={surfaceType}
-                onChange={(e) => setSurfaceType(e.target.value)}
+                onChange={(e) => setSurfaceType(e.target.value as '' | 'grass' | 'turf' | 'indoor')}
                 className="w-full bg-[#141414] text-white border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"
               >
                 <option value="">Select Surface</option>
@@ -114,7 +114,7 @@ export default function VenuesTab({ tournamentId }: VenuesTabProps) {
             <p className="text-gray-500">No venues added yet</p>
           </div>
         ) : (
-          venues.map((venue: any) => (
+          venues.map((venue) => (
             <div key={venue.id} className="bg-[#141414] border border-white/5 rounded-xl p-5 flex flex-col justify-between group hover:border-white/10 transition-colors">
               <div>
                 <div className="flex justify-between items-start mb-3">

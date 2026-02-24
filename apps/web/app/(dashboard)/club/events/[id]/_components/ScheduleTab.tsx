@@ -2,35 +2,20 @@
 
 import { useState } from 'react';
 import { useTournamentSchedule } from '@/lib/hooks/use-tournament-schedule';
-import { useTournamentVenues } from '@/lib/hooks/use-tournament-venues';
+import { useTournamentVenues, type TournamentVenue } from '@/lib/hooks/use-tournament-venues';
 import { Loader2, Save, Trophy } from 'lucide-react';
 import ScoringModal from './ScoringModal';
+import type { BracketGameRecord } from '@/lib/hooks/use-brackets';
 
 interface ScheduleTabProps {
   tournamentId: string;
-}
-
-interface Game {
-  id: string;
-  game_number: number;
-  round: number;
-  home_registration_id: string | null;
-  away_registration_id: string | null;
-  home_score: number;
-  away_score: number;
-  status: string;
-  scheduled_at: string | null;
-  venue_id: string | null;
-  home_reg?: { team_name: string };
-  away_reg?: { team_name: string };
-  venue?: { name: string };
 }
 
 export default function ScheduleTab({ tournamentId }: ScheduleTabProps) {
   const { games, isLoading: gamesLoading, refetch, updateGame } = useTournamentSchedule(tournamentId);
   const { venues, isLoading: venuesLoading } = useTournamentVenues(tournamentId);
   const [savingId, setSavingId] = useState<string | null>(null);
-  const [scoringGame, setScoringGame] = useState<Game | null>(null);
+  const [scoringGame, setScoringGame] = useState<BracketGameRecord | null>(null);
 
   async function handleUpdateGame(gameId: string, venueId: string | null, scheduledAt: string | null) {
     setSavingId(gameId);
@@ -99,19 +84,18 @@ export default function ScheduleTab({ tournamentId }: ScheduleTabProps) {
                   <th className="px-4 py-3 text-right text-gray-400 font-medium">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
-                {(games as any as Game[]).map((game) => (
-                  <GameRow 
-                    key={game.id} 
-                    game={game} 
-                    venues={venues} 
-                    onSave={handleUpdateGame}
-                    onScore={() => setScoringGame(game)}
-                    isSaving={savingId === game.id}
-                  />
-                ))}
-              </tbody>
-            </table>
+                        <tbody className="divide-y divide-white/5">
+                          {games.map((game) => (
+                            <GameRow 
+                              key={game.id} 
+                              game={game} 
+                              venues={venues}
+                              onSave={handleUpdateGame}
+                              onScore={() => setScoringGame(game)}
+                              isSaving={savingId === game.id}
+                            />
+                          ))}
+                        </tbody>            </table>
           </div>
         )}
       </div>
@@ -135,8 +119,8 @@ function GameRow({
   onScore,
   isSaving
 }: { 
-  game: Game; 
-  venues: any[]; 
+  game: BracketGameRecord; 
+  venues: TournamentVenue[]; 
   onSave: (id: string, venueId: string | null, time: string | null) => void;
   onScore: () => void;
   isSaving: boolean;
@@ -176,7 +160,7 @@ function GameRow({
           className="bg-[#1F1F22] border border-white/10 rounded px-2 py-1 text-xs text-white outline-none focus:ring-1 focus:ring-primary"
         >
           <option value="">Unassigned</option>
-          {venues.map((v: any) => (
+          {venues.map((v) => (
             <option key={v.id} value={v.id}>{v.name} {v.field_number ? `#${v.field_number}` : ''}</option>
           ))}
         </select>

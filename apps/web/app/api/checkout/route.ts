@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { getStripe } from "@/lib/stripe";
-import { getRecruiterTier } from "@/lib/utils/subscription-tier";
-import { rateLimit, dailyRateLimit } from "@/lib/utils/rate-limit";
 import { z } from "zod";
 
 function getPriceId(planSlug: string): string | undefined {

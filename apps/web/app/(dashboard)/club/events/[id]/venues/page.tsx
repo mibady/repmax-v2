@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useTournamentDetail, useTournamentVenues } from '@/lib/hooks';
+import type { TournamentVenue } from '@/lib/hooks/use-tournament-venues';
 
 const SURFACE_TYPES = [
   { value: 'grass', label: 'Grass' },
@@ -38,7 +39,7 @@ export default function ClubVenuesPage() {
     setShowForm(false);
   };
 
-  const startEdit = (venue: any) => {
+  const startEdit = (venue: TournamentVenue) => {
     setFormName(venue.name);
     setFormFieldNumber(venue.field_number?.toString() || '');
     setFormSurface(venue.surface_type || '');
@@ -55,7 +56,7 @@ export default function ClubVenuesPage() {
 
     const fieldNum = formFieldNumber ? parseInt(formFieldNumber) : null;
     const cap = formCapacity ? parseInt(formCapacity) : null;
-    const surfaceType = (formSurface || null) as any;
+    const surfaceType = (formSurface || null) as 'grass' | 'turf' | 'indoor' | null;
 
     const venueData = {
       name: formName.trim(),
@@ -248,7 +249,7 @@ export default function ClubVenuesPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {venues.map((venue: any) => (
+          {venues.map((venue: TournamentVenue) => (
             <div
               key={venue.id}
               className="bg-[#141414] border border-white/5 rounded-xl p-4 space-y-3"
