@@ -1,0 +1,190 @@
+{
+  "project": "repmax-v2",
+  "group": "06-athlete-empty",
+  "name": "Empty State Athlete (Tyler Chen)",
+  "requiresAuth": true,
+  "role": "athlete",
+  "baseUrl": "http://localhost:3000",
+  "env": {
+    "TEST_EMAIL": "tyler.chen@test.repmax.io",
+    "TEST_PASSWORD": "TestPass123!"
+  },
+  "pages": ["/athlete", "/athlete/film", "/athlete/analytics", "/athlete/documents"],
+  "journeys": [
+    {
+      "name": "Login as Tyler Chen and redirect to athlete dashboard",
+      "priority": "critical",
+      "description": "Authenticate as Tyler Chen (empty state athlete) and confirm redirect to /athlete dashboard",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "wait", "value": "2000" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_url_contains", "value": "/athlete" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard loads without crash",
+      "priority": "critical",
+      "description": "Verify the athlete dashboard renders completely with no JavaScript errors or stuck loading states",
+      "steps": [
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "assert_console_clean" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard no bad text (undefined, NaN, [object Object])",
+      "priority": "critical",
+      "description": "Verify dashboard does not render undefined, NaN, null, or [object Object] anywhere in the page",
+      "steps": [
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_text", "value": "undefined" },
+        { "action": "assert_no_text", "value": "NaN" },
+        { "action": "assert_no_text", "value": "[object Object]" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard empty/minimal data shows welcome and onboarding prompts",
+      "priority": "high",
+      "description": "With empty or minimal data, dashboard should show Welcome back heading and recruiting journey text",
+      "steps": [
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Welcome back" },
+        { "action": "assert_text_present", "value": "recruitment journey" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Profile card section renders with data or N/A fallbacks",
+      "priority": "high",
+      "description": "Profile card renders with height, weight, and 40YD showing either values or N/A — never undefined or blank",
+      "steps": [
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Height" },
+        { "action": "assert_text_present", "value": "Weight" },
+        { "action": "assert_text_present", "value": "40YD" },
+        { "action": "assert_no_text", "value": "undefined" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Metric cards show 0 or empty state (not undefined)",
+      "priority": "high",
+      "description": "Profile Views and Shortlists metric cards display 0 for empty state athlete, not undefined or NaN",
+      "steps": [
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Profile Views" },
+        { "action": "assert_text_present", "value": "Shortlists" },
+        { "action": "assert_visible", "selector": ".data-point" },
+        { "action": "assert_no_text", "value": "undefined" },
+        { "action": "assert_no_text", "value": "NaN" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Quick Actions links are present and functional",
+      "priority": "medium",
+      "description": "Quick Actions section renders Update Photos, Log New Maxes, and Upload Tape links",
+      "steps": [
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Quick Actions" },
+        { "action": "assert_text_present", "value": "Update Photos" },
+        { "action": "assert_text_present", "value": "Log New Maxes" },
+        { "action": "assert_text_present", "value": "Upload Tape" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Navigate to /athlete/film — empty state visible",
+      "priority": "high",
+      "description": "Film page with no highlights shows the 'No highlights yet' empty state with upload CTA",
+      "steps": [
+        { "action": "navigate", "url": "/athlete/film" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "assert_text_present", "value": "Your Highlights" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Film page no bad text",
+      "priority": "high",
+      "description": "Film page does not render undefined, NaN, or [object Object] with empty data",
+      "steps": [
+        { "action": "navigate", "url": "/athlete/film" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_text", "value": "undefined" },
+        { "action": "assert_no_text", "value": "NaN" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Film page upload zone and Upload Film button rendered",
+      "priority": "medium",
+      "description": "Film page shows Upload New Footage drop zone and Upload Film button for empty state",
+      "steps": [
+        { "action": "navigate", "url": "/athlete/film" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Upload" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Navigate to /athlete/analytics — renders without crash",
+      "priority": "high",
+      "description": "Analytics page loads for empty state athlete without JavaScript errors, shows Performance Analytics heading",
+      "steps": [
+        { "action": "navigate", "url": "/athlete/analytics" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "assert_text_present", "value": "Performance Analytics" },
+        { "action": "assert_no_text", "value": "undefined" },
+        { "action": "assert_no_text", "value": "NaN" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Analytics shows zeros or upgrade CTA, not undefined",
+      "priority": "high",
+      "description": "Analytics page either shows 0 values for metrics or an upgrade CTA — never undefined, NaN, or broken numbers",
+      "steps": [
+        { "action": "navigate", "url": "/athlete/analytics" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_text", "value": "undefined" },
+        { "action": "assert_no_text", "value": "NaN" },
+        { "action": "assert_no_text", "value": "[object Object]" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Navigate to /athlete/documents — empty state with no bad text",
+      "priority": "high",
+      "description": "Documents page shows either 'No documents yet' empty state or upgrade CTA, with no rendering errors",
+      "steps": [
+        { "action": "navigate", "url": "/athlete/documents" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "assert_text_present", "value": "Documents" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_text", "value": "undefined" },
+        { "action": "assert_no_text", "value": "NaN" },
+        { "action": "screenshot" }
+      ]
+    }
+  ]
+}

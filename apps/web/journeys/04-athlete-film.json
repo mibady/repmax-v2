@@ -1,0 +1,303 @@
+{
+  "project": "repmax-v2",
+  "group": "04-athlete-film",
+  "name": "Athlete Film Room",
+  "requiresAuth": true,
+  "role": "athlete",
+  "baseUrl": "http://localhost:3000",
+  "env": {
+    "TEST_EMAIL": "jaylen.washington@test.repmax.io",
+    "TEST_PASSWORD": "TestPass123!"
+  },
+  "pages": ["/athlete/film"],
+  "journeys": [
+    {
+      "name": "Film page loads with heading",
+      "priority": "critical",
+      "description": "Authenticate and verify the Film Room page loads with the 'Your Highlights' heading",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/film" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Your Highlights" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Film page no bad text",
+      "priority": "critical",
+      "description": "Verify the Film Room page has no undefined, NaN, or [object Object] rendering bugs",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/film" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_text", "value": "undefined" },
+        { "action": "assert_no_text", "value": "NaN" },
+        { "action": "assert_no_text", "value": "[object Object]" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Film page no stuck loading",
+      "priority": "critical",
+      "description": "Verify the Film Room page finishes loading without stuck spinners or skeleton states",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/film" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Film page console clean",
+      "priority": "high",
+      "description": "Verify no console errors are thrown on the Film Room page",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/film" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_console_clean" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Upload Film button visible in header",
+      "priority": "critical",
+      "description": "Verify the 'Upload Film' button is visible in the page header area",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/film" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Upload Film" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Upload zone visible with drop area",
+      "priority": "high",
+      "description": "Verify the upload dropzone area is rendered with 'Upload New Footage' text and file type hints",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/film" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Upload New Footage" },
+        { "action": "assert_text_present", "value": "MP4, MOV up to 2GB" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Upload Film button opens Add Highlight modal",
+      "priority": "critical",
+      "description": "Clicking the Upload Film button opens the Add Highlight modal with title and URL fields",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/film" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Upload Film')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_text_present", "value": "Add Highlight" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Add Highlight modal has title input",
+      "priority": "high",
+      "description": "Verify the Add Highlight modal contains a visible Title input field",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/film" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Upload Film')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_visible", "selector": "#highlight-title" },
+        { "action": "assert_text_present", "value": "Title" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Add Highlight modal has Video URL input",
+      "priority": "high",
+      "description": "Verify the Add Highlight modal contains a visible Video URL input field",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/film" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Upload Film')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_visible", "selector": "#highlight-url" },
+        { "action": "assert_text_present", "value": "Video URL" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Add Highlight modal has description textarea",
+      "priority": "medium",
+      "description": "Verify the Add Highlight modal contains an optional Description textarea",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/film" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Upload Film')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_visible", "selector": "#highlight-description" },
+        { "action": "assert_text_present", "value": "Description" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Add Highlight modal Cancel button closes modal",
+      "priority": "high",
+      "description": "Clicking the Cancel button in the Add Highlight modal closes it and returns to the film page",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/film" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Upload Film')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_text_present", "value": "Add Highlight" },
+        { "action": "click", "selector": "button:has-text('Cancel')" },
+        { "action": "wait", "value": "500" },
+        { "action": "assert_no_text", "value": "Add Highlight" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Add Highlight modal close X button works",
+      "priority": "medium",
+      "description": "Clicking the X close button in the modal header dismisses the Add Highlight modal",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/film" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Upload Film')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_text_present", "value": "Add Highlight" },
+        { "action": "click", "selector": "button:has(span.material-symbols-outlined:has-text('close'))" },
+        { "action": "wait", "value": "500" },
+        { "action": "assert_no_text", "value": "Add Highlight" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Highlight cards grid renders with thumbnails",
+      "priority": "high",
+      "description": "Verify the highlights grid section renders article cards with aspect-video thumbnail areas",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/film" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "article" },
+        { "action": "assert_visible", "selector": ".aspect-video" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Highlight cards have play button overlay",
+      "priority": "high",
+      "description": "Verify each highlight card has a play_arrow icon button for video playback",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/film" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "article .aspect-video button" },
+        { "action": "assert_text_present", "value": "play_arrow" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Highlight card more menu with Edit and Delete",
+      "priority": "high",
+      "description": "Clicking the more_vert menu on a highlight card reveals Edit and Delete options",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/film" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "article:first-of-type button:has(span:has-text('more_vert'))" },
+        { "action": "wait", "value": "500" },
+        { "action": "assert_text_present", "value": "Edit" },
+        { "action": "assert_text_present", "value": "Delete" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Upload zone click opens Add Highlight modal",
+      "priority": "medium",
+      "description": "Clicking the dashed upload zone area also opens the Add Highlight modal",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/film" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": ".border-dashed" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_text_present", "value": "Add Highlight" },
+        { "action": "screenshot" }
+      ]
+    }
+  ]
+}

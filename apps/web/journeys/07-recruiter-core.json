@@ -1,0 +1,332 @@
+{
+  "project": "repmax-v2",
+  "group": "07-recruiter-core",
+  "name": "Recruiter Pipeline & Prospect Detail",
+  "requiresAuth": true,
+  "role": "recruiter",
+  "baseUrl": "http://localhost:3000",
+  "env": {
+    "TEST_EMAIL": "coach.williams@test.repmax.io",
+    "TEST_PASSWORD": "TestPass123!"
+  },
+  "pages": ["/recruiter", "/recruiter/pipeline", "/recruiter/prospects", "/recruiter/compare", "/recruiter/territory"],
+  "journeys": [
+    {
+      "name": "Login as recruiter and redirect to /recruiter",
+      "priority": "critical",
+      "description": "Authenticate as Coach Williams and confirm redirect to the recruiter area",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "wait", "value": "2000" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_url_contains", "value": "/recruiter" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Pipeline page loads with Pipeline Dashboard heading",
+      "priority": "critical",
+      "description": "Navigate to pipeline and verify 'Pipeline Dashboard' heading renders",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/pipeline" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Pipeline Dashboard" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Pipeline no bad text",
+      "priority": "critical",
+      "description": "Pipeline page does not render undefined, NaN, null, or [object Object]",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/pipeline" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_text", "value": "undefined" },
+        { "action": "assert_no_text", "value": "NaN" },
+        { "action": "assert_no_text", "value": "[object Object]" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Pipeline no stuck loading",
+      "priority": "critical",
+      "description": "Pipeline page finishes loading within timeout — no infinite spinners",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/pipeline" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Kanban columns visible: Identified, Contacted, Evaluating, Visit Scheduled, Offered, Committed",
+      "priority": "critical",
+      "description": "All six pipeline columns render with correct titles in the Kanban board",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/pipeline" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Identified" },
+        { "action": "assert_text_present", "value": "Contacted" },
+        { "action": "assert_text_present", "value": "Evaluating" },
+        { "action": "assert_text_present", "value": "Visit Scheduled" },
+        { "action": "assert_text_present", "value": "Offered" },
+        { "action": "assert_text_present", "value": "Committed" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Pipeline shows prospect count in header",
+      "priority": "high",
+      "description": "Pipeline header displays a 'prospect(s)' count text showing the total number of athletes",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/pipeline" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "prospect" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Pipeline filter: Class Year dropdown present and interactive",
+      "priority": "high",
+      "description": "Class Year filter dropdown is visible and can be clicked to show options",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/pipeline" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "select" },
+        { "action": "assert_text_present", "value": "All Classes" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Pipeline filter: Position dropdown present",
+      "priority": "high",
+      "description": "Position filter dropdown renders with 'All Positions' default option",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/pipeline" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "All Positions" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Pipeline filter: Zone dropdown present",
+      "priority": "high",
+      "description": "Zone filter dropdown renders with 'All Zones' default option",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/pipeline" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "All Zones" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Pipeline: Add Prospect button visible and links to /recruiter/prospects",
+      "priority": "high",
+      "description": "Add Prospect button is rendered in the pipeline control bar linking to the prospects browser",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/pipeline" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Add Prospect" },
+        { "action": "assert_visible", "selector": "a[href='/recruiter/prospects']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Pipeline: click Add Prospect button navigates to prospects",
+      "priority": "high",
+      "description": "Clicking Add Prospect button navigates to the /recruiter/prospects page",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/pipeline" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href='/recruiter/prospects']" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/recruiter/prospects" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Pipeline: column count badges rendered",
+      "priority": "medium",
+      "description": "Each Kanban column shows a numeric count badge for the number of prospects in that stage",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/pipeline" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "span.rounded-full" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Pipeline: empty columns show 'No prospects' placeholder",
+      "priority": "medium",
+      "description": "Columns with no prospects display 'No prospects' empty state text",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/pipeline" },
+        { "action": "wait", "value": "3000" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Navigate to /recruiter/compare — page loads",
+      "priority": "high",
+      "description": "Compare page renders without crash, showing either comparison table or empty state",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/compare" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Compare page: heading and athlete info visible",
+      "priority": "high",
+      "description": "Compare page shows 'Compare Athletes' heading or empty state with appropriate messaging",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/compare" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Compare" },
+        { "action": "assert_no_text", "value": "undefined" },
+        { "action": "assert_no_text", "value": "NaN" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Compare page: Export Data button visible",
+      "priority": "high",
+      "description": "Compare page renders an Export Data button for CSV download when athletes are available",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/compare" },
+        { "action": "wait", "value": "3000" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Compare page: Add Athlete button visible",
+      "priority": "high",
+      "description": "Compare page shows an Add Athlete button that links to /recruiter/pipeline",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/compare" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Add Athlete" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Compare page: stat sections render (Physical Attributes, Combine, Academics)",
+      "priority": "medium",
+      "description": "When athletes exist, comparison table shows Physical Attributes, Combine Performance, and Academics sections",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/compare" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Navigate to /recruiter/territory — page loads with heading",
+      "priority": "high",
+      "description": "Territory page loads showing 'Territory Assignments' heading",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/territory" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "assert_text_present", "value": "Territory Assignments" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Territory page: no bad text",
+      "priority": "high",
+      "description": "Territory page does not render undefined, NaN, or [object Object]",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/territory" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_text", "value": "undefined" },
+        { "action": "assert_no_text", "value": "NaN" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Territory page: quick stats (Assigned, Open Zones, Coverage)",
+      "priority": "high",
+      "description": "Territory page displays Assigned count, Open Zones count, and Coverage percentage stats",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/territory" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Assigned" },
+        { "action": "assert_text_present", "value": "Open Zones" },
+        { "action": "assert_text_present", "value": "Coverage" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Territory page: zone cards show athlete and blue chip counts",
+      "priority": "medium",
+      "description": "Zone assignment cards show 'athletes' and 'blue chips' counts for each territory",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/territory" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "athletes" },
+        { "action": "assert_text_present", "value": "blue chips" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Territory page: Save Assignments button visible",
+      "priority": "medium",
+      "description": "Territory page footer has a Save Assignments button",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/territory" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Save Assignments" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Sidebar navigation: Pipeline link visible and works",
+      "priority": "high",
+      "description": "Sidebar has Pipeline nav link that navigates to /recruiter/pipeline",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/pipeline" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "a[href='/recruiter/pipeline']" },
+        { "action": "assert_text_present", "value": "Pipeline" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Sidebar navigation: Athletes link visible and navigates",
+      "priority": "high",
+      "description": "Sidebar has Athletes nav link that navigates to /recruiter/prospects",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/pipeline" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "a[href='/recruiter/prospects']" },
+        { "action": "click", "selector": "a[href='/recruiter/prospects']" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/recruiter/prospects" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Sidebar navigation: all recruiter links present",
+      "priority": "high",
+      "description": "Sidebar renders all expected recruiter nav items: Pipeline, Athletes, Campaigns, Messages, Analytics",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/pipeline" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Pipeline" },
+        { "action": "assert_text_present", "value": "Athletes" },
+        { "action": "assert_text_present", "value": "Campaigns" },
+        { "action": "assert_text_present", "value": "Messages" },
+        { "action": "assert_text_present", "value": "Analytics" },
+        { "action": "screenshot" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,532 @@
+{
+  "project": "repmax-v2",
+  "group": "05-athlete-subpages",
+  "name": "Athlete Analytics, Documents & Card Edit",
+  "requiresAuth": true,
+  "role": "athlete",
+  "baseUrl": "http://localhost:3000",
+  "env": {
+    "TEST_EMAIL": "jaylen.washington@test.repmax.io",
+    "TEST_PASSWORD": "TestPass123!"
+  },
+  "pages": ["/athlete/analytics", "/athlete/documents", "/athlete/card/edit"],
+  "journeys": [
+    {
+      "name": "Analytics page loads with heading",
+      "priority": "critical",
+      "description": "Authenticate and verify the Analytics page loads with the 'Performance Analytics' heading",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/analytics" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Performance Analytics" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Analytics page no bad text",
+      "priority": "critical",
+      "description": "Verify the Analytics page has no undefined, NaN, or [object Object] rendering bugs",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/analytics" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_text", "value": "undefined" },
+        { "action": "assert_no_text", "value": "NaN" },
+        { "action": "assert_no_text", "value": "[object Object]" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Analytics page no stuck loading",
+      "priority": "critical",
+      "description": "Verify the Analytics page finishes loading without stuck spinners or skeleton states",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/analytics" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Analytics KPI cards render with Profile Views",
+      "priority": "high",
+      "description": "Verify the KPI card grid renders and includes the Profile Views metric with a numeric value",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/analytics" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Profile Views" },
+        { "action": "assert_text_present", "value": "Completeness" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Analytics Coach Views and Unique Viewers KPIs",
+      "priority": "high",
+      "description": "Verify the Coach Views and Unique Viewers KPI cards are rendered on the analytics page",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/analytics" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Coach Views" },
+        { "action": "assert_text_present", "value": "Unique Viewers" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Analytics Profile Views Over Time chart visible",
+      "priority": "high",
+      "description": "Verify the line chart section 'Profile Views Over Time' renders with SVG chart and Full Report link",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/analytics" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Profile Views Over Time" },
+        { "action": "assert_text_present", "value": "Full Report" },
+        { "action": "assert_visible", "selector": "svg" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Analytics time range segmented control",
+      "priority": "high",
+      "description": "Verify the 7 Days / 30 Days / 90 Days segmented control is visible and interactive",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/analytics" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "7 Days" },
+        { "action": "assert_text_present", "value": "30 Days" },
+        { "action": "assert_text_present", "value": "90 Days" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Analytics time range toggle changes period",
+      "priority": "medium",
+      "description": "Clicking the 7 Days radio button updates the chart period label without errors",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/analytics" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "label:has(input[value='7'])" },
+        { "action": "wait", "value": "1500" },
+        { "action": "assert_text_present", "value": "Last 7 Days" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Analytics Zone Benchmark section visible",
+      "priority": "medium",
+      "description": "Verify the Zone Benchmark card renders with 'Regional Performance' and a ranking percentage",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/analytics" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Zone Benchmark" },
+        { "action": "assert_text_present", "value": "Regional Performance" },
+        { "action": "assert_text_present", "value": "In Your Region" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Analytics Who's Viewing You section",
+      "priority": "medium",
+      "description": "Verify the 'Who's Viewing You' viewer breakdown section renders with percentage bars",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/analytics" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Viewing You" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Documents page loads with heading",
+      "priority": "critical",
+      "description": "Authenticate and verify the Documents page loads with the 'Documents' heading",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/documents" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Documents" },
+        { "action": "assert_text_present", "value": "Manage and share your recruiting materials" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Documents page no bad text",
+      "priority": "critical",
+      "description": "Verify the Documents page has no undefined, NaN, or [object Object] rendering bugs",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/documents" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_text", "value": "undefined" },
+        { "action": "assert_no_text", "value": "NaN" },
+        { "action": "assert_no_text", "value": "[object Object]" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Documents Upload Document button visible",
+      "priority": "critical",
+      "description": "Verify the 'Upload Document' button is visible in the Documents page header",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/documents" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Upload Document" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Documents upload dropzone visible",
+      "priority": "high",
+      "description": "Verify the drag-and-drop upload zone renders with 'Click to upload' text and file type hints",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/documents" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Click to upload or drag and drop" },
+        { "action": "assert_text_present", "value": "Official transcripts, test scores, letters" },
+        { "action": "assert_visible", "selector": ".border-dashed" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Documents search input visible",
+      "priority": "high",
+      "description": "Verify the search files input is rendered in the Your Files section",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/documents" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Your Files" },
+        { "action": "assert_visible", "selector": "input[placeholder='Search files...']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Documents Filter button opens type filter dropdown",
+      "priority": "high",
+      "description": "Clicking the Filter button reveals the document type filter dropdown with PDF, Image, and Other checkboxes",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/documents" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Filter')" },
+        { "action": "wait", "value": "500" },
+        { "action": "assert_text_present", "value": "Document Type" },
+        { "action": "assert_text_present", "value": "PDF" },
+        { "action": "assert_text_present", "value": "Image" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Documents empty state or document list renders",
+      "priority": "high",
+      "description": "Verify the Documents page shows either the empty state with 'No documents yet' or a document grid",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/documents" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Card Edit page loads with heading",
+      "priority": "critical",
+      "description": "Authenticate and verify the Card Edit page loads with the 'Edit Companion Card' heading",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/card/edit" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Edit Companion Card" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Card Edit no bad text",
+      "priority": "critical",
+      "description": "Verify the Card Edit page has no undefined, NaN, or [object Object] rendering bugs",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/card/edit" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_text", "value": "[object Object]" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Card Edit Basic Information section with personal fields",
+      "priority": "high",
+      "description": "Verify the Basic Information section renders with Full Name, Primary Position, Class Year, and High School fields",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/card/edit" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Basic Information" },
+        { "action": "assert_text_present", "value": "Full Name" },
+        { "action": "assert_text_present", "value": "Primary Position" },
+        { "action": "assert_text_present", "value": "Class Year" },
+        { "action": "assert_text_present", "value": "High School" },
+        { "action": "assert_visible", "selector": "input[name='name']" },
+        { "action": "assert_visible", "selector": "select[name='position']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Card Edit Measurables section with athletic fields",
+      "priority": "high",
+      "description": "Verify the Measurables section renders with Height, Weight, 40-Yard, Vertical, and Bench Press fields",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/card/edit" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Measurables" },
+        { "action": "assert_visible", "selector": "input[name='height']" },
+        { "action": "assert_visible", "selector": "input[name='weight']" },
+        { "action": "assert_visible", "selector": "input[name='fortyYard']" },
+        { "action": "assert_visible", "selector": "input[name='vertical']" },
+        { "action": "assert_visible", "selector": "input[name='benchPress']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Card Edit Academics section with GPA, SAT, ACT fields",
+      "priority": "high",
+      "description": "Verify the Academics section renders with GPA, SAT Score, ACT Score, and Desired Major fields",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/card/edit" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Academics" },
+        { "action": "assert_visible", "selector": "input[name='gpa']" },
+        { "action": "assert_visible", "selector": "input[name='sat']" },
+        { "action": "assert_visible", "selector": "input[name='act']" },
+        { "action": "assert_visible", "selector": "input[name='major']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Card Edit Bio textarea visible",
+      "priority": "high",
+      "description": "Verify the Bio textarea is rendered with character counter and placeholder text",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/card/edit" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Bio" },
+        { "action": "assert_visible", "selector": "textarea[name='bio']" },
+        { "action": "assert_text_present", "value": "/280 characters" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Card Edit Save Changes button visible",
+      "priority": "critical",
+      "description": "Verify the Save Changes button is visible in the Card Edit page header",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/card/edit" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Save Changes" },
+        { "action": "assert_visible", "selector": "button:has-text('Save Changes')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Card Edit profile completion indicator",
+      "priority": "medium",
+      "description": "Verify the profile completion percentage indicator and progress bar are rendered",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/card/edit" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "% Complete" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Card Edit Live Preview panel renders",
+      "priority": "high",
+      "description": "Verify the Live Preview card panel renders on the right side with preview data",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/card/edit" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "LIVE PREVIEW" },
+        { "action": "assert_text_present", "value": "Height" },
+        { "action": "assert_text_present", "value": "Weight" },
+        { "action": "assert_text_present", "value": "40YD" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Card Edit Film & Highlights section with URL inputs",
+      "priority": "medium",
+      "description": "Verify the Film & Highlights section renders with Hudl Profile Link and YouTube Highlight Reel URL fields",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/card/edit" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Film & Highlights" },
+        { "action": "assert_visible", "selector": "input[name='hudlLink']" },
+        { "action": "assert_visible", "selector": "input[name='youtubeLink']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Card Edit back to dashboard link",
+      "priority": "medium",
+      "description": "Verify the back arrow link navigates to the athlete dashboard",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/card/edit" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "a[href='/athlete']" },
+        { "action": "assert_text_present", "value": "arrow_back" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Card Edit Profile Photo section with upload buttons",
+      "priority": "medium",
+      "description": "Verify the Profile Photo section renders with Upload Photo button and drag-drop zone",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/card/edit" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Profile Photo" },
+        { "action": "assert_text_present", "value": "Upload Photo" },
+        { "action": "assert_text_present", "value": "Drag and drop or click to upload" },
+        { "action": "screenshot" }
+      ]
+    }
+  ]
+}

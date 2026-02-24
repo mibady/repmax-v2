@@ -1,0 +1,407 @@
+{
+  "project": "repmax-v2",
+  "group": "01-public-directories",
+  "name": "Public Profiles & Directories",
+  "requiresAuth": false,
+  "role": "visitor",
+  "baseUrl": "http://localhost:3000",
+  "env": {
+    "TEST_EMAIL": "",
+    "TEST_PASSWORD": ""
+  },
+  "pages": [
+    "/card/REP-JW-2026",
+    "/athlete/REP-JW-2026",
+    "/positions/QB",
+    "/positions/WR",
+    "/zones/west",
+    "/zones/southeast",
+    "/states/tx",
+    "/states/ca",
+    "/programs/north-shore"
+  ],
+  "journeys": [
+    {
+      "name": "Public athlete card loads without login redirect",
+      "priority": "critical",
+      "description": "Verify the public card page at /card/[id] renders without redirecting to login",
+      "steps": [
+        { "action": "navigate", "url": "/card/REP-JW-2026" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/card/" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Public card shows athlete name heading",
+      "priority": "high",
+      "description": "Verify the public card displays the athlete name in an h1 heading",
+      "steps": [
+        { "action": "navigate", "url": "/card/REP-JW-2026" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "h1" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Public card shows measurables section",
+      "priority": "high",
+      "description": "Verify the card displays Height, Weight, 40-Yard, and Vertical measurables",
+      "steps": [
+        { "action": "navigate", "url": "/card/REP-JW-2026" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Measurables" },
+        { "action": "assert_text_present", "value": "Height" },
+        { "action": "assert_text_present", "value": "Weight" },
+        { "action": "assert_text_present", "value": "40-Yard" },
+        { "action": "assert_text_present", "value": "Vertical" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Public card shows academics section",
+      "priority": "high",
+      "description": "Verify the card displays GPA and SAT academic information",
+      "steps": [
+        { "action": "navigate", "url": "/card/REP-JW-2026" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Academics" },
+        { "action": "assert_text_present", "value": "GPA" },
+        { "action": "assert_text_present", "value": "SAT" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Public card position badge visible",
+      "priority": "medium",
+      "description": "Verify the card displays a position badge in a rounded-full pill element",
+      "steps": [
+        { "action": "navigate", "url": "/card/REP-JW-2026" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": ".rounded-full:has(span)" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Public card action buttons visible",
+      "priority": "high",
+      "description": "Verify the card displays Add to Shortlist and Contact Coach action buttons",
+      "steps": [
+        { "action": "navigate", "url": "/card/REP-JW-2026" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "a:has-text('Add to Shortlist')" },
+        { "action": "assert_visible", "selector": "a:has-text('Contact Coach')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Public athlete profile redirects unauth to login",
+      "priority": "critical",
+      "description": "Verify /athlete/[id] redirects unauthenticated visitors to the login page",
+      "steps": [
+        { "action": "navigate", "url": "/athlete/REP-JW-2026" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/login" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Positions QB page loads with position heading",
+      "priority": "high",
+      "description": "Verify the Quarterback positions page renders with the correct heading",
+      "steps": [
+        { "action": "navigate", "url": "/positions/QB" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Quarterback Prospects" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Positions QB shows prospect count",
+      "priority": "high",
+      "description": "Verify the QB position page displays a Showing X prospects count",
+      "steps": [
+        { "action": "navigate", "url": "/positions/QB" },
+        { "action": "wait", "value": "5000" },
+        { "action": "assert_text_present", "value": "Showing" },
+        { "action": "assert_text_present", "value": "prospects" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Positions QB filter controls visible",
+      "priority": "high",
+      "description": "Verify the QB page shows Zone filter buttons and Rating dropdown",
+      "steps": [
+        { "action": "navigate", "url": "/positions/QB" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Recruitment Zones" },
+        { "action": "assert_visible", "selector": "button:has-text('All')" },
+        { "action": "assert_text_present", "value": "Rating" },
+        { "action": "assert_visible", "selector": "select" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Positions QB sort dropdown has options",
+      "priority": "medium",
+      "description": "Verify the sort dropdown shows Rating, Name, and Class Year sort options",
+      "steps": [
+        { "action": "navigate", "url": "/positions/QB" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Sort by:" },
+        { "action": "assert_visible", "selector": "select:has(option:has-text('Rating'))" },
+        { "action": "assert_visible", "selector": "select:has(option:has-text('Name'))" },
+        { "action": "assert_visible", "selector": "select:has(option:has-text('Class Year'))" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Positions QB athlete cards link to athlete profile",
+      "priority": "medium",
+      "description": "Verify athlete prospect cards on the QB page link to /athlete/[id]",
+      "steps": [
+        { "action": "navigate", "url": "/positions/QB" },
+        { "action": "wait", "value": "5000" },
+        { "action": "assert_visible", "selector": "a[href^='/athlete/']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Positions WR page loads",
+      "priority": "medium",
+      "description": "Verify the Wide Receiver positions page renders correctly",
+      "steps": [
+        { "action": "navigate", "url": "/positions/WR" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Wide Receiver Prospects" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Zones West page loads with zone name",
+      "priority": "high",
+      "description": "Verify the West zone page renders with the zone name in the heading",
+      "steps": [
+        { "action": "navigate", "url": "/zones/west" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "West" },
+        { "action": "assert_text_present", "value": "Zone" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Zones West 3 stat cards visible",
+      "priority": "high",
+      "description": "Verify the West zone page displays Total Athletes, Blue Chips, and Upcoming Events stat cards",
+      "steps": [
+        { "action": "navigate", "url": "/zones/west" },
+        { "action": "wait", "value": "5000" },
+        { "action": "assert_text_present", "value": "Total Athletes" },
+        { "action": "assert_text_present", "value": "Blue Chips" },
+        { "action": "assert_text_present", "value": "Upcoming Events" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Zones West Featured Athletes section",
+      "priority": "medium",
+      "description": "Verify the West zone page has a Featured Athletes section",
+      "steps": [
+        { "action": "navigate", "url": "/zones/west" },
+        { "action": "wait", "value": "5000" },
+        { "action": "assert_text_present", "value": "Featured Athletes" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Zones West Top Programs section",
+      "priority": "medium",
+      "description": "Verify the West zone page has a Top Programs section with program cards",
+      "steps": [
+        { "action": "navigate", "url": "/zones/west" },
+        { "action": "wait", "value": "5000" },
+        { "action": "assert_text_present", "value": "Top Programs" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Zones West signup CTA banner links to signup",
+      "priority": "medium",
+      "description": "Verify the West zone page has a CTA banner with a link to /signup",
+      "steps": [
+        { "action": "navigate", "url": "/zones/west" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Ready to get noticed?" },
+        { "action": "assert_visible", "selector": "a[href='/signup']:has-text('Create Free RepMax ID')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Zones Southeast page loads",
+      "priority": "medium",
+      "description": "Verify the Southeast zone page renders without errors",
+      "steps": [
+        { "action": "navigate", "url": "/zones/southeast" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Southeast" },
+        { "action": "assert_text_present", "value": "Zone" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "States TX page loads with state name",
+      "priority": "high",
+      "description": "Verify the Texas state page renders with the state name in the heading",
+      "steps": [
+        { "action": "navigate", "url": "/states/tx" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Texas" },
+        { "action": "assert_text_present", "value": "Recruiting" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "States TX Active Athletes stat visible",
+      "priority": "medium",
+      "description": "Verify the Texas state page displays the Active Athletes stat",
+      "steps": [
+        { "action": "navigate", "url": "/states/tx" },
+        { "action": "wait", "value": "5000" },
+        { "action": "assert_text_present", "value": "Active Athletes" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "States TX Top Rated Programs grid",
+      "priority": "medium",
+      "description": "Verify the Texas state page displays a Top Rated Programs section",
+      "steps": [
+        { "action": "navigate", "url": "/states/tx" },
+        { "action": "wait", "value": "5000" },
+        { "action": "assert_text_present", "value": "Top Rated Programs" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "States TX CTA button Get Scouted links to signup",
+      "priority": "medium",
+      "description": "Verify the Texas state page has a Get Scouted CTA linking to /signup",
+      "steps": [
+        { "action": "navigate", "url": "/states/tx" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "a[href='/signup']:has-text('Get Scouted')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "States CA page loads",
+      "priority": "medium",
+      "description": "Verify the California state page renders without errors",
+      "steps": [
+        { "action": "navigate", "url": "/states/ca" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "California" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Programs north-shore loads with program name",
+      "priority": "high",
+      "description": "Verify the North Shore program page renders with the school name",
+      "steps": [
+        { "action": "navigate", "url": "/programs/north-shore" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "North Shore High School" },
+        { "action": "assert_text_present", "value": "Houston, TX" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Programs stats grid shows D1 Prospects and Athletes on RepMax",
+      "priority": "medium",
+      "description": "Verify the program page displays D1 Prospects and Athletes on RepMax stat cards",
+      "steps": [
+        { "action": "navigate", "url": "/programs/north-shore" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "D1 Prospects" },
+        { "action": "assert_text_present", "value": "Athletes on RepMax" },
+        { "action": "assert_text_present", "value": "159" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Programs Follow button and Create Profile CTA",
+      "priority": "medium",
+      "description": "Verify the program page has Follow This Program button and Create RepMax Profile link to /signup",
+      "steps": [
+        { "action": "navigate", "url": "/programs/north-shore" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "button:has-text('Follow This Program')" },
+        { "action": "assert_visible", "selector": "a[href='/signup']:has-text('Create RepMax Profile')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Programs 404 on nonexistent program",
+      "priority": "medium",
+      "description": "Verify navigating to a nonexistent program renders the 404 page",
+      "steps": [
+        { "action": "navigate", "url": "/programs/nonexistent-xyz-program" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Wrong Route" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Auth guard: /tournaments redirects to login",
+      "priority": "critical",
+      "description": "Verify that the protected /tournaments route redirects unauthenticated users to /login",
+      "steps": [
+        { "action": "navigate", "url": "/tournaments" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/login" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Auth guard: protected role dashboards redirect to login",
+      "priority": "critical",
+      "description": "Verify that all protected role routes redirect unauthenticated users to /login",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/pipeline" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/login" },
+        { "action": "navigate", "url": "/admin" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/login" },
+        { "action": "navigate", "url": "/coach" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/login" },
+        { "action": "navigate", "url": "/parent" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/login" },
+        { "action": "navigate", "url": "/club" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/login" },
+        { "action": "navigate", "url": "/school" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/login" },
+        { "action": "screenshot" }
+      ]
+    }
+  ]
+}

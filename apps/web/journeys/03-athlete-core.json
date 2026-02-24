@@ -1,0 +1,397 @@
+{
+  "project": "repmax-v2",
+  "group": "03-athlete-core",
+  "name": "Athlete Dashboard & Card Edit",
+  "requiresAuth": true,
+  "role": "athlete",
+  "baseUrl": "http://localhost:3000",
+  "env": {
+    "TEST_EMAIL": "jaylen.washington@test.repmax.io",
+    "TEST_PASSWORD": "TestPass123!"
+  },
+  "pages": ["/athlete", "/athlete/card/edit"],
+  "journeys": [
+    {
+      "name": "Login as athlete + redirect to /athlete",
+      "priority": "critical",
+      "description": "Authenticate as athlete and verify redirect to the athlete dashboard",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "5000" },
+        { "action": "assert_url_contains", "value": "/athlete" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard loads with Welcome Back heading",
+      "priority": "critical",
+      "description": "Verify the athlete dashboard renders with the personalized Welcome Back greeting",
+      "steps": [
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_text_present", "value": "Welcome back" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard no bad text (undefined, NaN, [object Object])",
+      "priority": "critical",
+      "description": "Verify athlete dashboard has no rendering artifacts like undefined, NaN, or [object Object]",
+      "steps": [
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_text", "value": "undefined" },
+        { "action": "assert_no_text", "value": "NaN" },
+        { "action": "assert_no_text", "value": "[object Object]" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Zone Pulse banner visible, no stuck loading",
+      "priority": "high",
+      "description": "Verify the Zone Pulse recruiting activity banner renders on the dashboard without stuck spinners",
+      "steps": [
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_text_present", "value": "Zone Pulse" },
+        { "action": "assert_text_present", "value": "Recruiting activity" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Zone Pulse: View Intel Report link wired",
+      "priority": "high",
+      "description": "Verify the View Intel Report link inside the Zone Pulse banner is present and navigable",
+      "steps": [
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_visible", "selector": "a[href='/dashboard/zone/map']" },
+        { "action": "assert_text_present", "value": "View Intel Report" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Profile card section with stats rendered",
+      "priority": "critical",
+      "description": "Verify the profile card sidebar section renders with measurables (Height, Weight, 40YD) and star ratings",
+      "steps": [
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_text_present", "value": "Height" },
+        { "action": "assert_text_present", "value": "Weight" },
+        { "action": "assert_text_present", "value": "40YD" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Key metric card: Profile Views visible with number",
+      "priority": "high",
+      "description": "Verify the Profile Views stat card is visible and shows a numeric value (not undefined)",
+      "steps": [
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_text_present", "value": "Profile Views" },
+        { "action": "assert_visible", "selector": ".data-point" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Key metric card: Shortlists visible with number",
+      "priority": "high",
+      "description": "Verify the Shortlists stat card is visible and shows how many coaches are watching",
+      "steps": [
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_text_present", "value": "Shortlists" },
+        { "action": "assert_text_present", "value": "Coaches watching" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Recruiting Calendar section renders",
+      "priority": "high",
+      "description": "Verify the Recruiting Calendar section renders on the dashboard with the heading and no stuck loading",
+      "steps": [
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "5000" },
+        { "action": "assert_text_present", "value": "Recruiting Calendar" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Quick Actions section visible with links",
+      "priority": "high",
+      "description": "Verify the Quick Actions section shows Update Photos, Log New Maxes, and Upload Tape links",
+      "steps": [
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_text_present", "value": "Quick Actions" },
+        { "action": "assert_text_present", "value": "Update Photos" },
+        { "action": "assert_text_present", "value": "Log New Maxes" },
+        { "action": "assert_text_present", "value": "Upload Tape" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Profile card Edit button visible and navigable",
+      "priority": "critical",
+      "description": "Verify the Edit button on the profile card links to /athlete/card/edit",
+      "steps": [
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_visible", "selector": "a[href='/athlete/card/edit']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Click Edit card link navigates to /athlete/card/edit",
+      "priority": "critical",
+      "description": "Verify clicking the Edit link on the profile card navigates to the card edit page",
+      "steps": [
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "4000" },
+        { "action": "click", "selector": "a[href='/athlete/card/edit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_url_contains", "value": "/athlete/card/edit" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Share button visible + click triggers interaction",
+      "priority": "high",
+      "description": "Verify the Share button is visible on the profile card and clicking it triggers clipboard copy or share dialog",
+      "steps": [
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_visible", "selector": "button:has-text('Share')" },
+        { "action": "click", "selector": "button:has-text('Share')" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_text_present", "value": "Copied!" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Sidebar navigation: Dashboard link active",
+      "priority": "high",
+      "description": "Verify the sidebar shows the Dashboard link as active (highlighted) on the athlete dashboard page",
+      "steps": [
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_visible", "selector": "aside a[href='/athlete']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Sidebar navigation: My Card link present",
+      "priority": "high",
+      "description": "Verify the sidebar shows the My Card link pointing to /athlete/card/edit",
+      "steps": [
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_visible", "selector": "aside a[href='/athlete/card/edit']" },
+        { "action": "assert_text_present", "value": "My Card" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Sidebar navigation: Messages link present",
+      "priority": "high",
+      "description": "Verify the sidebar shows the Messages link pointing to /messages",
+      "steps": [
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_visible", "selector": "aside a[href='/messages']" },
+        { "action": "assert_text_present", "value": "Messages" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Sidebar navigation: Tournaments link present",
+      "priority": "medium",
+      "description": "Verify the sidebar shows the Tournaments link pointing to /tournaments",
+      "steps": [
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_visible", "selector": "aside a[href='/tournaments']" },
+        { "action": "assert_text_present", "value": "Tournaments" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Topbar notification bell visible",
+      "priority": "high",
+      "description": "Verify the notification bell icon is visible in the topbar header",
+      "steps": [
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_visible", "selector": "button[aria-label='Notifications'], [aria-label='Toggle notifications']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Calendar section no stuck loading",
+      "priority": "medium",
+      "description": "Verify the full dashboard loads completely without stuck spinners after extended wait",
+      "steps": [
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "6000" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Card Edit page loads with heading",
+      "priority": "critical",
+      "description": "Verify the card edit page loads with the Edit Companion Card heading and no errors",
+      "steps": [
+        { "action": "navigate", "url": "/athlete/card/edit" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_text_present", "value": "Edit Companion Card" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Card Edit: Basic Information section with form fields",
+      "priority": "high",
+      "description": "Verify the Basic Information section shows Full Name, Position, Class Year, High School, City, State, and Bio fields",
+      "steps": [
+        { "action": "navigate", "url": "/athlete/card/edit" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_text_present", "value": "Basic Information" },
+        { "action": "assert_visible", "selector": "input[name='name']" },
+        { "action": "assert_visible", "selector": "select[name='position']" },
+        { "action": "assert_visible", "selector": "select[name='classYear']" },
+        { "action": "assert_visible", "selector": "input[name='highSchool']" },
+        { "action": "assert_visible", "selector": "textarea[name='bio']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Card Edit: Measurables section with form fields",
+      "priority": "high",
+      "description": "Verify the Measurables section shows Height, Weight, Wingspan, 40-Yard, Bench Press, Squat, and Vertical fields",
+      "steps": [
+        { "action": "navigate", "url": "/athlete/card/edit" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_text_present", "value": "Measurables" },
+        { "action": "assert_visible", "selector": "input[name='height']" },
+        { "action": "assert_visible", "selector": "input[name='weight']" },
+        { "action": "assert_visible", "selector": "input[name='fortyYard']" },
+        { "action": "assert_visible", "selector": "input[name='vertical']" },
+        { "action": "assert_visible", "selector": "input[name='benchPress']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Card Edit: Academics section with form fields",
+      "priority": "high",
+      "description": "Verify the Academics section shows GPA, SAT Score, ACT Score, and Desired Major fields",
+      "steps": [
+        { "action": "navigate", "url": "/athlete/card/edit" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_text_present", "value": "Academics" },
+        { "action": "assert_visible", "selector": "input[name='gpa']" },
+        { "action": "assert_visible", "selector": "input[name='sat']" },
+        { "action": "assert_visible", "selector": "input[name='act']" },
+        { "action": "assert_visible", "selector": "input[name='major']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Card Edit: Film & Highlights section with link inputs",
+      "priority": "high",
+      "description": "Verify the Film & Highlights section shows Hudl Profile Link and YouTube Highlight Reel inputs",
+      "steps": [
+        { "action": "navigate", "url": "/athlete/card/edit" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_text_present", "value": "Film & Highlights" },
+        { "action": "assert_visible", "selector": "input[name='hudlLink']" },
+        { "action": "assert_visible", "selector": "input[name='youtubeLink']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Card Edit: Save Changes button visible",
+      "priority": "critical",
+      "description": "Verify the Save Changes button is present and clickable on the card edit page",
+      "steps": [
+        { "action": "navigate", "url": "/athlete/card/edit" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_visible", "selector": "button:has-text('Save Changes')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Card Edit: fill a field + save triggers submission",
+      "priority": "critical",
+      "description": "Verify filling in the bio field and clicking Save Changes triggers a save operation and shows success feedback",
+      "steps": [
+        { "action": "navigate", "url": "/athlete/card/edit" },
+        { "action": "wait", "value": "4000" },
+        { "action": "fill", "selector": "textarea[name='bio']", "value": "Dedicated football athlete striving for excellence on and off the field." },
+        { "action": "click", "selector": "button:has-text('Save Changes')" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Card Edit: Profile Photo section with upload button",
+      "priority": "high",
+      "description": "Verify the Profile Photo section is visible with an Upload Photo button",
+      "steps": [
+        { "action": "navigate", "url": "/athlete/card/edit" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_text_present", "value": "Profile Photo" },
+        { "action": "assert_visible", "selector": "button:has-text('Upload Photo')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Card Edit: Live Preview sidebar renders",
+      "priority": "medium",
+      "description": "Verify the Live Preview section renders in the sidebar showing a mini card preview",
+      "steps": [
+        { "action": "navigate", "url": "/athlete/card/edit" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_text_present", "value": "LIVE PREVIEW" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Card Edit: profile completion percentage bar visible",
+      "priority": "medium",
+      "description": "Verify the profile completion percentage indicator is shown in the page header",
+      "steps": [
+        { "action": "navigate", "url": "/athlete/card/edit" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_text_present", "value": "% Complete" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Card Edit: back arrow navigates to /athlete",
+      "priority": "medium",
+      "description": "Verify the back arrow link in the page header navigates back to the athlete dashboard",
+      "steps": [
+        { "action": "navigate", "url": "/athlete/card/edit" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_visible", "selector": "a[href='/athlete']" },
+        { "action": "click", "selector": "a[href='/athlete']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_url_contains", "value": "/athlete" },
+        { "action": "assert_text_present", "value": "Welcome back" },
+        { "action": "screenshot" }
+      ]
+    }
+  ]
+}

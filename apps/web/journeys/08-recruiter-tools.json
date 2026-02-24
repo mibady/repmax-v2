@@ -1,0 +1,474 @@
+{
+  "project": "repmax-v2",
+  "group": "08-recruiter-tools",
+  "name": "Recruiter Visits, Comms & Reports",
+  "requiresAuth": true,
+  "role": "recruiter",
+  "baseUrl": "http://localhost:3000",
+  "env": {
+    "TEST_EMAIL": "coach.williams@test.repmax.io",
+    "TEST_PASSWORD": "TestPass123!"
+  },
+  "pages": [
+    "/recruiter/visits",
+    "/recruiter/communications",
+    "/recruiter/reports",
+    "/recruiter/film"
+  ],
+  "journeys": [
+    {
+      "name": "Login as recruiter",
+      "priority": "critical",
+      "description": "Recruiter logs in with valid credentials and session is established",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "wait", "value": "2000" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Visits page loads with heading and stats",
+      "priority": "critical",
+      "description": "Campus Visits page renders heading, subtitle, and 4 stat cards without errors",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/recruiter/visits" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Campus Visits" },
+        { "action": "assert_text_present", "value": "Official Visits" },
+        { "action": "assert_text_present", "value": "Pending" },
+        { "action": "assert_text_present", "value": "Win Rate" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Visits calendar month view renders",
+      "priority": "high",
+      "description": "Calendar displays day-of-week header row and numbered day cells in month view",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/visits" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Sun" },
+        { "action": "assert_text_present", "value": "Mon" },
+        { "action": "assert_text_present", "value": "Fri" },
+        { "action": "assert_text_present", "value": "Sat" },
+        { "action": "assert_visible", "selector": "button:has-text('Month')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Visits calendar view mode toggle (Month/Week/Day)",
+      "priority": "high",
+      "description": "Calendar view mode buttons are visible and clickable to switch between Month, Week, and Day views",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/visits" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "button:has-text('Month')" },
+        { "action": "assert_visible", "selector": "button:has-text('Week')" },
+        { "action": "assert_visible", "selector": "button:has-text('Day')" },
+        { "action": "click", "selector": "button:has-text('Week')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "screenshot" },
+        { "action": "click", "selector": "button:has-text('Day')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "screenshot" },
+        { "action": "click", "selector": "button:has-text('Month')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Visits calendar month navigation (prev/next)",
+      "priority": "medium",
+      "description": "Chevron buttons navigate to previous and next months",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/visits" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "span.material-symbols-outlined:has-text('chevron_left')" },
+        { "action": "click", "selector": "button:has(span:has-text('chevron_left'))" },
+        { "action": "wait", "value": "1000" },
+        { "action": "screenshot" },
+        { "action": "click", "selector": "button:has(span:has-text('chevron_right'))" },
+        { "action": "wait", "value": "1000" },
+        { "action": "click", "selector": "button:has(span:has-text('chevron_right'))" },
+        { "action": "wait", "value": "1000" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Schedule Visit button visible",
+      "priority": "high",
+      "description": "Visits page has a visible Schedule Visit button in the header",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/visits" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "button:has-text('Schedule Visit')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Schedule Visit button opens modal",
+      "priority": "critical",
+      "description": "Clicking Schedule Visit opens the modal with form fields for scheduling a campus visit",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/visits" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Schedule Visit')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_text_present", "value": "Schedule Campus Visit" },
+        { "action": "assert_visible", "selector": "input[placeholder='Enter athlete ID']" },
+        { "action": "assert_visible", "selector": "input[type='date']" },
+        { "action": "assert_visible", "selector": "select" },
+        { "action": "assert_visible", "selector": "input[type='time']" },
+        { "action": "assert_visible", "selector": "textarea" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Schedule Visit modal form fields populated",
+      "priority": "high",
+      "description": "Modal form fields for Athlete ID, Visit Date, Visit Type, Time, and Notes are fillable",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/visits" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Schedule Visit')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "fill", "selector": "input[placeholder='Enter athlete ID']", "value": "test-athlete-123" },
+        { "action": "fill", "selector": "input[type='date']", "value": "2026-03-15" },
+        { "action": "fill", "selector": "input[type='time']", "value": "10:00" },
+        { "action": "fill", "selector": "textarea", "value": "Test visit notes for campus tour" },
+        { "action": "assert_visible", "selector": "button[type='submit']:has-text('Schedule Visit')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Schedule Visit modal cancel closes modal",
+      "priority": "medium",
+      "description": "Clicking Cancel in the Schedule Visit modal closes it and returns to the visits page",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/visits" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Schedule Visit')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_text_present", "value": "Schedule Campus Visit" },
+        { "action": "click", "selector": "button[type='button']:has-text('Cancel')" },
+        { "action": "wait", "value": "500" },
+        { "action": "assert_no_text", "value": "Schedule Campus Visit" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Visits color key legend visible",
+      "priority": "low",
+      "description": "Calendar legend shows Official Visit, Unofficial Visit, and Junior Day color keys",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/visits" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Official Visit" },
+        { "action": "assert_text_present", "value": "Unofficial Visit" },
+        { "action": "assert_text_present", "value": "Junior Day" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Upcoming Visits sidebar visible",
+      "priority": "high",
+      "description": "Right sidebar shows Upcoming Visits heading and View All toggle",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/visits" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Upcoming Visits" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Communications page loads with heading",
+      "priority": "critical",
+      "description": "Communications page renders the Communication Log heading and filter bar without errors",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/recruiter/communications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Communication Log" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Communications filter bar controls visible",
+      "priority": "high",
+      "description": "Filter bar has search input, type select, date range inputs, and staff member select",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/communications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "input[placeholder*='Search']" },
+        { "action": "assert_text_present", "value": "Type" },
+        { "action": "assert_text_present", "value": "Date Range" },
+        { "action": "assert_text_present", "value": "Staff Member" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Communications type filter options",
+      "priority": "medium",
+      "description": "Type filter select shows All Types, Call, Email, Visit, and Message options",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/communications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "select" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Communications Log Communication button opens modal",
+      "priority": "critical",
+      "description": "Clicking Log Communication button opens the modal with form fields",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/communications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "button:has-text('Log Communication')" },
+        { "action": "click", "selector": "button:has-text('Log Communication')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_text_present", "value": "Log Communication" },
+        { "action": "assert_text_present", "value": "Athlete ID" },
+        { "action": "assert_text_present", "value": "Communication Type" },
+        { "action": "assert_text_present", "value": "Summary" },
+        { "action": "assert_visible", "selector": "textarea" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Communications modal cancel button closes",
+      "priority": "medium",
+      "description": "Clicking Cancel in the Log Communication modal closes it",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/communications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Log Communication')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_text_present", "value": "Log Communication" },
+        { "action": "click", "selector": "button:has-text('Cancel')" },
+        { "action": "wait", "value": "500" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Communications table headers visible",
+      "priority": "high",
+      "description": "Communication log table shows Prospect, Type, Summary, Staff, and Date/Time column headers",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/communications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Prospect" },
+        { "action": "assert_text_present", "value": "Summary" },
+        { "action": "assert_text_present", "value": "Staff" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Reports page loads with heading and filters",
+      "priority": "critical",
+      "description": "Recruiting Reports page renders heading, subtitle, and filter pills without errors",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/recruiter/reports" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Recruiting Reports" },
+        { "action": "assert_text_present", "value": "Pipeline analytics" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Reports pipeline funnel visible",
+      "priority": "high",
+      "description": "Pipeline Funnel section renders with funnel visualization and View Detail toggle",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/reports" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Pipeline Funnel" },
+        { "action": "assert_visible", "selector": "button:has-text('View Detail')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Reports funnel detail toggle",
+      "priority": "medium",
+      "description": "Clicking View Detail expands the funnel detail grid, clicking Hide Detail collapses it",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/reports" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('View Detail')" },
+        { "action": "wait", "value": "500" },
+        { "action": "assert_text_present", "value": "conversion" },
+        { "action": "screenshot" },
+        { "action": "click", "selector": "button:has-text('Hide Detail')" },
+        { "action": "wait", "value": "500" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Reports stat cards visible (Communications, Visits, Avg Time)",
+      "priority": "high",
+      "description": "Three stat cards render with Communications, Campus Visits, and Avg Time to Commit metrics",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/reports" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Communications" },
+        { "action": "assert_text_present", "value": "Campus Visits" },
+        { "action": "assert_text_present", "value": "Avg Time to Commit" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Reports staff activity leaderboard",
+      "priority": "high",
+      "description": "Staff Activity Leaderboard table renders with Recruiter, Calls, Emails, Visits, Commits columns",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/reports" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Staff Activity Leaderboard" },
+        { "action": "assert_text_present", "value": "Recruiter" },
+        { "action": "assert_text_present", "value": "Calls" },
+        { "action": "assert_text_present", "value": "Emails" },
+        { "action": "assert_text_present", "value": "Commits" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Reports Export CSV from staff leaderboard",
+      "priority": "high",
+      "description": "Staff leaderboard more-options menu has Export CSV button that triggers download",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/reports" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "button:has(span:has-text('more_horiz'))" },
+        { "action": "click", "selector": "button:has(span:has-text('more_horiz'))" },
+        { "action": "wait", "value": "500" },
+        { "action": "assert_text_present", "value": "Export CSV" },
+        { "action": "assert_text_present", "value": "Print" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Reports zone coverage chart visible",
+      "priority": "medium",
+      "description": "Zone Coverage bar chart section renders with title and Prospects legend",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/reports" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Zone Coverage" },
+        { "action": "assert_text_present", "value": "Prospects" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Reports filter pills toggle",
+      "priority": "medium",
+      "description": "Filter pills (Class of 2025, Varsity Program, This Quarter) are clickable and toggle active state",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/reports" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "button:has-text('Class of 2025')" },
+        { "action": "assert_visible", "selector": "button:has-text('Varsity Program')" },
+        { "action": "assert_visible", "selector": "button:has-text('This Quarter')" },
+        { "action": "click", "selector": "button:has-text('Class of 2025')" },
+        { "action": "wait", "value": "500" },
+        { "action": "click", "selector": "button:has-text('This Quarter')" },
+        { "action": "wait", "value": "500" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Film viewer page loads",
+      "priority": "high",
+      "description": "Film viewer page for a specific highlight renders without errors",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/recruiter/film/film-001" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Film viewer player area and controls",
+      "priority": "high",
+      "description": "Film viewer shows the video player area with play button overlay",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/film/film-001" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "span.material-symbols-outlined:has-text('play_arrow')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Film viewer Add Bookmark button and bookmarks section",
+      "priority": "medium",
+      "description": "Film page has Recruiter Bookmarks heading and Add Bookmark button",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/film/film-001" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Recruiter Bookmarks" },
+        { "action": "assert_visible", "selector": "button:has-text('Add Bookmark')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Film viewer Add Bookmark modal opens",
+      "priority": "medium",
+      "description": "Clicking Add Bookmark opens modal with label and notes fields",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/film/film-001" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Add Bookmark')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_text_present", "value": "Add Bookmark at" },
+        { "action": "assert_visible", "selector": "input[placeholder*='Great throw']" },
+        { "action": "assert_visible", "selector": "textarea[placeholder*='observations']" },
+        { "action": "assert_visible", "selector": "button:has-text('Cancel')" },
+        { "action": "assert_visible", "selector": "button[type='submit']:has-text('Add Bookmark')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Film viewer action buttons (Share, Copy Link, Report, Download)",
+      "priority": "medium",
+      "description": "Film page shows Share, Copy Link, Report, and Download action buttons",
+      "steps": [
+        { "action": "navigate", "url": "/recruiter/film/film-001" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Share" },
+        { "action": "assert_text_present", "value": "Copy Link" },
+        { "action": "assert_text_present", "value": "Report" },
+        { "action": "assert_text_present", "value": "Download" },
+        { "action": "screenshot" }
+      ]
+    }
+  ]
+}

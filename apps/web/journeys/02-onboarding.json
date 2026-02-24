@@ -1,0 +1,427 @@
+{
+  "project": "repmax-v2",
+  "group": "02-onboarding",
+  "name": "Onboarding & Role Selection",
+  "requiresAuth": true,
+  "role": "athlete",
+  "baseUrl": "http://localhost:3000",
+  "env": {
+    "TEST_EMAIL": "tyler.chen@test.repmax.io",
+    "TEST_PASSWORD": "TestPass123!"
+  },
+  "pages": ["/onboarding/role", "/onboarding/chat", "/dashboard"],
+  "journeys": [
+    {
+      "name": "Auth guard: /recruiter/pipeline redirects unauthenticated to /login",
+      "priority": "critical",
+      "description": "Verify that navigating to /recruiter/pipeline without credentials redirects to /login. This journey runs first (before login) so no saved cookies exist.",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "navigate", "url": "/recruiter/pipeline" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/login" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Auth guard: /admin redirects unauthenticated to /login",
+      "priority": "critical",
+      "description": "Verify that navigating to /admin without credentials redirects to /login",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "navigate", "url": "/admin" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/login" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Auth guard: /settings redirects unauthenticated to /login",
+      "priority": "critical",
+      "description": "Verify that navigating to /settings without credentials redirects to /login",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "navigate", "url": "/settings" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/login" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Auth guard: /messages redirects unauthenticated to /login",
+      "priority": "critical",
+      "description": "Verify that navigating to /messages without credentials redirects to /login",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "navigate", "url": "/messages" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/login" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Login + redirect to dashboard",
+      "priority": "critical",
+      "description": "Verify that logging in with valid athlete credentials redirects to the athlete dashboard or general dashboard",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "assert_visible", "selector": "input[type='email']" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "5000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Authenticated user on /login redirects to /dashboard",
+      "priority": "high",
+      "description": "Verify that navigating to /login while already authenticated redirects to /dashboard (middleware rule)",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/dashboard" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Authenticated user on /signup redirects to /dashboard",
+      "priority": "high",
+      "description": "Verify that navigating to /signup while already authenticated redirects to /dashboard (middleware rule)",
+      "steps": [
+        { "action": "navigate", "url": "/signup" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/dashboard" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Onboarding role selection page loads",
+      "priority": "critical",
+      "description": "Verify the onboarding role selection page renders without errors and shows the heading",
+      "steps": [
+        { "action": "navigate", "url": "/onboarding/role" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_text_present", "value": "What's Your Role?" },
+        { "action": "assert_text_present", "value": "Step 1 of 3" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Role selection: 5 role cards visible",
+      "priority": "critical",
+      "description": "Verify all 5 role cards (Athlete, Parent, Coach, Recruiter, Club Organizer) are visible on the role selection page",
+      "steps": [
+        { "action": "navigate", "url": "/onboarding/role" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Athlete" },
+        { "action": "assert_text_present", "value": "Parent" },
+        { "action": "assert_text_present", "value": "Coach" },
+        { "action": "assert_text_present", "value": "Recruiter" },
+        { "action": "assert_text_present", "value": "Club Organizer" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Role selection: Athlete radio default checked",
+      "priority": "high",
+      "description": "Verify that the Athlete radio button is checked by default on the role selection page",
+      "steps": [
+        { "action": "navigate", "url": "/onboarding/role" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "input[type='radio'][value='athlete']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Role selection: clicking Parent card toggles radio",
+      "priority": "high",
+      "description": "Verify that clicking the Parent role card selects the parent radio button (only one can be selected at a time)",
+      "steps": [
+        { "action": "navigate", "url": "/onboarding/role" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "input[type='radio'][value='parent']" },
+        { "action": "wait", "value": "500" },
+        { "action": "assert_text_present", "value": "Parent" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Role selection: clicking Coach card toggles radio",
+      "priority": "medium",
+      "description": "Verify clicking Coach role card selects the coach radio button",
+      "steps": [
+        { "action": "navigate", "url": "/onboarding/role" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "input[type='radio'][value='coach']" },
+        { "action": "wait", "value": "500" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Role selection: clicking Recruiter card toggles radio",
+      "priority": "medium",
+      "description": "Verify clicking Recruiter role card selects the recruiter radio button",
+      "steps": [
+        { "action": "navigate", "url": "/onboarding/role" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "input[type='radio'][value='recruiter']" },
+        { "action": "wait", "value": "500" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Role selection: Continue button visible and clickable",
+      "priority": "critical",
+      "description": "Verify the Continue button is visible on the role selection page and can be clicked",
+      "steps": [
+        { "action": "navigate", "url": "/onboarding/role" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "button:has-text('Continue')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Onboarding chat page loads with step 1",
+      "priority": "critical",
+      "description": "Verify the onboarding chat page loads showing Step 1 of 5 with Personal Info heading",
+      "steps": [
+        { "action": "navigate", "url": "/onboarding/chat" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "assert_text_present", "value": "Step 1 of 5" },
+        { "action": "assert_text_present", "value": "Personal Information" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Onboarding chat step 1: Full Name input present",
+      "priority": "high",
+      "description": "Verify the Full Name input with correct placeholder is present on step 1",
+      "steps": [
+        { "action": "navigate", "url": "/onboarding/chat" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_visible", "selector": "input[placeholder='Enter your full name']" },
+        { "action": "fill", "selector": "input[placeholder='Enter your full name']", "value": "Tyler Chen" },
+        { "action": "wait", "value": "500" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Onboarding chat: Continue button advances to step 2",
+      "priority": "critical",
+      "description": "Verify clicking Continue on step 1 saves and advances to step 2 (School Information)",
+      "steps": [
+        { "action": "navigate", "url": "/onboarding/chat" },
+        { "action": "wait", "value": "4000" },
+        { "action": "fill", "selector": "input[placeholder='Enter your full name']", "value": "Tyler Chen" },
+        { "action": "click", "selector": "button:has-text('Continue')" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Step 2 of 5" },
+        { "action": "assert_text_present", "value": "School Information" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Onboarding chat step 2: School form fields present",
+      "priority": "high",
+      "description": "Verify step 2 shows High School, City, State, Class Year, and Position inputs",
+      "steps": [
+        { "action": "navigate", "url": "/onboarding/chat" },
+        { "action": "wait", "value": "4000" },
+        { "action": "click", "selector": "button:has-text('Continue')" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "input[placeholder='Enter your high school name']" },
+        { "action": "assert_visible", "selector": "input[placeholder='City']" },
+        { "action": "assert_text_present", "value": "State" },
+        { "action": "assert_text_present", "value": "Class Year" },
+        { "action": "assert_text_present", "value": "Primary Position" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Onboarding chat step 3: Athletic Measurables fields present",
+      "priority": "high",
+      "description": "Verify step 3 shows Height, Weight, 40-Yard Dash, and Vertical Jump inputs",
+      "steps": [
+        { "action": "navigate", "url": "/onboarding/chat" },
+        { "action": "wait", "value": "4000" },
+        { "action": "click", "selector": "button:has-text('Continue')" },
+        { "action": "wait", "value": "2000" },
+        { "action": "click", "selector": "button:has-text('Continue')" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_text_present", "value": "Step 3 of 5" },
+        { "action": "assert_text_present", "value": "Athletic Measurables" },
+        { "action": "assert_text_present", "value": "Height" },
+        { "action": "assert_text_present", "value": "Weight" },
+        { "action": "assert_text_present", "value": "40-Yard Dash" },
+        { "action": "assert_text_present", "value": "Vertical Jump" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Onboarding chat step 4: Academic Information fields present",
+      "priority": "high",
+      "description": "Verify step 4 shows GPA, SAT, ACT, and NCAA ID inputs",
+      "steps": [
+        { "action": "navigate", "url": "/onboarding/chat" },
+        { "action": "wait", "value": "4000" },
+        { "action": "click", "selector": "button:has-text('Continue')" },
+        { "action": "wait", "value": "2000" },
+        { "action": "click", "selector": "button:has-text('Continue')" },
+        { "action": "wait", "value": "2000" },
+        { "action": "click", "selector": "button:has-text('Continue')" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_text_present", "value": "Step 4 of 5" },
+        { "action": "assert_text_present", "value": "Academic Information" },
+        { "action": "assert_text_present", "value": "GPA" },
+        { "action": "assert_text_present", "value": "SAT Score" },
+        { "action": "assert_text_present", "value": "ACT Score" },
+        { "action": "assert_text_present", "value": "NCAA ID" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Onboarding chat step 5: Review Your Profile summary",
+      "priority": "high",
+      "description": "Verify step 5 shows Review Your Profile heading with summary sections for Personal, School, Measurables, and Academics",
+      "steps": [
+        { "action": "navigate", "url": "/onboarding/chat" },
+        { "action": "wait", "value": "4000" },
+        { "action": "click", "selector": "button:has-text('Continue')" },
+        { "action": "wait", "value": "2000" },
+        { "action": "click", "selector": "button:has-text('Continue')" },
+        { "action": "wait", "value": "2000" },
+        { "action": "click", "selector": "button:has-text('Continue')" },
+        { "action": "wait", "value": "2000" },
+        { "action": "click", "selector": "button:has-text('Continue')" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_text_present", "value": "Step 5 of 5" },
+        { "action": "assert_text_present", "value": "Review Your Profile" },
+        { "action": "assert_text_present", "value": "PERSONAL" },
+        { "action": "assert_text_present", "value": "SCHOOL" },
+        { "action": "assert_text_present", "value": "MEASURABLES" },
+        { "action": "assert_text_present", "value": "ACADEMICS" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Onboarding chat: Skip for Now link navigates to /dashboard",
+      "priority": "high",
+      "description": "Verify the Skip for Now link is visible in the sidebar and links to /dashboard",
+      "steps": [
+        { "action": "navigate", "url": "/onboarding/chat" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_visible", "selector": "a[href='/dashboard']" },
+        { "action": "assert_text_present", "value": "Skip for Now" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Onboarding chat: Previous button navigates back one step",
+      "priority": "high",
+      "description": "Verify clicking Previous from step 2 returns to step 1 (Personal Information)",
+      "steps": [
+        { "action": "navigate", "url": "/onboarding/chat" },
+        { "action": "wait", "value": "4000" },
+        { "action": "click", "selector": "button:has-text('Continue')" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_text_present", "value": "Step 2 of 5" },
+        { "action": "click", "selector": "button:has-text('Previous')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_text_present", "value": "Step 1 of 5" },
+        { "action": "assert_text_present", "value": "Personal Information" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Onboarding chat: Previous button disabled on step 1",
+      "priority": "medium",
+      "description": "Verify the Previous button is disabled (grayed out) on step 1 since there is no earlier step",
+      "steps": [
+        { "action": "navigate", "url": "/onboarding/chat" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_text_present", "value": "Step 1 of 5" },
+        { "action": "assert_visible", "selector": "button:has-text('Previous'):disabled" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Session persists after page refresh",
+      "priority": "medium",
+      "description": "Verify that refreshing the page while authenticated maintains the user session (does not redirect to /login)",
+      "steps": [
+        { "action": "navigate", "url": "/dashboard" },
+        { "action": "wait", "value": "3000" },
+        { "action": "navigate", "url": "/dashboard" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Onboarding chat: no stuck loading indicators",
+      "priority": "medium",
+      "description": "Verify the onboarding chat page fully loads without stuck spinners or loading states",
+      "steps": [
+        { "action": "navigate", "url": "/onboarding/chat" },
+        { "action": "wait", "value": "5000" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Onboarding chat: side navigation step buttons clickable",
+      "priority": "medium",
+      "description": "Verify the sidebar step navigation buttons are present and allow direct step navigation",
+      "steps": [
+        { "action": "navigate", "url": "/onboarding/chat" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_visible", "selector": "nav button" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Onboarding chat: progress sidebar shows completion percentage",
+      "priority": "medium",
+      "description": "Verify the right sidebar shows a profile completeness percentage and progress ring",
+      "steps": [
+        { "action": "navigate", "url": "/onboarding/chat" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_text_present", "value": "Profile Completeness" },
+        { "action": "assert_text_present", "value": "Complete" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Onboarding chat: live preview card updates with data",
+      "priority": "medium",
+      "description": "Verify the Live Preview sidebar section renders a recruiter-view card preview",
+      "steps": [
+        { "action": "navigate", "url": "/onboarding/chat" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_text_present", "value": "Live Preview" },
+        { "action": "assert_text_present", "value": "Recruiter View" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Role selection page: no console errors or bad text",
+      "priority": "medium",
+      "description": "Verify the role selection page loads cleanly with no undefined, NaN, or [object Object] text",
+      "steps": [
+        { "action": "navigate", "url": "/onboarding/role" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_text", "value": "undefined" },
+        { "action": "assert_no_text", "value": "NaN" },
+        { "action": "assert_no_text", "value": "[object Object]" },
+        { "action": "screenshot" }
+      ]
+    }
+  ]
+}

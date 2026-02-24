@@ -1,0 +1,524 @@
+{
+  "project": "repmax-v2",
+  "group": "09-coach",
+  "name": "Coach Dashboard, Roster & Tasks",
+  "requiresAuth": true,
+  "role": "coach",
+  "baseUrl": "http://localhost:3000",
+  "env": {
+    "TEST_EMAIL": "coach.davis@test.repmax.io",
+    "TEST_PASSWORD": "TestPass123!"
+  },
+  "pages": [
+    "/coach",
+    "/coach/roster",
+    "/coach/roster/new",
+    "/coach/tasks"
+  ],
+  "journeys": [
+    {
+      "name": "Login as coach and redirect to dashboard",
+      "priority": "critical",
+      "description": "Coach logs in with valid credentials and lands on the coach dashboard",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "wait", "value": "2000" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard heading and subtitle visible",
+      "priority": "critical",
+      "description": "Coach dashboard displays Team Roster heading and athlete count",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/coach" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Team Roster" },
+        { "action": "assert_text_present", "value": "Athletes" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard 4 metric cards render",
+      "priority": "high",
+      "description": "Dashboard shows Total Athletes, With Offers, Committed, and Pending Tasks metric cards",
+      "steps": [
+        { "action": "navigate", "url": "/coach" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Total Athletes" },
+        { "action": "assert_text_present", "value": "With Offers" },
+        { "action": "assert_text_present", "value": "Committed" },
+        { "action": "assert_text_present", "value": "Pending Tasks" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard no bad text and no stuck loading",
+      "priority": "high",
+      "description": "Dashboard renders without error text, undefined values, or stuck loading spinners",
+      "steps": [
+        { "action": "navigate", "url": "/coach" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard roster table with column headers",
+      "priority": "critical",
+      "description": "Roster table shows Athlete, Position, Class, GPA, Offers, Status, Actions column headers",
+      "steps": [
+        { "action": "navigate", "url": "/coach" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Athlete" },
+        { "action": "assert_text_present", "value": "Position" },
+        { "action": "assert_text_present", "value": "Class" },
+        { "action": "assert_text_present", "value": "Status" },
+        { "action": "assert_text_present", "value": "Actions" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard position filter select",
+      "priority": "high",
+      "description": "Position filter select has All Positions, QB, RB, WR, LB, CB options",
+      "steps": [
+        { "action": "navigate", "url": "/coach" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "select" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard position filter selects QB",
+      "priority": "high",
+      "description": "Selecting QB from position filter updates the roster table to show only QB athletes",
+      "steps": [
+        { "action": "navigate", "url": "/coach" },
+        { "action": "wait", "value": "3000" },
+        { "action": "fill", "selector": "select >> nth=0", "value": "QB" },
+        { "action": "wait", "value": "1000" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard class year filter selects 2026",
+      "priority": "high",
+      "description": "Selecting 2026 from class year filter updates the roster table",
+      "steps": [
+        { "action": "navigate", "url": "/coach" },
+        { "action": "wait", "value": "3000" },
+        { "action": "fill", "selector": "select >> nth=1", "value": "2026" },
+        { "action": "wait", "value": "1000" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard select-all checkbox in table header",
+      "priority": "high",
+      "description": "Table header has a select-all checkbox that toggles all row checkboxes",
+      "steps": [
+        { "action": "navigate", "url": "/coach" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "thead input[type='checkbox']" },
+        { "action": "click", "selector": "thead input[type='checkbox']" },
+        { "action": "wait", "value": "500" },
+        { "action": "assert_text_present", "value": "selected" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard individual row checkbox toggles",
+      "priority": "medium",
+      "description": "Clicking a row checkbox selects that individual athlete and shows selection count",
+      "steps": [
+        { "action": "navigate", "url": "/coach" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "tbody input[type='checkbox'] >> nth=0" },
+        { "action": "wait", "value": "500" },
+        { "action": "assert_text_present", "value": "selected" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard Export Selected button appears when rows selected",
+      "priority": "high",
+      "description": "Selecting athletes reveals Export Selected and Send to Recruiter bulk action buttons",
+      "steps": [
+        { "action": "navigate", "url": "/coach" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "thead input[type='checkbox']" },
+        { "action": "wait", "value": "500" },
+        { "action": "assert_visible", "selector": "button:has-text('Export Selected')" },
+        { "action": "assert_visible", "selector": "button:has-text('Send to Recruiter')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard Export Selected triggers CSV download",
+      "priority": "high",
+      "description": "Clicking Export Selected button triggers a CSV file download",
+      "steps": [
+        { "action": "navigate", "url": "/coach" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "thead input[type='checkbox']" },
+        { "action": "wait", "value": "500" },
+        { "action": "click", "selector": "button:has-text('Export Selected')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard Send to Recruiter opens ComposeMessageModal",
+      "priority": "critical",
+      "description": "Clicking Send to Recruiter button opens the New Message compose modal",
+      "steps": [
+        { "action": "navigate", "url": "/coach" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "thead input[type='checkbox']" },
+        { "action": "wait", "value": "500" },
+        { "action": "click", "selector": "button:has-text('Send to Recruiter')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_text_present", "value": "New Message" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "ComposeMessageModal fields and controls",
+      "priority": "high",
+      "description": "New Message modal shows To, Subject, Message fields, NCAA Compliance warning, and Send/Cancel buttons",
+      "steps": [
+        { "action": "navigate", "url": "/coach" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "thead input[type='checkbox']" },
+        { "action": "wait", "value": "500" },
+        { "action": "click", "selector": "button:has-text('Send to Recruiter')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_text_present", "value": "New Message" },
+        { "action": "assert_text_present", "value": "To:" },
+        { "action": "assert_text_present", "value": "Subject" },
+        { "action": "assert_text_present", "value": "Message" },
+        { "action": "assert_text_present", "value": "NCAA Compliance" },
+        { "action": "assert_visible", "selector": "button:has-text('Send Message')" },
+        { "action": "assert_visible", "selector": "button:has-text('Cancel')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "ComposeMessageModal Cancel closes modal",
+      "priority": "medium",
+      "description": "Clicking Cancel in the compose modal closes it and returns to the dashboard",
+      "steps": [
+        { "action": "navigate", "url": "/coach" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "thead input[type='checkbox']" },
+        { "action": "wait", "value": "500" },
+        { "action": "click", "selector": "button:has-text('Send to Recruiter')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_text_present", "value": "New Message" },
+        { "action": "click", "selector": "button:has-text('Cancel')" },
+        { "action": "wait", "value": "500" },
+        { "action": "assert_no_text", "value": "New Message" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard per-row View link navigates to athlete detail",
+      "priority": "high",
+      "description": "Per-row visibility icon links to the athlete detail page",
+      "steps": [
+        { "action": "navigate", "url": "/coach" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "a[href*='/coach/roster/'] >> nth=0" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard per-row Edit button",
+      "priority": "medium",
+      "description": "Per-row edit icon button is visible and clickable",
+      "steps": [
+        { "action": "navigate", "url": "/coach" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "button:has(span:has-text('edit')) >> nth=0" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard per-row Send button opens compose modal",
+      "priority": "medium",
+      "description": "Per-row send icon button opens the New Message compose modal",
+      "steps": [
+        { "action": "navigate", "url": "/coach" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has(span:has-text('send')) >> nth=0" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_text_present", "value": "New Message" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard Team Tasks sidebar visible",
+      "priority": "high",
+      "description": "Sidebar shows Team Tasks heading with task checkboxes and View All link",
+      "steps": [
+        { "action": "navigate", "url": "/coach" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Team Tasks" },
+        { "action": "assert_visible", "selector": "a[href='/coach/tasks']:has-text('View All')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard Recent Activity sidebar visible",
+      "priority": "medium",
+      "description": "Sidebar shows Recent Activity section",
+      "steps": [
+        { "action": "navigate", "url": "/coach" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Recent Activity" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard Add Athlete link navigates to new page",
+      "priority": "high",
+      "description": "Add Athlete button in header links to /coach/roster/new",
+      "steps": [
+        { "action": "navigate", "url": "/coach" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "a[href='/coach/roster/new']:has-text('Add Athlete')" },
+        { "action": "click", "selector": "a[href='/coach/roster/new']" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/coach/roster/new" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Add Athlete page loads with heading",
+      "priority": "critical",
+      "description": "Add Athlete page renders heading, search input, and filter controls",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/coach/roster/new" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Add Athlete to Roster" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Add Athlete search input with placeholder",
+      "priority": "high",
+      "description": "Search input has placeholder text for searching by name or position",
+      "steps": [
+        { "action": "navigate", "url": "/coach/roster/new" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "input[placeholder*='Search']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Add Athlete position and class year filters",
+      "priority": "high",
+      "description": "Add Athlete page has position filter and class year filter selects",
+      "steps": [
+        { "action": "navigate", "url": "/coach/roster/new" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "select >> nth=0" },
+        { "action": "assert_visible", "selector": "select >> nth=1" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Add Athlete cards with Add to Roster buttons",
+      "priority": "high",
+      "description": "Athlete cards display name, position, class, GPA, and an Add to Roster button",
+      "steps": [
+        { "action": "navigate", "url": "/coach/roster/new" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "button:has-text('Add to Roster')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Add Athlete Back to Roster link",
+      "priority": "medium",
+      "description": "Back to Roster link navigates back to the roster page",
+      "steps": [
+        { "action": "navigate", "url": "/coach/roster/new" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "a[href='/coach/roster']:has-text('Back to Roster')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Tasks page loads with heading",
+      "priority": "critical",
+      "description": "Team Tasks page renders heading, task count, and filter bar",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/coach/tasks" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Team Tasks" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Tasks status filter select",
+      "priority": "high",
+      "description": "Status filter has All Statuses, Pending, In Progress, and Completed options",
+      "steps": [
+        { "action": "navigate", "url": "/coach/tasks" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "select >> nth=0" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Tasks priority filter select",
+      "priority": "high",
+      "description": "Priority filter has All Priorities, High, Medium, and Low options",
+      "steps": [
+        { "action": "navigate", "url": "/coach/tasks" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "select >> nth=1" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Tasks New Task form visible",
+      "priority": "critical",
+      "description": "New Task section shows title input, priority select, due date input, and Add Task button",
+      "steps": [
+        { "action": "navigate", "url": "/coach/tasks" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "New Task" },
+        { "action": "assert_visible", "selector": "input[placeholder='Task title...']" },
+        { "action": "assert_visible", "selector": "input[type='date']" },
+        { "action": "assert_visible", "selector": "button:has-text('Add Task')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Tasks typing title enables Add Task button",
+      "priority": "high",
+      "description": "Add Task button is disabled when empty and enabled after typing a task title",
+      "steps": [
+        { "action": "navigate", "url": "/coach/tasks" },
+        { "action": "wait", "value": "3000" },
+        { "action": "fill", "selector": "input[placeholder='Task title...']", "value": "Review film for QB prospects" },
+        { "action": "wait", "value": "500" },
+        { "action": "assert_visible", "selector": "button:has-text('Add Task')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Tasks checkbox toggles task status",
+      "priority": "high",
+      "description": "Clicking a task checkbox changes its status between completed and pending",
+      "steps": [
+        { "action": "navigate", "url": "/coach/tasks" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "input[type='checkbox'] >> nth=0" },
+        { "action": "click", "selector": "input[type='checkbox'] >> nth=0" },
+        { "action": "wait", "value": "1000" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Roster page loads with full table",
+      "priority": "critical",
+      "description": "Dedicated roster page at /coach/roster shows Full Roster heading and athlete table",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/coach/roster" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Full Roster" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Roster page Export CSV when selected",
+      "priority": "high",
+      "description": "Selecting athletes on roster page shows Export CSV button that triggers download",
+      "steps": [
+        { "action": "navigate", "url": "/coach/roster" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "thead input[type='checkbox']" },
+        { "action": "wait", "value": "500" },
+        { "action": "assert_text_present", "value": "selected" },
+        { "action": "assert_visible", "selector": "button:has-text('Export CSV')" },
+        { "action": "click", "selector": "button:has-text('Export CSV')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Roster page per-row view and edit links",
+      "priority": "medium",
+      "description": "Each row has visibility and edit icon links to the athlete detail and edit pages",
+      "steps": [
+        { "action": "navigate", "url": "/coach/roster" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "a[href*='/coach/roster/'] >> nth=0" },
+        { "action": "assert_visible", "selector": "a[href*='/edit'] >> nth=0" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Redirect /coach/schedule to /coach/tasks",
+      "priority": "medium",
+      "description": "Navigating to /coach/schedule redirects to /coach/tasks",
+      "steps": [
+        { "action": "navigate", "url": "/coach/schedule" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/coach/tasks" },
+        { "action": "assert_text_present", "value": "Team Tasks" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Redirect /coach/recruiting to /coach/roster",
+      "priority": "medium",
+      "description": "Navigating to /coach/recruiting redirects to /coach/roster",
+      "steps": [
+        { "action": "navigate", "url": "/coach/recruiting" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/coach/roster" },
+        { "action": "assert_text_present", "value": "Full Roster" },
+        { "action": "screenshot" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,497 @@
+{
+  "project": "repmax-v2",
+  "group": "00-public",
+  "name": "Landing, Auth & Static Pages",
+  "requiresAuth": false,
+  "role": "visitor",
+  "baseUrl": "http://localhost:3000",
+  "env": {
+    "TEST_EMAIL": "",
+    "TEST_PASSWORD": ""
+  },
+  "pages": [
+    "/",
+    "/pricing",
+    "/login",
+    "/signup",
+    "/auth/reset-password",
+    "/privacy",
+    "/terms",
+    "/support",
+    "/not-found"
+  ],
+  "journeys": [
+    {
+      "name": "Landing page loads cleanly",
+      "priority": "critical",
+      "description": "Verify the landing page renders without errors, bad text, or console issues",
+      "steps": [
+        { "action": "navigate", "url": "/" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_console_clean" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Landing hero CTAs visible",
+      "priority": "critical",
+      "description": "Verify both signup and login CTA links are visible in the hero section",
+      "steps": [
+        { "action": "navigate", "url": "/" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_visible", "selector": "a[href='/signup']" },
+        { "action": "assert_visible", "selector": "a[href='/login']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Landing hero Get Your Free RepMax ID CTA links to signup",
+      "priority": "critical",
+      "description": "Verify the primary hero CTA button exists and links to /signup",
+      "steps": [
+        { "action": "navigate", "url": "/" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_visible", "selector": "a[href='/signup']:has-text('Get Your Free RepMax ID')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Landing How It Works section renders 3 steps",
+      "priority": "high",
+      "description": "Verify the How It Works section displays all three steps: Create Your ID, Upload Highlights, Get Recruited",
+      "steps": [
+        { "action": "navigate", "url": "/" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_text_present", "value": "How It Works" },
+        { "action": "assert_text_present", "value": "Create Your ID" },
+        { "action": "assert_text_present", "value": "Upload Highlights" },
+        { "action": "assert_text_present", "value": "Get Recruited" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Landing features section shows 4 feature cards",
+      "priority": "high",
+      "description": "Verify the features section displays Verified Stats, Video Analysis, Direct Contact, and AI Ranking",
+      "steps": [
+        { "action": "navigate", "url": "/" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_text_present", "value": "Verified Stats" },
+        { "action": "assert_text_present", "value": "Video Analysis" },
+        { "action": "assert_text_present", "value": "Direct Contact" },
+        { "action": "assert_text_present", "value": "AI Ranking" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Landing social proof stats visible",
+      "priority": "high",
+      "description": "Verify the stats bar displays 500+, 10k+, and 98% social proof numbers",
+      "steps": [
+        { "action": "navigate", "url": "/" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_text_present", "value": "500+" },
+        { "action": "assert_text_present", "value": "10k+" },
+        { "action": "assert_text_present", "value": "98%" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Landing Command Center accordion click and expand",
+      "priority": "medium",
+      "description": "Verify clicking the Team Collaboration accordion item expands to reveal its content",
+      "steps": [
+        { "action": "navigate", "url": "/" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_text_present", "value": "Command Center" },
+        { "action": "click", "selector": "div:has-text('Team Collaboration') >> button" },
+        { "action": "wait", "value": "500" },
+        { "action": "assert_text_present", "value": "Share watchlists" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Landing footer links to Privacy and Terms",
+      "priority": "medium",
+      "description": "Verify the footer contains working links to the Privacy and Terms pages",
+      "steps": [
+        { "action": "navigate", "url": "/" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_visible", "selector": "footer a[href='/privacy']" },
+        { "action": "assert_visible", "selector": "footer a[href='/terms']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Landing final CTA section links to signup",
+      "priority": "high",
+      "description": "Verify the final CTA section has a Create Free Athlete Account button linking to /signup",
+      "steps": [
+        { "action": "navigate", "url": "/" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_text_present", "value": "Ready to Level Up?" },
+        { "action": "assert_visible", "selector": "a[href='/signup']:has-text('Create Free Athlete Account')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Landing nav Login link navigates to login",
+      "priority": "high",
+      "description": "Verify the navigation Login link goes to the login page",
+      "steps": [
+        { "action": "navigate", "url": "/" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_visible", "selector": "nav a[href='/login']" },
+        { "action": "click", "selector": "nav a[href='/login']" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_url_contains", "value": "/login" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Landing no horizontal scroll on mobile",
+      "priority": "medium",
+      "description": "Verify the landing page has no horizontal overflow on a mobile viewport",
+      "steps": [
+        { "action": "set_viewport", "value": "390x844" },
+        { "action": "navigate", "url": "/" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Pricing page loads with category tabs",
+      "priority": "critical",
+      "description": "Verify the pricing page renders with all five category tabs: Athletes, Recruiters, Schools, Events, Dashr",
+      "steps": [
+        { "action": "navigate", "url": "/pricing" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Athletes" },
+        { "action": "assert_text_present", "value": "Recruiters" },
+        { "action": "assert_text_present", "value": "Schools" },
+        { "action": "assert_text_present", "value": "Events" },
+        { "action": "assert_text_present", "value": "Dashr" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Pricing Athletes tab shows Basic plan by default",
+      "priority": "high",
+      "description": "Verify the default Athletes tab displays the Basic plan with Get Started Free CTA",
+      "steps": [
+        { "action": "navigate", "url": "/pricing" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "BASIC" },
+        { "action": "assert_text_present", "value": "Get Started Free" },
+        { "action": "assert_text_present", "value": "Go Premium" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Pricing tab switching to Recruiters shows Free and Enterprise",
+      "priority": "high",
+      "description": "Verify clicking the Recruiters tab shows Free and Enterprise plans",
+      "steps": [
+        { "action": "navigate", "url": "/pricing" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Recruiters')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_text_present", "value": "FREE" },
+        { "action": "assert_text_present", "value": "ENTERPRISE" },
+        { "action": "assert_text_present", "value": "Contact Sales" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Pricing tab switching to Schools shows plan cards",
+      "priority": "high",
+      "description": "Verify clicking the Schools tab shows Small, Medium, and Large plans",
+      "steps": [
+        { "action": "navigate", "url": "/pricing" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Schools')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_text_present", "value": "SMALL" },
+        { "action": "assert_text_present", "value": "MEDIUM" },
+        { "action": "assert_text_present", "value": "LARGE" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Pricing tab switching to Events shows tiers",
+      "priority": "medium",
+      "description": "Verify clicking the Events tab shows Basic, Standard, and Premium event tiers",
+      "steps": [
+        { "action": "navigate", "url": "/pricing" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Events')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_text_present", "value": "STANDARD" },
+        { "action": "assert_text_present", "value": "PREMIUM" },
+        { "action": "assert_text_present", "value": "Buy Now" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Pricing tab switching to Dashr shows Blueprint plan",
+      "priority": "medium",
+      "description": "Verify clicking the Dashr tab shows the Blueprint plan among others",
+      "steps": [
+        { "action": "navigate", "url": "/pricing" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Dashr')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_text_present", "value": "BLUEPRINT" },
+        { "action": "assert_text_present", "value": "Custom Training Plan" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Pricing Monthly/Annual toggle shows annual prices",
+      "priority": "high",
+      "description": "Verify the billing toggle switches to Annual and shows /mo with billed annually text",
+      "steps": [
+        { "action": "navigate", "url": "/pricing" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Annual')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_text_present", "value": "billed annually" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Pricing Annual toggle shows Save ~17% badge",
+      "priority": "medium",
+      "description": "Verify the Annual toggle button displays the Save ~17% badge",
+      "steps": [
+        { "action": "navigate", "url": "/pricing" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Save ~17%" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Pricing FAQ accordion expand and collapse",
+      "priority": "medium",
+      "description": "Verify clicking a FAQ question expands it to show the answer, and the details element opens",
+      "steps": [
+        { "action": "navigate", "url": "/pricing" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Frequently Asked Questions" },
+        { "action": "click", "selector": "details:first-of-type summary" },
+        { "action": "wait", "value": "500" },
+        { "action": "assert_visible", "selector": "details[open]" },
+        { "action": "assert_text_present", "value": "completely free and always will be" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Login page renders form elements",
+      "priority": "critical",
+      "description": "Verify the login page renders email input, password input, and submit button",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_visible", "selector": "input[type='email']" },
+        { "action": "assert_visible", "selector": "input[type='password']" },
+        { "action": "assert_visible", "selector": "button[type='submit']" },
+        { "action": "assert_text_present", "value": "Welcome Back" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Login password show/hide toggle",
+      "priority": "medium",
+      "description": "Verify clicking the password visibility toggle changes the input type from password to text",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "wait", "value": "2000" },
+        { "action": "fill", "selector": "input[type='password']", "value": "testpassword" },
+        { "action": "assert_visible", "selector": "input[type='password']" },
+        { "action": "click", "selector": "button:has(span:has-text('visibility_off'))" },
+        { "action": "wait", "value": "500" },
+        { "action": "assert_visible", "selector": "input[type='text'][name='password']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Login OAuth buttons visible",
+      "priority": "high",
+      "description": "Verify Google and Apple OAuth sign-in buttons are visible on the login page",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_visible", "selector": "button:has-text('Google')" },
+        { "action": "assert_visible", "selector": "button:has-text('Apple')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Login invalid credentials stays on login with error",
+      "priority": "critical",
+      "description": "Verify that submitting invalid credentials keeps the user on /login and shows an error",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "wait", "value": "2000" },
+        { "action": "fill", "selector": "input[type='email']", "value": "bad@example.com" },
+        { "action": "fill", "selector": "input[type='password']", "value": "wrongpassword123" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/login" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Login Sign Up link navigates to signup",
+      "priority": "high",
+      "description": "Verify the Sign Up link at the bottom of the login page navigates to /signup",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_visible", "selector": "a[href='/signup']:has-text('Sign Up')" },
+        { "action": "click", "selector": "a[href='/signup']:has-text('Sign Up')" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_url_contains", "value": "/signup" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Login Forgot Password link visible",
+      "priority": "medium",
+      "description": "Verify the Forgot Password link is visible on the login page",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_visible", "selector": "button:has-text('Forgot password?')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Signup page loads cleanly",
+      "priority": "critical",
+      "description": "Verify the signup page renders without bad text or rendering issues and shows the form",
+      "steps": [
+        { "action": "navigate", "url": "/signup" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_text_present", "value": "Join RepMax" },
+        { "action": "assert_visible", "selector": "input[type='email']" },
+        { "action": "assert_visible", "selector": "input[name='password']" },
+        { "action": "assert_visible", "selector": "input[name='fullname']" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Signup password strength indicator shows Weak then Strong",
+      "priority": "medium",
+      "description": "Verify typing a weak password shows Weak indicator and a strong password shows Strong",
+      "steps": [
+        { "action": "navigate", "url": "/signup" },
+        { "action": "wait", "value": "2000" },
+        { "action": "fill", "selector": "input[name='password']", "value": "aaaaaa" },
+        { "action": "wait", "value": "500" },
+        { "action": "assert_text_present", "value": "Weak" },
+        { "action": "screenshot" },
+        { "action": "fill", "selector": "input[name='password']", "value": "" },
+        { "action": "fill", "selector": "input[name='password']", "value": "Abcd1234!@" },
+        { "action": "wait", "value": "500" },
+        { "action": "assert_text_present", "value": "Very Strong" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Signup Sign In link navigates to login",
+      "priority": "high",
+      "description": "Verify the Sign In link at the bottom of signup navigates to /login",
+      "steps": [
+        { "action": "navigate", "url": "/signup" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_visible", "selector": "a[href='/login']:has-text('Sign In')" },
+        { "action": "click", "selector": "a[href='/login']:has-text('Sign In')" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_url_contains", "value": "/login" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Reset password page loads with form",
+      "priority": "medium",
+      "description": "Verify the reset password page renders with New Password and Confirm Password fields",
+      "steps": [
+        { "action": "navigate", "url": "/auth/reset-password" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_text_present", "value": "Reset Password" },
+        { "action": "assert_visible", "selector": "input#password" },
+        { "action": "assert_visible", "selector": "input#confirmPassword" },
+        { "action": "assert_visible", "selector": "button[type='submit']" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Privacy policy page loads with heading and sections",
+      "priority": "medium",
+      "description": "Verify the privacy policy page renders with the correct heading and content sections",
+      "steps": [
+        { "action": "navigate", "url": "/privacy" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_text_present", "value": "Privacy Policy" },
+        { "action": "assert_text_present", "value": "Information We Collect" },
+        { "action": "assert_text_present", "value": "support@repmax.io" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Terms of service page loads with heading and sections",
+      "priority": "medium",
+      "description": "Verify the terms page renders with the correct heading and key sections",
+      "steps": [
+        { "action": "navigate", "url": "/terms" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_text_present", "value": "Terms of Service" },
+        { "action": "assert_text_present", "value": "Acceptance of Terms" },
+        { "action": "assert_text_present", "value": "NCAA Compliance" },
+        { "action": "assert_text_present", "value": "Subscriptions and Payments" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Support page loads with email and topic cards",
+      "priority": "medium",
+      "description": "Verify the support page renders with the support email and common topic cards",
+      "steps": [
+        { "action": "navigate", "url": "/support" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_text_present", "value": "Support" },
+        { "action": "assert_text_present", "value": "support@repmax.io" },
+        { "action": "assert_text_present", "value": "Account" },
+        { "action": "assert_text_present", "value": "Billing" },
+        { "action": "assert_text_present", "value": "Technical" },
+        { "action": "assert_text_present", "value": "Recruiting" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "404 page loads with Wrong Route and Back to Home link",
+      "priority": "medium",
+      "description": "Verify navigating to a non-existent route renders the 404 page with correct content",
+      "steps": [
+        { "action": "navigate", "url": "/this-page-does-not-exist-xyz" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_text_present", "value": "Wrong Route" },
+        { "action": "assert_visible", "selector": "a[href='/']:has-text('Back to Home')" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    }
+  ]
+}
