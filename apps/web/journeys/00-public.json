@@ -106,7 +106,7 @@
         { "action": "navigate", "url": "/" },
         { "action": "wait", "value": "2000" },
         { "action": "assert_text_present", "value": "Command Center" },
-        { "action": "click", "selector": "div:has-text('Team Collaboration') >> button" },
+        { "action": "click", "selector": "button:has-text('Team Collaboration')" },
         { "action": "wait", "value": "500" },
         { "action": "assert_text_present", "value": "Share watchlists" },
         { "action": "screenshot" }
