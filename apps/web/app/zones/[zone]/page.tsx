@@ -109,20 +109,6 @@ export default function ZoneLandingPage() {
     p.team_name.toLowerCase().includes(search.toLowerCase())
   );
 
-  if (error) {
-    return (
-      <div className="bg-[#050505] text-white min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-500 mb-2">Error Loading Zone</h1>
-          <p className="text-gray-400">{error.message}</p>
-          <Link href="/zones" className="mt-4 inline-block text-orange-500 hover:text-orange-400">
-            ← Back to Zones
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="bg-[#050505] text-white overflow-x-hidden min-h-screen">
       <div className="relative flex flex-col w-full">
@@ -241,6 +227,11 @@ export default function ZoneLandingPage() {
 
               {isLoading ? (
                 <LoadingSkeleton />
+              ) : error ? (
+                <div className="text-center py-12 text-gray-500">
+                  <span className="material-symbols-outlined text-4xl mb-2">error</span>
+                  <p>Error loading athletes</p>
+                </div>
               ) : prospects.length > 0 ? (
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                   {filteredProspects.slice(0, 4).map((athlete) => (
