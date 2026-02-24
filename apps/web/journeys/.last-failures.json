@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-02-20T14:16:55.945672",
+  "pass_rate": "0%",
+  "results_dir": "/home/info/Projects/repmax-v2/journey-results/docker-2026-02-20",
+  "failed_groups": [
+    "00-public.json"
+  ],
+  "failed_journeys": {
+    "00-public": [
+      "Pricing page loads with category tabs"
+    ]
+  }
+}

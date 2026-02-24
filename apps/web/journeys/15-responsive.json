@@ -1,0 +1,351 @@
+{
+  "project": "repmax-v2",
+  "group": "15-responsive",
+  "name": "Mobile & Tablet Responsive Tests",
+  "requiresAuth": true,
+  "role": "athlete",
+  "baseUrl": "http://localhost:3000",
+  "env": {
+    "TEST_EMAIL": "jaylen.washington@test.repmax.io",
+    "TEST_PASSWORD": "TestPass123!"
+  },
+  "pages": [
+    "/",
+    "/pricing",
+    "/athlete",
+    "/athlete/film",
+    "/messages",
+    "/settings",
+    "/help"
+  ],
+  "journeys": [
+    {
+      "name": "Mobile 390x844: landing page loads cleanly",
+      "priority": "critical",
+      "description": "Verify the landing page renders without errors at mobile viewport 390x844",
+      "steps": [
+        { "action": "set_viewport", "value": "390x844" },
+        { "action": "navigate", "url": "/" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Mobile 390x844: landing hero CTAs visible",
+      "priority": "critical",
+      "description": "Verify signup and login links are visible in the hero section at mobile viewport",
+      "steps": [
+        { "action": "set_viewport", "value": "390x844" },
+        { "action": "navigate", "url": "/" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_visible", "selector": "a[href='/signup']" },
+        { "action": "assert_text_present", "value": "Get Your Free RepMax ID" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Mobile 390x844: pricing page loads",
+      "priority": "high",
+      "description": "Verify the pricing page renders cleanly at mobile viewport with tabs visible",
+      "steps": [
+        { "action": "set_viewport", "value": "390x844" },
+        { "action": "navigate", "url": "/pricing" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_text_present", "value": "Athletes" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Mobile 390x844: pricing tab switch works",
+      "priority": "high",
+      "description": "Verify pricing tab switching works on mobile by clicking Recruiters tab",
+      "steps": [
+        { "action": "set_viewport", "value": "390x844" },
+        { "action": "navigate", "url": "/pricing" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Recruiters')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_text_present", "value": "ENTERPRISE" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Mobile 390x844: login form usable",
+      "priority": "critical",
+      "description": "Verify login form inputs and submit button are visible and usable at mobile viewport",
+      "steps": [
+        { "action": "set_viewport", "value": "390x844" },
+        { "action": "navigate", "url": "/login" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_visible", "selector": "input[type='email']" },
+        { "action": "assert_visible", "selector": "input[type='password']" },
+        { "action": "assert_visible", "selector": "button[type='submit']" },
+        { "action": "assert_text_present", "value": "Sign In" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Mobile 390x844: login and athlete dashboard redirect",
+      "priority": "critical",
+      "description": "Login as athlete at mobile viewport and verify dashboard loads successfully",
+      "steps": [
+        { "action": "set_viewport", "value": "390x844" },
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Mobile 390x844: athlete dashboard no bad text, no stuck loading",
+      "priority": "critical",
+      "description": "Verify athlete dashboard renders cleanly at mobile viewport without errors or stuck loading",
+      "steps": [
+        { "action": "set_viewport", "value": "390x844" },
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Mobile 390x844: athlete dashboard no horizontal overflow",
+      "priority": "high",
+      "description": "Verify athlete dashboard content does not overflow horizontally at mobile viewport",
+      "steps": [
+        { "action": "set_viewport", "value": "390x844" },
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Mobile 390x844: athlete dashboard key metric cards visible",
+      "priority": "high",
+      "description": "Verify the athlete dashboard renders key stat/metric cards at mobile viewport",
+      "steps": [
+        { "action": "set_viewport", "value": "390x844" },
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "main, [class*='dashboard'], [class*='flex-1']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Mobile 390x844: athlete film page loads",
+      "priority": "high",
+      "description": "Verify the athlete film page renders at mobile viewport without stuck loading",
+      "steps": [
+        { "action": "set_viewport", "value": "390x844" },
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete/film" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Mobile 390x844: messages page loads",
+      "priority": "high",
+      "description": "Verify the messages page renders cleanly at mobile viewport without errors",
+      "steps": [
+        { "action": "set_viewport", "value": "390x844" },
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/messages" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Mobile 390x844: settings page loads with notifications link",
+      "priority": "high",
+      "description": "Verify the settings page loads at mobile viewport and notifications link is visible",
+      "steps": [
+        { "action": "set_viewport", "value": "390x844" },
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/settings" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Notifications" },
+        { "action": "assert_visible", "selector": "a[href='/settings/notifications']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Mobile 390x844: help page FAQ accordion expands on tap",
+      "priority": "high",
+      "description": "Verify the help page FAQ accordion works on mobile by tapping a question to expand",
+      "steps": [
+        { "action": "set_viewport", "value": "390x844" },
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/help" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "details:first-of-type summary" },
+        { "action": "wait", "value": "500" },
+        { "action": "assert_text_present", "value": "After signing up, navigate to your dashboard" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Mobile 390x844: sidebar collapses and main content renders",
+      "priority": "high",
+      "description": "Verify the sidebar is collapsed on mobile and main content area renders correctly",
+      "steps": [
+        { "action": "set_viewport", "value": "390x844" },
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "body" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "iPhone 14 Pro Max 430x932: athlete dashboard loads cleanly",
+      "priority": "high",
+      "description": "Verify the athlete dashboard renders cleanly at iPhone 14 Pro Max viewport 430x932",
+      "steps": [
+        { "action": "set_viewport", "value": "430x932" },
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "iPad Mini 768x1024: athlete dashboard loads with sidebar",
+      "priority": "high",
+      "description": "Verify the athlete dashboard renders at iPad Mini viewport 768x1024 with sidebar visible",
+      "steps": [
+        { "action": "set_viewport", "value": "768x1024" },
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "iPad Mini 768x1024: pricing page tabs and plans visible",
+      "priority": "high",
+      "description": "Verify the pricing page renders tabs and plan cards at iPad Mini viewport",
+      "steps": [
+        { "action": "set_viewport", "value": "768x1024" },
+        { "action": "navigate", "url": "/pricing" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Athletes" },
+        { "action": "assert_text_present", "value": "Recruiters" },
+        { "action": "assert_text_present", "value": "BASIC" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "iPad Mini 768x1024: messages page no bad text",
+      "priority": "medium",
+      "description": "Verify the messages page renders cleanly at iPad Mini viewport",
+      "steps": [
+        { "action": "set_viewport", "value": "768x1024" },
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/messages" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Desktop Large 1920x1080: full layout with sidebar and content",
+      "priority": "high",
+      "description": "Verify the athlete dashboard renders full layout with sidebar at 1920x1080 desktop viewport",
+      "steps": [
+        { "action": "set_viewport", "value": "1920x1080" },
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/athlete" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Desktop Large 1920x1080: pricing page all tabs visible",
+      "priority": "high",
+      "description": "Verify the pricing page renders all category tabs at full desktop viewport",
+      "steps": [
+        { "action": "set_viewport", "value": "1920x1080" },
+        { "action": "navigate", "url": "/pricing" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Athletes" },
+        { "action": "assert_text_present", "value": "Recruiters" },
+        { "action": "assert_text_present", "value": "Schools" },
+        { "action": "assert_text_present", "value": "Events" },
+        { "action": "assert_text_present", "value": "Dashr" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    }
+  ]
+}

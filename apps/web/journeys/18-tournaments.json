@@ -1,0 +1,425 @@
+{
+  "project": "repmax-v2",
+  "group": "18-tournaments",
+  "name": "Tournaments Browse, Detail & Registration",
+  "requiresAuth": true,
+  "role": "school",
+  "baseUrl": "http://localhost:3000",
+  "env": {
+    "TEST_EMAIL": "school.admin@test.repmax.io",
+    "TEST_PASSWORD": "TestPass123!"
+  },
+  "pages": ["/tournaments", "/school/events"],
+  "journeys": [
+    {
+      "name": "Login as school admin",
+      "priority": "critical",
+      "description": "Authenticate as school admin to access protected tournament routes",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "wait", "value": "2000" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Tournaments page loads with heading",
+      "priority": "critical",
+      "description": "Navigate to /tournaments and verify the page heading contains Tournaments text",
+      "steps": [
+        { "action": "navigate", "url": "/tournaments" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "h1" },
+        { "action": "assert_text_present", "value": "Tournaments" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Tournaments page has no bad text",
+      "priority": "critical",
+      "description": "Verify the public tournaments page has no undefined, NaN, null, or error text",
+      "steps": [
+        { "action": "navigate", "url": "/tournaments" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Tournaments page has no stuck loading",
+      "priority": "critical",
+      "description": "Verify the tournaments page finishes loading and does not get stuck with spinners",
+      "steps": [
+        { "action": "navigate", "url": "/tournaments" },
+        { "action": "wait", "value": "5000" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Tournaments date filter inputs visible",
+      "priority": "high",
+      "description": "Verify both start date and end date filter inputs of type date are visible on the tournaments page",
+      "steps": [
+        { "action": "navigate", "url": "/tournaments" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "input[type='date']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Tournaments start date label visible",
+      "priority": "medium",
+      "description": "Verify the Start Date label text is rendered above the first date filter input",
+      "steps": [
+        { "action": "navigate", "url": "/tournaments" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Start Date" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Tournaments end date label visible",
+      "priority": "medium",
+      "description": "Verify the End Date label text is rendered above the second date filter input",
+      "steps": [
+        { "action": "navigate", "url": "/tournaments" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "End Date" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Tournaments fill start date filter",
+      "priority": "high",
+      "description": "Fill the start date input with a valid date value and verify it accepts input",
+      "steps": [
+        { "action": "navigate", "url": "/tournaments" },
+        { "action": "wait", "value": "3000" },
+        { "action": "fill", "selector": "input[type='date']:first-of-type", "value": "2026-01-01" },
+        { "action": "wait", "value": "500" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Tournaments fill end date filter",
+      "priority": "high",
+      "description": "Fill the end date input with a valid date value and verify it accepts input",
+      "steps": [
+        { "action": "navigate", "url": "/tournaments" },
+        { "action": "wait", "value": "3000" },
+        { "action": "fill", "selector": "input[type='date']:last-of-type", "value": "2026-12-31" },
+        { "action": "wait", "value": "500" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Tournaments search button applies date filters",
+      "priority": "high",
+      "description": "Fill both date filters and click the Search button to apply filters and verify no errors",
+      "steps": [
+        { "action": "navigate", "url": "/tournaments" },
+        { "action": "wait", "value": "3000" },
+        { "action": "fill", "selector": "input[type='date']:first-of-type", "value": "2026-01-01" },
+        { "action": "fill", "selector": "input[type='date']:last-of-type", "value": "2026-12-31" },
+        { "action": "click", "selector": "button:has-text('Search')" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Tournaments shows cards or empty state",
+      "priority": "critical",
+      "description": "Verify the tournaments page shows either tournament cards with links or a No tournaments found empty state",
+      "steps": [
+        { "action": "navigate", "url": "/tournaments" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "a[href*='/tournaments/'], h3:has-text('No tournaments found')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Tournaments cards show name date and location",
+      "priority": "high",
+      "description": "Verify tournament cards display the tournament name, date range, and location metadata",
+      "steps": [
+        { "action": "navigate", "url": "/tournaments" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_text_present", "value": "View Details" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Click tournament card navigates to detail page",
+      "priority": "critical",
+      "description": "Click the first tournament card link and verify navigation to a tournament detail page",
+      "steps": [
+        { "action": "navigate", "url": "/tournaments" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href*='/tournaments/']:not([href='/tournaments'])" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/tournaments/" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Tournament detail shows name heading",
+      "priority": "critical",
+      "description": "Navigate to a tournament detail page and verify the tournament name is displayed as an h1 heading",
+      "steps": [
+        { "action": "navigate", "url": "/tournaments" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href*='/tournaments/']:not([href='/tournaments'])" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "h1" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Tournament detail has no bad text",
+      "priority": "critical",
+      "description": "Verify the tournament detail page has no undefined, NaN, null, or error rendering artifacts",
+      "steps": [
+        { "action": "navigate", "url": "/tournaments" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href*='/tournaments/']:not([href='/tournaments'])" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Tournament detail shows status badge",
+      "priority": "high",
+      "description": "Verify the tournament detail page displays a status badge (upcoming, active, or completed)",
+      "steps": [
+        { "action": "navigate", "url": "/tournaments" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href*='/tournaments/']:not([href='/tournaments'])" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "span[class*='rounded-full']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Tournament detail shows 3 info cards (Date Location Capacity)",
+      "priority": "high",
+      "description": "Verify the tournament detail page shows three info cards: Date, Location, and Capacity",
+      "steps": [
+        { "action": "navigate", "url": "/tournaments" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href*='/tournaments/']:not([href='/tournaments'])" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Date" },
+        { "action": "assert_text_present", "value": "Location" },
+        { "action": "assert_text_present", "value": "Capacity" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Tournament detail shows Registration sidebar",
+      "priority": "critical",
+      "description": "Verify the tournament detail page has a Registration sidebar with the Registration heading",
+      "steps": [
+        { "action": "navigate", "url": "/tournaments" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href*='/tournaments/']:not([href='/tournaments'])" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Registration" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Tournament detail shows Entry Fee label and value",
+      "priority": "high",
+      "description": "Verify the Registration sidebar shows the Entry Fee label with a dollar value or Free",
+      "steps": [
+        { "action": "navigate", "url": "/tournaments" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href*='/tournaments/']:not([href='/tournaments'])" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Entry Fee" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Tournament detail shows Deadline label and value",
+      "priority": "high",
+      "description": "Verify the Registration sidebar shows the Deadline label with a date or Rolling text",
+      "steps": [
+        { "action": "navigate", "url": "/tournaments" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href*='/tournaments/']:not([href='/tournaments'])" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Deadline" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Tournament detail shows Register Team CTA link",
+      "priority": "critical",
+      "description": "Verify the tournament detail page has a Register Team call-to-action link pointing to the registration page",
+      "steps": [
+        { "action": "navigate", "url": "/tournaments" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href*='/tournaments/']:not([href='/tournaments'])" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "a[href*='/register']" },
+        { "action": "assert_text_present", "value": "Register Team" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Tournament detail shows Live Schedule section",
+      "priority": "high",
+      "description": "Verify the tournament detail page has a Live Schedule and Scores section heading",
+      "steps": [
+        { "action": "navigate", "url": "/tournaments" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href*='/tournaments/']:not([href='/tournaments'])" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Live Schedule" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "School events page loads with Browse Tournaments heading",
+      "priority": "critical",
+      "description": "Navigate to /school/events after login and verify the Browse Tournaments heading is visible",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/school/events" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Browse Tournaments" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "School events shows tournament cards or empty state",
+      "priority": "critical",
+      "description": "Verify the school events page shows either tournament cards or a No Tournaments Found empty state",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/school/events" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "a[href*='/school/events/'], h3:has-text('No Tournaments Found')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "School events click event navigates to detail",
+      "priority": "critical",
+      "description": "Click a tournament card on school events page and verify navigation to the school event detail page",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/school/events" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href*='/school/events/']:not([href='/school/events']):not([href*='/my'])" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/school/events/" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "School event detail shows tournament name heading",
+      "priority": "critical",
+      "description": "Verify the school event detail page displays the tournament name as an h1 heading",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/school/events" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href*='/school/events/']:not([href='/school/events']):not([href*='/my'])" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "h1" },
+        { "action": "assert_text_present", "value": "Event Details" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "School event detail shows Register Now or registration status",
+      "priority": "critical",
+      "description": "Verify the school event detail page has a Register Now button or shows registration status",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/school/events" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href*='/school/events/']:not([href='/school/events']):not([href*='/my'])" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Registration" },
+        { "action": "assert_visible", "selector": "a[href*='/register'], div:has-text('Already registered'), div:has-text('Tournament is full')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "School events date filter and My Registrations link",
+      "priority": "high",
+      "description": "Verify school events page has date filter inputs and a My Registrations navigation link",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/school/events" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "input[type='date']" },
+        { "action": "assert_text_present", "value": "My Registrations" },
+        { "action": "assert_visible", "selector": "a[href='/school/events/my']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "School events Apply filter button works",
+      "priority": "high",
+      "description": "Fill date filters on school events and click Apply to filter results without errors",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/school/events" },
+        { "action": "wait", "value": "3000" },
+        { "action": "fill", "selector": "input[type='date']:first-of-type", "value": "2026-01-01" },
+        { "action": "fill", "selector": "input[type='date']:last-of-type", "value": "2026-12-31" },
+        { "action": "click", "selector": "button:has-text('Apply')" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    }
+  ]
+}

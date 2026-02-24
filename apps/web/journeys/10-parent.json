@@ -1,0 +1,501 @@
+{
+  "project": "repmax-v2",
+  "group": "10-parent",
+  "name": "Parent Dashboard & Resources",
+  "requiresAuth": true,
+  "role": "parent",
+  "baseUrl": "http://localhost:3000",
+  "env": {
+    "TEST_EMAIL": "lisa.washington@test.repmax.io",
+    "TEST_PASSWORD": "TestPass123!"
+  },
+  "pages": [
+    "/parent",
+    "/parent/profile",
+    "/parent/schools",
+    "/parent/calendar",
+    "/parent/activity",
+    "/parent/resources"
+  ],
+  "journeys": [
+    {
+      "name": "Login as parent and redirect to dashboard",
+      "priority": "critical",
+      "description": "Parent logs in with credentials and is redirected to /parent dashboard",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_url_contains", "value": "/parent" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard loads with welcome heading",
+      "priority": "critical",
+      "description": "Parent dashboard renders the personalized welcome heading with child name",
+      "steps": [
+        { "action": "navigate", "url": "/parent" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "assert_text_present", "value": "Recruiting Journey" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard has no bad text or errors",
+      "priority": "critical",
+      "description": "Parent dashboard renders without error messages, undefined values, or placeholder text",
+      "steps": [
+        { "action": "navigate", "url": "/parent" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" }
+      ]
+    },
+    {
+      "name": "Dashboard shows Profile Views metric card",
+      "priority": "high",
+      "description": "The Profile Views stat card is visible with the visibility icon and 'This month' label",
+      "steps": [
+        { "action": "navigate", "url": "/parent" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Profile Views" },
+        { "action": "assert_text_present", "value": "This month" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard shows Coach Messages metric card",
+      "priority": "high",
+      "description": "The Coach Messages stat card is visible with unread count",
+      "steps": [
+        { "action": "navigate", "url": "/parent" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Coach Messages" },
+        { "action": "assert_text_present", "value": "Unread messages" }
+      ]
+    },
+    {
+      "name": "Dashboard shows Schools Tracking metric card",
+      "priority": "high",
+      "description": "The Schools Tracking stat card is visible with 'Showing interest' label",
+      "steps": [
+        { "action": "navigate", "url": "/parent" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Schools Tracking" },
+        { "action": "assert_text_present", "value": "Showing interest" }
+      ]
+    },
+    {
+      "name": "Dashboard shows Upcoming Deadlines metric card",
+      "priority": "high",
+      "description": "The Upcoming Deadlines stat card is visible with calendar icon",
+      "steps": [
+        { "action": "navigate", "url": "/parent" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Upcoming Deadlines" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard Recent Activity widget with View All link",
+      "priority": "high",
+      "description": "Recent Activity section renders with a View All link pointing to /parent/activity",
+      "steps": [
+        { "action": "navigate", "url": "/parent" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Recent Activity" },
+        { "action": "assert_visible", "selector": "a[href='/parent/activity']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard College Interest section with View All link",
+      "priority": "high",
+      "description": "College Interest section renders with a View All link pointing to /parent/schools",
+      "steps": [
+        { "action": "navigate", "url": "/parent" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "College Interest" },
+        { "action": "assert_visible", "selector": "a[href='/parent/schools']" }
+      ]
+    },
+    {
+      "name": "Dashboard Recruiting Calendar section with View Full Calendar link",
+      "priority": "high",
+      "description": "Recruiting Calendar section renders with View Full Calendar link to /parent/calendar",
+      "steps": [
+        { "action": "navigate", "url": "/parent" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Recruiting Calendar" },
+        { "action": "assert_visible", "selector": "a[href='/parent/calendar']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard Quick Action: View Profile card links to /parent/profile",
+      "priority": "high",
+      "description": "The View Profile quick action card has a link pointing to /parent/profile and shows 'See what coaches see'",
+      "steps": [
+        { "action": "navigate", "url": "/parent" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "See what coaches see" },
+        { "action": "assert_visible", "selector": "a[href='/parent/profile']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard Quick Action: Message History card links to /messages",
+      "priority": "high",
+      "description": "The Message History quick action card has a link pointing to /messages",
+      "steps": [
+        { "action": "navigate", "url": "/parent" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Message History" },
+        { "action": "assert_visible", "selector": "a[href='/messages']" }
+      ]
+    },
+    {
+      "name": "Dashboard Quick Action: Academic Requirements card",
+      "priority": "medium",
+      "description": "The Academic Requirements quick action card is visible with NCAA eligibility info subtitle",
+      "steps": [
+        { "action": "navigate", "url": "/parent" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Academic Requirements" },
+        { "action": "assert_text_present", "value": "NCAA eligibility info" }
+      ]
+    },
+    {
+      "name": "Dashboard Quick Action: Compliance Info card",
+      "priority": "medium",
+      "description": "The Compliance Info quick action card is visible with 'Know the rules' subtitle",
+      "steps": [
+        { "action": "navigate", "url": "/parent" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Compliance Info" },
+        { "action": "assert_text_present", "value": "Know the rules" }
+      ]
+    },
+    {
+      "name": "Navigate View Profile quick action to /parent/profile",
+      "priority": "high",
+      "description": "Clicking the View Profile quick action navigates to the child profile page",
+      "steps": [
+        { "action": "navigate", "url": "/parent" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href='/parent/profile']" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_url_contains", "value": "/parent/profile" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Navigate Resources quick action to /parent/resources",
+      "priority": "medium",
+      "description": "Clicking the Resources link navigates to the NCAA resources page",
+      "steps": [
+        { "action": "navigate", "url": "/parent" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href='/parent/resources']" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_url_contains", "value": "/parent/resources" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Profile page: child avatar or initials visible",
+      "priority": "high",
+      "description": "The profile page renders the child avatar image or initials circle",
+      "steps": [
+        { "action": "navigate", "url": "/parent/profile" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "assert_visible", "selector": "img.rounded-full, div.rounded-full" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Profile page: child name heading visible",
+      "priority": "high",
+      "description": "The profile page displays the child name as a heading",
+      "steps": [
+        { "action": "navigate", "url": "/parent/profile" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "h1" },
+        { "action": "assert_no_bad_text" }
+      ]
+    },
+    {
+      "name": "Profile page: position with sports_football icon",
+      "priority": "medium",
+      "description": "The profile page shows the child position alongside a sports_football material icon",
+      "steps": [
+        { "action": "navigate", "url": "/parent/profile" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "span.material-symbols-outlined" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Profile page: Class year visible",
+      "priority": "medium",
+      "description": "The profile page shows 'Class of' followed by the graduation year",
+      "steps": [
+        { "action": "navigate", "url": "/parent/profile" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Class of" }
+      ]
+    },
+    {
+      "name": "Profile page: read-only with no edit buttons",
+      "priority": "high",
+      "description": "The parent profile view is read-only; there are no edit or save buttons visible",
+      "steps": [
+        { "action": "navigate", "url": "/parent/profile" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_text", "value": "Edit Profile" },
+        { "action": "assert_no_text", "value": "Save Changes" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Profile page: Back to Dashboard link navigates to /parent",
+      "priority": "medium",
+      "description": "The Back to Dashboard link on the profile page navigates back to the parent dashboard",
+      "steps": [
+        { "action": "navigate", "url": "/parent/profile" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Back to Dashboard" },
+        { "action": "click", "selector": "a[href='/parent']" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_url_contains", "value": "/parent" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Schools page: heading College Interest",
+      "priority": "high",
+      "description": "The schools page renders with 'College Interest' heading",
+      "steps": [
+        { "action": "navigate", "url": "/parent/schools" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "assert_text_present", "value": "College Interest" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Schools page: list or empty state visible",
+      "priority": "high",
+      "description": "The schools page shows either a list of schools or an empty state message",
+      "steps": [
+        { "action": "navigate", "url": "/parent/schools" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "div.rounded-xl" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Calendar page: heading Recruiting Calendar",
+      "priority": "high",
+      "description": "The calendar page renders with 'Recruiting Calendar' heading",
+      "steps": [
+        { "action": "navigate", "url": "/parent/calendar" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "assert_text_present", "value": "Recruiting Calendar" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Calendar page: events or empty state rendered",
+      "priority": "medium",
+      "description": "The calendar page shows either calendar events or an empty state with 'No upcoming events'",
+      "steps": [
+        { "action": "navigate", "url": "/parent/calendar" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "div.rounded-xl" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Activity page: heading Recent Activity",
+      "priority": "high",
+      "description": "The activity page renders with 'Recent Activity' heading",
+      "steps": [
+        { "action": "navigate", "url": "/parent/activity" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "assert_text_present", "value": "Recent Activity" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Activity page: Refresh button is visible and functional",
+      "priority": "high",
+      "description": "The activity page has a Refresh button that can be clicked without errors",
+      "steps": [
+        { "action": "navigate", "url": "/parent/activity" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Refresh" },
+        { "action": "click", "selector": "button:has-text('Refresh')" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Activity page: items or empty state visible",
+      "priority": "medium",
+      "description": "The activity page shows either activity items or an empty state with 'No recent activity'",
+      "steps": [
+        { "action": "navigate", "url": "/parent/activity" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "div.rounded-xl" }
+      ]
+    },
+    {
+      "name": "Resources page: heading NCAA Resources",
+      "priority": "high",
+      "description": "The resources page renders with 'NCAA Resources' heading",
+      "steps": [
+        { "action": "navigate", "url": "/parent/resources" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "NCAA Resources" },
+        { "action": "assert_text_present", "value": "Essential information for the recruiting process" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Resources page: Eligibility Requirements card visible",
+      "priority": "high",
+      "description": "The resources page shows the Eligibility Requirements card with description",
+      "steps": [
+        { "action": "navigate", "url": "/parent/resources" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Eligibility Requirements" },
+        { "action": "assert_text_present", "value": "GPA requirements" }
+      ]
+    },
+    {
+      "name": "Resources page: NCAA Recruiting Rules card visible",
+      "priority": "high",
+      "description": "The resources page shows the NCAA Recruiting Rules card with description",
+      "steps": [
+        { "action": "navigate", "url": "/parent/resources" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "NCAA Recruiting Rules" },
+        { "action": "assert_text_present", "value": "contact periods" }
+      ]
+    },
+    {
+      "name": "Resources page: Important Dates card visible",
+      "priority": "high",
+      "description": "The resources page shows the Important Dates card with deadline information",
+      "steps": [
+        { "action": "navigate", "url": "/parent/resources" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Important Dates" },
+        { "action": "assert_text_present", "value": "Key deadlines" }
+      ]
+    },
+    {
+      "name": "Resources page: Helpful Links card visible",
+      "priority": "high",
+      "description": "The resources page shows the Helpful Links card with external resource description",
+      "steps": [
+        { "action": "navigate", "url": "/parent/resources" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Helpful Links" },
+        { "action": "assert_text_present", "value": "External resources" }
+      ]
+    },
+    {
+      "name": "Resources page: Learn More links have ncaa.org href and open in new tab",
+      "priority": "high",
+      "description": "All 4 Learn More links point to ncaa.org URLs and have target=_blank",
+      "steps": [
+        { "action": "navigate", "url": "/parent/resources" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "a[href*='ncaa.org'][target='_blank']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Sidebar: Dashboard nav link visible",
+      "priority": "high",
+      "description": "The parent sidebar shows the Dashboard navigation item linking to /parent",
+      "steps": [
+        { "action": "navigate", "url": "/parent" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "aside a[href='/parent']" },
+        { "action": "assert_text_present", "value": "Dashboard" }
+      ]
+    },
+    {
+      "name": "Sidebar: Child's Profile nav link visible",
+      "priority": "high",
+      "description": "The parent sidebar shows the Child's Profile navigation item linking to /parent/profile",
+      "steps": [
+        { "action": "navigate", "url": "/parent" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "aside a[href='/parent/profile']" }
+      ]
+    },
+    {
+      "name": "Sidebar: Messages nav link visible",
+      "priority": "high",
+      "description": "The parent sidebar shows the Messages navigation item linking to /messages",
+      "steps": [
+        { "action": "navigate", "url": "/parent" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "aside a[href='/messages']" },
+        { "action": "assert_text_present", "value": "Messages" }
+      ]
+    },
+    {
+      "name": "Sidebar: Calendar, Schools, Resources nav links visible",
+      "priority": "high",
+      "description": "The parent sidebar shows Calendar, Schools, and Resources navigation items",
+      "steps": [
+        { "action": "navigate", "url": "/parent" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "aside a[href='/parent/calendar']" },
+        { "action": "assert_visible", "selector": "aside a[href='/parent/schools']" },
+        { "action": "assert_visible", "selector": "aside a[href='/parent/resources']" }
+      ]
+    },
+    {
+      "name": "Sidebar: Settings and Help Center links visible",
+      "priority": "medium",
+      "description": "The parent sidebar shows Settings and Help Center links in the bottom section",
+      "steps": [
+        { "action": "navigate", "url": "/parent" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "aside a[href='/settings']" },
+        { "action": "assert_visible", "selector": "aside a[href='/help']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Sidebar: Sign Out button visible",
+      "priority": "high",
+      "description": "The parent sidebar shows a Sign Out button at the bottom",
+      "steps": [
+        { "action": "navigate", "url": "/parent" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Sign Out" },
+        { "action": "assert_visible", "selector": "aside button" },
+        { "action": "screenshot" }
+      ]
+    }
+  ]
+}

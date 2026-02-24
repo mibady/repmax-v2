@@ -1,0 +1,324 @@
+{
+  "project": "repmax-v2",
+  "group": "17-dashr",
+  "name": "Dashr Event Browse & Booking",
+  "requiresAuth": true,
+  "role": "athlete",
+  "baseUrl": "http://localhost:3000",
+  "env": {
+    "TEST_EMAIL": "jaylen.washington@test.repmax.io",
+    "TEST_PASSWORD": "TestPass123!"
+  },
+  "pages": [
+    "/dashr"
+  ],
+  "journeys": [
+    {
+      "name": "Login as athlete and navigate to Dashr",
+      "priority": "critical",
+      "description": "Authenticate as athlete user and verify the Dashr events browse page loads successfully",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "wait", "value": "2000" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/dashr" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashr browse page loads with heading",
+      "priority": "critical",
+      "description": "Verify the Dashr Events heading is visible on the browse page",
+      "steps": [
+        { "action": "navigate", "url": "/dashr" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Dashr Events" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashr: no bad text",
+      "priority": "critical",
+      "description": "Verify the Dashr browse page has no error text, undefined values, or broken elements",
+      "steps": [
+        { "action": "navigate", "url": "/dashr" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashr: no stuck loading",
+      "priority": "critical",
+      "description": "Verify the Dashr browse page finishes loading without stuck spinners",
+      "steps": [
+        { "action": "navigate", "url": "/dashr" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashr: All Events filter button visible and active by default",
+      "priority": "high",
+      "description": "Verify the All Events filter button is present and has the active style by default",
+      "steps": [
+        { "action": "navigate", "url": "/dashr" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "button:has-text('All Events')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashr: all type filter buttons visible (Combine, Camp, Clinic, Multi-Day Intensive, Blueprint)",
+      "priority": "high",
+      "description": "Verify all event type filter buttons are present on the Dashr browse page",
+      "steps": [
+        { "action": "navigate", "url": "/dashr" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Combine" },
+        { "action": "assert_text_present", "value": "Camp" },
+        { "action": "assert_text_present", "value": "Clinic" },
+        { "action": "assert_text_present", "value": "Blueprint" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashr: click Combine filter updates content",
+      "priority": "high",
+      "description": "Click the Combine filter button and verify the page content updates",
+      "steps": [
+        { "action": "navigate", "url": "/dashr" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Combine')" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashr: click Camp filter updates content",
+      "priority": "high",
+      "description": "Click the Camp filter button and verify the page content updates",
+      "steps": [
+        { "action": "navigate", "url": "/dashr" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Camp')" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashr: click Clinic filter updates content",
+      "priority": "high",
+      "description": "Click the Clinic filter button and verify the page content updates",
+      "steps": [
+        { "action": "navigate", "url": "/dashr" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Clinic')" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashr: click All Events resets filter to show all",
+      "priority": "high",
+      "description": "After applying a filter, click All Events to reset and verify all events are shown again",
+      "steps": [
+        { "action": "navigate", "url": "/dashr" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Combine')" },
+        { "action": "wait", "value": "2000" },
+        { "action": "click", "selector": "button:has-text('All Events')" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashr: event cards are links to /dashr/[id]",
+      "priority": "critical",
+      "description": "Verify event cards on the browse page are links with href pointing to /dashr/[id]",
+      "steps": [
+        { "action": "navigate", "url": "/dashr" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "a[href^='/dashr/']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashr: event card shows title, type badge, date, and price",
+      "priority": "high",
+      "description": "Verify event cards display a title (h3), type badge, calendar date, and price",
+      "steps": [
+        { "action": "navigate", "url": "/dashr" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "a[href^='/dashr/'] h3" },
+        { "action": "assert_text_present", "value": "$" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashr: click first event card navigates to detail",
+      "priority": "critical",
+      "description": "Click the first event card and verify navigation to the event detail page",
+      "steps": [
+        { "action": "navigate", "url": "/dashr" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href^='/dashr/']" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/dashr/" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Event detail: title heading (h1) visible",
+      "priority": "critical",
+      "description": "Verify the event detail page displays the event title as an h1 heading",
+      "steps": [
+        { "action": "navigate", "url": "/dashr" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href^='/dashr/']" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "h1" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Event detail: no bad text",
+      "priority": "critical",
+      "description": "Verify the event detail page has no error text, undefined values, or broken elements",
+      "steps": [
+        { "action": "navigate", "url": "/dashr" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href^='/dashr/']" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Event detail: Date label and value visible",
+      "priority": "high",
+      "description": "Verify the event detail page shows the Date label and a date value",
+      "steps": [
+        { "action": "navigate", "url": "/dashr" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href^='/dashr/']" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Date" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Event detail: Price label and value visible",
+      "priority": "high",
+      "description": "Verify the event detail page shows the Price label and a dollar amount",
+      "steps": [
+        { "action": "navigate", "url": "/dashr" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href^='/dashr/']" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Price" },
+        { "action": "assert_text_present", "value": "$" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Event detail: Back to Events link visible and correct href",
+      "priority": "high",
+      "description": "Verify the Back to Events link is visible and points to /dashr",
+      "steps": [
+        { "action": "navigate", "url": "/dashr" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href^='/dashr/']" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "a[href='/dashr']" },
+        { "action": "assert_text_present", "value": "Back to Events" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Event detail: booking sidebar (sticky) visible",
+      "priority": "critical",
+      "description": "Verify the booking sidebar with sticky positioning is visible on the event detail page",
+      "steps": [
+        { "action": "navigate", "url": "/dashr" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href^='/dashr/']" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": ".sticky" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Event detail: Book Now button or Your Booking heading or Sold Out visible",
+      "priority": "critical",
+      "description": "Verify the booking sidebar shows Book Now button, Your Booking heading, or Sold Out text",
+      "steps": [
+        { "action": "navigate", "url": "/dashr" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href^='/dashr/']" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "button:has-text('Book Now'), h3:has-text('Your Booking'), button:has-text('Sold Out')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Event detail: Event Details section with capacity info",
+      "priority": "high",
+      "description": "Verify the Event Details section is present with capacity or registered count text",
+      "steps": [
+        { "action": "navigate", "url": "/dashr" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href^='/dashr/']" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Event Details" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Event detail: checkout success banner shows Booking Confirmed",
+      "priority": "critical",
+      "description": "Navigate to an event detail page with checkout=success query param and verify the Booking Confirmed banner appears",
+      "steps": [
+        { "action": "navigate", "url": "/dashr" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href^='/dashr/']" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/dashr/" },
+        { "action": "screenshot" },
+        { "action": "navigate", "url": "{{CURRENT_URL}}?checkout=success" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Booking Confirmed" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Event detail: checkout canceled banner shows Booking Canceled",
+      "priority": "critical",
+      "description": "Navigate to an event detail page with checkout=canceled query param and verify the Booking Canceled banner appears",
+      "steps": [
+        { "action": "navigate", "url": "/dashr" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href^='/dashr/']" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/dashr/" },
+        { "action": "screenshot" },
+        { "action": "navigate", "url": "{{CURRENT_URL}}?checkout=canceled" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Booking Canceled" },
+        { "action": "screenshot" }
+      ]
+    }
+  ]
+}

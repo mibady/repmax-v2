@@ -1,0 +1,537 @@
+{
+  "project": "repmax-v2",
+  "group": "11-club",
+  "name": "Club Dashboard & Event Management",
+  "requiresAuth": true,
+  "role": "club",
+  "baseUrl": "http://localhost:3000",
+  "env": {
+    "TEST_EMAIL": "mike.torres@test.repmax.io",
+    "TEST_PASSWORD": "TestPass123!"
+  },
+  "pages": [
+    "/club",
+    "/club/events",
+    "/club/events/new",
+    "/club/athletes",
+    "/club/verifications",
+    "/club/payments",
+    "/club/scouts",
+    "/club/analytics"
+  ],
+  "journeys": [
+    {
+      "name": "Login as club user and redirect to dashboard",
+      "priority": "critical",
+      "description": "Authenticate as club user and verify redirect to /club dashboard",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_url_contains", "value": "/club" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard loads without errors or bad text",
+      "priority": "critical",
+      "description": "Verify the club dashboard renders cleanly without error text, undefined values, or stuck loading states",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/club" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "assert_console_clean" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard stat card: Active Events",
+      "priority": "high",
+      "description": "Verify the Active Events stat card is visible on the club dashboard",
+      "steps": [
+        { "action": "navigate", "url": "/club" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Active Events" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard stat card: Total Registrations",
+      "priority": "high",
+      "description": "Verify the Total Registrations stat card is visible on the club dashboard",
+      "steps": [
+        { "action": "navigate", "url": "/club" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Total Registrations" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard stat card: Total Revenue",
+      "priority": "high",
+      "description": "Verify the Total Revenue stat card is visible on the club dashboard",
+      "steps": [
+        { "action": "navigate", "url": "/club" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Total Revenue" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard stat card: Pending Verifications",
+      "priority": "high",
+      "description": "Verify the Pending Verifications stat card is visible on the club dashboard",
+      "steps": [
+        { "action": "navigate", "url": "/club" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Pending Verifications" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Quick action: Create Tournament link navigates to /club/events/new",
+      "priority": "high",
+      "description": "Verify the Create Tournament quick action link exists and navigates to the create event form",
+      "steps": [
+        { "action": "navigate", "url": "/club" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "a[href='/club/events/new']" },
+        { "action": "click", "selector": "a[href='/club/events/new']" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_url_contains", "value": "/club/events/new" },
+        { "action": "assert_text_present", "value": "Create Tournament" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Quick action: View Verification Queue link navigates to /club/verifications",
+      "priority": "high",
+      "description": "Verify the View Verification Queue quick action link navigates to the verifications page",
+      "steps": [
+        { "action": "navigate", "url": "/club" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "a[href='/club/verifications']" },
+        { "action": "click", "selector": "a[href='/club/verifications']" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_url_contains", "value": "/club/verifications" },
+        { "action": "assert_text_present", "value": "Verification Queue" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Quick action: Manage Athletes link navigates to /club/athletes",
+      "priority": "high",
+      "description": "Verify the Manage Athletes quick action link navigates to the athletes page",
+      "steps": [
+        { "action": "navigate", "url": "/club" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "a[href='/club/athletes']" },
+        { "action": "click", "selector": "a[href='/club/athletes']" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_url_contains", "value": "/club/athletes" },
+        { "action": "assert_text_present", "value": "Athletes" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard: Tournament Overview section visible",
+      "priority": "high",
+      "description": "Verify the Tournament Overview heading and View all link are present on the dashboard",
+      "steps": [
+        { "action": "navigate", "url": "/club" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Tournament Overview" },
+        { "action": "assert_visible", "selector": "a[href='/club/events']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard: Verification Queue section visible",
+      "priority": "high",
+      "description": "Verify the Verification Queue heading is present on the dashboard right column",
+      "steps": [
+        { "action": "navigate", "url": "/club" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Verification Queue" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Dashboard: Recent Payments section visible",
+      "priority": "high",
+      "description": "Verify the Recent Payments heading and View all link to /club/payments are present",
+      "steps": [
+        { "action": "navigate", "url": "/club" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Recent Payments" },
+        { "action": "assert_visible", "selector": "a[href='/club/payments']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Events page: heading and table load",
+      "priority": "critical",
+      "description": "Verify the events page loads with the Tournaments heading and event count",
+      "steps": [
+        { "action": "navigate", "url": "/club/events" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Tournaments" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Events page: Create Tournament button visible",
+      "priority": "high",
+      "description": "Verify the Create Tournament link button is visible on the events list page",
+      "steps": [
+        { "action": "navigate", "url": "/club/events" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "a[href='/club/events/new']" },
+        { "action": "assert_text_present", "value": "Create Tournament" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Events page: status filter buttons visible and clickable",
+      "priority": "high",
+      "description": "Verify the All, Upcoming, Active, and Completed filter buttons are present and clickable",
+      "steps": [
+        { "action": "navigate", "url": "/club/events" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "button:has-text('All')" },
+        { "action": "assert_visible", "selector": "button:has-text('Upcoming')" },
+        { "action": "assert_visible", "selector": "button:has-text('Active')" },
+        { "action": "assert_visible", "selector": "button:has-text('Completed')" },
+        { "action": "click", "selector": "button:has-text('Upcoming')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "click", "selector": "button:has-text('Active')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "click", "selector": "button:has-text('Completed')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "click", "selector": "button:has-text('All')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Create Tournament page: heading loads",
+      "priority": "critical",
+      "description": "Verify the Create Tournament page loads with heading and form",
+      "steps": [
+        { "action": "navigate", "url": "/club/events/new" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Create Tournament" },
+        { "action": "assert_text_present", "value": "Set up a new tournament event" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Create Tournament form: Tournament Name input",
+      "priority": "high",
+      "description": "Verify the Tournament Name label and input field are present and fillable",
+      "steps": [
+        { "action": "navigate", "url": "/club/events/new" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Tournament Name" },
+        { "action": "assert_visible", "selector": "input#name" },
+        { "action": "fill", "selector": "input#name", "value": "Spring Showcase 2026" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Create Tournament form: Date inputs",
+      "priority": "high",
+      "description": "Verify Start Date and End Date inputs are present and fillable",
+      "steps": [
+        { "action": "navigate", "url": "/club/events/new" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Start Date" },
+        { "action": "assert_text_present", "value": "End Date" },
+        { "action": "assert_visible", "selector": "input#startDate" },
+        { "action": "assert_visible", "selector": "input#endDate" },
+        { "action": "fill", "selector": "input#startDate", "value": "2026-06-15" },
+        { "action": "fill", "selector": "input#endDate", "value": "2026-06-17" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Create Tournament form: Location input",
+      "priority": "high",
+      "description": "Verify the Location label and input are present and fillable",
+      "steps": [
+        { "action": "navigate", "url": "/club/events/new" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Location" },
+        { "action": "assert_visible", "selector": "input#location" },
+        { "action": "fill", "selector": "input#location", "value": "MetLife Stadium, East Rutherford, NJ" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Create Tournament form: Capacity and Entry Fee inputs",
+      "priority": "high",
+      "description": "Verify Team Capacity and Entry Fee input fields are present with correct types",
+      "steps": [
+        { "action": "navigate", "url": "/club/events/new" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Team Capacity" },
+        { "action": "assert_text_present", "value": "Entry Fee" },
+        { "action": "assert_visible", "selector": "input#capacity" },
+        { "action": "assert_visible", "selector": "input#entryFee" },
+        { "action": "fill", "selector": "input#capacity", "value": "32" },
+        { "action": "fill", "selector": "input#entryFee", "value": "150" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Create Tournament form: Description textarea and Registration Deadline",
+      "priority": "medium",
+      "description": "Verify the Description textarea and Registration Deadline date input are present",
+      "steps": [
+        { "action": "navigate", "url": "/club/events/new" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Description" },
+        { "action": "assert_visible", "selector": "textarea#description" },
+        { "action": "assert_text_present", "value": "Registration Deadline" },
+        { "action": "assert_visible", "selector": "input#registrationDeadline" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Create Tournament form: Event Tier select and Public toggle",
+      "priority": "medium",
+      "description": "Verify Event Tier dropdown and Public Tournament toggle switch are present",
+      "steps": [
+        { "action": "navigate", "url": "/club/events/new" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Event Tier" },
+        { "action": "assert_visible", "selector": "select#eventTier" },
+        { "action": "assert_text_present", "value": "Public Tournament" },
+        { "action": "assert_visible", "selector": "button[role='switch']" },
+        { "action": "click", "selector": "button[role='switch']" },
+        { "action": "wait", "value": "500" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Create Tournament form: submit button visible",
+      "priority": "high",
+      "description": "Verify the Create Tournament submit button and Cancel link are present",
+      "steps": [
+        { "action": "navigate", "url": "/club/events/new" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "button[type='submit']" },
+        { "action": "assert_visible", "selector": "a[href='/club/events']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Athletes page: heading and search load",
+      "priority": "high",
+      "description": "Verify the Athletes page loads with heading, athlete count, and search input",
+      "steps": [
+        { "action": "navigate", "url": "/club/athletes" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Athletes" },
+        { "action": "assert_visible", "selector": "input[placeholder='Search athletes...']" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Verifications page: heading and filter buttons load",
+      "priority": "high",
+      "description": "Verify the Verification Queue page loads with heading and status filter buttons",
+      "steps": [
+        { "action": "navigate", "url": "/club/verifications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Verification Queue" },
+        { "action": "assert_visible", "selector": "button:has-text('All')" },
+        { "action": "assert_visible", "selector": "button:has-text('Pending')" },
+        { "action": "assert_visible", "selector": "button:has-text('Approved')" },
+        { "action": "assert_visible", "selector": "button:has-text('Rejected')" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Verifications page: filter switching works",
+      "priority": "medium",
+      "description": "Verify clicking filter buttons changes the active filter on verifications page",
+      "steps": [
+        { "action": "navigate", "url": "/club/verifications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Pending')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "click", "selector": "button:has-text('Approved')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "click", "selector": "button:has-text('Rejected')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "click", "selector": "button:has-text('All')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Payments page: heading and revenue summary load",
+      "priority": "high",
+      "description": "Verify the Payments page loads with heading, total revenue summary, and filter buttons",
+      "steps": [
+        { "action": "navigate", "url": "/club/payments" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Payments" },
+        { "action": "assert_text_present", "value": "Total Revenue" },
+        { "action": "assert_visible", "selector": "button:has-text('All')" },
+        { "action": "assert_visible", "selector": "button:has-text('Completed')" },
+        { "action": "assert_visible", "selector": "button:has-text('Pending')" },
+        { "action": "assert_visible", "selector": "button:has-text('Failed')" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Scouts page: loads without crash",
+      "priority": "medium",
+      "description": "Verify the Scouts page loads with Scout Management heading and placeholder state",
+      "steps": [
+        { "action": "navigate", "url": "/club/scouts" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Scout Management" },
+        { "action": "assert_text_present", "value": "No scouts assigned yet" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Analytics page: loads without crash",
+      "priority": "medium",
+      "description": "Verify the Analytics page loads with Club Analytics heading and placeholder state",
+      "steps": [
+        { "action": "navigate", "url": "/club/analytics" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Club Analytics" },
+        { "action": "assert_text_present", "value": "Analytics coming soon" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Sidebar: Dashboard nav link",
+      "priority": "high",
+      "description": "Verify the sidebar Dashboard nav link points to /club",
+      "steps": [
+        { "action": "navigate", "url": "/club" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "aside a[href='/club']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Sidebar: Events nav link navigates to /club/events",
+      "priority": "high",
+      "description": "Verify the sidebar Events nav link navigates to the events page",
+      "steps": [
+        { "action": "navigate", "url": "/club" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "aside a[href='/club/events']" },
+        { "action": "click", "selector": "aside a[href='/club/events']" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_url_contains", "value": "/club/events" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Sidebar: Athletes nav link navigates to /club/athletes",
+      "priority": "high",
+      "description": "Verify the sidebar Athletes nav link navigates to the athletes page",
+      "steps": [
+        { "action": "navigate", "url": "/club" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "aside a[href='/club/athletes']" },
+        { "action": "click", "selector": "aside a[href='/club/athletes']" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_url_contains", "value": "/club/athletes" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Sidebar: Scouts nav link navigates to /club/scouts",
+      "priority": "medium",
+      "description": "Verify the sidebar Scouts nav link navigates to the scouts page",
+      "steps": [
+        { "action": "navigate", "url": "/club" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "aside a[href='/club/scouts']" },
+        { "action": "click", "selector": "aside a[href='/club/scouts']" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_url_contains", "value": "/club/scouts" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Sidebar: Analytics nav link navigates to /club/analytics",
+      "priority": "medium",
+      "description": "Verify the sidebar Analytics nav link navigates to the analytics page",
+      "steps": [
+        { "action": "navigate", "url": "/club" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "aside a[href='/club/analytics']" },
+        { "action": "click", "selector": "aside a[href='/club/analytics']" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_url_contains", "value": "/club/analytics" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Sidebar: Settings nav link navigates to /settings",
+      "priority": "medium",
+      "description": "Verify the sidebar Settings nav link navigates to the settings page",
+      "steps": [
+        { "action": "navigate", "url": "/club" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "aside a[href='/settings']" },
+        { "action": "click", "selector": "aside a[href='/settings']" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_url_contains", "value": "/settings" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Sidebar: Sign Out button visible",
+      "priority": "medium",
+      "description": "Verify the sidebar Sign Out button is visible and labeled correctly",
+      "steps": [
+        { "action": "navigate", "url": "/club" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "aside button:has-text('Sign Out')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Back to Dashboard links on subpages",
+      "priority": "medium",
+      "description": "Verify that scouts and analytics pages have Back to Dashboard links to /club",
+      "steps": [
+        { "action": "navigate", "url": "/club/scouts" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "a[href='/club']" },
+        { "action": "navigate", "url": "/club/analytics" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "a[href='/club']" },
+        { "action": "screenshot" }
+      ]
+    }
+  ]
+}

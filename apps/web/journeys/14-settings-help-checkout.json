@@ -1,0 +1,552 @@
+{
+  "project": "repmax-v2",
+  "group": "14-settings-help-checkout",
+  "name": "Settings, Help & Checkout",
+  "requiresAuth": true,
+  "role": "athlete",
+  "baseUrl": "http://localhost:3000",
+  "env": {
+    "TEST_EMAIL": "jaylen.washington@test.repmax.io",
+    "TEST_PASSWORD": "TestPass123!"
+  },
+  "pages": [
+    "/settings",
+    "/settings/notifications",
+    "/help",
+    "/pricing"
+  ],
+  "journeys": [
+    {
+      "name": "Login as athlete for settings tests",
+      "priority": "critical",
+      "description": "Authenticate as athlete user and verify redirect to dashboard",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "wait", "value": "2000" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Settings page heading visible",
+      "priority": "critical",
+      "description": "Navigate to /settings and verify the Settings heading renders",
+      "steps": [
+        { "action": "navigate", "url": "/settings" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Settings" },
+        { "action": "assert_visible", "selector": "h1" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Settings page no bad text",
+      "priority": "critical",
+      "description": "Verify settings page has no error text, undefined values, or broken content",
+      "steps": [
+        { "action": "navigate", "url": "/settings" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Settings Notifications card link present",
+      "priority": "high",
+      "description": "Verify the Notifications card is a link with href containing /settings/notifications",
+      "steps": [
+        { "action": "navigate", "url": "/settings" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "a[href='/settings/notifications']" },
+        { "action": "assert_text_present", "value": "Notifications" },
+        { "action": "assert_text_present", "value": "Manage email and push notification preferences" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Settings Profile card disabled with Soon badge",
+      "priority": "medium",
+      "description": "Verify Profile settings card is disabled and shows a Soon badge",
+      "steps": [
+        { "action": "navigate", "url": "/settings" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Profile" },
+        { "action": "assert_text_present", "value": "Soon" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Settings Security card disabled with Soon badge",
+      "priority": "medium",
+      "description": "Verify Security settings card shows disabled state with Soon badge",
+      "steps": [
+        { "action": "navigate", "url": "/settings" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Security" },
+        { "action": "assert_text_present", "value": "Password, two-factor authentication" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Settings Appearance card disabled with Soon badge",
+      "priority": "medium",
+      "description": "Verify Appearance settings card shows disabled state with Soon badge",
+      "steps": [
+        { "action": "navigate", "url": "/settings" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Appearance" },
+        { "action": "assert_text_present", "value": "Theme, display density" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Settings Notifications link navigates to notifications page",
+      "priority": "high",
+      "description": "Click the Notifications card link and verify navigation to /settings/notifications",
+      "steps": [
+        { "action": "navigate", "url": "/settings" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "a[href='/settings/notifications']" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/settings/notifications" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Notification Settings heading visible",
+      "priority": "critical",
+      "description": "Navigate to /settings/notifications and verify the page heading renders",
+      "steps": [
+        { "action": "navigate", "url": "/settings/notifications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Notification Settings" },
+        { "action": "assert_visible", "selector": "h1" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Notification Settings no bad text",
+      "priority": "critical",
+      "description": "Verify notification settings page has no error text or broken content",
+      "steps": [
+        { "action": "navigate", "url": "/settings/notifications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Push Notifications section heading visible",
+      "priority": "high",
+      "description": "Verify the Push Notifications section heading is rendered in the notifications page",
+      "steps": [
+        { "action": "navigate", "url": "/settings/notifications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Push Notifications" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Push Notifications Profile Views toggle visible",
+      "priority": "high",
+      "description": "Verify the Profile Views toggle row is visible in Push Notifications section",
+      "steps": [
+        { "action": "navigate", "url": "/settings/notifications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Profile Views" },
+        { "action": "assert_text_present", "value": "Notify when a scout or coach views a prospect profile" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Push Notifications New Offers toggle visible",
+      "priority": "high",
+      "description": "Verify the New Offers toggle row is visible in Push Notifications section",
+      "steps": [
+        { "action": "navigate", "url": "/settings/notifications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "New Offers" },
+        { "action": "assert_text_present", "value": "Instant alerts when an athlete in your watchlist receives a scholarship offer" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Push Notifications Shortlist Activity toggle visible",
+      "priority": "high",
+      "description": "Verify the Shortlist Activity toggle row is visible in Push Notifications section",
+      "steps": [
+        { "action": "navigate", "url": "/settings/notifications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Shortlist Activity" },
+        { "action": "assert_text_present", "value": "Updates on movement within your recruitment shortlist" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Push Notifications Messages toggle visible",
+      "priority": "high",
+      "description": "Verify the Messages toggle row is visible in Push Notifications section",
+      "steps": [
+        { "action": "navigate", "url": "/settings/notifications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Messages" },
+        { "action": "assert_text_present", "value": "Direct notifications for internal staff messages" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Push Notifications Calendar Reminders toggle visible",
+      "priority": "high",
+      "description": "Verify the Calendar Reminders toggle row is visible in Push Notifications section",
+      "steps": [
+        { "action": "navigate", "url": "/settings/notifications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Calendar Reminders" },
+        { "action": "assert_text_present", "value": "Alerts for scheduled visits, calls, and evaluation deadlines" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Toggle click changes toggle state",
+      "priority": "high",
+      "description": "Click a push notification toggle checkbox and verify it changes checked state",
+      "steps": [
+        { "action": "navigate", "url": "/settings/notifications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "input.sr-only[type='checkbox']", "options": { "force": true } },
+        { "action": "wait", "value": "500" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Email Notifications section heading visible",
+      "priority": "high",
+      "description": "Verify the Email Notifications section heading is rendered",
+      "steps": [
+        { "action": "navigate", "url": "/settings/notifications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Email Notifications" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Email Recruiting Intelligence Digest select visible",
+      "priority": "high",
+      "description": "Verify the Recruiting Intelligence Digest row and frequency select dropdown are rendered",
+      "steps": [
+        { "action": "navigate", "url": "/settings/notifications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Recruiting Intelligence Digest" },
+        { "action": "assert_visible", "selector": "select" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Email digest frequency select has correct options",
+      "priority": "medium",
+      "description": "Verify the digest frequency select contains Daily, Weekly, Monthly, and Never options",
+      "steps": [
+        { "action": "navigate", "url": "/settings/notifications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "select option[value='daily']" },
+        { "action": "assert_visible", "selector": "select option[value='weekly']" },
+        { "action": "assert_visible", "selector": "select option[value='monthly']" },
+        { "action": "assert_visible", "selector": "select option[value='never']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Email Important Deadlines toggle visible",
+      "priority": "high",
+      "description": "Verify the Important Deadlines toggle row is visible in Email Notifications section",
+      "steps": [
+        { "action": "navigate", "url": "/settings/notifications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Important Deadlines" },
+        { "action": "assert_text_present", "value": "NCAA compliance periods" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Email Marketing and Tips toggle visible",
+      "priority": "high",
+      "description": "Verify the Marketing and Tips toggle row is visible in Email Notifications section",
+      "steps": [
+        { "action": "navigate", "url": "/settings/notifications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Marketing & Tips" },
+        { "action": "assert_text_present", "value": "new RepMax features" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "In-App Notifications section heading visible",
+      "priority": "high",
+      "description": "Verify the In-App Notifications section heading is rendered",
+      "steps": [
+        { "action": "navigate", "url": "/settings/notifications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "In-App Notifications" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "In-App Badge Count toggle visible",
+      "priority": "high",
+      "description": "Verify the Badge Count toggle row is visible in In-App Notifications section",
+      "steps": [
+        { "action": "navigate", "url": "/settings/notifications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Badge Count" },
+        { "action": "assert_text_present", "value": "Show notification count on the sidebar" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "In-App System Sounds toggle visible",
+      "priority": "high",
+      "description": "Verify the System Sounds toggle row is visible in In-App Notifications section",
+      "steps": [
+        { "action": "navigate", "url": "/settings/notifications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "System Sounds" },
+        { "action": "assert_text_present", "value": "Play a subtle sound when a new alert arrives" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Quiet Hours section heading visible",
+      "priority": "high",
+      "description": "Verify the Quiet Hours section heading is rendered",
+      "steps": [
+        { "action": "navigate", "url": "/settings/notifications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Quiet Hours" },
+        { "action": "assert_text_present", "value": "Schedule Downtime" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Quiet Hours time inputs present",
+      "priority": "medium",
+      "description": "Verify the Quiet Hours section has From and To time input fields",
+      "steps": [
+        { "action": "navigate", "url": "/settings/notifications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "From" },
+        { "action": "assert_text_present", "value": "To" },
+        { "action": "assert_visible", "selector": "input[type='time']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Unsaved changes triggers save bar with Discard and Save Changes",
+      "priority": "high",
+      "description": "Toggle a preference to trigger unsaved changes, then verify the save bar appears with Discard and Save Changes buttons",
+      "steps": [
+        { "action": "navigate", "url": "/settings/notifications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "input.sr-only[type='checkbox']", "options": { "force": true } },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_text_present", "value": "Discard" },
+        { "action": "assert_text_present", "value": "Save Changes" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Discard button click reverts unsaved changes",
+      "priority": "high",
+      "description": "Toggle a preference, then click Discard button and verify save bar disappears",
+      "steps": [
+        { "action": "navigate", "url": "/settings/notifications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "input.sr-only[type='checkbox']", "options": { "force": true } },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_text_present", "value": "Discard" },
+        { "action": "click", "selector": "button:has-text('Discard')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_no_text", "value": "Unsaved changes detected" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Save Changes button click saves preferences",
+      "priority": "high",
+      "description": "Toggle a preference, then click Save Changes button and verify the save action completes",
+      "steps": [
+        { "action": "navigate", "url": "/settings/notifications" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "input.sr-only[type='checkbox']", "options": { "force": true } },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_text_present", "value": "Save Changes" },
+        { "action": "click", "selector": "button:has-text('Save Changes')" },
+        { "action": "wait", "value": "2000" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Help Center heading visible",
+      "priority": "critical",
+      "description": "Navigate to /help and verify the Help Center heading renders",
+      "steps": [
+        { "action": "navigate", "url": "/help" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Help Center" },
+        { "action": "assert_visible", "selector": "h1" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Help Center no bad text",
+      "priority": "critical",
+      "description": "Verify help center page has no error text or broken content",
+      "steps": [
+        { "action": "navigate", "url": "/help" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Help Center 6 FAQ items present",
+      "priority": "high",
+      "description": "Verify the help center renders all 6 FAQ items as details elements",
+      "steps": [
+        { "action": "navigate", "url": "/help" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "details" },
+        { "action": "assert_text_present", "value": "How do I create my athlete profile?" },
+        { "action": "assert_text_present", "value": "How does messaging work on RepMax?" },
+        { "action": "assert_text_present", "value": "How do I upload highlight film?" },
+        { "action": "assert_text_present", "value": "What features are included in each subscription plan?" },
+        { "action": "assert_text_present", "value": "How do I cancel my subscription?" },
+        { "action": "assert_text_present", "value": "How is my data stored and protected?" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Help Center FAQ click expands answer",
+      "priority": "high",
+      "description": "Click the first FAQ summary and verify the answer content expands and becomes visible",
+      "steps": [
+        { "action": "navigate", "url": "/help" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "details:first-of-type summary" },
+        { "action": "wait", "value": "500" },
+        { "action": "assert_text_present", "value": "After signing up, navigate to your dashboard" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Help Center FAQ topics cover key areas",
+      "priority": "medium",
+      "description": "Verify FAQ topics span athlete profile, messaging, highlight film, and subscription",
+      "steps": [
+        { "action": "navigate", "url": "/help" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "athlete profile" },
+        { "action": "assert_text_present", "value": "messaging" },
+        { "action": "assert_text_present", "value": "highlight film" },
+        { "action": "assert_text_present", "value": "subscription" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Help Center Contact Support email link present",
+      "priority": "high",
+      "description": "Verify the Contact Support link is a mailto link to support@repmax.io",
+      "steps": [
+        { "action": "navigate", "url": "/help" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "a[href='mailto:support@repmax.io']" },
+        { "action": "assert_text_present", "value": "Contact Support" },
+        { "action": "assert_text_present", "value": "Still need help?" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Pricing page loads with plans (authenticated)",
+      "priority": "high",
+      "description": "Navigate to /pricing while authenticated and verify the pricing page renders with plan cards",
+      "steps": [
+        { "action": "navigate", "url": "/pricing" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Pricing" },
+        { "action": "assert_text_present", "value": "Built for Access" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Pricing Athletes tab default with Basic plan",
+      "priority": "high",
+      "description": "Verify the Athletes tab is shown by default for an athlete user and the Basic plan is visible",
+      "steps": [
+        { "action": "navigate", "url": "/pricing" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "BASIC" },
+        { "action": "assert_text_present", "value": "Get Started Free" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Pricing Go Pro button visible",
+      "priority": "high",
+      "description": "Verify the Go Pro CTA button is visible on the Athletes tab",
+      "steps": [
+        { "action": "navigate", "url": "/pricing" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "button:has-text('Go Pro')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Pricing Go Pro button click triggers checkout or loading",
+      "priority": "high",
+      "description": "Click the Go Pro button and verify it shows loading state or triggers checkout redirect",
+      "steps": [
+        { "action": "navigate", "url": "/pricing" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Go Pro')" },
+        { "action": "wait", "value": "3000" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Pricing Recruiters tab shows Enterprise plan",
+      "priority": "medium",
+      "description": "Switch to the Recruiters tab and verify the Enterprise plan with Contact Sales CTA is visible",
+      "steps": [
+        { "action": "navigate", "url": "/pricing" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Recruiters')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_text_present", "value": "ENTERPRISE" },
+        { "action": "assert_text_present", "value": "Contact Sales" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Pricing Dashr tab shows one-time products",
+      "priority": "medium",
+      "description": "Switch to the Dashr tab and verify one-time purchase products are shown",
+      "steps": [
+        { "action": "navigate", "url": "/pricing" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Dashr')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_text_present", "value": "STANDARD" },
+        { "action": "assert_text_present", "value": "one-time" },
+        { "action": "assert_text_present", "value": "Buy Now" },
+        { "action": "screenshot" }
+      ]
+    }
+  ]
+}

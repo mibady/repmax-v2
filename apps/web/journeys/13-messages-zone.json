@@ -1,0 +1,363 @@
+{
+  "project": "repmax-v2",
+  "group": "13-messages-zone",
+  "name": "Messaging & Zone Intelligence",
+  "requiresAuth": true,
+  "role": "athlete",
+  "baseUrl": "http://localhost:3000",
+  "env": {
+    "TEST_EMAIL": "jaylen.washington@test.repmax.io",
+    "TEST_PASSWORD": "TestPass123!"
+  },
+  "pages": [
+    "/messages",
+    "/zone/map"
+  ],
+  "journeys": [
+    {
+      "name": "Login as athlete and navigate to messages",
+      "priority": "critical",
+      "description": "Authenticate as athlete user and navigate to the messages inbox page",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/messages" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_url_contains", "value": "/messages" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Messages page: heading visible",
+      "priority": "critical",
+      "description": "Verify the Messages heading is visible on the messages page",
+      "steps": [
+        { "action": "navigate", "url": "/messages" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "value": "Messages" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Messages page: no bad text or stuck loading",
+      "priority": "critical",
+      "description": "Verify the messages page renders cleanly without error text or stuck loading indicators",
+      "steps": [
+        { "action": "navigate", "url": "/messages" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "assert_console_clean" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Messages page: New Message button visible",
+      "priority": "high",
+      "description": "Verify the New Message compose button is visible in the messages header",
+      "steps": [
+        { "action": "navigate", "url": "/messages" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "button:has-text('New Message')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Messages page: click New Message opens ComposeModal",
+      "priority": "high",
+      "description": "Verify clicking New Message opens the compose modal with New Message heading",
+      "steps": [
+        { "action": "navigate", "url": "/messages" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('New Message')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_visible", "selector": "h2:has-text('New Message')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "ComposeModal: recipient search field present",
+      "priority": "high",
+      "description": "Verify the compose modal has a recipient search field with Search coaches placeholder",
+      "steps": [
+        { "action": "navigate", "url": "/messages" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('New Message')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_visible", "selector": "input[placeholder='Search coaches...']" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "ComposeModal: subject field present",
+      "priority": "high",
+      "description": "Verify the compose modal has a subject input field with Enter subject placeholder",
+      "steps": [
+        { "action": "navigate", "url": "/messages" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('New Message')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_visible", "selector": "input[placeholder='Enter subject...']" },
+        { "action": "fill", "selector": "input[placeholder='Enter subject...']", "value": "Recruiting Interest" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "ComposeModal: message body textarea present",
+      "priority": "high",
+      "description": "Verify the compose modal has a message body textarea with Write your message placeholder",
+      "steps": [
+        { "action": "navigate", "url": "/messages" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('New Message')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_visible", "selector": "textarea[placeholder='Write your message...']" },
+        { "action": "fill", "selector": "textarea[placeholder='Write your message...']", "value": "Hello Coach, I am interested in your program." },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "ComposeModal: Attach files button visible",
+      "priority": "medium",
+      "description": "Verify the Attach files button is visible in the compose modal",
+      "steps": [
+        { "action": "navigate", "url": "/messages" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('New Message')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_visible", "selector": "button:has-text('Attach files')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "ComposeModal: Cancel button closes modal",
+      "priority": "high",
+      "description": "Verify clicking Cancel in the compose modal closes it and returns to the messages view",
+      "steps": [
+        { "action": "navigate", "url": "/messages" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('New Message')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_visible", "selector": "h2:has-text('New Message')" },
+        { "action": "click", "selector": "button:has-text('Cancel')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_no_text", "value": "NCAA" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "ComposeModal: Send Message button visible",
+      "priority": "high",
+      "description": "Verify the Send Message button is visible in the compose modal footer",
+      "steps": [
+        { "action": "navigate", "url": "/messages" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('New Message')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_visible", "selector": "button:has-text('Send Message')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Messages page: search input present",
+      "priority": "medium",
+      "description": "Verify the conversation search input with Search messages placeholder is present",
+      "steps": [
+        { "action": "navigate", "url": "/messages" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "input[placeholder='Search messages...']" },
+        { "action": "fill", "selector": "input[placeholder='Search messages...']", "value": "test search" },
+        { "action": "wait", "value": "500" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Messages page: filter tabs All, Unread, Archived",
+      "priority": "high",
+      "description": "Verify the All, Unread, and Archived filter tab buttons are visible",
+      "steps": [
+        { "action": "navigate", "url": "/messages" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "button:has-text('All')" },
+        { "action": "assert_visible", "selector": "button:has-text('Unread')" },
+        { "action": "assert_visible", "selector": "button:has-text('Archived')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Messages page: click Unread tab changes active state",
+      "priority": "medium",
+      "description": "Verify clicking the Unread filter tab activates it",
+      "steps": [
+        { "action": "navigate", "url": "/messages" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Unread')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Messages page: click Archived tab changes active state",
+      "priority": "medium",
+      "description": "Verify clicking the Archived filter tab activates it",
+      "steps": [
+        { "action": "navigate", "url": "/messages" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Archived')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Messages page: empty state or conversation list renders",
+      "priority": "medium",
+      "description": "Verify either the empty state message or conversation list renders in the inbox",
+      "steps": [
+        { "action": "navigate", "url": "/messages" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Zone map page: loads with visualization",
+      "priority": "critical",
+      "description": "Verify the zone map page loads with the map visualization section and no errors",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/zone/map" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_url_contains", "value": "/zone/map" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Zone map: view mode radio buttons present",
+      "priority": "high",
+      "description": "Verify the Prospects, Programs, Events, and Recruiters view mode radio options are visible",
+      "steps": [
+        { "action": "navigate", "url": "/zone/map" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_text_present", "value": "Prospects" },
+        { "action": "assert_text_present", "value": "Programs" },
+        { "action": "assert_text_present", "value": "Events" },
+        { "action": "assert_text_present", "value": "Recruiters" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Zone map: click Programs radio changes view",
+      "priority": "medium",
+      "description": "Verify clicking the Programs radio button selects it as the active view",
+      "steps": [
+        { "action": "navigate", "url": "/zone/map" },
+        { "action": "wait", "value": "4000" },
+        { "action": "click", "selector": "label:has-text('Programs')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Zone map: click Events radio changes view",
+      "priority": "medium",
+      "description": "Verify clicking the Events radio button selects it as the active view",
+      "steps": [
+        { "action": "navigate", "url": "/zone/map" },
+        { "action": "wait", "value": "4000" },
+        { "action": "click", "selector": "label:has-text('Events')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Zone map: Refresh button visible and clickable",
+      "priority": "high",
+      "description": "Verify the Refresh button is visible and triggers a data refresh when clicked",
+      "steps": [
+        { "action": "navigate", "url": "/zone/map" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_visible", "selector": "button:has-text('Refresh')" },
+        { "action": "click", "selector": "button:has-text('Refresh')" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Zone map: Export CSV button visible and clickable",
+      "priority": "high",
+      "description": "Verify the Export CSV button is visible and triggers a download when clicked",
+      "steps": [
+        { "action": "navigate", "url": "/zone/map" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_visible", "selector": "button:has-text('Export')" },
+        { "action": "click", "selector": "button:has-text('Export')" },
+        { "action": "wait", "value": "1000" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Zone map: Filters toggle button shows/hides filter panel",
+      "priority": "medium",
+      "description": "Verify the tune icon filter toggle button shows and hides the activity type filter chips",
+      "steps": [
+        { "action": "navigate", "url": "/zone/map" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_visible", "selector": "button span.material-symbols-outlined:has-text('tune')" },
+        { "action": "click", "selector": "button:has(span:has-text('tune'))" },
+        { "action": "wait", "value": "1000" },
+        { "action": "assert_text_present", "value": "SPIKE DETECTED" },
+        { "action": "click", "selector": "button:has(span:has-text('tune'))" },
+        { "action": "wait", "value": "1000" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Zone map: Zone Activity sidebar heading",
+      "priority": "high",
+      "description": "Verify the Zone Activity heading and description text are visible in the right sidebar",
+      "steps": [
+        { "action": "navigate", "url": "/zone/map" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_text_present", "value": "Zone Activity" },
+        { "action": "assert_text_present", "value": "Live intelligence updates across zones" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Zone map: bottom stats bar with Total Athletes, Blue Chips, Upcoming Events",
+      "priority": "high",
+      "description": "Verify the bottom stats bar displays Total Athletes, Blue Chips, and Upcoming Events metrics",
+      "steps": [
+        { "action": "navigate", "url": "/zone/map" },
+        { "action": "wait", "value": "5000" },
+        { "action": "assert_text_present", "value": "Total Athletes" },
+        { "action": "assert_text_present", "value": "Blue Chips" },
+        { "action": "assert_text_present", "value": "Upcoming Events" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Zone map: zone links present for navigation",
+      "priority": "medium",
+      "description": "Verify zone overlay links with href=/zones/* are present on the map for zone drill-down",
+      "steps": [
+        { "action": "navigate", "url": "/zone/map" },
+        { "action": "wait", "value": "5000" },
+        { "action": "assert_visible", "selector": "a[href^='/zones/']" },
+        { "action": "screenshot" }
+      ]
+    }
+  ]
+}

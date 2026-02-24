@@ -1,0 +1,501 @@
+{
+  "project": "repmax-v2",
+  "group": "12-admin",
+  "name": "Admin Platform Analytics & Management",
+  "requiresAuth": true,
+  "role": "admin",
+  "baseUrl": "http://localhost:3000",
+  "env": {
+    "TEST_EMAIL": "admin@repmax.io",
+    "TEST_PASSWORD": "TestPass123!"
+  },
+  "pages": [
+    "/admin",
+    "/admin/users",
+    "/admin/moderation",
+    "/admin/flags"
+  ],
+  "journeys": [
+    {
+      "name": "Admin login and redirect to dashboard",
+      "priority": "critical",
+      "description": "Authenticate as admin user and verify redirect to admin dashboard",
+      "steps": [
+        { "action": "navigate", "url": "/login" },
+        { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
+        { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "value": "4000" },
+        { "action": "navigate", "url": "/admin" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_url_contains", "value": "/admin" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Analytics heading Platform Analytics",
+      "priority": "critical",
+      "description": "Verify the admin dashboard renders with the Platform Analytics heading",
+      "steps": [
+        { "action": "navigate", "url": "/admin" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "text": "Platform Analytics" },
+        { "action": "assert_visible", "selector": "h1" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Analytics no bad text or errors",
+      "priority": "critical",
+      "description": "Verify the analytics dashboard has no error text, undefined values, or stuck loading",
+      "steps": [
+        { "action": "navigate", "url": "/admin" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "KPI cards grid with 4 cards",
+      "priority": "high",
+      "description": "Verify the 4 KPI stat cards are visible in the grid layout with labels and bold values",
+      "steps": [
+        { "action": "navigate", "url": "/admin" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": ".grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-4" },
+        { "action": "assert_visible", "selector": ".text-slate-400.text-sm" },
+        { "action": "assert_visible", "selector": ".text-3xl.font-bold" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "KPI cards show trend icons",
+      "priority": "medium",
+      "description": "Verify KPI cards display trending_up or trending_down icons with percentage change",
+      "steps": [
+        { "action": "navigate", "url": "/admin" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": ".text-green-400, .text-red-400" },
+        { "action": "assert_visible", "selector": "span.material-symbols-outlined" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Profile Completeness section with progress bars",
+      "priority": "high",
+      "description": "Verify the Profile Completeness section renders with labeled progress bars for each bucket",
+      "steps": [
+        { "action": "navigate", "url": "/admin" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "text": "Profile Completeness" },
+        { "action": "assert_visible", "selector": ".h-2\\.5.bg-white\\/5.rounded-full" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Role Distribution section with colored dots and roles",
+      "priority": "high",
+      "description": "Verify Role Distribution shows colored dots, role names, and percentages for all roles",
+      "steps": [
+        { "action": "navigate", "url": "/admin" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "text": "Role Distribution" },
+        { "action": "assert_visible", "selector": ".size-3.rounded-full" },
+        { "action": "assert_visible", "selector": ".text-sm.text-white.capitalize" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Monthly Growth grid with month cards",
+      "priority": "medium",
+      "description": "Verify the Monthly Growth section renders a grid of month cards with counts",
+      "steps": [
+        { "action": "navigate", "url": "/admin" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "text": "Monthly Growth" },
+        { "action": "assert_visible", "selector": ".grid.grid-cols-2" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Refresh button click is functional",
+      "priority": "high",
+      "description": "Click the Refresh button on the analytics dashboard and verify no errors occur",
+      "steps": [
+        { "action": "navigate", "url": "/admin" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "button:has-text('Refresh')" },
+        { "action": "click", "selector": "button:has-text('Refresh')" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "No stuck loading after dashboard refresh",
+      "priority": "medium",
+      "description": "After clicking refresh, verify the dashboard fully re-renders with no stuck spinners",
+      "steps": [
+        { "action": "navigate", "url": "/admin" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Refresh')" },
+        { "action": "wait", "value": "4000" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "assert_text_present", "text": "Platform Analytics" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Navigate to User Management page",
+      "priority": "critical",
+      "description": "Navigate to /admin/users and verify the page loads with the correct heading",
+      "steps": [
+        { "action": "navigate", "url": "/admin/users" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "text": "User Management" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Users page subtitle",
+      "priority": "medium",
+      "description": "Verify the User Management subtitle text is present",
+      "steps": [
+        { "action": "navigate", "url": "/admin/users" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "text": "Manage platform users, roles, and account status" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Users 3 stat cards (Total Users, Active Today, New Signups)",
+      "priority": "high",
+      "description": "Verify the 3 stat cards on the users page display Total Users, Active Today, and New Signups",
+      "steps": [
+        { "action": "navigate", "url": "/admin/users" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "text": "Total Users" },
+        { "action": "assert_text_present", "text": "Active Today" },
+        { "action": "assert_text_present", "text": "New Signups" },
+        { "action": "assert_visible", "selector": ".grid.grid-cols-1.sm\\:grid-cols-3 .text-3xl.font-bold" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Users search input present and typeable",
+      "priority": "high",
+      "description": "Verify the search input is present with correct placeholder and accepts text",
+      "steps": [
+        { "action": "navigate", "url": "/admin/users" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "input[placeholder*='Search users']" },
+        { "action": "fill", "selector": "input[placeholder*='Search users']", "value": "test" },
+        { "action": "wait", "value": "1000" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Users role filter select dropdown",
+      "priority": "high",
+      "description": "Verify the role filter dropdown is present with All Roles as default and options for each role",
+      "steps": [
+        { "action": "navigate", "url": "/admin/users" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "select" },
+        { "action": "assert_text_present", "text": "All Roles" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Users role filter changes table results",
+      "priority": "high",
+      "description": "Select a specific role filter and verify the table updates accordingly",
+      "steps": [
+        { "action": "navigate", "url": "/admin/users" },
+        { "action": "wait", "value": "3000" },
+        { "action": "fill", "selector": "select", "value": "athlete" },
+        { "action": "wait", "value": "2000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Users table columns visible",
+      "priority": "high",
+      "description": "Verify the users table renders with column headers: User, Role, Joined, Last Active, Status, Actions",
+      "steps": [
+        { "action": "navigate", "url": "/admin/users" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "table" },
+        { "action": "assert_text_present", "text": "USER" },
+        { "action": "assert_text_present", "text": "ROLE" },
+        { "action": "assert_text_present", "text": "STATUS" },
+        { "action": "assert_text_present", "text": "ACTIONS" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Users table rows show name, email, and role badge",
+      "priority": "medium",
+      "description": "Verify user rows display name, email, avatar initials, and a colored role badge",
+      "steps": [
+        { "action": "navigate", "url": "/admin/users" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "table tbody tr" },
+        { "action": "assert_visible", "selector": ".text-sm.font-medium.text-white" },
+        { "action": "assert_visible", "selector": ".text-xs.font-bold.px-2.py-1.rounded" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Users per-user role change select dropdown",
+      "priority": "medium",
+      "description": "Verify each user row has a role change select dropdown in the Actions column",
+      "steps": [
+        { "action": "navigate", "url": "/admin/users" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "table tbody select" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Users pagination buttons when multiple pages",
+      "priority": "low",
+      "description": "Verify pagination controls appear when there are more users than the page limit",
+      "steps": [
+        { "action": "navigate", "url": "/admin/users" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Navigate to Content Moderation page",
+      "priority": "critical",
+      "description": "Navigate to /admin/moderation and verify the page loads with correct heading",
+      "steps": [
+        { "action": "navigate", "url": "/admin/moderation" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "text": "Content Moderation" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Moderation 3 stat cards (Total Flagged, Pending Review, Resolved Today)",
+      "priority": "high",
+      "description": "Verify the 3 moderation stat cards display correct labels and values",
+      "steps": [
+        { "action": "navigate", "url": "/admin/moderation" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "text": "Total Flagged" },
+        { "action": "assert_text_present", "text": "Pending Review" },
+        { "action": "assert_text_present", "text": "Resolved Today" },
+        { "action": "assert_visible", "selector": ".text-3xl.font-bold" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Moderation filter tabs (All, Photos, Bios, Film)",
+      "priority": "high",
+      "description": "Verify the 4 content type filter tabs are visible with correct labels",
+      "steps": [
+        { "action": "navigate", "url": "/admin/moderation" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "button:has-text('All')" },
+        { "action": "assert_visible", "selector": "button:has-text('Photos')" },
+        { "action": "assert_visible", "selector": "button:has-text('Bios')" },
+        { "action": "assert_visible", "selector": "button:has-text('Film')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Moderation click tab filters content and highlights active tab",
+      "priority": "high",
+      "description": "Click a filter tab and verify it gets the active bg-primary styling while filtering content",
+      "steps": [
+        { "action": "navigate", "url": "/admin/moderation" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Photos')" },
+        { "action": "wait", "value": "1500" },
+        { "action": "assert_no_bad_text" },
+        { "action": "click", "selector": "button:has-text('Bios')" },
+        { "action": "wait", "value": "1500" },
+        { "action": "assert_no_bad_text" },
+        { "action": "click", "selector": "button:has-text('All')" },
+        { "action": "wait", "value": "1500" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Moderation cards with Approve, Warn, Remove buttons",
+      "priority": "high",
+      "description": "Verify moderation content cards display action buttons or show the empty state",
+      "steps": [
+        { "action": "navigate", "url": "/admin/moderation" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Moderation empty state shows shield icon and No flagged content",
+      "priority": "medium",
+      "description": "When no flagged items exist, verify the empty state renders with shield icon and message",
+      "steps": [
+        { "action": "navigate", "url": "/admin/moderation" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_no_bad_text" },
+        { "action": "assert_no_stuck_loading" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Navigate to Feature Flags page",
+      "priority": "critical",
+      "description": "Navigate to /admin/flags and verify the page loads with the correct heading",
+      "steps": [
+        { "action": "navigate", "url": "/admin/flags" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "text": "Feature Flags" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Flags search input present and typeable",
+      "priority": "high",
+      "description": "Verify the flag search input is present with correct placeholder and accepts text input",
+      "steps": [
+        { "action": "navigate", "url": "/admin/flags" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "input[placeholder*='Search flags']" },
+        { "action": "fill", "selector": "input[placeholder*='Search flags']", "value": "test-flag" },
+        { "action": "wait", "value": "1000" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Flags status filter buttons (All, Active, Disabled)",
+      "priority": "high",
+      "description": "Verify the 3 status filter buttons are visible and the All button is active by default",
+      "steps": [
+        { "action": "navigate", "url": "/admin/flags" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "button:has-text('All')" },
+        { "action": "assert_visible", "selector": "button:has-text('Active')" },
+        { "action": "assert_visible", "selector": "button:has-text('Disabled')" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Flags click filter button changes active state",
+      "priority": "high",
+      "description": "Click each status filter button and verify it toggles active styling",
+      "steps": [
+        { "action": "navigate", "url": "/admin/flags" },
+        { "action": "wait", "value": "3000" },
+        { "action": "click", "selector": "button:has-text('Active')" },
+        { "action": "wait", "value": "1500" },
+        { "action": "assert_no_bad_text" },
+        { "action": "click", "selector": "button:has-text('Disabled')" },
+        { "action": "wait", "value": "1500" },
+        { "action": "assert_no_bad_text" },
+        { "action": "click", "selector": "button:has-text('All')" },
+        { "action": "wait", "value": "1500" },
+        { "action": "assert_no_bad_text" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Flags table columns (Flag, Status, Scope, Rollout %, Actions)",
+      "priority": "high",
+      "description": "Verify the feature flags table renders with correct column headers",
+      "steps": [
+        { "action": "navigate", "url": "/admin/flags" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "table" },
+        { "action": "assert_text_present", "text": "FLAG" },
+        { "action": "assert_text_present", "text": "STATUS" },
+        { "action": "assert_text_present", "text": "SCOPE" },
+        { "action": "assert_text_present", "text": "ROLLOUT %" },
+        { "action": "assert_text_present", "text": "ACTIONS" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Flags toggle switch visible in actions column",
+      "priority": "high",
+      "description": "Verify toggle switch buttons (rounded-full h-6 w-11) are visible for each flag row",
+      "steps": [
+        { "action": "navigate", "url": "/admin/flags" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": "button.rounded-full.h-6.w-11, table tbody button" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Flags rollout bar and percentage visible",
+      "priority": "medium",
+      "description": "Verify the rollout progress bar and percentage text are visible in the flags table",
+      "steps": [
+        { "action": "navigate", "url": "/admin/flags" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_visible", "selector": ".w-16.h-1\\.5" },
+        { "action": "assert_visible", "selector": ".font-mono" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Sidebar navigation roundtrip: Dashboard to Users to Moderation to Flags to Dashboard",
+      "priority": "high",
+      "description": "Navigate through all admin sidebar links and verify each page loads correctly",
+      "steps": [
+        { "action": "navigate", "url": "/admin" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "text": "Platform Analytics" },
+        { "action": "click", "selector": "a[href='/admin/users']" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "text": "User Management" },
+        { "action": "click", "selector": "a[href='/admin/moderation']" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "text": "Content Moderation" },
+        { "action": "click", "selector": "a[href='/admin/flags']" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "text": "Feature Flags" },
+        { "action": "click", "selector": "a[href='/admin']" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_text_present", "text": "Platform Analytics" },
+        { "action": "screenshot" }
+      ]
+    },
+    {
+      "name": "Console clean across all admin pages",
+      "priority": "medium",
+      "description": "Navigate all admin pages and verify the console is clean of errors",
+      "steps": [
+        { "action": "navigate", "url": "/admin" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_console_clean" },
+        { "action": "navigate", "url": "/admin/users" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_console_clean" },
+        { "action": "navigate", "url": "/admin/moderation" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_console_clean" },
+        { "action": "navigate", "url": "/admin/flags" },
+        { "action": "wait", "value": "3000" },
+        { "action": "assert_console_clean" },
+        { "action": "screenshot" }
+      ]
+    }
+  ]
+}
