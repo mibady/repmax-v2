@@ -416,11 +416,6 @@ export default function Page() {
 </div>
 </div>
 </footer>
-{/* Custom styles from Stitch */}
-<style jsx>{`
-        .text-gradient-gold {
-        .stats-font {
-`}</style>
     </>
   );
 }
