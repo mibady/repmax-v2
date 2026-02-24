@@ -85,6 +85,18 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith(route)
   );
 
+  // Public directory routes (no auth required)
+  const publicDirectoryRoutes = [
+    "/zones",
+    "/positions",
+    "/states",
+    "/programs",
+    "/card",
+  ];
+  const isPublicDirectory = publicDirectoryRoutes.some((route) =>
+    pathname.startsWith(route)
+  );
+
   // App routes that require authentication
   const appRoutes = [
     "/dashboard",
@@ -104,7 +116,7 @@ export async function middleware(request: NextRequest) {
     "/shortlist",
     "/tournaments",
   ];
-  const isAppRoute = appRoutes.some((route) => pathname.startsWith(route));
+  const isAppRoute = !isPublicDirectory && appRoutes.some((route) => pathname.startsWith(route));
 
   // Redirect unauthenticated users from protected routes
   if (!user && (isAppRoute || isProtectedApi)) {
