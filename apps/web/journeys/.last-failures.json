@@ -1,13 +1,33 @@
 {
-  "timestamp": "2026-02-20T14:16:55.945672",
-  "pass_rate": "0%",
-  "results_dir": "/home/info/Projects/repmax-v2/journey-results/docker-2026-02-20",
+  "timestamp": "2026-02-24T18:20:41.960Z",
+  "pass_rate": "27%",
   "failed_groups": [
-    "00-public.json"
+    "02-onboarding.json"
   ],
   "failed_journeys": {
-    "00-public": [
-      "Pricing page loads with category tabs"
+    "02-onboarding": [
+      "Authenticated user on /login redirects to /dashboard",
+      "Authenticated user on /signup redirects to /dashboard",
+      "Onboarding role selection page loads",
+      "Role selection: 5 role cards visible",
+      "Role selection: Athlete radio default checked",
+      "Role selection: clicking Parent card toggles radio",
+      "Role selection: clicking Coach card toggles radio",
+      "Role selection: clicking Recruiter card toggles radio",
+      "Role selection: Continue button visible and clickable",
+      "Onboarding chat page loads with step 1",
+      "Onboarding chat step 1: Full Name input present",
+      "Onboarding chat: Continue button advances to step 2",
+      "Onboarding chat step 2: School form fields present",
+      "Onboarding chat step 3: Athletic Measurables fields present",
+      "Onboarding chat step 4: Academic Information fields present",
+      "Onboarding chat step 5: Review Your Profile summary",
+      "Onboarding chat: Skip for Now link navigates to /dashboard",
+      "Onboarding chat: Previous button navigates back one step",
+      "Onboarding chat: Previous button disabled on step 1",
+      "Onboarding chat: side navigation step buttons clickable",
+      "Onboarding chat: progress sidebar shows completion percentage",
+      "Onboarding chat: live preview card updates with data"
     ]
   }
 }

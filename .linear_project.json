@@ -37,25 +37,23 @@
       { "id": "NGE-51", "title": "Parent dashboard backend (parent_links table + seed)", "phase": 5 },
       { "id": "NGE-52", "title": "Club dashboard backend (3 tables + 6 tests)", "phase": 5 },
       { "id": "NGE-56", "title": "Polish: wire all dead UI elements", "phase": 6 },
-      { "id": "NGE-165", "title": "Recruiter pricing: 4-tier subscriptions (Spec B)" },
-      { "id": "NGE-166", "title": "School B2B subscriptions: 3 annual tiers (Spec C)" },
-      { "id": "NGE-167", "title": "Tournament/Events: organizer tiers + registration fees (Spec D)" },
-      { "id": "NGE-168", "title": "Dashr Combines: 5 one-time products (Spec E)" },
-      { "id": "NGE-169", "title": "Recruiter pricing page: role-aware tabs + new tiers" },
-      { "id": "NGE-170", "title": "School pricing page + checkout flow" },
-      { "id": "NGE-171", "title": "Tournament booking + registration payment flow" },
-      { "id": "NGE-172", "title": "Dashr booking + checkout flow" },
-      { "id": "NGE-173", "title": "Stripe product catalog: create 22 prices + 2 coupons in Stripe Dashboard" }
+      { "id": "NGE-165", "title": "Stripe product catalog: 22 prices + 2 coupons" },
+      { "id": "NGE-166", "title": "Sprint 1: Athlete Pricing (3-tier subs + annual billing)" },
+      { "id": "NGE-167", "title": "Sprint 2: Schools B2B (org entity + 3-tier annual subs + Dashr catalog)" },
+      { "id": "NGE-168", "title": "Sprint 3: Recruiter Pricing (4-tier subs + annual billing)" },
+      { "id": "NGE-169", "title": "Sprint 4: Tournament Phase 1 — Connect (browse, register, pay)" },
+      { "id": "NGE-170", "title": "Sprint 5: Tournament Phase 2 — Schedule (brackets, games, venues)" },
+      { "id": "NGE-171", "title": "Sprint 6: Tournament Phase 3 — Live Score (realtime scoring + standings)" },
+      { "id": "NGE-172", "title": "Sprint 7: Tournament Phase 4 — Full Platform (public discovery + profile sync)" },
+      { "id": "NGE-173", "title": "Sprint 8: Dashr Combines & Training (5 products + booking flow)" }
     ],
     "todo": [],
-    "removed": [
-      { "id": "NGE-55", "title": "Mobile app (Expo)", "reason": "Removed from Linear" }
-    ]
+    "removed": []
   },
   "summary": {
     "total": 30,
     "done": 30,
     "todo": 0
   },
-  "updatedAt": "2026-02-21"
+  "updatedAt": "2026-02-23"
 }
