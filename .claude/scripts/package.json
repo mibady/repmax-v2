@@ -1,0 +1,9 @@
+{
+  "name": "repmax-claude-scripts",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "e2b": "^2.12.1",
+    "playwright": "^1.49.0"
+  }
+}

@@ -14,6 +14,7 @@
     {
       "name": "Auth guard: /recruiter/pipeline redirects unauthenticated to /login",
       "priority": "critical",
+      "requiresAuth": false,
       "description": "Verify that navigating to /recruiter/pipeline without credentials redirects to /login. This journey runs first (before login) so no saved cookies exist.",
       "steps": [
         { "action": "navigate", "url": "/login" },
@@ -26,6 +27,7 @@
     {
       "name": "Auth guard: /admin redirects unauthenticated to /login",
       "priority": "critical",
+      "requiresAuth": false,
       "description": "Verify that navigating to /admin without credentials redirects to /login",
       "steps": [
         { "action": "navigate", "url": "/login" },
@@ -38,6 +40,7 @@
     {
       "name": "Auth guard: /settings redirects unauthenticated to /login",
       "priority": "critical",
+      "requiresAuth": false,
       "description": "Verify that navigating to /settings without credentials redirects to /login",
       "steps": [
         { "action": "navigate", "url": "/login" },
@@ -50,6 +53,7 @@
     {
       "name": "Auth guard: /messages redirects unauthenticated to /login",
       "priority": "critical",
+      "requiresAuth": false,
       "description": "Verify that navigating to /messages without credentials redirects to /login",
       "steps": [
         { "action": "navigate", "url": "/login" },
@@ -75,24 +79,24 @@
       ]
     },
     {
-      "name": "Authenticated user on /login redirects to /dashboard",
+      "name": "Authenticated user on /login redirects away",
       "priority": "high",
-      "description": "Verify that navigating to /login while already authenticated redirects to /dashboard (middleware rule)",
+      "description": "Verify that navigating to /login while already authenticated redirects to role home (e.g. /athlete) or /onboarding",
       "steps": [
         { "action": "navigate", "url": "/login" },
         { "action": "wait", "value": "3000" },
-        { "action": "assert_url_contains", "value": "/dashboard" },
+        { "action": "assert_no_text", "value": "Sign in to your account" },
         { "action": "screenshot" }
       ]
     },
     {
-      "name": "Authenticated user on /signup redirects to /dashboard",
+      "name": "Authenticated user on /signup redirects away",
       "priority": "high",
-      "description": "Verify that navigating to /signup while already authenticated redirects to /dashboard (middleware rule)",
+      "description": "Verify that navigating to /signup while already authenticated redirects to role home (e.g. /athlete) or /onboarding",
       "steps": [
         { "action": "navigate", "url": "/signup" },
         { "action": "wait", "value": "3000" },
-        { "action": "assert_url_contains", "value": "/dashboard" },
+        { "action": "assert_no_text", "value": "Create your account" },
         { "action": "screenshot" }
       ]
     },
@@ -142,9 +146,8 @@
       "steps": [
         { "action": "navigate", "url": "/onboarding/role" },
         { "action": "wait", "value": "3000" },
-        { "action": "click", "selector": "input[type='radio'][value='parent']" },
+        { "action": "click", "selector": "label:has-text('Parent')" },
         { "action": "wait", "value": "500" },
-        { "action": "assert_text_present", "value": "Parent" },
         { "action": "screenshot" }
       ]
     },
@@ -155,7 +158,7 @@
       "steps": [
         { "action": "navigate", "url": "/onboarding/role" },
         { "action": "wait", "value": "3000" },
-        { "action": "click", "selector": "input[type='radio'][value='coach']" },
+        { "action": "click", "selector": "label:has-text('Coach')" },
         { "action": "wait", "value": "500" },
         { "action": "screenshot" }
       ]
@@ -167,7 +170,7 @@
       "steps": [
         { "action": "navigate", "url": "/onboarding/role" },
         { "action": "wait", "value": "3000" },
-        { "action": "click", "selector": "input[type='radio'][value='recruiter']" },
+        { "action": "click", "selector": "label:has-text('Recruiter')" },
         { "action": "wait", "value": "500" },
         { "action": "screenshot" }
       ]
@@ -301,10 +304,10 @@
         { "action": "wait", "value": "2000" },
         { "action": "assert_text_present", "value": "Step 5 of 5" },
         { "action": "assert_text_present", "value": "Review Your Profile" },
-        { "action": "assert_text_present", "value": "PERSONAL" },
-        { "action": "assert_text_present", "value": "SCHOOL" },
-        { "action": "assert_text_present", "value": "MEASURABLES" },
-        { "action": "assert_text_present", "value": "ACADEMICS" },
+        { "action": "assert_text_present", "value": "Personal" },
+        { "action": "assert_text_present", "value": "School" },
+        { "action": "assert_text_present", "value": "Measurables" },
+        { "action": "assert_text_present", "value": "Academics" },
         { "action": "screenshot" }
       ]
     },

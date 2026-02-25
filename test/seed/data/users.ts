@@ -249,7 +249,7 @@ export const testUserData: TestUserData[] = [
       height: "6'2\"",
       weight: 195,
       fortyYard: 4.55,
-      vertical: 34.5,
+      vertical: 35,
       bench: 265,
       squat: 405,
       gpa: 3.8,

@@ -26,7 +26,10 @@ export default async function AthleteCardPage({
   const { id } = await params;
   const supabase = await createClient();
 
-  // Fetch athlete data from Supabase
+  // Support lookup by UUID or repmax_id (e.g. REP-JW-2026)
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+  const column = isUuid ? "id" : "repmax_id";
+
   const { data: athleteData } = await supabase
     .from("athletes")
     .select(`
@@ -34,7 +37,7 @@ export default async function AthleteCardPage({
       profile:profiles(*),
       highlights(*)
     `)
-    .eq("id", id)
+    .eq(column, id)
     .single();
 
   if (!athleteData) {

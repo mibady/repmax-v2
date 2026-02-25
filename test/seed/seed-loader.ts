@@ -169,6 +169,7 @@ async function seedUser(supabase: SupabaseClient, userData: TestUserData): Promi
     if (!existingAthlete) {
       const { error } = await supabase.from('athletes').insert({
         profile_id: profileId,
+        repmax_id: userData.repmaxId || null,
         primary_position: userData.athleteProfile.position,
         class_year: userData.athleteProfile.classYear,
         high_school: userData.athleteProfile.school,
