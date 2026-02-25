@@ -29,6 +29,7 @@ export interface JourneyDefinition {
   priority: string;
   description?: string;
   steps: JourneyStep[];
+  requiresAuth?: boolean;
 }
 
 export interface JourneyGroup {
@@ -36,6 +37,7 @@ export interface JourneyGroup {
   group: string;
   name: string;
   requiresAuth?: boolean;
+  serial?: boolean;
   role?: string;
   baseUrl?: string;
   env?: Record<string, string>;
@@ -59,11 +61,26 @@ const isPublicRoute = (path: string) => {
 const journeyTouchesProtectedRoute = (journey: JourneyDefinition) =>
   journey.steps.some((step) => step.action === 'navigate' && !!step.url && !isPublicRoute(step.url));
 
-const journeyHasExplicitLogin = (journey: JourneyDefinition) =>
-  journey.steps.some((step) => step.action === 'navigate' && step.url === '/login');
+const journeyHasExplicitLogin = (journey: JourneyDefinition) => {
+  const navigatesToLogin = journey.steps.some((step) => step.action === 'navigate' && step.url === '/login');
+  if (!navigatesToLogin) return false;
+  const interactsWithLoginForm = journey.steps.some((step) => {
+    if (step.action === 'fill' && step.selector) {
+      return step.selector.includes("input[type='email']") || step.selector.includes("input[type='password']");
+    }
+    if (step.action === 'click' && step.selector) {
+      return step.selector.includes("button[type='submit']");
+    }
+    return false;
+  });
+  return interactsWithLoginForm;
+};
 
 const shouldAutoLogin = (group: JourneyGroup, journey: JourneyDefinition) => {
-  const requiresAuth = Boolean(group.requiresAuth) || journeyTouchesProtectedRoute(journey);
+  if (journey.requiresAuth === false) return false;
+  const requiresAuth = journey.requiresAuth === true
+    ? true
+    : Boolean(group.requiresAuth) || journeyTouchesProtectedRoute(journey);
   if (!requiresAuth) return false;
   if (journeyHasExplicitLogin(journey)) return false;
   if (!group.env?.TEST_EMAIL || !group.env?.TEST_PASSWORD) return false;
@@ -159,7 +176,7 @@ const assertNoStuckLoading = async (page: Page, timeout: number) => {
 
 const getStepText = (step: JourneyStep) => step.value ?? step.text ?? '';
 
-const getBaseUrl = (group: JourneyGroup) => process.env.PLAYWRIGHT_BASE_URL ?? group.baseUrl ?? 'http://localhost:3000';
+const getBaseUrl = (group: JourneyGroup) => process.env.PLAYWRIGHT_TEST_BASE_URL ?? group.baseUrl ?? 'http://localhost:3000';
 
 const executeStep = async (
   page: Page,
@@ -254,10 +271,24 @@ const executeStep = async (
   }
 };
 
+/**
+ * Resolve credentials for a journey group. Checks role-specific env vars first
+ * (e.g. PLAYWRIGHT_TEST_EMAIL_COACH) so staging can override the hardcoded
+ * synthetic emails in the JSON without editing every journey file.
+ */
+const resolveCredentials = (group: JourneyGroup): { email: string; password: string } => {
+  const role = (group.role ?? '').toUpperCase();
+  const envEmail = role ? process.env[`PLAYWRIGHT_TEST_EMAIL_${role}`] : undefined;
+  const envPassword = role ? process.env[`PLAYWRIGHT_TEST_PASSWORD_${role}`] : undefined;
+  return {
+    email: envEmail || resolveTemplate(group.env?.TEST_EMAIL, group.env),
+    password: envPassword || resolveTemplate(group.env?.TEST_PASSWORD, group.env),
+  };
+};
+
 const ensureAuthIfNeeded = async (page: Page, group: JourneyGroup, journey: JourneyDefinition) => {
   if (!shouldAutoLogin(group, journey)) return;
-  const email = resolveTemplate(group.env?.TEST_EMAIL, group.env);
-  const password = resolveTemplate(group.env?.TEST_PASSWORD, group.env);
+  const { email, password } = resolveCredentials(group);
   if (!email || !password) {
     throw new Error(
       `Missing TEST_EMAIL/TEST_PASSWORD for group ${group.group}. Provide them in JSON env or via environment variables.`,

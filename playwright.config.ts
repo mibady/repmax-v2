@@ -3,8 +3,10 @@ import { defineConfig, devices } from '@playwright/test';
 /**
  * RepMax v2 Playwright Configuration
  *
- * Configured for E2B cloud sandbox execution.
- * The sandbox builds and serves the app - no local webServer needed.
+ * Supports three modes:
+ *   1. Local dev — starts `npm run dev` automatically via webServer
+ *   2. Staging   — set PLAYWRIGHT_TEST_BASE_URL to the staging host (webServer skipped)
+ *   3. E2B       — sandbox builds and serves the app (webServer skipped)
  *
  * Viewport projects for responsive testing:
  * - Mobile S (375px): iPhone SE, small Android
@@ -13,6 +15,10 @@ import { defineConfig, devices } from '@playwright/test';
  * - Desktop (1024px): Small laptop/tablet landscape
  * - Desktop L (1440px): Standard desktop
  */
+
+const baseURL = process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3000';
+const isRemote = baseURL.startsWith('https://');
+
 export default defineConfig({
   testDir: './apps/web/e2e',
   fullyParallel: true,
@@ -30,9 +36,7 @@ export default defineConfig({
     timeout: 5000,
   },
   use: {
-    // Base URL is set by the sandbox environment
-    // E2B sandbox will build and serve on localhost:3000 inside the container
-    baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3000',
+    baseURL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
@@ -74,5 +78,21 @@ export default defineConfig({
       },
     },
   ],
-  // No webServer - E2B sandbox handles build and serve
+  // Skip webServer when targeting a remote host (staging / E2B).
+  ...(isRemote
+    ? {}
+    : {
+        webServer: [
+          {
+            command: 'cd apps/web && npm run dev -- --hostname 127.0.0.1',
+            url: 'http://127.0.0.1:3000',
+            reuseExistingServer: !process.env.CI,
+            timeout: 120 * 1000,
+            env: {
+              ...process.env,
+              HOSTNAME: '127.0.0.1',
+            },
+          },
+        ],
+      }),
 });
