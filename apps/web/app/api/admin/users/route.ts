@@ -177,7 +177,7 @@ export async function PATCH(request: NextRequest) {
 
     const patchSchema = z.object({
       userId: z.string().uuid(),
-      role: z.enum(["athlete", "coach", "recruiter", "parent", "club_director", "admin"]).optional(),
+      role: z.enum(["athlete", "coach", "recruiter", "parent", "club", "admin"]).optional(),
       status: z.enum(["active", "suspended"]).optional(),
     });
 

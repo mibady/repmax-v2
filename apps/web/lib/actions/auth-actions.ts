@@ -127,37 +127,29 @@ export async function resetPassword(email: string): Promise<AuthResult> {
   return { success: true };
 }
 
-export type UserRole = "athlete" | "parent" | "coach" | "recruiter" | "organizer";
+export type UserRole = "athlete" | "parent" | "coach" | "recruiter" | "club";
 
 // Map UI roles to database roles
-function mapRoleToDbRole(role: UserRole): "athlete" | "coach" | "recruiter" | "admin" {
+function mapRoleToDbRole(role: UserRole): "athlete" | "coach" | "recruiter" | "admin" | "parent" | "club" {
   switch (role) {
-    case "athlete":
-    case "parent": // Parents manage athlete profiles
-      return "athlete";
-    case "coach":
-      return "coach";
-    case "recruiter":
-      return "recruiter";
-    case "organizer": // Club organizers get admin-like access
-      return "admin";
-    default:
-      return "athlete";
+    case "athlete":   return "athlete";
+    case "parent":    return "parent";
+    case "coach":     return "coach";
+    case "recruiter": return "recruiter";
+    case "club":      return "club";
+    default:          return "athlete";
   }
 }
 
 // Get redirect path based on role
 function getRedirectPathForRole(role: UserRole): string {
   switch (role) {
-    case "athlete":
-    case "parent":
-      return "/onboarding/chat";
-    case "coach":
-    case "recruiter":
-    case "organizer":
-      return "/dashboard";
-    default:
-      return "/dashboard";
+    case "athlete":   return "/onboarding/chat";
+    case "parent":    return "/parent";
+    case "coach":     return "/coach";
+    case "recruiter": return "/recruiter/pipeline";
+    case "club":      return "/club";
+    default:          return "/onboarding/chat";
   }
 }
 
@@ -183,7 +175,10 @@ export async function updateUserRole(role: UserRole): Promise<AuthResult> {
     .eq("user_id", user.id)
     .single();
 
+  let profileId: string;
+
   if (existingProfile) {
+    profileId = existingProfile.id;
     // Update existing profile
     const { error: updateError } = await supabase
       .from("profiles")
@@ -198,16 +193,41 @@ export async function updateUserRole(role: UserRole): Promise<AuthResult> {
     }
   } else {
     // Create new profile
-    const { error: insertError } = await supabase.from("profiles").insert({
-      user_id: user.id,
-      role: dbRole,
-      full_name: user.user_metadata?.full_name || user.email?.split("@")[0] || "User",
-    });
+    const { data: newProfile, error: insertError } = await supabase
+      .from("profiles")
+      .insert({
+        user_id: user.id,
+        role: dbRole,
+        full_name: user.user_metadata?.full_name || user.email?.split("@")[0] || "User",
+      })
+      .select("id")
+      .single();
 
-    if (insertError) {
-      return { success: false, error: insertError.message };
+    if (insertError || !newProfile) {
+      return { success: false, error: insertError?.message || "Failed to create profile" };
     }
+    profileId = newProfile.id;
   }
+
+  // Create role-specific records in coaches table
+  if (role === "coach") {
+    await supabase.from("coaches").upsert({
+      profile_id: profileId,
+      school_name: "",
+      division: null,
+      school_type: "high_school",
+      title: "Head Coach",
+    }, { onConflict: "profile_id" });
+  } else if (role === "recruiter") {
+    await supabase.from("coaches").upsert({
+      profile_id: profileId,
+      school_name: "",
+      division: "D1",
+      school_type: "college",
+      title: "Recruiting Coordinator",
+    }, { onConflict: "profile_id" });
+  }
+  // club role does NOT get a coaches record
 
   // Also update user metadata with the original role for reference
   await supabase.auth.updateUser({

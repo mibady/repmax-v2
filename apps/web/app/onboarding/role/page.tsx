@@ -85,8 +85,8 @@ export default function Page() {
                     </div>
 {/*  Text Content  */}
 <div className="flex grow flex-col">
-<p className="text-white text-base font-bold leading-snug">Athlete</p>
-<p className="text-text-secondary text-sm font-normal leading-normal">I want to get recruited.</p>
+<p className="text-white text-base font-bold leading-snug">Student Athlete</p>
+<p className="text-text-secondary text-sm font-normal leading-normal">Build your recruiting profile and get discovered</p>
 </div>
 {/*  Selection Indicator  */}
 <div className="text-transparent transition-colors duration-200 peer-checked:text-primary">
@@ -111,8 +111,8 @@ export default function Page() {
                         👪
                     </div>
 <div className="flex grow flex-col">
-<p className="text-white text-base font-bold leading-snug">Parent</p>
-<p className="text-text-secondary text-sm font-normal leading-normal">I am managing a player&apos;s profile.</p>
+<p className="text-white text-base font-bold leading-snug">Parent / Guardian</p>
+<p className="text-text-secondary text-sm font-normal leading-normal">Support your child&apos;s path to a scholarship</p>
 </div>
 <div className="text-transparent transition-colors duration-200 peer-checked:text-primary">
 <span className="material-symbols-outlined filled text-[28px]" style={{fontVariationSettings: "'FILL' 1"}}>check_circle</span>
@@ -135,8 +135,8 @@ export default function Page() {
                         🧢
                     </div>
 <div className="flex grow flex-col">
-<p className="text-white text-base font-bold leading-snug">Coach</p>
-<p className="text-text-secondary text-sm font-normal leading-normal">I manage a high school or college team.</p>
+<p className="text-white text-base font-bold leading-snug">Head Coach</p>
+<p className="text-text-secondary text-sm font-normal leading-normal">Get your high school program&apos;s athletes recruited</p>
 </div>
 <div className="text-transparent transition-colors duration-200 peer-checked:text-primary">
 <span className="material-symbols-outlined filled text-[28px]" style={{fontVariationSettings: "'FILL' 1"}}>check_circle</span>
@@ -159,8 +159,8 @@ export default function Page() {
                         👀
                     </div>
 <div className="flex grow flex-col">
-<p className="text-white text-base font-bold leading-snug">Recruiter</p>
-<p className="text-text-secondary text-sm font-normal leading-normal">I am looking for talent.</p>
+<p className="text-white text-base font-bold leading-snug">College Recruiter</p>
+<p className="text-text-secondary text-sm font-normal leading-normal">Find elite high school talent across 6 zones</p>
 </div>
 <div className="text-transparent transition-colors duration-200 peer-checked:text-primary">
 <span className="material-symbols-outlined filled text-[28px]" style={{fontVariationSettings: "'FILL' 1"}}>check_circle</span>
@@ -171,12 +171,12 @@ export default function Page() {
 {/*  Club Organizer Card  */}
 <label className="group relative cursor-pointer">
 <input
-  checked={selectedRole === 'organizer'}
-  onChange={() => handleRoleChange('organizer')}
+  checked={selectedRole === 'club'}
+  onChange={() => handleRoleChange('club')}
   className="peer sr-only"
   name="role"
   type="radio"
-  value="organizer"
+  value="club"
 />
 <div className="relative flex items-center gap-4 rounded-xl border-2 border-transparent bg-surface-dark p-4 transition-all duration-200 hover:bg-surface-hover peer-checked:border-primary peer-checked:shadow-[0_0_15px_rgba(237,188,29,0.15)] peer-focus:ring-2 peer-focus:ring-primary/50">
 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#2A2A2E] text-2xl group-hover:scale-110 transition-transform duration-200">
@@ -184,7 +184,7 @@ export default function Page() {
                     </div>
 <div className="flex grow flex-col">
 <p className="text-white text-base font-bold leading-snug">Club Organizer</p>
-<p className="text-text-secondary text-sm font-normal leading-normal">I run a league or club event.</p>
+<p className="text-text-secondary text-sm font-normal leading-normal">Run 7v7 tournaments and camps for college recruiters</p>
 </div>
 <div className="text-transparent transition-colors duration-200 peer-checked:text-primary">
 <span className="material-symbols-outlined filled text-[28px]" style={{fontVariationSettings: "'FILL' 1"}}>check_circle</span>

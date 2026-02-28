@@ -17,11 +17,18 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Fetch profile to get correct profile UUID (different from auth UUID)
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('user_id', user.id)
+      .single();
+
     // Check subscription tier for daily quota
     const { data: subscription } = await supabase
       .from('subscriptions')
       .select('plan:subscription_plans(slug)')
-      .eq('profile_id', user.id)
+      .eq('profile_id', profile?.id ?? '')
       .eq('status', 'active')
       .maybeSingle();
 

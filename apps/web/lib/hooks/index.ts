@@ -221,6 +221,7 @@ export {
 // Coach Dashboard
 export {
   useCoachDashboard,
+  type CoachTeam,
   type RosterAthlete,
   type CoachTask,
   type CoachNote,
@@ -236,20 +237,6 @@ export {
   type PaymentItem,
   type ClubMetrics,
 } from "./use-club-dashboard";
-
-// School Dashboard
-export {
-  useSchoolDashboard,
-  type School,
-  type SchoolMember,
-  type SchoolCredit,
-} from "./use-school-dashboard";
-
-// School Members
-export {
-  useSchoolMembers,
-  type SchoolMemberDetail,
-} from "./use-school-members";
 
 // Dashr Events
 export {
@@ -303,3 +290,10 @@ export { useTournamentSchedule } from "./use-tournament-schedule";
 
 // Game Scoring
 export { useGameScoring, type ScoreEvent, type ScoreEventType } from "./use-game-scoring";
+
+// Recruiter Pipeline (CRM)
+export {
+  useRecruiterPipeline,
+  type CrmStage,
+  type PipelineEntry,
+} from "./use-recruiter-pipeline";

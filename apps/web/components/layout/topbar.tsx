@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { NotificationDropdown } from '@/components/ui/notification-dropdown';
 import { SearchInput } from '@/components/ui/search-input';
 
-export type UserRole = 'athlete' | 'parent' | 'coach' | 'recruiter' | 'club' | 'admin' | 'school';
+export type UserRole = 'athlete' | 'parent' | 'coach' | 'recruiter' | 'club' | 'admin';
 
 interface TopbarUser {
   name: string;
@@ -32,7 +32,6 @@ const ROLE_LABELS: Record<UserRole, string> = {
   recruiter: 'Recruiter',
   club: 'Club',
   admin: 'Admin',
-  school: 'School',
 };
 
 const ROLE_DASHBOARD_PATHS: Record<UserRole, string> = {
@@ -42,7 +41,6 @@ const ROLE_DASHBOARD_PATHS: Record<UserRole, string> = {
   recruiter: '/recruiter/pipeline',
   club: '/club',
   admin: '/admin',
-  school: '/school',
 };
 
 function RoleSwitcher({

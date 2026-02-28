@@ -37,7 +37,6 @@ function getPageTitle(pathname: string): string {
     roster: 'Roster',
     tasks: 'Team Tasks',
     profile: 'Profile',
-    schools: 'Schools',
     calendar: 'Calendar',
     activity: 'Activity',
     resources: 'Resources',
@@ -50,7 +49,6 @@ function getPageTitle(pathname: string): string {
     scouts: 'Scouts',
     help: 'Help Center',
     new: 'Create New',
-    school: 'School Dashboard',
     members: 'Members',
     billing: 'Billing',
     dashr: 'Dashr Events',
@@ -65,7 +63,6 @@ function getRoleFromPathname(pathname: string): UserRole {
   if (pathname.startsWith('/coach')) return 'coach';
   if (pathname.startsWith('/parent')) return 'parent';
   if (pathname.startsWith('/club')) return 'club';
-  if (pathname.startsWith('/school')) return 'school';
   return 'athlete';
 }
 
@@ -121,13 +118,7 @@ export default function DashboardLayout({
   };
 
   // Determine available roles for role switcher
-  const availableRoles: UserRole[] = ['athlete'];
-  if (user.profile.role === 'recruiter' || user.profile.role === 'coach') {
-    availableRoles.push('recruiter');
-  }
-  if (user.profile.role === 'admin') {
-    availableRoles.push('admin');
-  }
+  const availableRoles: UserRole[] = [user.profile.role as UserRole];
 
   return (
     <div className="flex h-screen w-full bg-[#050505] text-slate-200 font-sans overflow-hidden selection:bg-primary/30 selection:text-primary">

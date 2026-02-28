@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
-export type UserRole = 'athlete' | 'parent' | 'coach' | 'recruiter' | 'club' | 'admin' | 'school';
+export type UserRole = 'athlete' | 'parent' | 'coach' | 'recruiter' | 'club' | 'admin';
 
 interface SidebarUser {
   name: string;
@@ -13,7 +13,6 @@ interface SidebarUser {
   childName?: string; // For parent role
   teamName?: string;  // For coach role
   clubName?: string;  // For club role
-  schoolName?: string; // For school role
 }
 
 interface SidebarProps {
@@ -73,10 +72,9 @@ const parentSettingsItems: NavItem[] = [
 const coachNavItems: NavItem[] = [
   { icon: 'dashboard', label: 'Dashboard', href: '/coach' },
   { icon: 'groups', label: 'Roster', href: '/coach/roster' },
-  { icon: 'radar', label: 'Recruiting', href: '/coach/recruiting' },
+  { icon: 'playlist_add_check', label: 'Tasks', href: '/coach/tasks' },
   { icon: 'trophy', label: 'Tournaments', href: '/tournaments' },
-  { icon: 'calendar_today', label: 'Schedule', href: '/coach/schedule' },
-  { icon: 'playlist_add_check', label: 'Team Tasks', href: '/coach/tasks' },
+  { icon: 'mail', label: 'Messages', href: '/messages' },
 ];
 
 const coachSettingsItems: NavItem[] = [
@@ -93,19 +91,6 @@ const clubNavItems: NavItem[] = [
 
 const clubSettingsItems: NavItem[] = [
   { icon: 'settings', label: 'Settings', href: '/settings' },
-];
-
-const schoolNavItems: NavItem[] = [
-  { icon: 'dashboard', label: 'Dashboard', href: '/school' },
-  { icon: 'trophy', label: 'Tournaments', href: '/tournaments' },
-  { icon: 'group', label: 'Members', href: '/school/members' },
-  { icon: 'speed', label: 'Dashr', href: '/school/dashr' },
-  { icon: 'credit_card', label: 'Billing', href: '/school/billing' },
-  { icon: 'settings', label: 'Settings', href: '/school/settings' },
-];
-
-const schoolSettingsItems: NavItem[] = [
-  { icon: 'settings', label: 'Settings', href: '/school/settings' },
 ];
 
 const adminNavItems: NavItem[] = [
@@ -548,93 +533,6 @@ function ClubSidebar({ user, onSignOut }: { user: SidebarUser; onSignOut?: () =>
   );
 }
 
-function SchoolSidebar({ user, onSignOut }: { user: SidebarUser; onSignOut?: () => void }) {
-  const pathname = usePathname();
-  const schoolName = user.schoolName || 'My School';
-
-  return (
-    <aside className="w-64 border-r border-white/10 flex flex-col justify-between p-4 bg-[#050505] h-full">
-      <div className="flex flex-col gap-6">
-        <div className="flex gap-3 items-center px-2">
-          <div className="flex items-center justify-center size-10 rounded-full bg-primary/10 border border-primary/20">
-            <span className="material-symbols-outlined text-primary text-xl">school</span>
-          </div>
-          <div className="flex flex-col">
-            <h1 className="text-white text-lg font-bold leading-none tracking-tight">RepMax</h1>
-            <p className="text-gray-500 text-xs font-medium uppercase tracking-wider mt-1">School Portal</p>
-          </div>
-        </div>
-
-        <div className="px-2 py-3 bg-[#1F1F22] rounded-lg">
-          <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">Institution</p>
-          <p className="text-white font-semibold text-sm">{schoolName}</p>
-        </div>
-
-        <nav className="flex flex-col gap-1">
-          {schoolNavItems.map((item) => {
-            const isActive = pathname === item.href || (item.href !== '/school' && pathname.startsWith(item.href));
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
-                  isActive
-                    ? 'bg-primary text-black font-bold'
-                    : 'text-gray-400 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
-                <p className="text-sm font-medium">{item.label}</p>
-              </Link>
-            );
-          })}
-        </nav>
-      </div>
-
-      <div className="flex flex-col gap-2">
-        {schoolSettingsItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all"
-          >
-            <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
-            <p className="text-sm font-medium">{item.label}</p>
-          </Link>
-        ))}
-
-        <div className="flex items-center gap-3 px-3 py-3 mt-2 border-t border-white/5">
-          {user.avatarUrl ? (
-            <div className="size-8 rounded-full overflow-hidden">
-              <img
-                src={user.avatarUrl}
-                alt={user.name}
-                className="size-full object-cover"
-              />
-            </div>
-          ) : (
-            <div className="flex items-center justify-center size-8 rounded-full bg-primary/20">
-              <span className="material-symbols-outlined text-primary text-sm">person</span>
-            </div>
-          )}
-          <div className="flex flex-col">
-            <p className="text-white text-sm font-medium">{user.name}</p>
-            <p className="text-gray-500 text-xs">{user.title || 'School Admin'}</p>
-          </div>
-        </div>
-
-        <button
-          onClick={onSignOut}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all"
-        >
-          <span className="material-symbols-outlined text-[20px]">logout</span>
-          <p className="text-sm font-medium">Sign Out</p>
-        </button>
-      </div>
-    </aside>
-  );
-}
-
 function AdminSidebar({ user, onSignOut }: { user: SidebarUser; onSignOut?: () => void }) {
   const pathname = usePathname();
 
@@ -735,8 +633,6 @@ export function Sidebar({ role, user, onSignOut }: SidebarProps) {
       return <RecruiterSidebar user={user} onSignOut={onSignOut} />;
     case 'club':
       return <ClubSidebar user={user} onSignOut={onSignOut} />;
-    case 'school':
-      return <SchoolSidebar user={user} onSignOut={onSignOut} />;
     case 'admin':
       return <AdminSidebar user={user} onSignOut={onSignOut} />;
     default:

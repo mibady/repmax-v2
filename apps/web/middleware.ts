@@ -49,19 +49,6 @@ export async function middleware(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
 
-  // Public routes that don't require authentication
-  const publicRoutes = [
-    "/",
-    "/login",
-    "/signup",
-    "/auth/callback",
-    "/pricing",
-    "/api/webhooks",
-  ];
-  const isPublicRoute = publicRoutes.some(
-    (route) => pathname === route || pathname.startsWith(route)
-  );
-
   // API routes that require authentication
   const protectedApiRoutes = [
     "/api/athletes",
@@ -79,7 +66,6 @@ export async function middleware(request: NextRequest) {
     "/api/coach",
     "/api/club",
     "/api/parent",
-    "/api/schools",
   ];
   const isProtectedApi = protectedApiRoutes.some((route) =>
     pathname.startsWith(route)
@@ -106,7 +92,6 @@ export async function middleware(request: NextRequest) {
     "/admin",
     "/parent",
     "/club",
-    "/school",
     "/dashr",
     "/zone",
     "/messages",

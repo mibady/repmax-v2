@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export type UserRole = "athlete" | "parent" | "coach" | "recruiter" | "club_organizer";
+export type UserRole = "athlete" | "parent" | "coach" | "recruiter" | "club";
 
 interface RoleSwitcherProps {
   currentRole: UserRole;
@@ -22,16 +22,16 @@ const roleConfig: Record<UserRole, { label: string; icon: string; color: string 
     color: "bg-blue-500",
   },
   coach: {
-    label: "Coach",
+    label: "Head Coach",
     icon: "sports",
     color: "bg-green-500",
   },
   recruiter: {
-    label: "Recruiter",
+    label: "College Recruiter",
     icon: "search",
     color: "bg-purple-500",
   },
-  club_organizer: {
+  club: {
     label: "Club Organizer",
     icon: "groups",
     color: "bg-orange-500",
