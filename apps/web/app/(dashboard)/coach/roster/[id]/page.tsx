@@ -17,7 +17,7 @@ export default function CoachRosterDetailPage(): React.JSX.Element {
     if (!confirm('Remove this athlete from your roster? This cannot be undone.')) return;
     setIsRemoving(true);
     try {
-      const res = await fetch(`/api/shortlists?athlete_id=${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/coach/roster?athlete_id=${id}`, { method: 'DELETE' });
       if (res.ok) {
         toast.success('Athlete removed from roster');
         router.push('/coach/roster');

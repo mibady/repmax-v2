@@ -31,10 +31,10 @@ export default function CoachRosterNewPage(): React.JSX.Element {
     setFeedback(null);
 
     try {
-      const res = await fetch('/api/shortlists', {
+      const res = await fetch('/api/coach/roster', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ athlete_id: athleteId, priority: 'medium' }),
+        body: JSON.stringify({ athlete_id: athleteId }),
       });
 
       if (!res.ok) {

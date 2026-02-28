@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useCoachDashboard } from '@/lib/hooks';
 import ComposeMessageModal from '@/components/modals/ComposeMessageModal';
 
@@ -13,7 +14,9 @@ const statusColors: Record<string, { bg: string; text: string; label: string }> 
 };
 
 export default function CoachDashboardPage() {
+  const router = useRouter();
   const {
+    team,
     roster,
     tasks,
     activity,
@@ -22,6 +25,12 @@ export default function CoachDashboardPage() {
     error,
     updateTask,
   } = useCoachDashboard();
+
+  useEffect(() => {
+    if (!isLoading && !team) {
+      router.push('/coach/setup');
+    }
+  }, [isLoading, team, router]);
 
   const [selectedAthletes, setSelectedAthletes] = useState<string[]>([]);
   const [filterPosition, setFilterPosition] = useState<string>('all');

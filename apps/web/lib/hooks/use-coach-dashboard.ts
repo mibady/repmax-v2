@@ -2,6 +2,15 @@
 
 import { useCallback, useEffect, useState } from "react";
 
+export interface CoachTeam {
+  id: string;
+  name: string;
+  school: string;
+  city: string;
+  state: string;
+  zone: string;
+}
+
 export interface RosterAthlete {
   id: string;
   name: string;
@@ -52,6 +61,7 @@ export interface CoachMetrics {
 }
 
 interface UseCoachDashboardReturn {
+  team: CoachTeam | null;
   roster: RosterAthlete[];
   tasks: CoachTask[];
   notes: CoachNote[];
@@ -64,6 +74,7 @@ interface UseCoachDashboardReturn {
 }
 
 export function useCoachDashboard(): UseCoachDashboardReturn {
+  const [team, setTeam] = useState<CoachTeam | null>(null);
   const [roster, setRoster] = useState<RosterAthlete[]>([]);
   const [tasks, setTasks] = useState<CoachTask[]>([]);
   const [notes, setNotes] = useState<CoachNote[]>([]);
@@ -85,6 +96,7 @@ export function useCoachDashboard(): UseCoachDashboardReturn {
       }
 
       const data = await res.json();
+      setTeam(data.coach?.team || null);
       setRoster(data.roster || []);
       setTasks(data.tasks || []);
       setNotes(data.notes || []);
@@ -123,6 +135,7 @@ export function useCoachDashboard(): UseCoachDashboardReturn {
   }, [fetchDashboard]);
 
   return {
+    team,
     roster,
     tasks,
     notes,
