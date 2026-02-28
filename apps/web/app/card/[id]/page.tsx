@@ -4,11 +4,13 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Tables } from "@/types/database";
 import CardActions from "./CardActions";
+import CardQRCode from "./CardQRCode";
 import HighlightVideo from "./HighlightVideo";
 
 type AthleteWithProfile = Tables<"athletes"> & {
   profile: Tables<"profiles"> | null;
   highlights: Tables<"highlights">[];
+  repmax_id?: string | null;
 };
 
 function formatHeight(inches: number | null): string {
@@ -45,6 +47,17 @@ export default async function AthleteCardPage({
   }
 
   const typedAthlete = athleteData as AthleteWithProfile;
+
+  // Record the view — do not await, do not block card render
+  void Promise.resolve(
+    supabase.from("profile_views").insert({
+      athlete_id: typedAthlete.id,
+      viewer_id: null,
+    })
+  ).catch(() => {});
+
+  // Build the canonical card URL using repmax_id if available, else UUID
+  const cardUrl = `https://repmax.io/card/${typedAthlete.repmax_id || typedAthlete.id}`;
 
   // Map to display format
   const athlete = {
@@ -329,8 +342,11 @@ export default async function AthleteCardPage({
           </section>
         </div>
 
+        {/* QR Code */}
+        <CardQRCode url={cardUrl} />
+
         {/* Sticky Footer Actions */}
-        <CardActions athleteId={athlete.id} />
+        <CardActions athleteId={athlete.id} repMaxId={typedAthlete.repmax_id ?? null} athleteName={athlete.name} />
       </main>
     </div>
   );

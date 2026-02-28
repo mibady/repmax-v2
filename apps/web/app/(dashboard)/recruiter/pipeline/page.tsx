@@ -1,16 +1,9 @@
 'use client';
 
 import { useState, useMemo } from "react";
-import { useShortlist, type PipelineStatus, useSubscription } from "@/lib/hooks";
+import { useRecruiterPipeline, type CrmStage, type PipelineEntry, useSubscription } from "@/lib/hooks";
 import { getRecruiterTier } from "@/lib/utils/subscription-tier";
-import type { Tables } from "@/types/database";
 import Link from "next/link";
-
-type ShortlistItem = Tables<"shortlists"> & {
-  athlete: Tables<"athletes"> & {
-    profile: Pick<Tables<"profiles">, "full_name" | "avatar_url"> | null;
-  };
-};
 
 interface ProspectCard {
   id: string;
@@ -26,11 +19,11 @@ interface ProspectCard {
   status?: string;
   isPriority?: boolean;
   notes?: string | null;
-  pipelineStatus: PipelineStatus;
+  stage: CrmStage;
 }
 
 interface PipelineColumn {
-  id: PipelineStatus;
+  id: CrmStage;
   title: string;
   color: string;
   bgColor: string;
@@ -40,7 +33,7 @@ interface PipelineColumn {
 }
 
 const COLUMN_CONFIG: Array<{
-  id: PipelineStatus;
+  id: CrmStage;
   title: string;
   color: string;
   bgColor: string;
@@ -109,33 +102,33 @@ function formatTimeAgo(dateString: string): string {
   return `${Math.floor(diffDays / 30)}mo ago`;
 }
 
-function mapShortlistToProspects(shortlist: ShortlistItem[]): PipelineColumn[] {
+function mapPipelineToColumns(entries: PipelineEntry[]): PipelineColumn[] {
   const columns: PipelineColumn[] = COLUMN_CONFIG.map(config => ({
     ...config,
     count: 0,
     prospects: [],
   }));
 
-  shortlist.forEach(item => {
-    const pipelineStatus = item.pipeline_status || 'identified';
-    const column = columns.find(c => c.id === pipelineStatus);
+  entries.forEach(entry => {
+    const column = columns.find(c => c.id === entry.stage);
 
     if (column) {
+      const profile = Array.isArray(entry.athlete?.profile) ? entry.athlete.profile[0] : entry.athlete?.profile;
       const prospect: ProspectCard = {
-        id: item.id,
-        athleteId: item.athlete_id,
-        name: item.athlete.profile?.full_name || 'Unknown Athlete',
-        school: `${item.athlete.high_school}, ${item.athlete.state}`,
-        position: item.athlete.primary_position,
-        classYear: item.athlete.class_year,
-        zone: item.athlete.zone,
-        stars: item.athlete.star_rating || 3,
-        avatar: item.athlete.profile?.avatar_url || getPlaceholderAvatar(item.athlete_id),
-        lastActivity: formatTimeAgo(item.updated_at),
-        isPriority: item.priority === 'top' || item.priority === 'high',
-        notes: item.notes,
-        status: item.notes || undefined,
-        pipelineStatus,
+        id: entry.id,
+        athleteId: entry.athlete.id,
+        name: profile?.full_name || 'Unknown Athlete',
+        school: `${entry.athlete.high_school || 'Unknown'}, ${entry.athlete.state || ''}`.replace(/, $/, ''),
+        position: entry.athlete.primary_position,
+        classYear: entry.athlete.class_year,
+        zone: entry.athlete.zone,
+        stars: entry.athlete.star_rating || 3,
+        avatar: profile?.avatar_url || getPlaceholderAvatar(entry.athlete.id),
+        lastActivity: formatTimeAgo(entry.last_touch),
+        isPriority: entry.priority === 'top' || entry.priority === 'high',
+        notes: entry.notes,
+        status: entry.notes || undefined,
+        stage: entry.stage,
       };
       column.prospects.push(prospect);
       column.count++;
@@ -145,21 +138,21 @@ function mapShortlistToProspects(shortlist: ShortlistItem[]): PipelineColumn[] {
   return columns;
 }
 
-// Extract unique filter options from shortlist data
-function extractFilterOptions(shortlist: ShortlistItem[]) {
+// Extract unique filter options from pipeline data
+function extractFilterOptions(entries: PipelineEntry[]) {
   const classYears = new Set<number>();
   const positions = new Set<string>();
   const zones = new Set<string>();
 
-  shortlist.forEach(item => {
-    if (item.athlete.class_year) {
-      classYears.add(item.athlete.class_year);
+  entries.forEach(entry => {
+    if (entry.athlete.class_year) {
+      classYears.add(entry.athlete.class_year);
     }
-    if (item.athlete.primary_position) {
-      positions.add(item.athlete.primary_position);
+    if (entry.athlete.primary_position) {
+      positions.add(entry.athlete.primary_position);
     }
-    if (item.athlete.zone) {
-      zones.add(item.athlete.zone);
+    if (entry.athlete.zone) {
+      zones.add(entry.athlete.zone);
     }
   });
 
@@ -170,30 +163,27 @@ function extractFilterOptions(shortlist: ShortlistItem[]) {
   };
 }
 
-// Filter shortlist based on selected filters
-function filterShortlist(
-  shortlist: ShortlistItem[],
+// Filter pipeline entries based on selected filters
+function filterPipeline(
+  entries: PipelineEntry[],
   filters: { classYear: string; position: string; zone: string }
-): ShortlistItem[] {
-  return shortlist.filter(item => {
-    // Filter by class year
+): PipelineEntry[] {
+  return entries.filter(entry => {
     if (filters.classYear !== 'all') {
       const selectedYear = parseInt(filters.classYear, 10);
-      if (item.athlete.class_year !== selectedYear) {
+      if (entry.athlete.class_year !== selectedYear) {
         return false;
       }
     }
 
-    // Filter by position
     if (filters.position !== 'all') {
-      if (item.athlete.primary_position !== filters.position) {
+      if (entry.athlete.primary_position !== filters.position) {
         return false;
       }
     }
 
-    // Filter by zone
     if (filters.zone !== 'all') {
-      if (item.athlete.zone !== filters.zone) {
+      if (entry.athlete.zone !== filters.zone) {
         return false;
       }
     }
@@ -217,12 +207,12 @@ function StarRating({ count }: { count: number }) {
 function ProspectCardComponent({
   prospect,
   columnId,
-  onStatusChange,
+  onStageChange,
   isViewOnly = false,
 }: {
   prospect: ProspectCard;
   columnId: string;
-  onStatusChange: (athleteId: string, newStatus: PipelineStatus) => void;
+  onStageChange: (pipelineId: string, newStage: CrmStage) => void;
   isViewOnly?: boolean;
 }) {
   const isOffered = columnId === 'offered';
@@ -309,7 +299,7 @@ function ProspectCardComponent({
             <button
               onClick={(e) => {
                 e.preventDefault();
-                onStatusChange(prospect.athleteId, prevStatus.id);
+                onStageChange(prospect.id, prevStatus.id);
               }}
               className="flex items-center gap-1 text-[10px] text-gray-500 hover:text-white transition-colors"
             >
@@ -322,7 +312,7 @@ function ProspectCardComponent({
             <button
               onClick={(e) => {
                 e.preventDefault();
-                onStatusChange(prospect.athleteId, nextStatus.id);
+                onStageChange(prospect.id, nextStatus.id);
               }}
               className="flex items-center gap-1 text-[10px] text-gray-500 hover:text-white transition-colors"
             >
@@ -386,28 +376,27 @@ function EmptyState() {
 }
 
 export default function RecruiterPipelinePage() {
-  const { shortlist, isLoading, updateStatus, isPending } = useShortlist();
+  const { pipeline, isLoading, moveToStage } = useRecruiterPipeline();
   const { subscription, isLoading: subLoading } = useSubscription();
   const tier = getRecruiterTier(subscription?.plan?.slug);
   const isViewOnly = tier === 'free';
 
-  // All hooks must be called before any early returns (React rules of hooks)
   const [classYearFilter, setClassYearFilter] = useState<string>('all');
   const [positionFilter, setPositionFilter] = useState<string>('all');
   const [zoneFilter, setZoneFilter] = useState<string>('all');
 
-  const [draggedAthleteId, setDraggedAthleteId] = useState<string | null>(null);
+  const [draggedPipelineId, setDraggedPipelineId] = useState<string | null>(null);
   const [dragOverColumnId, setDragOverColumnId] = useState<string | null>(null);
 
-  const filterOptions = useMemo(() => extractFilterOptions(shortlist), [shortlist]);
+  const filterOptions = useMemo(() => extractFilterOptions(pipeline), [pipeline]);
 
-  const filteredShortlist = useMemo(
-    () => filterShortlist(shortlist, {
+  const filteredPipeline = useMemo(
+    () => filterPipeline(pipeline, {
       classYear: classYearFilter,
       position: positionFilter,
       zone: zoneFilter,
     }),
-    [shortlist, classYearFilter, positionFilter, zoneFilter]
+    [pipeline, classYearFilter, positionFilter, zoneFilter]
   );
 
   if (isLoading || subLoading) {
@@ -418,18 +407,18 @@ export default function RecruiterPipelinePage() {
     );
   }
 
-  const pipelineData = mapShortlistToProspects(filteredShortlist);
+  const pipelineData = mapPipelineToColumns(filteredPipeline);
   const totalProspects = pipelineData.reduce((sum, col) => sum + col.count, 0);
-  const totalUnfiltered = shortlist.length;
+  const totalUnfiltered = pipeline.length;
 
-  const handleStatusChange = async (athleteId: string, newStatus: PipelineStatus) => {
-    await updateStatus(athleteId, newStatus);
+  const handleStageChange = async (pipelineId: string, newStage: CrmStage) => {
+    await moveToStage(pipelineId, newStage);
   };
 
-  const handleDragStart = (e: React.DragEvent, athleteId: string) => {
-    e.dataTransfer.setData("text/plain", athleteId);
+  const handleDragStart = (e: React.DragEvent, pipelineId: string) => {
+    e.dataTransfer.setData("text/plain", pipelineId);
     e.dataTransfer.effectAllowed = "move";
-    setDraggedAthleteId(athleteId);
+    setDraggedPipelineId(pipelineId);
   };
 
   const handleDragOver = (e: React.DragEvent, columnId: string) => {
@@ -442,18 +431,18 @@ export default function RecruiterPipelinePage() {
     setDragOverColumnId(null);
   };
 
-  const handleDrop = async (e: React.DragEvent, columnStatus: PipelineStatus) => {
+  const handleDrop = async (e: React.DragEvent, columnStage: CrmStage) => {
     e.preventDefault();
-    const athleteId = e.dataTransfer.getData("text/plain");
-    setDraggedAthleteId(null);
+    const pipelineId = e.dataTransfer.getData("text/plain");
+    setDraggedPipelineId(null);
     setDragOverColumnId(null);
-    if (athleteId) {
-      await handleStatusChange(athleteId, columnStatus);
+    if (pipelineId) {
+      await handleStageChange(pipelineId, columnStage);
     }
   };
 
   const handleDragEnd = () => {
-    setDraggedAthleteId(null);
+    setDraggedPipelineId(null);
     setDragOverColumnId(null);
   };
 
@@ -475,9 +464,6 @@ export default function RecruiterPipelinePage() {
           <span className="text-gray-500 text-sm font-mono">
             {totalProspects} prospect{totalProspects !== 1 ? 's' : ''}
           </span>
-          {isPending && (
-            <span className="text-xs text-primary animate-pulse">Updating...</span>
-          )}
         </div>
       </div>
 
@@ -609,14 +595,14 @@ export default function RecruiterPipelinePage() {
                     <div
                       key={prospect.id}
                       draggable={!isViewOnly}
-                      onDragStart={isViewOnly ? undefined : (e) => handleDragStart(e, prospect.athleteId)}
+                      onDragStart={isViewOnly ? undefined : (e) => handleDragStart(e, prospect.id)}
                       onDragEnd={isViewOnly ? undefined : handleDragEnd}
-                      className={`transition-opacity ${draggedAthleteId === prospect.athleteId ? 'opacity-40' : 'opacity-100'}`}
+                      className={`transition-opacity ${draggedPipelineId === prospect.id ? 'opacity-40' : 'opacity-100'}`}
                     >
                       <ProspectCardComponent
                         prospect={prospect}
                         columnId={column.id}
-                        onStatusChange={handleStatusChange}
+                        onStageChange={handleStageChange}
                         isViewOnly={isViewOnly}
                       />
                     </div>

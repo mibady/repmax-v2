@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useAthlete, useShortlist, type PipelineStatus } from '@/lib/hooks';
+import { useAthlete, useShortlist, useRecruiterPipeline, type CrmStage } from '@/lib/hooks';
 import { logCommunication, getAthleteContactEmail } from '@/lib/actions/communication-actions';
 import type { Tables } from '@/types/database';
 
@@ -246,7 +246,8 @@ export default function ProspectDetailPage() {
   const athleteId = params.id as string;
 
   const { athlete, isLoading, error } = useAthlete(athleteId);
-  const { shortlist, add, remove, isInShortlist, updateStatus } = useShortlist();
+  const { shortlist, add, remove, isInShortlist } = useShortlist();
+  const { pipeline, addToPipeline, moveToStage } = useRecruiterPipeline();
   const [toast, setToast] = useState<string | null>(null);
   const [isEditingTags, setIsEditingTags] = useState(false);
   const [customTags, setCustomTags] = useState<string[]>([]);
@@ -258,7 +259,10 @@ export default function ProspectDetailPage() {
 
   const shortlistItem = shortlist.find(item => item.athlete_id === athleteId);
   const isOnShortlist = isInShortlist(athleteId);
-  const currentStatus = shortlistItem?.pipeline_status || 'identified';
+  // CRM Pipeline state
+  const pipelineEntry = pipeline.find(e => e.athlete.id === athleteId);
+  const isInPipeline = !!pipelineEntry;
+  const currentPipelineStage = pipelineEntry?.stage || 'identified';
 
   const handleAddToShortlist = async () => {
     await add(athleteId);
@@ -268,8 +272,15 @@ export default function ProspectDetailPage() {
     await remove(athleteId);
   };
 
-  const handleStatusChange = async (newStatus: PipelineStatus) => {
-    await updateStatus(athleteId, newStatus);
+  const handleAddToPipeline = async () => {
+    await addToPipeline(athleteId);
+    showToast('Added to pipeline');
+  };
+
+  const handlePipelineStageChange = async (newStage: CrmStage) => {
+    if (pipelineEntry) {
+      await moveToStage(pipelineEntry.id, newStage);
+    }
   };
 
   const showToast = (message: string) => {
@@ -367,14 +378,14 @@ export default function ProspectDetailPage() {
           {/* CRM Control Bar */}
           <div className="bg-[#2a271d] p-4 rounded-xl border border-[#433d28] flex flex-wrap gap-4 items-center justify-between">
             <div className="flex gap-3 flex-wrap">
-              {/* Shortlist Toggle */}
-              {isOnShortlist ? (
+              {/* Pipeline Controls */}
+              {isInPipeline ? (
                 <>
-                  {/* Stage Dropdown */}
+                  {/* Pipeline Stage Dropdown */}
                   <div className="relative">
                     <select
-                      value={currentStatus}
-                      onChange={(e) => handleStatusChange(e.target.value as PipelineStatus)}
+                      value={currentPipelineStage}
+                      onChange={(e) => handlePipelineStageChange(e.target.value as CrmStage)}
                       className="appearance-none bg-[#363225] text-white pl-9 pr-8 py-2 rounded-lg border border-[#433d28] focus:border-primary focus:outline-none text-sm font-medium cursor-pointer min-w-[140px]"
                     >
                       <option value="identified">Identified</option>
@@ -391,41 +402,51 @@ export default function ProspectDetailPage() {
                       expand_more
                     </span>
                   </div>
-
-                  {/* Remove from Pipeline */}
-                  <button
-                    onClick={handleRemoveFromShortlist}
-                    className="flex items-center gap-2 bg-red-500/20 px-3 py-2 rounded-lg border border-red-500/40 hover:bg-red-500/30 transition-colors"
-                  >
-                    <span className="material-symbols-outlined text-red-500 text-[20px]">person_remove</span>
-                    <span className="text-red-500 text-sm font-medium">Remove</span>
-                  </button>
                 </>
               ) : (
                 <button
-                  onClick={handleAddToShortlist}
+                  onClick={handleAddToPipeline}
                   className="flex items-center gap-2 bg-primary/20 px-4 py-2 rounded-lg border border-primary/40 hover:bg-primary/30 transition-colors"
                 >
                   <span className="material-symbols-outlined text-primary text-[20px]">person_add</span>
                   <span className="text-primary text-sm font-medium">Add to Pipeline</span>
                 </button>
               )}
+
+              {/* Shortlist Bookmark Toggle */}
+              {isOnShortlist ? (
+                <button
+                  onClick={handleRemoveFromShortlist}
+                  className="flex items-center gap-2 bg-[#363225] px-3 py-2 rounded-lg border border-[#433d28] hover:bg-[#363225]/80 transition-colors"
+                >
+                  <span className="material-symbols-outlined text-primary text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>bookmark</span>
+                  <span className="text-[#c3b998] text-sm font-medium">Saved</span>
+                </button>
+              ) : (
+                <button
+                  onClick={handleAddToShortlist}
+                  className="flex items-center gap-2 bg-[#363225] px-3 py-2 rounded-lg border border-[#433d28] hover:bg-[#363225]/80 transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[#c3b998] text-[20px]">bookmark</span>
+                  <span className="text-[#c3b998] text-sm font-medium">Save</span>
+                </button>
+              )}
             </div>
 
             {/* Priority indicator */}
-            {isOnShortlist && shortlistItem?.priority && (
+            {isInPipeline && pipelineEntry?.priority && (
               <div className="flex items-center gap-2 pl-4 border-l border-[#433d28]">
                 <span
                   className={`material-symbols-outlined text-[20px] ${
-                    shortlistItem.priority === 'top' || shortlistItem.priority === 'high'
+                    pipelineEntry.priority === 'top' || pipelineEntry.priority === 'high'
                       ? 'text-primary'
                       : 'text-[#c3b998]'
                   }`}
-                  style={{ fontVariationSettings: shortlistItem.priority === 'top' ? "'FILL' 1" : "'FILL' 0" }}
+                  style={{ fontVariationSettings: pipelineEntry.priority === 'top' ? "'FILL' 1" : "'FILL' 0" }}
                 >
                   flag
                 </span>
-                <span className="text-white text-sm font-medium capitalize">{shortlistItem.priority} Priority</span>
+                <span className="text-white text-sm font-medium capitalize">{pipelineEntry.priority} Priority</span>
               </div>
             )}
           </div>
@@ -486,9 +507,9 @@ export default function ProspectDetailPage() {
               <div className="flex justify-between items-center mb-2">
                 <h3 className="text-white font-semibold text-sm">Notes</h3>
               </div>
-              {shortlistItem?.notes ? (
+              {(pipelineEntry?.notes || shortlistItem?.notes) ? (
                 <p className="text-[#c3b998] text-sm leading-relaxed flex-1">
-                  &quot;{shortlistItem.notes}&quot;
+                  &quot;{pipelineEntry?.notes || shortlistItem?.notes}&quot;
                 </p>
               ) : (
                 <p className="text-[#c3b998]/50 text-sm italic flex-1">
