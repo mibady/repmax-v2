@@ -3,13 +3,14 @@
 import { useState, useCallback } from 'react';
 import { useAdminUsers, type AdminUser } from '@/lib/hooks';
 
-const ROLES = ['all', 'athlete', 'coach', 'recruiter', 'parent', 'admin'] as const;
+const ROLES = ['all', 'athlete', 'coach', 'recruiter', 'parent', 'club', 'admin'] as const;
 
 const roleBadgeColors: Record<string, { bg: string; text: string }> = {
   athlete: { bg: 'bg-blue-500/10', text: 'text-blue-400' },
   coach: { bg: 'bg-green-500/10', text: 'text-green-400' },
   recruiter: { bg: 'bg-purple-500/10', text: 'text-purple-400' },
   parent: { bg: 'bg-yellow-500/10', text: 'text-yellow-400' },
+  club: { bg: 'bg-orange-500/10', text: 'text-orange-400' },
   admin: { bg: 'bg-red-500/10', text: 'text-red-400' },
 };
 
