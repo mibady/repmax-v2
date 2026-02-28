@@ -91,7 +91,7 @@ export default function ZonePulseBannerWest({
       </div>
 
       {/* Custom styles from Stitch */}
-      <style jsx>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         .pulse-dot {
           box-shadow: 0 0 0 0 rgba(137, 86, 245, 0.7);
           animation: pulse-purple 2s infinite;
@@ -113,7 +113,7 @@ export default function ZonePulseBannerWest({
             box-shadow: 0 0 0 0 rgba(137, 86, 245, 0);
           }
         }
-      `}</style>
+      ` }} />
     </>
   );
 }

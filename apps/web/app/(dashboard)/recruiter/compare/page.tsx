@@ -548,7 +548,7 @@ export default function ComparePage() {
         </div>
       </div>
 
-      <style jsx>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         .custom-scrollbar::-webkit-scrollbar {
           height: 12px;
           width: 12px;
@@ -567,7 +567,7 @@ export default function ComparePage() {
         .icon-filled {
           font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
-      `}</style>
+      ` }} />
     </div>
   );
 }

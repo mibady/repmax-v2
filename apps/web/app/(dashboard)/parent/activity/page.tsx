@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useParentDashboard } from '@/lib/hooks';
 
-export default function ParentActivityPage(): JSX.Element {
+export default function ParentActivityPage() {
   const { activity, isLoading, error, refresh } = useParentDashboard();
 
   if (isLoading) {

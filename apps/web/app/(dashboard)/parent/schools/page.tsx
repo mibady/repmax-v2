@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useParentDashboard } from '@/lib/hooks';
 
-export default function ParentSchoolsPage(): JSX.Element {
+export default function ParentSchoolsPage() {
   const { schools, isLoading, error } = useParentDashboard();
 
   if (isLoading) {

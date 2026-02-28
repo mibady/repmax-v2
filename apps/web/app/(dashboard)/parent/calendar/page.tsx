@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useParentDashboard } from '@/lib/hooks';
 
-export default function ParentCalendarPage(): JSX.Element {
+export default function ParentCalendarPage() {
   const { calendarEvents, isLoading, error } = useParentDashboard();
 
   if (isLoading) {
