@@ -13,42 +13,42 @@ export default function CoachRosterEditPage(): React.JSX.Element {
 
   const [priority, setPriority] = useState<string>('medium');
   const [notes, setNotes] = useState<string>('');
-  const [shortlistId, setShortlistId] = useState<string | null>(null);
-  const [loadingShortlist, setLoadingShortlist] = useState(true);
+  const [rosterFound, setRosterFound] = useState(false);
+  const [loadingRoster, setLoadingRoster] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  // Fetch the shortlist entry for this athlete
+  // Fetch the roster entry for this athlete from the coach dashboard
   useEffect(() => {
-    async function fetchShortlistEntry(): Promise<void> {
+    async function fetchRosterEntry(): Promise<void> {
       try {
-        const res = await fetch('/api/shortlists');
+        const res = await fetch('/api/coach/dashboard');
         if (!res.ok) {
-          setLoadingShortlist(false);
+          setLoadingRoster(false);
           return;
         }
         const data = await res.json();
-        const entry = data.shortlists?.find(
-          (s: { athlete_id: string; id: string; priority: string; notes: string | null }) => s.athlete_id === id
+        const entry = data.roster?.find(
+          (r: { id: string; priority?: string; notes?: string }) => r.id === id
         );
         if (entry) {
-          setShortlistId(entry.id);
+          setRosterFound(true);
           setPriority(entry.priority || 'medium');
           setNotes(entry.notes || '');
         }
       } catch {
         // Ignore -- page still works for display
       } finally {
-        setLoadingShortlist(false);
+        setLoadingRoster(false);
       }
     }
 
-    if (id) fetchShortlistEntry();
+    if (id) fetchRosterEntry();
   }, [id]);
 
   const handleSave = async (): Promise<void> => {
-    if (!shortlistId) {
-      setSaveMessage({ type: 'error', text: 'No shortlist entry found for this athlete' });
+    if (!rosterFound) {
+      setSaveMessage({ type: 'error', text: 'No roster entry found for this athlete' });
       return;
     }
 
@@ -56,10 +56,10 @@ export default function CoachRosterEditPage(): React.JSX.Element {
     setSaveMessage(null);
 
     try {
-      const res = await fetch(`/api/shortlists/${shortlistId}`, {
+      const res = await fetch('/api/coach/roster', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priority, notes }),
+        body: JSON.stringify({ athlete_id: id, priority, notes }),
       });
 
       if (!res.ok) {
@@ -76,7 +76,7 @@ export default function CoachRosterEditPage(): React.JSX.Element {
     }
   };
 
-  if (isLoading || loadingShortlist) {
+  if (isLoading || loadingRoster) {
     return (
       <div className="flex-1 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
@@ -171,7 +171,7 @@ export default function CoachRosterEditPage(): React.JSX.Element {
           <div className="flex items-center gap-3 mt-6">
             <button
               onClick={handleSave}
-              disabled={saving || !shortlistId}
+              disabled={saving || !rosterFound}
               className="flex items-center gap-2 bg-primary text-black font-bold px-5 py-2.5 rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
             >
               {saving ? (
@@ -194,10 +194,10 @@ export default function CoachRosterEditPage(): React.JSX.Element {
             </button>
           </div>
 
-          {!shortlistId && (
+          {!rosterFound && (
             <p className="text-yellow-400 text-xs mt-3">
               <span className="material-symbols-outlined text-[14px] align-middle mr-1">warning</span>
-              No shortlist entry found for this athlete. Save is disabled.
+              No roster entry found for this athlete. Save is disabled.
             </p>
           )}
         </div>

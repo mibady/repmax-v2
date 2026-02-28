@@ -136,7 +136,7 @@ export default function DashboardLayout({
         </div>
       </main>
 
-      <style jsx global>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         ::-webkit-scrollbar {
           width: 8px;
           height: 8px;
@@ -151,7 +151,7 @@ export default function DashboardLayout({
         ::-webkit-scrollbar-thumb:hover {
           background: #444;
         }
-      `}</style>
+      `}} />
     </div>
   );
 }
