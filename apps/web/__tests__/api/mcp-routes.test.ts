@@ -13,7 +13,7 @@ import { GET as getZoneDetail } from '@/app/api/mcp/zones/[zone]/route';
 import { GET as getProspects } from '@/app/api/mcp/prospects/route';
 import { GET as getPrograms } from '@/app/api/mcp/programs/route';
 import { GET as getCalendar } from '@/app/api/mcp/calendar/route';
-import { getCached, setCache } from '@/lib/utils/mcp-cache';
+import { getCached } from '@/lib/utils/mcp-cache';
 
 /** Helper: create a request with nextUrl.searchParams (for routes that use NextRequest) */
 function createNextRequest(url: string): any {
@@ -24,7 +24,7 @@ function createNextRequest(url: string): any {
 }
 
 // ---------------------------------------------------------------------------
-// GET /api/mcp/zones
+// GET /api/mcp/zones  (public — no auth required)
 // ---------------------------------------------------------------------------
 describe('GET /api/mcp/zones', () => {
   beforeEach(() => {
@@ -32,12 +32,16 @@ describe('GET /api/mcp/zones', () => {
     vi.mocked(getCached).mockReturnValue(null);
   });
 
-  it('returns 401 when unauthenticated', async () => {
+  it('returns 200 even when unauthenticated (public endpoint)', async () => {
     mockUnauthenticated();
+    configureMockSupabase({
+      athletes: { data: [], error: null },
+    });
+
     const response = await getZones();
-    expect(response.status).toBe(401);
+    expect(response.status).toBe(200);
     const body = await response.json();
-    expect(body.error).toBe('Unauthorized');
+    expect(body.zones).toHaveLength(6);
   });
 
   it('returns all 6 zones with correct structure', async () => {
@@ -154,7 +158,7 @@ describe('GET /api/mcp/zones', () => {
 });
 
 // ---------------------------------------------------------------------------
-// GET /api/mcp/zones/[zone]
+// GET /api/mcp/zones/[zone]  (public — no auth required)
 // ---------------------------------------------------------------------------
 describe('GET /api/mcp/zones/[zone]', () => {
   beforeEach(() => {
@@ -162,15 +166,17 @@ describe('GET /api/mcp/zones/[zone]', () => {
     vi.mocked(getCached).mockReturnValue(null);
   });
 
-  it('returns 401 when unauthenticated', async () => {
+  it('returns 200 even when unauthenticated (public endpoint)', async () => {
     mockUnauthenticated();
+    configureMockSupabase({
+      athletes: { data: [], error: null },
+    });
+
     const request = createMockRequest('http://localhost:3000/api/mcp/zones/SOUTHWEST');
     const response = await getZoneDetail(request, {
       params: Promise.resolve({ zone: 'SOUTHWEST' }),
     });
-    expect(response.status).toBe(401);
-    const body = await response.json();
-    expect(body.error).toBe('Unauthorized');
+    expect(response.status).toBe(200);
   });
 
   it('returns zone info, programs, and prospects for a valid zone', async () => {
@@ -281,7 +287,7 @@ describe('GET /api/mcp/zones/[zone]', () => {
 });
 
 // ---------------------------------------------------------------------------
-// GET /api/mcp/prospects
+// GET /api/mcp/prospects  (public — no auth required)
 // ---------------------------------------------------------------------------
 describe('GET /api/mcp/prospects', () => {
   const mockAthletes = [
@@ -328,13 +334,15 @@ describe('GET /api/mcp/prospects', () => {
     vi.mocked(getCached).mockReturnValue(null);
   });
 
-  it('returns 401 when unauthenticated', async () => {
+  it('returns 200 even when unauthenticated (public endpoint)', async () => {
     mockUnauthenticated();
+    configureMockSupabase({
+      athletes: { data: [], count: 0, error: null },
+    });
+
     const request = createNextRequest('http://localhost:3000/api/mcp/prospects');
     const response = await getProspects(request);
-    expect(response.status).toBe(401);
-    const body = await response.json();
-    expect(body.error).toBe('Unauthorized');
+    expect(response.status).toBe(200);
   });
 
   it('returns all prospects when no filters applied', async () => {
@@ -426,7 +434,7 @@ describe('GET /api/mcp/prospects', () => {
 });
 
 // ---------------------------------------------------------------------------
-// GET /api/mcp/programs (static data, no DB)
+// GET /api/mcp/programs (static data, no DB)  (public — no auth required)
 // ---------------------------------------------------------------------------
 describe('GET /api/mcp/programs', () => {
   beforeEach(() => {
@@ -434,13 +442,13 @@ describe('GET /api/mcp/programs', () => {
     vi.mocked(getCached).mockReturnValue(null);
   });
 
-  it('returns 401 when unauthenticated', async () => {
+  it('returns 200 even when unauthenticated (public endpoint)', async () => {
     mockUnauthenticated();
     const request = createNextRequest('http://localhost:3000/api/mcp/programs');
     const response = await getPrograms(request);
-    expect(response.status).toBe(401);
+    expect(response.status).toBe(200);
     const body = await response.json();
-    expect(body.error).toBe('Unauthorized');
+    expect(body.programs.length).toBeGreaterThan(0);
   });
 
   it('returns all programs sorted by rating descending', async () => {
@@ -493,7 +501,7 @@ describe('GET /api/mcp/programs', () => {
 });
 
 // ---------------------------------------------------------------------------
-// GET /api/mcp/calendar (no DB, date-computed)
+// GET /api/mcp/calendar (no DB, date-computed)  (public — no auth required)
 // ---------------------------------------------------------------------------
 describe('GET /api/mcp/calendar', () => {
   afterEach(() => {
@@ -505,12 +513,15 @@ describe('GET /api/mcp/calendar', () => {
     vi.mocked(getCached).mockReturnValue(null);
   });
 
-  it('returns 401 when unauthenticated', async () => {
+  it('returns 200 even when unauthenticated (public endpoint)', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-10-01T12:00:00Z'));
     mockUnauthenticated();
+
     const response = await getCalendar();
-    expect(response.status).toBe(401);
+    expect(response.status).toBe(200);
     const body = await response.json();
-    expect(body.error).toBe('Unauthorized');
+    expect(body.calendar).toBeDefined();
   });
 
   it('returns calendar context with valid structure and non-negative daysUntilSigning', async () => {

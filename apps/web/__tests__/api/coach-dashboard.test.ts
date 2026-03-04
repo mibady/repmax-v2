@@ -10,12 +10,21 @@ import { coachDavis } from '../fixtures/users';
 import { GET } from '@/app/api/coach/dashboard/route';
 
 // ---------------------------------------------------------------------------
-// Mock data — matches actual route queries
+// Mock data — matches actual route queries (teams/team_rosters based)
 // ---------------------------------------------------------------------------
 const mockProfile = {
   id: coachDavis.id,
   full_name: 'James Davis',
   avatar_url: null,
+};
+
+const mockTeam = {
+  id: 'team-001',
+  name: 'Allen Eagles',
+  school_name: 'Allen High School',
+  city: 'Dallas',
+  state: 'TX',
+  zone: 'SOUTHWEST',
 };
 
 const mockCoach = {
@@ -26,41 +35,35 @@ const mockCoach = {
   title: 'Head Coach',
 };
 
-const mockShortlistData = [
+const mockRosterRows = [
   {
-    id: 'sl-1',
+    id: 'tr-1',
+    added_at: '2026-02-10T10:00:00Z',
     priority: 'high',
     notes: 'Top prospect',
-    created_at: '2026-02-10T10:00:00Z',
     athlete: {
       id: 'ath-r1',
       primary_position: 'WR',
       class_year: 2026,
       gpa: 3.5,
       offers_count: 4,
-      profile_id: 'p-r1',
       profile: { full_name: 'Andre Mitchell', avatar_url: null },
     },
   },
   {
-    id: 'sl-2',
+    id: 'tr-2',
+    added_at: '2026-02-09T08:00:00Z',
     priority: 'medium',
     notes: null,
-    created_at: '2026-02-09T08:00:00Z',
     athlete: {
       id: 'ath-r2',
       primary_position: 'RB',
       class_year: 2026,
       gpa: 3.2,
       offers_count: 2,
-      profile_id: 'p-r2',
       profile: { full_name: 'Devon Brooks', avatar_url: null },
     },
   },
-];
-
-const mockCommittedOffers = [
-  { athlete_id: 'ath-r1' }, // Andre Mitchell is committed
 ];
 
 const mockCoachTasks = [
@@ -90,10 +93,10 @@ const mockMessages = [
   {
     id: 'm-1',
     subject: 'Recruiting update',
-    body: 'Great game last Friday',
-    read: false,
+    content: 'Great game last Friday',
     created_at: '2026-02-10T15:00:00Z',
-    sender: { full_name: 'Andre Mitchell', avatar_url: null },
+    sender_id: 'sender-1',
+    sender: { full_name: 'Andre Mitchell' },
   },
 ];
 
@@ -128,29 +131,13 @@ describe('GET /api/coach/dashboard', () => {
     expect(json.error).toBe('Profile not found');
   });
 
-  it('returns 404 when coach profile not found', async () => {
+  it('returns 200 with empty state when coach has no team or data', async () => {
     mockAuthenticated(coachDavis);
     configureMockSupabase({
       profiles: { data: mockProfile, error: null },
+      teams: { data: null, error: null },
       coaches: { data: null, error: null },
-    });
-
-    const response = await GET();
-    const json = await response.json();
-
-    expect(response.status).toBe(404);
-    expect(json.error).toBe('Coach profile not found');
-  });
-
-  it('returns 200 with empty state when coach has no data', async () => {
-    mockAuthenticated(coachDavis);
-    configureMockSupabase({
-      profiles: { data: mockProfile, error: null },
-      coaches: { data: mockCoach, error: null },
-      shortlists: { data: [], error: null },
-      offers: { data: [], error: null },
-      coach_tasks: { data: [], error: null },
-      messages: { data: [], error: null, count: 0 },
+      messages: { data: [], error: null },
     });
 
     const response = await GET();
@@ -161,21 +148,17 @@ describe('GET /api/coach/dashboard', () => {
     expect(json.tasks).toEqual([]);
     expect(json.activity).toEqual([]);
     expect(json.metrics.totalAthletes).toBe(0);
-    expect(json.metrics.activeAthletes).toBe(0);
-    expect(json.metrics.committedAthletes).toBe(0);
     expect(json.metrics.pendingTasks).toBe(0);
-    expect(json.metrics.totalOffers).toBe(0);
   });
 
   it('returns full dashboard payload on happy path', async () => {
     mockAuthenticated(coachDavis);
     configureMockSupabase({
       profiles: { data: mockProfile, error: null },
+      teams: { data: mockTeam, error: null },
+      team_rosters: { data: mockRosterRows, error: null },
       coaches: { data: mockCoach, error: null },
-      shortlists: { data: mockShortlistData, error: null },
-      offers: { data: mockCommittedOffers, error: null },
       coach_tasks: { data: mockCoachTasks, error: null },
-      athletes: { data: [], error: null },
       messages: { data: mockMessages, error: null },
     });
 
@@ -194,10 +177,11 @@ describe('GET /api/coach/dashboard', () => {
     mockAuthenticated(coachDavis);
     configureMockSupabase({
       profiles: { data: mockProfile, error: null },
+      teams: { data: mockTeam, error: null },
+      team_rosters: { data: [], error: null },
       coaches: { data: mockCoach, error: null },
-      shortlists: { data: [], error: null },
       coach_tasks: { data: [], error: null },
-      messages: { data: [], error: null, count: 0 },
+      messages: { data: [], error: null },
     });
 
     const response = await GET();
@@ -210,36 +194,12 @@ describe('GET /api/coach/dashboard', () => {
     expect(json.coach.title).toBe('Head Coach');
   });
 
-  it('derives roster status from committed offers', async () => {
-    mockAuthenticated(coachDavis);
-    configureMockSupabase({
-      profiles: { data: mockProfile, error: null },
-      coaches: { data: mockCoach, error: null },
-      shortlists: { data: mockShortlistData, error: null },
-      offers: { data: mockCommittedOffers, error: null },
-      coach_tasks: { data: [], error: null },
-      athletes: { data: [], error: null },
-      messages: { data: [], error: null },
-    });
-
-    const response = await GET();
-    const json = await response.json();
-
-    // ath-r1 has a committed offer → "committed"
-    const andre = json.roster.find((r: { name: string }) => r.name === 'Andre Mitchell');
-    expect(andre.status).toBe('committed');
-
-    // ath-r2 has no committed offer → "active"
-    const devon = json.roster.find((r: { name: string }) => r.name === 'Devon Brooks');
-    expect(devon.status).toBe('active');
-  });
-
   it('returns tasks from coach_tasks table', async () => {
     mockAuthenticated(coachDavis);
     configureMockSupabase({
       profiles: { data: mockProfile, error: null },
+      teams: { data: null, error: null },
       coaches: { data: mockCoach, error: null },
-      shortlists: { data: [], error: null },
       coach_tasks: { data: mockCoachTasks, error: null },
       messages: { data: [], error: null },
     });
@@ -259,21 +219,17 @@ describe('GET /api/coach/dashboard', () => {
     mockAuthenticated(coachDavis);
     configureMockSupabase({
       profiles: { data: mockProfile, error: null },
+      teams: { data: mockTeam, error: null },
+      team_rosters: { data: mockRosterRows, error: null },
       coaches: { data: mockCoach, error: null },
-      shortlists: { data: mockShortlistData, error: null },
-      offers: { data: mockCommittedOffers, error: null },
       coach_tasks: { data: mockCoachTasks, error: null },
-      athletes: { data: [], error: null },
       messages: { data: mockMessages, error: null },
     });
 
     const response = await GET();
     const json = await response.json();
 
-    expect(json.metrics.totalAthletes).toBe(2);
-    expect(json.metrics.committedAthletes).toBe(1); // ath-r1
-    expect(json.metrics.activeAthletes).toBe(1); // ath-r2
+    expect(json.metrics.totalAthletes).toBe(2); // 2 roster entries
     expect(json.metrics.pendingTasks).toBe(1); // task-1 is pending, task-2 is completed
-    expect(json.metrics.totalOffers).toBe(6); // 4 + 2
   });
 });

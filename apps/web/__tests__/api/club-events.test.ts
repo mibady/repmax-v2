@@ -55,8 +55,30 @@ describe('POST /api/club/events', () => {
     expect(json.error).toBe('Unauthorized');
   });
 
+  it('returns 403 when user does not have club role', async () => {
+    mockAuthenticated(mikeTorres);
+    configureMockSupabase({
+      profiles: { data: { role: 'athlete' }, error: null },
+    });
+
+    const request = createMockRequest(BASE, {
+      method: 'POST',
+      body: validBody,
+    });
+
+    const response = await POST(request as any);
+    const json = await response.json();
+
+    expect(response.status).toBe(403);
+    expect(json.error).toContain('club');
+  });
+
   it('returns 400 with missing required fields', async () => {
     mockAuthenticated(mikeTorres);
+    configureMockSupabase({
+      profiles: { data: { role: 'club' }, error: null },
+    });
+
     const request = createMockRequest(BASE, {
       method: 'POST',
       body: { name: 'Winter Classic 2026' },
@@ -72,6 +94,10 @@ describe('POST /api/club/events', () => {
 
   it('returns 400 with invalid capacity (negative number)', async () => {
     mockAuthenticated(mikeTorres);
+    configureMockSupabase({
+      profiles: { data: { role: 'club' }, error: null },
+    });
+
     const request = createMockRequest(BASE, {
       method: 'POST',
       body: { ...validBody, capacity: -5 },
@@ -86,6 +112,10 @@ describe('POST /api/club/events', () => {
 
   it('returns 400 with invalid capacity (non-integer)', async () => {
     mockAuthenticated(mikeTorres);
+    configureMockSupabase({
+      profiles: { data: { role: 'club' }, error: null },
+    });
+
     const request = createMockRequest(BASE, {
       method: 'POST',
       body: { ...validBody, capacity: 16.5 },
@@ -101,6 +131,7 @@ describe('POST /api/club/events', () => {
   it('returns 500 on database error', async () => {
     mockAuthenticated(mikeTorres);
     configureMockSupabase({
+      profiles: { data: { role: 'club' }, error: null },
       tournaments: { data: null, error: { message: 'Database error', code: '23505' } },
     });
 
@@ -113,12 +144,13 @@ describe('POST /api/club/events', () => {
     const json = await response.json();
 
     expect(response.status).toBe(500);
-    expect(json.error).toBe('Database error');
+    expect(json.error).toBe('Failed to create tournament');
   });
 
   it('returns 201 with created tournament on success', async () => {
     mockAuthenticated(mikeTorres);
     configureMockSupabase({
+      profiles: { data: { role: 'club' }, error: null },
       tournaments: { data: mockCreatedTournament, error: null },
     });
 

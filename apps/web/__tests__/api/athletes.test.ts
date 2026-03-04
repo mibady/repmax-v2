@@ -191,7 +191,7 @@ describe('GET /api/athletes', () => {
     const json = await response.json();
 
     expect(response.status).toBe(500);
-    expect(json.error).toBe('Database connection failed');
+    expect(json.error).toBe('Failed to fetch athletes');
   });
 
   it('returns empty array with count 0 when no athletes match', async () => {

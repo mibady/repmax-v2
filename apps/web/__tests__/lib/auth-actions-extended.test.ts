@@ -111,10 +111,10 @@ describe('auth-actions (extended)', () => {
       expect(result.error).toContain('logged in');
     });
 
-    it('creates new profile and redirects athlete to onboarding', async () => {
+    it('updates profile and redirects athlete to onboarding', async () => {
       mockAuthenticated(jaylenWashington);
       configureMockSupabase({
-        profiles: { data: null, error: null }, // no existing profile
+        profiles: { data: { id: 'profile-new' }, error: null },
       });
       (mockSupabaseClient.auth as any).updateUser.mockResolvedValue({ error: null });
 
@@ -140,7 +140,7 @@ describe('auth-actions (extended)', () => {
         // Expected — mock redirect
       }
 
-      expect(redirect).toHaveBeenCalledWith('/dashboard');
+      expect(redirect).toHaveBeenCalledWith('/coach');
     });
   });
 });

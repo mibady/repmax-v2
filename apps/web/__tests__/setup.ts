@@ -54,6 +54,13 @@ vi.mock('@/lib/supabase/server', () => ({
   createServiceClient: vi.fn(() => mockSupabaseClient),
 }));
 
+// Mock subscription server — default to authorized so subscription gates pass in tests
+vi.mock('@/lib/utils/subscription-server', () => ({
+  getServerSubscription: vi.fn(() => Promise.resolve(null)),
+  requireAthleteTier: vi.fn(() => Promise.resolve({ authorized: true, subscription: null })),
+  requireRecruiterTier: vi.fn(() => Promise.resolve({ authorized: true, subscription: null })),
+}));
+
 // Mock Supabase client implementation
 export const mockSupabaseClient = {
   auth: {
