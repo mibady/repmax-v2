@@ -90,3 +90,31 @@ WHERE p.role = 'coach'
   )
 ORDER BY p.created_at DESC
 LIMIT 1;
+
+-- ============================================
+-- 6. Seed team_rosters — Coach dashboard needs roster data
+-- ============================================
+-- Distribute athletes across all coach teams (>= 15 total entries)
+-- Uses athletes table, assigning them round-robin across teams.
+INSERT INTO team_rosters (team_id, athlete_id, priority, notes)
+SELECT
+  t.id AS team_id,
+  a.id AS athlete_id,
+  CASE (row_number() OVER (ORDER BY a.id)) % 4
+    WHEN 0 THEN 'top'
+    WHEN 1 THEN 'high'
+    WHEN 2 THEN 'medium'
+    ELSE 'low'
+  END AS priority,
+  'Seeded roster entry'
+FROM teams t
+CROSS JOIN LATERAL (
+  SELECT a2.id
+  FROM athletes a2
+  ORDER BY a2.id
+  LIMIT 8
+) a
+WHERE NOT EXISTS (
+  SELECT 1 FROM team_rosters tr WHERE tr.team_id = t.id AND tr.athlete_id = a.id
+)
+LIMIT 20;

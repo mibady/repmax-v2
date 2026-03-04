@@ -35,6 +35,8 @@ export async function GET() {
         .select(`
           id,
           added_at,
+          priority,
+          notes,
           athlete:athletes(
             id,
             primary_position,
@@ -60,6 +62,8 @@ export async function GET() {
           offers: a?.offers_count || 0,
           avatarUrl: p?.avatar_url || null,
           rosterEntryId: row.id,
+          priority: row.priority || "medium",
+          notes: row.notes || "",
         };
       });
     }
@@ -71,7 +75,7 @@ export async function GET() {
       .eq("profile_id", profile.id)
       .single();
 
-    let tasks: object[] = [];
+    let tasks: Array<{ status: string; [key: string]: unknown }> = [];
     if (coachRecord) {
       const { data: taskData } = await supabase
         .from("coach_tasks")
@@ -106,7 +110,7 @@ export async function GET() {
 
     const metrics = {
       totalAthletes: roster.length,
-      pendingTasks: tasks.filter((t: { status: string }) => t.status === "pending" || t.status === "in_progress").length,
+      pendingTasks: tasks.filter((t) => t.status === "pending" || t.status === "in_progress").length,
     };
 
     return NextResponse.json({

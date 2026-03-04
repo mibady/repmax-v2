@@ -179,7 +179,7 @@ export function NotificationCenter({
         </>
       )}
 
-      <style jsx>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         .custom-scrollbar::-webkit-scrollbar {
           width: 6px;
         }
@@ -193,7 +193,7 @@ export function NotificationCenter({
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
           background: #4a4a4d;
         }
-      `}</style>
+      ` }} />
     </div>
   );
 }

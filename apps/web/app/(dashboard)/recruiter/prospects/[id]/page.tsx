@@ -592,7 +592,7 @@ export default function ProspectDetailPage() {
         </div>
       )}
 
-      <style jsx>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         ::-webkit-scrollbar {
           width: 8px;
           height: 8px;
@@ -607,7 +607,7 @@ export default function ProspectDetailPage() {
         ::-webkit-scrollbar-thumb:hover {
           background: #d4af35;
         }
-      `}</style>
+      ` }} />
     </div>
   );
 }

@@ -21,7 +21,7 @@ const fallbackMetrics = {
   upcomingDeadlines: 0,
 };
 
-export default function ParentProfilePage(): JSX.Element {
+export default function ParentProfilePage() {
   const { childProfile, metrics, isLoading, error } = useParentDashboard();
 
   if (isLoading) {

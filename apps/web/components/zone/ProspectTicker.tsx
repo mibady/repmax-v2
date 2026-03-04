@@ -120,7 +120,7 @@ export function ProspectTicker({
       </div>
 
       {/* Inline styles for animation */}
-      <style jsx>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         @keyframes ticker {
           0% {
             transform: translateX(0);
@@ -129,7 +129,7 @@ export function ProspectTicker({
             transform: translateX(-50%);
           }
         }
-      `}</style>
+      ` }} />
     </div>
   );
 }

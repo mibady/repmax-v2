@@ -620,7 +620,7 @@ export default function RecruiterPipelinePage() {
         )}
       </div>
 
-      <style jsx>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         ::-webkit-scrollbar {
           width: 8px;
           height: 8px;
@@ -635,7 +635,7 @@ export default function RecruiterPipelinePage() {
         ::-webkit-scrollbar-thumb:hover {
           background: #444;
         }
-      `}</style>
+      ` }} />
     </div>
   );
 }

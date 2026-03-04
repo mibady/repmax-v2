@@ -33,7 +33,7 @@ const resources = [
   },
 ];
 
-export default function ParentResourcesPage(): JSX.Element {
+export default function ParentResourcesPage() {
   return (
     <div className="flex-1 overflow-auto">
       <div className="p-8 max-w-7xl mx-auto">
