@@ -80,7 +80,7 @@ export function useRegistrations(
 
     try {
       // Fetch all registrations for the school using the new optimized endpoint
-      const res = await fetch(`/api/schools/me/registrations`);
+      const res = await fetch(`/api/tournaments/registrations`);
       if (!res.ok) {
         throw new Error("Failed to fetch registrations");
       }

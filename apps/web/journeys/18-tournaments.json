@@ -3,18 +3,18 @@
   "group": "18-tournaments",
   "name": "Tournaments Browse, Detail & Registration",
   "requiresAuth": true,
-  "role": "school",
+  "role": "club",
   "baseUrl": "http://localhost:3000",
   "env": {
-    "TEST_EMAIL": "school.admin@test.repmax.io",
+    "TEST_EMAIL": "club@test.repmax.io",
     "TEST_PASSWORD": "TestPass123!"
   },
-  "pages": ["/tournaments", "/school/events"],
+  "pages": ["/tournaments", "/club/events"],
   "journeys": [
     {
-      "name": "Login as school admin",
+      "name": "Login as club organizer",
       "priority": "critical",
-      "description": "Authenticate as school admin to access protected tournament routes",
+      "description": "Authenticate as club organizer to access protected tournament routes",
       "steps": [
         { "action": "navigate", "url": "/login" },
         { "action": "wait", "value": "2000" },
@@ -292,16 +292,16 @@
       ]
     },
     {
-      "name": "School events page loads with Browse Tournaments heading",
+      "name": "Club events page loads with Browse Tournaments heading",
       "priority": "critical",
-      "description": "Navigate to /school/events after login and verify the Browse Tournaments heading is visible",
+      "description": "Navigate to /club/events after login and verify the Browse Tournaments heading is visible",
       "steps": [
         { "action": "navigate", "url": "/login" },
         { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
         { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
         { "action": "click", "selector": "button[type='submit']" },
         { "action": "wait", "value": "4000" },
-        { "action": "navigate", "url": "/school/events" },
+        { "action": "navigate", "url": "/club/events" },
         { "action": "wait", "value": "3000" },
         { "action": "assert_text_present", "value": "Browse Tournaments" },
         { "action": "assert_no_bad_text" },
@@ -310,42 +310,42 @@
       ]
     },
     {
-      "name": "School events shows tournament cards or empty state",
+      "name": "Club events shows tournament cards or empty state",
       "priority": "critical",
-      "description": "Verify the school events page shows either tournament cards or a No Tournaments Found empty state",
+      "description": "Verify the club events page shows either tournament cards or a No Tournaments Found empty state",
       "steps": [
         { "action": "navigate", "url": "/login" },
         { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
         { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
         { "action": "click", "selector": "button[type='submit']" },
         { "action": "wait", "value": "4000" },
-        { "action": "navigate", "url": "/school/events" },
+        { "action": "navigate", "url": "/club/events" },
         { "action": "wait", "value": "3000" },
-        { "action": "assert_visible", "selector": "a[href*='/school/events/'], h3:has-text('No Tournaments Found')" },
+        { "action": "assert_visible", "selector": "a[href*='/club/events/'], h3:has-text('No Tournaments Found')" },
         { "action": "screenshot" }
       ]
     },
     {
-      "name": "School events click event navigates to detail",
+      "name": "Club events click event navigates to detail",
       "priority": "critical",
-      "description": "Click a tournament card on school events page and verify navigation to the school event detail page",
+      "description": "Click a tournament card on club events page and verify navigation to the school event detail page",
       "steps": [
         { "action": "navigate", "url": "/login" },
         { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
         { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
         { "action": "click", "selector": "button[type='submit']" },
         { "action": "wait", "value": "4000" },
-        { "action": "navigate", "url": "/school/events" },
+        { "action": "navigate", "url": "/club/events" },
         { "action": "wait", "value": "3000" },
-        { "action": "click", "selector": "a[href*='/school/events/']:not([href='/school/events']):not([href*='/my'])" },
+        { "action": "click", "selector": "a[href*='/club/events/']:not([href='/club/events']):not([href*='/my'])" },
         { "action": "wait", "value": "3000" },
-        { "action": "assert_url_contains", "value": "/school/events/" },
+        { "action": "assert_url_contains", "value": "/club/events/" },
         { "action": "assert_no_bad_text" },
         { "action": "screenshot" }
       ]
     },
     {
-      "name": "School event detail shows tournament name heading",
+      "name": "Club event detail shows tournament name heading",
       "priority": "critical",
       "description": "Verify the school event detail page displays the tournament name as an h1 heading",
       "steps": [
@@ -354,9 +354,9 @@
         { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
         { "action": "click", "selector": "button[type='submit']" },
         { "action": "wait", "value": "4000" },
-        { "action": "navigate", "url": "/school/events" },
+        { "action": "navigate", "url": "/club/events" },
         { "action": "wait", "value": "3000" },
-        { "action": "click", "selector": "a[href*='/school/events/']:not([href='/school/events']):not([href*='/my'])" },
+        { "action": "click", "selector": "a[href*='/club/events/']:not([href='/club/events']):not([href*='/my'])" },
         { "action": "wait", "value": "3000" },
         { "action": "assert_visible", "selector": "h1" },
         { "action": "assert_text_present", "value": "Event Details" },
@@ -364,7 +364,7 @@
       ]
     },
     {
-      "name": "School event detail shows Register Now or registration status",
+      "name": "Club event detail shows Register Now or registration status",
       "priority": "critical",
       "description": "Verify the school event detail page has a Register Now button or shows registration status",
       "steps": [
@@ -373,9 +373,9 @@
         { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
         { "action": "click", "selector": "button[type='submit']" },
         { "action": "wait", "value": "4000" },
-        { "action": "navigate", "url": "/school/events" },
+        { "action": "navigate", "url": "/club/events" },
         { "action": "wait", "value": "3000" },
-        { "action": "click", "selector": "a[href*='/school/events/']:not([href='/school/events']):not([href*='/my'])" },
+        { "action": "click", "selector": "a[href*='/club/events/']:not([href='/club/events']):not([href*='/my'])" },
         { "action": "wait", "value": "3000" },
         { "action": "assert_text_present", "value": "Registration" },
         { "action": "assert_visible", "selector": "a[href*='/register'], div:has-text('Already registered'), div:has-text('Tournament is full')" },
@@ -383,34 +383,34 @@
       ]
     },
     {
-      "name": "School events date filter and My Registrations link",
+      "name": "Club events date filter and My Registrations link",
       "priority": "high",
-      "description": "Verify school events page has date filter inputs and a My Registrations navigation link",
+      "description": "Verify club events page has date filter inputs and a My Registrations navigation link",
       "steps": [
         { "action": "navigate", "url": "/login" },
         { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
         { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
         { "action": "click", "selector": "button[type='submit']" },
         { "action": "wait", "value": "4000" },
-        { "action": "navigate", "url": "/school/events" },
+        { "action": "navigate", "url": "/club/events" },
         { "action": "wait", "value": "3000" },
         { "action": "assert_visible", "selector": "input[type='date']" },
         { "action": "assert_text_present", "value": "My Registrations" },
-        { "action": "assert_visible", "selector": "a[href='/school/events/my']" },
+        { "action": "assert_visible", "selector": "a[href='/club/events/my']" },
         { "action": "screenshot" }
       ]
     },
     {
-      "name": "School events Apply filter button works",
+      "name": "Club events Apply filter button works",
       "priority": "high",
-      "description": "Fill date filters on school events and click Apply to filter results without errors",
+      "description": "Fill date filters on club events and click Apply to filter results without errors",
       "steps": [
         { "action": "navigate", "url": "/login" },
         { "action": "fill", "selector": "input[type='email']", "value": "{{TEST_EMAIL}}" },
         { "action": "fill", "selector": "input[type='password']", "value": "{{TEST_PASSWORD}}" },
         { "action": "click", "selector": "button[type='submit']" },
         { "action": "wait", "value": "4000" },
-        { "action": "navigate", "url": "/school/events" },
+        { "action": "navigate", "url": "/club/events" },
         { "action": "wait", "value": "3000" },
         { "action": "fill", "selector": "input[type='date']:first-of-type", "value": "2026-01-01" },
         { "action": "fill", "selector": "input[type='date']:last-of-type", "value": "2026-12-31" },

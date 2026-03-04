@@ -260,6 +260,7 @@ export default function AdminUsersPage() {
                             <option value="coach">Coach</option>
                             <option value="recruiter">Recruiter</option>
                             <option value="parent">Parent</option>
+                            <option value="club">Club</option>
                             <option value="admin">Admin</option>
                           </select>
                         </td>
