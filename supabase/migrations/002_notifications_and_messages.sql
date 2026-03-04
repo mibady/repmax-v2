@@ -306,17 +306,27 @@ RETURNS TRIGGER AS $$
 DECLARE
   coach_name TEXT;
   coach_org TEXT;
+  athlete_profile UUID;
 BEGIN
   -- Get coach info
-  SELECT p.full_name, c.organization INTO coach_name, coach_org
-  FROM profiles p
-  LEFT JOIN coaches c ON c.profile_id = p.id
-  WHERE p.id = NEW.coach_id;
+  SELECT p.full_name, c.school_name INTO coach_name, coach_org
+  FROM coaches c
+  JOIN profiles p ON p.id = c.profile_id
+  WHERE c.id = NEW.coach_id;
+
+  -- Get athlete's profile_id (notifications.user_id references profiles.id)
+  SELECT a.profile_id INTO athlete_profile
+  FROM athletes a
+  WHERE a.id = NEW.athlete_id;
+
+  IF athlete_profile IS NULL THEN
+    RETURN NEW;
+  END IF;
 
   -- Create notification for the athlete
   INSERT INTO notifications (user_id, type, title, description, metadata)
   VALUES (
-    NEW.athlete_id,
+    athlete_profile,
     'shortlist',
     'Added to shortlist by ' || COALESCE(coach_org, coach_name),
     COALESCE(coach_name, 'A recruiter') || ' has added you to their prospect list',

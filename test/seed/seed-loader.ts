@@ -414,10 +414,11 @@ export async function seedCoachTasks(): Promise<SeedResult> {
       const { error } = await supabase.from('coach_tasks').insert({
         coach_id: coachId,
         athlete_id: athleteId || null,
-        text: task.title,
+        title: task.title,
+        description: task.description,
         due_date: task.dueDate,
         priority: task.priority,
-        completed: task.status === 'completed',
+        status: task.status,
       });
 
       if (error) {
@@ -444,6 +445,64 @@ export async function seedCoachTasks(): Promise<SeedResult> {
 }
 
 // ============================================
+// FIX SHORTLIST TRIGGER (c.organization → c.school_name)
+// Migration 002 references c.organization which doesn't exist on coaches table.
+// Patch the trigger function at runtime using service role before inserting shortlists.
+// ============================================
+
+async function fixShortlistTrigger(supabase: SupabaseClient): Promise<void> {
+  const { error } = await supabase.rpc('exec_sql', {
+    sql: `
+      CREATE OR REPLACE FUNCTION notify_shortlist_add()
+      RETURNS TRIGGER AS $$
+      DECLARE
+        coach_name TEXT;
+        coach_org TEXT;
+        athlete_profile_id UUID;
+      BEGIN
+        -- Get coach info (fixed: use school_name instead of organization)
+        SELECT p.full_name, c.school_name INTO coach_name, coach_org
+        FROM coaches c
+        JOIN profiles p ON c.profile_id = p.id
+        WHERE c.id = NEW.coach_id;
+
+        -- Get athlete's profile_id
+        SELECT a.profile_id INTO athlete_profile_id
+        FROM athletes a
+        WHERE a.id = NEW.athlete_id;
+
+        -- Create notification for the athlete
+        IF athlete_profile_id IS NOT NULL THEN
+          INSERT INTO notifications (user_id, type, title, description, metadata)
+          VALUES (
+            athlete_profile_id,
+            'shortlist',
+            'Added to shortlist by ' || COALESCE(coach_org, coach_name),
+            COALESCE(coach_name, 'A recruiter') || ' has added you to their prospect list',
+            jsonb_build_object(
+              'shortlist_id', NEW.id,
+              'coach_id', NEW.coach_id,
+              'priority', NEW.priority
+            )
+          );
+        END IF;
+
+        RETURN NEW;
+      END;
+      $$ LANGUAGE plpgsql SECURITY DEFINER;
+    `,
+  });
+
+  if (error) {
+    // If exec_sql RPC doesn't exist, try raw SQL via postgrest
+    console.log('  ⚠ Could not patch shortlist trigger via RPC (non-fatal):', error.message);
+    console.log('  ⚠ Shortlist inserts may fail if notify_shortlist_add trigger references c.organization');
+  } else {
+    console.log('  ✓ Patched notify_shortlist_add trigger (c.organization → c.school_name)');
+  }
+}
+
+// ============================================
 // TEST DATA (Shortlists + Profile Views)
 // ============================================
 
@@ -455,6 +514,9 @@ export async function seedTestData(): Promise<void> {
   if (athleteIdMap.size === 0 || coachIdMap.size === 0 || profileIdMap.size === 0) {
     await buildEntityMaps(supabase);
   }
+
+  // Fix the shortlist trigger before inserting (migration 002 has c.organization bug)
+  await fixShortlistTrigger(supabase);
 
   const athletes = testUserData.filter((u) => u.roles.includes('athlete'));
   const recruiters = testUserData.filter((u) => u.roles.includes('recruiter'));
@@ -474,11 +536,11 @@ export async function seedTestData(): Promise<void> {
 
       views.push({
         athlete_id: athleteId,
-        viewer_profile_id: viewerId,
+        viewer_id: viewerId,
         viewer_role: 'recruiter',
         viewer_zone: toDbZone(recruiter.zone) || 'Southwest',
         viewer_school: recruiter.recruiterProfile?.school || null,
-        section_viewed: ['overview', 'measurables', 'highlights', 'academics'][i % 4],
+        source: (['search', 'shortlist', 'direct', 'search'] as const)[i % 4],
         created_at: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString(),
       });
     }
@@ -536,6 +598,9 @@ export async function seedRelationships(): Promise<SeedResult> {
   if (coachIdMap.size === 0 || profileIdMap.size === 0) {
     await buildEntityMaps(supabase);
   }
+
+  // Fix the shortlist trigger before inserting (migration 002 has c.organization bug)
+  await fixShortlistTrigger(supabase);
 
   // 1. Query real athletes (from JotForm import, typically CA-based)
   const { data: realAthletes, error: queryError } = await supabase
@@ -609,7 +674,6 @@ export async function seedRelationships(): Promise<SeedResult> {
   }
 
   if (viewerEntries.length > 0) {
-    const sections = ['overview', 'measurables', 'highlights', 'academics'] as const;
     const viewRows = [];
 
     for (let day = 0; day < 30; day++) {
@@ -619,11 +683,11 @@ export async function seedRelationships(): Promise<SeedResult> {
         const viewer = viewerEntries[Math.floor(Math.random() * viewerEntries.length)];
         viewRows.push({
           athlete_id: athlete.id,
-          viewer_profile_id: viewer.profileId,
+          viewer_id: viewer.profileId,
           viewer_role: 'recruiter',
           viewer_school: viewer.school,
           viewer_zone: viewer.zone,
-          section_viewed: sections[Math.floor(Math.random() * sections.length)],
+          source: (['search', 'shortlist', 'direct', 'zone_pulse'] as const)[Math.floor(Math.random() * 4)],
           created_at: new Date(Date.now() - day * 24 * 60 * 60 * 1000 - Math.random() * 86400000).toISOString(),
         });
       }
@@ -1200,6 +1264,9 @@ export async function seedSchoolCoaches(): Promise<SeedResult> {
   console.log('\nSeeding school coach accounts...\n');
 
   const supabase = getSupabaseClient();
+
+  // Fix the shortlist trigger before inserting (migration 002 has c.organization bug)
+  await fixShortlistTrigger(supabase);
 
   // CA Recruits school names for the aggregate account
   const caRecruitsSchools = schoolConfigs

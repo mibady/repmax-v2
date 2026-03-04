@@ -203,7 +203,8 @@ CREATE TABLE IF NOT EXISTS recruiting_events (
 -- Indexes for recruiting events
 CREATE INDEX IF NOT EXISTS idx_recruiting_events_start ON recruiting_events(start_date);
 CREATE INDEX IF NOT EXISTS idx_recruiting_events_type ON recruiting_events(event_type);
-CREATE INDEX IF NOT EXISTS idx_recruiting_events_upcoming ON recruiting_events(start_date) WHERE start_date >= CURRENT_DATE;
+-- Note: partial index with CURRENT_DATE not allowed (not immutable); use plain index
+CREATE INDEX IF NOT EXISTS idx_recruiting_events_upcoming ON recruiting_events(start_date);
 
 -- RLS for recruiting events
 ALTER TABLE recruiting_events ENABLE ROW LEVEL SECURITY;

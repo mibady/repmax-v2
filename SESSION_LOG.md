@@ -792,3 +792,51 @@ This project existed before tracking was set up.
 - Populate live Stripe Price IDs in `.env.local`
 - Run full quality pipeline: `npx tsx ~/.claude/scripts/quality-pipeline.ts --all`
 - NGE-55: Mobile app (Expo) — only non-tracked feature remaining
+
+## Session 18 — 2026-02-27
+
+### Completed
+- **NGE-252 Epic: 5-Role Architecture Correction Sprint** (8 issues, all implemented)
+- NGE-253: Deleted all school/organizer pages (11 pages), 4 API routes, 2 hooks, 1 journey test
+- NGE-254: Migration 016 — coaches table role separation (school_type, division columns)
+- NGE-255: Rewired coach dashboard to teams/team_rosters API (setup page, roster CRUD, team creation)
+- NGE-257: Fixed 10 role-mapping bugs across sidebar, topbar, layout, middleware, auth-actions, search, admin, onboarding, pricing, dashboard redirect
+- NGE-256: Wired recruiter Kanban to crm_pipeline table (API route, use-recruiter-pipeline hook, page rewrite separating pipeline from shortlist)
+- NGE-258: Migration 017 — crm_pipeline table + crm_stage enum + seed-role-correction.sql
+- NGE-259: Player card hardened with QR code (qrcode.react), profile view tracking (fire-and-forget), share button (Web Share API + clipboard fallback)
+- NGE-260: QA smoke test ready (manual walkthrough for human)
+- Fixed all lint errors (unused vars, catch bindings, explicit any)
+
+### Audit Snapshot
+- Pages: 70 (50 dashboard + 6 public + 2 auth + 3 app + 9 nested)
+- API routes: 68
+- Components: 30
+- Hooks: 45
+- Migrations: 17
+- Server actions: 9 files
+- Unit tests: 35 files
+- Journey tests: 20
+- Quality gates: mock PASS, tsc PASS, lint PASS (test gate has pre-existing turbo CLI issue)
+
+### Decisions Made
+- Canonical role value for 7v7 organizers is "club" everywhere (not "school" or "organizer")
+- coaches table stores all three roles via school_type: 'high_school' (coach), 'college' (recruiter), 'club' (club organizer)
+- Pipeline (crm_pipeline) and shortlist are separate data flows — pipeline is CRM Kanban, shortlist is bookmarking
+- profile_views uses fire-and-forget insert pattern (void Promise.resolve(...).catch(() => {}))
+- QR code uses repmax.io/card/{repmax_id} canonical URL format
+
+### Known Issues
+- Test gate in quality pipeline fails due to turbo CLI version (`--run` flag not recognized) — pre-existing
+- supabase/masking/mask-staging.sql had a stuck staged deletion (included in commit 1)
+- NGE-260 QA smoke test is manual — human needs to walkthrough all 5 role dashboards
+
+### Next Session Should
+- Run `/prime` to load context
+- Complete NGE-260 manual QA walkthrough (all 5 role dashboards)
+- Apply migrations 016-017 to remote Supabase
+- Fix turbo test runner CLI flag issue
+- Consider mobile app (Expo) as next feature track
+
+### Linear
+- NGE-253 through NGE-259 -> Done (code complete)
+- NGE-260 -> In Progress (manual QA pending)
