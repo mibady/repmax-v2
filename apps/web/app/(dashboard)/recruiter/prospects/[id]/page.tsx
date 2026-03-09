@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useAthlete, useShortlist, useRecruiterPipeline, type CrmStage } from '@/lib/hooks';
 import { logCommunication, getAthleteContactEmail } from '@/lib/actions/communication-actions';
@@ -109,10 +110,12 @@ function AthleteProfile({
     <div className="bg-[#2a271d] rounded-xl border border-[#433d28] overflow-hidden">
       {/* Hero Image & Header */}
       <div className="relative h-48 bg-gradient-to-t from-black/80 to-transparent">
-        <img
+        <Image
           src="/images/marketing/profile-header-bg.png"
           alt="Stadium background"
           className="absolute inset-0 w-full h-full object-cover opacity-60"
+          fill
+          sizes="100vw"
         />
         <div className="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-[#2a271d] via-[#2a271d]/90 to-transparent pt-20">
           <div className="flex justify-between items-end">

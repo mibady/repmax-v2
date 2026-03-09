@@ -1,6 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 import { useAthlete, useHighlights } from "@/lib/hooks";
 import { ZONE_COLORS, getPlaceholderImage } from "@/lib/data/zone-data";
@@ -106,10 +107,12 @@ export default function AthletePage() {
               {/* Avatar */}
               <div className="relative group">
                 <div className={`w-24 h-24 rounded-full border-4 ${colors.border} shadow-lg p-0.5 bg-[#121212] overflow-hidden relative z-10 transition-transform duration-300 group-hover:scale-105`}>
-                  <img
+                  <Image
                     alt={`Portrait of ${fullName}`}
                     className="w-full h-full object-cover rounded-full"
                     src={avatarUrl}
+                    width={96}
+                    height={96}
                   />
                 </div>
                 {/* Verified Badge */}

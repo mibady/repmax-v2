@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useAthleteDashboard } from '@/lib/hooks';
@@ -159,11 +160,13 @@ export default function AthleteDashboardPage() {
                   <div className="mt-4 flex -space-x-2 overflow-hidden">
                     {shortlistCoaches.slice(0, 3).map((coach) => (
                       coach.avatarUrl ? (
-                        <img
+                        <Image
                           key={coach.id}
                           alt={coach.name}
                           className="inline-block size-8 rounded-full ring-2 ring-surface-dark"
                           src={coach.avatarUrl}
+                          width={32}
+                          height={32}
                         />
                       ) : (
                         <div

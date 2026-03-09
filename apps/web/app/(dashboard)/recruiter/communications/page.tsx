@@ -55,6 +55,7 @@ export default function CommunicationsPage() {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   // Debounced search
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = useCallback(
     debounce((value: string) => {
       setSearchFilter(value);

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 export default function Page() {
@@ -109,7 +110,7 @@ export default function Page() {
 {/*  Image Header  */}
 <div className="relative h-64 w-full overflow-hidden">
 <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] to-transparent z-10"></div>
-<img src="/images/marketing/hero-athlete.png" alt="Athletic football player in action pose holding a ball with intense focus" className="w-full h-full object-cover" />
+<Image src="/images/marketing/hero-athlete.png" alt="Athletic football player in action pose holding a ball with intense focus" className="w-full h-full object-cover" fill sizes="(max-width: 440px) 100vw, 440px" />
 <div className="absolute top-4 right-4 z-20 flex items-center gap-1 rounded bg-black/60 px-2 py-1 backdrop-blur-sm border border-primary/30">
 <span className="text-xs font-bold text-primary">ELITE 11</span>
 </div>
@@ -279,7 +280,7 @@ export default function Page() {
 {/*  Step 1  */}
 <div className="flex flex-col items-center text-center group">
 <div className="w-20 h-20 rounded-lg bg-[#050505] border border-primary/30 flex items-center justify-center text-3xl mb-6 shadow-gold-glow group-hover:scale-110 transition-transform duration-300 overflow-hidden">
-<img src="/images/marketing/step-id.png" alt="Create Your ID" className="w-full h-full object-cover" />
+<Image src="/images/marketing/step-id.png" alt="Create Your ID" className="w-full h-full object-cover" fill sizes="80px" />
 </div>
 <span className="stats-font text-6xl font-bold text-white/5 absolute -z-10 -translate-y-6 select-none group-hover:text-white/10 transition-colors">01</span>
 <h3 className="text-xl font-bold text-white mb-3">Create Your ID</h3>
@@ -288,7 +289,7 @@ export default function Page() {
 {/*  Step 2  */}
 <div className="flex flex-col items-center text-center group">
 <div className="w-20 h-20 rounded-lg bg-[#050505] border border-white/10 flex items-center justify-center text-3xl mb-6 group-hover:border-primary/30 group-hover:shadow-gold-glow group-hover:scale-110 transition-all duration-300 overflow-hidden">
-<img src="/images/marketing/step-video.png" alt="Upload Highlights" className="w-full h-full object-cover" />
+<Image src="/images/marketing/step-video.png" alt="Upload Highlights" className="w-full h-full object-cover" fill sizes="80px" />
 </div>
 <span className="stats-font text-6xl font-bold text-white/5 absolute -z-10 -translate-y-6 select-none group-hover:text-white/10 transition-colors">02</span>
 <h3 className="text-xl font-bold text-white mb-3">Upload Highlights</h3>
@@ -297,7 +298,7 @@ export default function Page() {
 {/*  Step 3  */}
 <div className="flex flex-col items-center text-center group">
 <div className="w-20 h-20 rounded-lg bg-[#050505] border border-white/10 flex items-center justify-center text-3xl mb-6 group-hover:border-primary/30 group-hover:shadow-gold-glow group-hover:scale-110 transition-all duration-300 overflow-hidden">
-<img src="/images/marketing/step-trophy.png" alt="Get Recruited" className="w-full h-full object-cover" />
+<Image src="/images/marketing/step-trophy.png" alt="Get Recruited" className="w-full h-full object-cover" fill sizes="80px" />
 </div>
 <span className="stats-font text-6xl font-bold text-white/5 absolute -z-10 -translate-y-6 select-none group-hover:text-white/10 transition-colors">03</span>
 <h3 className="text-xl font-bold text-white mb-3">Get Recruited</h3>
@@ -315,7 +316,7 @@ export default function Page() {
 <div className="relative rounded-xl border border-white/10 bg-[#0A0A0A] overflow-hidden shadow-2xl">
 <div className="absolute top-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>
 <div className="p-1">
-<img src="/images/marketing/internal-dashboard.png" alt="Dashboard interface screenshot showing charts, athlete list, and filtering options with a dark theme" className="w-full h-[300px] sm:h-[400px] rounded-lg opacity-90 object-cover" />
+<Image src="/images/marketing/internal-dashboard.png" alt="Dashboard interface screenshot showing charts, athlete list, and filtering options with a dark theme" className="w-full h-[300px] sm:h-[400px] rounded-lg opacity-90 object-cover" width={800} height={400} />
 </div>
 </div>
 </div>
@@ -352,7 +353,7 @@ export default function Page() {
 {/*  Final CTA  */}
 <section className="py-24 bg-surface-dark border-t border-white/5 relative overflow-hidden">
 <div className="absolute inset-0 opacity-20 pointer-events-none">
-<img src="/images/marketing/cta-background.png" alt="Background" className="w-full h-full object-cover" />
+<Image src="/images/marketing/cta-background.png" alt="" className="w-full h-full object-cover" fill sizes="100vw" />
 </div>
 <div className="absolute inset-0 bg-gradient-to-b from-surface-dark via-transparent to-surface-dark"></div>
 <div className="mx-auto max-w-4xl px-6 lg:px-8 text-center relative z-10">

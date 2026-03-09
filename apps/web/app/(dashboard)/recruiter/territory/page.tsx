@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useMcpZones } from "@/lib/hooks";
 import { useZoneAssignments, type AvailableRecruiter } from "@/lib/hooks/use-zone-assignments";
 import { ZONE_COLORS, ZONE_DISPLAY_NAMES } from "@/lib/data/zone-data";
@@ -271,7 +272,7 @@ export default function TerritoryAssignmentsPage() {
           <div className="relative w-full aspect-[4/3] max-w-4xl">
             {/* Map Visualization */}
             <div className="w-full h-full rounded-xl overflow-hidden border border-white/5 shadow-2xl">
-              <img src="/images/marketing/recruiting-map.png" alt="US Recruiting Map" className="w-full h-full object-cover" />
+              <Image src="/images/marketing/recruiting-map.png" alt="US Recruiting Map" className="w-full h-full object-cover" fill sizes="55vw" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#080808] via-transparent to-transparent"></div>
             </div>
 

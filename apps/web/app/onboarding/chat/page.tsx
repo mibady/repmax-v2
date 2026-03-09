@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useOnboardingProfile, ProfileUpdateData } from '@/lib/hooks/use-onboarding-profile';
@@ -652,7 +653,7 @@ export default function OnboardingChatPage() {
       <aside className="w-[400px] hidden xl:flex flex-col border-l border-surface-light/30 bg-[#080808] relative overflow-hidden">
         {/* Background Texture */}
         <div className="absolute inset-0 opacity-10 pointer-events-none">
-          <img src="/images/onboarding/sidebar-bg.png" alt="background" className="w-full h-full object-cover" />
+          <Image src="/images/onboarding/sidebar-bg.png" alt="" className="w-full h-full object-cover" fill sizes="400px" />
         </div>
         
         <div className="p-8 flex flex-col h-full gap-8 overflow-y-auto relative z-10">
@@ -726,7 +727,7 @@ export default function OnboardingChatPage() {
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <div className="bg-primary/20 rounded-full size-12 flex items-center justify-center border-2 border-white/10 overflow-hidden">
-                    <img src="/images/athletes/placeholder/male-v1.png" alt="Avatar" className="w-full h-full object-cover" />
+                    <Image src="/images/athletes/placeholder/male-v1.png" alt="Avatar" className="w-full h-full object-cover" width={48} height={48} />
                   </div>
                   <div>
                     <h5 className="font-bold text-white text-sm">

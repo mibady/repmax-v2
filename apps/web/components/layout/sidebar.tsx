@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 
 export type UserRole = 'athlete' | 'parent' | 'coach' | 'recruiter' | 'club' | 'admin';
@@ -150,10 +151,12 @@ function AthleteSidebar({ user, onSignOut }: { user: SidebarUser; onSignOut?: ()
         <div className="flex items-center gap-3 mb-6">
           {user.avatarUrl ? (
             <div className="size-12 rounded-full ring-2 ring-primary/20 overflow-hidden">
-              <img
+              <Image
                 src={user.avatarUrl}
                 alt={user.name}
                 className="size-full object-cover"
+                width={48}
+                height={48}
               />
             </div>
           ) : (
@@ -265,10 +268,12 @@ function RecruiterSidebar({ user, onSignOut }: { user: SidebarUser; onSignOut?: 
         <div className="flex items-center gap-3 px-3 py-3 mt-2 border-t border-white/5">
           {user.avatarUrl ? (
             <div className="size-8 rounded-full overflow-hidden">
-              <img
+              <Image
                 src={user.avatarUrl}
                 alt={user.name}
                 className="size-full object-cover"
+                width={32}
+                height={32}
               />
             </div>
           ) : (
@@ -311,10 +316,12 @@ function ParentSidebar({ user, onSignOut }: { user: SidebarUser; onSignOut?: () 
         <div className="flex items-center gap-3 px-3 py-4 mb-8 bg-[#1F1F22] rounded-xl">
           {user.avatarUrl ? (
             <div className="size-10 rounded-full border-2 border-primary/30 overflow-hidden">
-              <img
+              <Image
                 src={user.avatarUrl}
                 alt={user.name}
                 className="size-full object-cover"
+                width={40}
+                height={40}
               />
             </div>
           ) : (
@@ -380,10 +387,12 @@ function CoachSidebar({ user, onSignOut }: { user: SidebarUser; onSignOut?: () =
         <div className="flex items-center gap-3 px-2">
           {user.avatarUrl ? (
             <div className="size-10 rounded-full border-2 border-primary overflow-hidden">
-              <img
+              <Image
                 src={user.avatarUrl}
                 alt={user.name}
                 className="size-full object-cover"
+                width={40}
+                height={40}
               />
             </div>
           ) : (
@@ -504,10 +513,12 @@ function ClubSidebar({ user, onSignOut }: { user: SidebarUser; onSignOut?: () =>
         <div className="flex items-center gap-3 px-3 py-3 mt-2 border-t border-white/5">
           {user.avatarUrl ? (
             <div className="size-8 rounded-full overflow-hidden">
-              <img
+              <Image
                 src={user.avatarUrl}
                 alt={user.name}
                 className="size-full object-cover"
+                width={32}
+                height={32}
               />
             </div>
           ) : (
@@ -591,10 +602,12 @@ function AdminSidebar({ user, onSignOut }: { user: SidebarUser; onSignOut?: () =
         <div className="flex items-center gap-3 px-3 py-3 mt-2 border-t border-white/5">
           {user.avatarUrl ? (
             <div className="size-8 rounded-full overflow-hidden">
-              <img
+              <Image
                 src={user.avatarUrl}
                 alt={user.name}
                 className="size-full object-cover"
+                width={32}
+                height={32}
               />
             </div>
           ) : (

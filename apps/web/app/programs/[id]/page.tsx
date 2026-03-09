@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import SearchInput from './SearchInput';
 import { notFound } from 'next/navigation';
 
@@ -64,10 +65,12 @@ export default async function ProgramSpotlightPage({ params }: { params: Promise
             <SearchInput />
             {/* User Avatar */}
             <div className="relative size-9 rounded-full bg-[#1F1F22] overflow-hidden ring-1 ring-white/10">
-              <img
+              <Image
                 src="/images/athletes/placeholder/male-v1.png"
                 alt="User Avatar"
                 className="w-full h-full object-cover"
+                width={36}
+                height={36}
               />
             </div>
           </div>
@@ -78,10 +81,12 @@ export default async function ProgramSpotlightPage({ params }: { params: Promise
         {/* Banner Section */}
         {program.banner && (
           <div className="relative w-full h-48 md:h-64 overflow-hidden">
-            <img
+            <Image
               src={program.banner}
               alt={`${program.name} stadium`}
               className="w-full h-full object-cover opacity-60"
+              fill
+              sizes="100vw"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent"></div>
           </div>
@@ -94,7 +99,7 @@ export default async function ProgramSpotlightPage({ params }: { params: Promise
             <div className="shrink-0">
               <div className="size-32 md:size-40 rounded-xl bg-[#1F1F22] border border-white/5 p-1 shadow-2xl backdrop-blur-sm overflow-hidden">
                 {program.logo ? (
-                  <img src={program.logo} alt={`${program.name} Logo`} className="w-full h-full rounded-lg object-contain" />
+                  <Image src={program.logo} alt={`${program.name} Logo`} className="w-full h-full rounded-lg object-contain" fill sizes="160px" />
                 ) : (
                   <div
                     className="w-full h-full rounded-lg"

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useParentDashboard } from '@/lib/hooks';
 
 const fallbackProfile = {
@@ -70,10 +71,12 @@ export default function ParentProfilePage() {
           <div className="flex flex-col sm:flex-row items-center gap-6">
             {/* Avatar */}
             {profile.avatarUrl ? (
-              <img
+              <Image
                 src={profile.avatarUrl}
                 alt={profile.name}
                 className="size-24 rounded-full object-cover border-2 border-white/10"
+                width={96}
+                height={96}
               />
             ) : (
               <div className="size-24 rounded-full bg-primary/20 text-primary flex items-center justify-center text-2xl font-bold border-2 border-primary/30">

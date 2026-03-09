@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useHighlights, type Highlight, useSubscription } from '@/lib/hooks';
 import { getAthleteTier } from '@/lib/utils/subscription-tier';
 import { UpgradeCTA } from '@/components/upgrade-cta';
@@ -328,7 +329,7 @@ export default function FilmManagementPage() {
         ) : highlights.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
             <div className="size-48 rounded-2xl bg-[#1F1F22] border border-white/5 shadow-2xl overflow-hidden mb-6 group hover:border-primary/20 transition-all">
-              <img src="/images/marketing/film-room-empty.png" alt="Film Room Illustration" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+              <Image src="/images/marketing/film-room-empty.png" alt="Film Room Illustration" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" fill sizes="192px" />
             </div>
             <h3 className="text-white text-xl font-bold mb-2">No highlights yet</h3>
             <p className="text-gray-400 mb-6 max-w-md">

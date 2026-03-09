@@ -2,6 +2,7 @@
 
 // Z-index fix: topbar should be above all content
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 import { NotificationDropdown } from '@/components/ui/notification-dropdown';
 import { SearchInput } from '@/components/ui/search-input';
@@ -182,10 +183,12 @@ function ParentTopbar({ user, title, userId }: Omit<TopbarProps, 'role'>) {
         <div className="flex items-center gap-3">
           {user.avatarUrl ? (
             <div className="size-9 rounded-full border-2 border-primary/30 overflow-hidden">
-              <img
+              <Image
                 src={user.avatarUrl}
                 alt={user.name}
                 className="size-full object-cover"
+                width={36}
+                height={36}
               />
             </div>
           ) : (
@@ -254,10 +257,12 @@ function ClubTopbar({ user, title, userId }: Omit<TopbarProps, 'role'>) {
         <div className="flex items-center gap-3">
           {user.avatarUrl ? (
             <div className="size-8 rounded-full overflow-hidden">
-              <img
+              <Image
                 src={user.avatarUrl}
                 alt={user.name}
                 className="size-full object-cover"
+                width={32}
+                height={32}
               />
             </div>
           ) : (
