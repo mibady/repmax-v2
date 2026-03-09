@@ -876,3 +876,48 @@ This project existed before tracking was set up.
 ### Linear
 - No new issues filed
 - NGE-260 -> In Progress (manual QA pending)
+
+## Session 20 — 2026-03-09
+
+### Completed
+- Synced all tracking sources (Linear, GitHub, local files, memory)
+- Verified all 8 NGE-252 epic issues (NGE-253 through NGE-260) already marked Done in Linear
+- Updated `.linear_project.json`: moved NGE-260 to completed, summary 38/38, added deploy status
+- Rewrote `CLAUDE.md` from stale Feb 1 snapshot to accurate Mar 9 state (monorepo structure, 44 tables, 6 roles, 68 API routes, Stripe, MCP)
+- Updated Linear project: summary, description with full stats and links
+- Updated `MEMORY.md`: corrected metrics (18 migrations, 44 tables, 36 components, 44 hooks)
+
+### Audit Snapshot
+- Pages: 70
+- API routes: 68 (25 groups)
+- Components: 36
+- Hooks: 44
+- Test files: 42
+- DB tables: 44 (18 migrations)
+- Linear: 38/38 done
+- Build: pass (deployed)
+
+### Source Alignment Status
+| Source | Status |
+|--------|--------|
+| Linear (web) | 38/38 Done, summary + description updated |
+| `.linear_project.json` | 38/38, deploy info, pushed to GitHub |
+| `CLAUDE.md` | Full rewrite, pushed to GitHub |
+| `MEMORY.md` | Corrected metrics |
+| `SESSION_LOG.md` | This entry |
+| GitHub | All changes pushed to main |
+
+### Known Issues
+- Linear project status stuck on "In Progress" — proxy error on state change, toggle manually to "Completed"
+- turbo.json env var warnings (non-blocking, cosmetic)
+
+### Next Session Should
+- Toggle Linear project status to "Completed" manually
+- Send test webhook from Stripe Dashboard to verify 200 response
+- Consider mobile app (Expo) as next feature track
+- Consider adding env vars to turbo.json to silence build warnings
+
+### Linear
+- NGE-260 confirmed Done (completed 2026-03-04)
+- Project summary updated: "38/38 issues done, deployed to repmax-v2.vercel.app"
+- Project description updated with full stats
