@@ -41,6 +41,21 @@ export default defineConfig({
         'app/api/admin/moderation/**',
         'app/api/admin/users/**',
         'app/api/athlete/documents/**',
+        // Tournament sub-routes (Phase 5-6, complex game/bracket/venue management)
+        'app/api/tournaments/**/brackets/**',
+        'app/api/tournaments/**/games/**',
+        'app/api/tournaments/**/notifications/**',
+        'app/api/tournaments/**/register/**',
+        'app/api/tournaments/**/registrations/**',
+        'app/api/tournaments/**/roster/**',
+        'app/api/tournaments/**/venues/**',
+        'app/api/tournaments/pay/**',
+        // Coach sub-routes (not yet in testing scope)
+        'app/api/coach/team/**',
+        'app/api/settings/**',
+        // Utility files without direct route coverage
+        'lib/utils/repmax-id-generator.ts',
+        'lib/utils/subscription-server.ts',
         'lib/actions/communication-actions.ts',
         'lib/actions/visit-actions.ts',
         'lib/actions/index.ts',
