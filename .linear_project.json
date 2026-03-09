@@ -12,7 +12,9 @@
     "phase2": { "id": "231e5a5e-400f-4ca4-a33d-d71357cc6a29", "name": "Phase 2: Recruiter API Sprint" },
     "phase3": { "id": "3c6b6e0c-99a2-4550-9932-b462bb3f76f7", "name": "Phase 3: MCP Connectors" },
     "phase4": { "id": "96f3ab44-1e3e-4e1b-b044-ad863375286b", "name": "Phase 4: Testing Sprint" },
-    "phase56": { "id": "da09f418-7a18-4a31-89c4-9c96e1fcfb32", "name": "Phase 5-6: Secondary Roles & Polish" }
+    "phase56": { "id": "da09f418-7a18-4a31-89c4-9c96e1fcfb32", "name": "Phase 5-6: Secondary Roles & Polish" },
+    "nge252": { "id": "nge-252-epic", "name": "NGE-252: 5-Role Architecture Correction Sprint" },
+    "deploy": { "id": "deploy-phase", "name": "Production Deployment & Hardening" }
   },
   "issues": {
     "completed": [
@@ -45,15 +47,32 @@
       { "id": "NGE-170", "title": "Sprint 5: Tournament Phase 2 — Schedule (brackets, games, venues)" },
       { "id": "NGE-171", "title": "Sprint 6: Tournament Phase 3 — Live Score (realtime scoring + standings)" },
       { "id": "NGE-172", "title": "Sprint 7: Tournament Phase 4 — Full Platform (public discovery + profile sync)" },
-      { "id": "NGE-173", "title": "Sprint 8: Dashr Combines & Training (5 products + booking flow)" }
+      { "id": "NGE-173", "title": "Sprint 8: Dashr Combines & Training (5 products + booking flow)" },
+      { "id": "NGE-253", "title": "Delete school/organizer pages (11 pages, 4 API routes, 2 hooks)", "epic": "NGE-252" },
+      { "id": "NGE-254", "title": "Migration 016 — coaches table role separation (school_type, division)", "epic": "NGE-252" },
+      { "id": "NGE-255", "title": "Rewire coach dashboard to teams/team_rosters API", "epic": "NGE-252" },
+      { "id": "NGE-256", "title": "Wire recruiter Kanban to crm_pipeline table", "epic": "NGE-252" },
+      { "id": "NGE-257", "title": "Fix 10 role-mapping bugs across sidebar, topbar, middleware, auth", "epic": "NGE-252" },
+      { "id": "NGE-258", "title": "Migration 017 — crm_pipeline table + crm_stage enum + seed correction", "epic": "NGE-252" },
+      { "id": "NGE-259", "title": "Player card: QR code, profile view tracking, share button", "epic": "NGE-252" },
+      { "id": "NGE-260", "title": "QA smoke test — manual walkthrough of 5 role dashboards", "epic": "NGE-252" }
     ],
+    "inProgress": [],
     "todo": [],
     "removed": []
   },
+  "deploy": {
+    "status": "live",
+    "url": "https://repmax-v2.vercel.app",
+    "stripeWebhook": "wired (5 events)",
+    "lastDeploy": "2026-03-09",
+    "envVars": ["STRIPE_WEBHOOK_SECRET added to Vercel"]
+  },
   "summary": {
-    "total": 30,
-    "done": 30,
+    "total": 38,
+    "done": 38,
+    "inProgress": 0,
     "todo": 0
   },
-  "updatedAt": "2026-02-23"
+  "updatedAt": "2026-03-09"
 }
