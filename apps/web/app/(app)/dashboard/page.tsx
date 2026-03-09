@@ -35,7 +35,7 @@ export default async function DashboardPage() {
   } else if (profile.role === "club") {
     redirect("/club");
   } else if (profile.role === "admin") {
-    redirect("/admin/analytics");
+    redirect("/admin");
   } else {
     redirect("/athlete");
   }
