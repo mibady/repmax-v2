@@ -840,3 +840,39 @@ This project existed before tracking was set up.
 ### Linear
 - NGE-253 through NGE-259 -> Done (code complete)
 - NGE-260 -> In Progress (manual QA pending)
+
+## Session 19 — 2026-03-09
+
+### Completed
+- Wired Stripe webhook: created endpoint in Stripe Dashboard (5 events), set `STRIPE_WEBHOOK_SECRET` in `.env.local` and Vercel env vars
+- Committed and deployed production audit fixes (25 `<img>` → `next/image`, 7 new API test files, vitest coverage config, `.gitignore` updates)
+- Deleted 4 stale remote branches (`claude/db-work-Ac4NU`, `claude/fix-dashboard-routing-W25BR`, `claude/qa-audit-typescript-O4iG3`, `vercel/react-server-components-cve-vu-epxsls`)
+- Fixed admin login redirect: `/admin/analytics` (404) → `/admin` (exists)
+- Deployed to Vercel production — build passes, 110 static pages generated
+
+### Audit Snapshot
+- Pages: 70
+- API routes: 68
+- Components: 30
+- Hooks: 45
+- Test files: 42
+- Build: pass (deployed)
+
+### Decisions Made
+- Stripe webhook listens for exactly 5 events (checkout.session.completed, payment_intent.succeeded, customer.subscription.updated, customer.subscription.deleted, invoice.payment_failed)
+- Admin dashboard route is `/admin` (not `/admin/analytics`)
+
+### Known Issues
+- turbo.json warnings: 25+ env vars not listed in turbo.json (non-blocking, cosmetic)
+- User account has `admin` role — may want to change for testing other role flows
+- NGE-260 manual QA smoke test still pending
+
+### Next Session Should
+- Send test webhook from Stripe Dashboard to verify 200 response
+- Complete NGE-260 manual QA smoke test (5 role dashboards)
+- Consider adding env vars to turbo.json to silence build warnings
+- Consider mobile app (Expo) as next feature track
+
+### Linear
+- No new issues filed
+- NGE-260 -> In Progress (manual QA pending)
