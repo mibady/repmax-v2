@@ -440,6 +440,70 @@ export type Database = {
           uploaded_at?: string;
         };
       };
+      coach_structured_notes: {
+        Row: {
+          id: string;
+          coach_id: string;
+          athlete_id: string | null;
+          content: string;
+          category: "general" | "urgent" | "call_log" | "strategy";
+          is_pinned: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          coach_id: string;
+          athlete_id?: string | null;
+          content: string;
+          category?: "general" | "urgent" | "call_log" | "strategy";
+          is_pinned?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          coach_id?: string;
+          athlete_id?: string | null;
+          content?: string;
+          category?: "general" | "urgent" | "call_log" | "strategy";
+          is_pinned?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      coach_college_tracking: {
+        Row: {
+          id: string;
+          coach_id: string;
+          school_name: string;
+          temperature: "hot" | "warm" | "cold";
+          prospect_count: number;
+          scheduled_visits: number;
+          notes: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          coach_id: string;
+          school_name: string;
+          temperature?: "hot" | "warm" | "cold";
+          prospect_count?: number;
+          scheduled_visits?: number;
+          notes?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          coach_id?: string;
+          school_name?: string;
+          temperature?: "hot" | "warm" | "cold";
+          prospect_count?: number;
+          scheduled_visits?: number;
+          notes?: string | null;
+          created_at?: string;
+        };
+      };
     };
     Views: {};
     Functions: {};

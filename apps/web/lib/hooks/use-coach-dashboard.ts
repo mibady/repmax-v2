@@ -20,6 +20,15 @@ export interface RosterAthlete {
   offers: number;
   status: "active" | "committed" | "transferred" | "graduated";
   avatarUrl: string | null;
+  heightInches: number | null;
+  weightLbs: number | null;
+  fortyTime: number | null;
+  starRating: number | null;
+  school: string | null;
+  city: string | null;
+  state: string | null;
+  zone: string | null;
+  verified: boolean;
 }
 
 export interface CoachTask {
@@ -41,6 +50,14 @@ export interface CoachNote {
   content: string;
   category: string;
   createdAt: string;
+}
+
+export interface CalendarEvent {
+  id: string;
+  title: string;
+  date: string;
+  type: string;
+  location: string | null;
 }
 
 export interface CoachActivityItem {
@@ -66,6 +83,7 @@ interface UseCoachDashboardReturn {
   tasks: CoachTask[];
   notes: CoachNote[];
   activity: CoachActivityItem[];
+  calendarEvents: CalendarEvent[];
   metrics: CoachMetrics | null;
   isLoading: boolean;
   error: Error | null;
@@ -79,6 +97,7 @@ export function useCoachDashboard(): UseCoachDashboardReturn {
   const [tasks, setTasks] = useState<CoachTask[]>([]);
   const [notes, setNotes] = useState<CoachNote[]>([]);
   const [activity, setActivity] = useState<CoachActivityItem[]>([]);
+  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
   const [metrics, setMetrics] = useState<CoachMetrics | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -101,6 +120,7 @@ export function useCoachDashboard(): UseCoachDashboardReturn {
       setTasks(data.tasks || []);
       setNotes(data.notes || []);
       setActivity(data.activity || []);
+      setCalendarEvents(data.calendarEvents || []);
       setMetrics(data.metrics || null);
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Unknown error"));
@@ -140,6 +160,7 @@ export function useCoachDashboard(): UseCoachDashboardReturn {
     tasks,
     notes,
     activity,
+    calendarEvents,
     metrics,
     isLoading,
     error,

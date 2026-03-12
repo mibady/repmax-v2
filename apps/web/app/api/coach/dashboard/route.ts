@@ -40,9 +40,19 @@ export async function GET() {
           athlete:athletes(
             id,
             primary_position,
+            secondary_position,
             class_year,
             gpa,
             offers_count,
+            height_inches,
+            weight_lbs,
+            forty_yard_time,
+            star_rating,
+            high_school,
+            city,
+            state,
+            zone,
+            verified,
             profile:profiles(full_name, avatar_url)
           )
         `)
@@ -64,6 +74,15 @@ export async function GET() {
           rosterEntryId: row.id,
           priority: row.priority || "medium",
           notes: row.notes || "",
+          heightInches: a?.height_inches ?? null,
+          weightLbs: a?.weight_lbs ?? null,
+          fortyTime: a?.forty_yard_time ?? null,
+          starRating: a?.star_rating ?? null,
+          school: a?.high_school ?? null,
+          city: a?.city ?? null,
+          state: a?.state ?? null,
+          zone: a?.zone ?? null,
+          verified: a?.verified ?? false,
         };
       });
     }
@@ -108,8 +127,34 @@ export async function GET() {
       };
     });
 
+    // Upcoming recruiting events for calendar sidebar
+    const { data: calendarEvents } = await supabase
+      .from("recruiting_events")
+      .select("id, title, event_date, event_type, location")
+      .order("event_date", { ascending: true })
+      .gte("event_date", new Date().toISOString())
+      .limit(10);
+
+    const formattedCalendarEvents = (calendarEvents || []).map((e: { id: string; title: string; event_date: string; event_type: string; location: string | null }) => ({
+      id: e.id,
+      title: e.title,
+      date: e.event_date,
+      type: e.event_type,
+      location: e.location,
+    }));
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const activeAthletes = roster.filter((r: any) => r.status !== "graduated" && r.status !== "transferred").length;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const committedAthletes = roster.filter((r: any) => r.status === "committed").length;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const totalOffers = roster.reduce((sum: number, r: any) => sum + (r.offers || 0), 0);
+
     const metrics = {
       totalAthletes: roster.length,
+      activeAthletes,
+      committedAthletes,
+      totalOffers,
       pendingTasks: tasks.filter((t) => t.status === "pending" || t.status === "in_progress").length,
     };
 
@@ -134,6 +179,7 @@ export async function GET() {
       tasks,
       activity,
       metrics,
+      calendarEvents: formattedCalendarEvents,
     });
   } catch (error) {
     console.error("Coach dashboard error:", error);
