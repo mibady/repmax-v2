@@ -11,6 +11,8 @@ import ZoneOverviewMini from '@/components/coach/ZoneOverviewMini';
 import CoachTasksSidebar from '@/components/coach/CoachTasksSidebar';
 import CoachActivityFeed from '@/components/coach/CoachActivityFeed';
 import CoachCalendarSidebar from '@/components/coach/CoachCalendarSidebar';
+import CoachNotesSidebar from '@/components/coach/CoachNotesSidebar';
+import TopCollegesSidebar from '@/components/coach/TopCollegesSidebar';
 
 const statusColors: Record<string, { bg: string; text: string; label: string }> = {
   active: { bg: 'bg-green-500/10', text: 'text-green-400', label: 'Active' },
@@ -25,12 +27,16 @@ export default function CoachDashboardPage() {
     team,
     roster,
     tasks,
+    notes,
     activity,
     calendarEvents,
+    colleges,
     metrics,
     isLoading,
     error,
     updateTask,
+    addNote,
+    toggleNotePin,
   } = useCoachDashboard();
 
   useEffect(() => {
@@ -208,6 +214,13 @@ export default function CoachDashboardPage() {
             />
             <CoachActivityFeed activity={activity} />
             <CoachCalendarSidebar events={calendarEvents} />
+            <CoachNotesSidebar
+              notes={notes}
+              rosterAthletes={roster.map((a) => ({ id: a.id, name: a.name }))}
+              onAddNote={addNote}
+              onTogglePin={toggleNotePin}
+            />
+            <TopCollegesSidebar colleges={colleges} />
 
             {/* Quick Actions */}
             <div className="bg-[#1F1F22] rounded-xl border border-white/5 p-4">

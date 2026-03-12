@@ -278,8 +278,8 @@ export default function Page() {
 </div>
 <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
 {/*  Step 1  */}
-<div className="flex flex-col items-center text-center group">
-<div className="w-20 h-20 rounded-lg bg-[#050505] border border-primary/30 flex items-center justify-center text-3xl mb-6 shadow-gold-glow group-hover:scale-110 transition-transform duration-300 overflow-hidden">
+<div className="relative flex flex-col items-center text-center group">
+<div className="relative w-20 h-20 rounded-lg bg-[#050505] border border-primary/30 flex items-center justify-center text-3xl mb-6 shadow-gold-glow group-hover:scale-110 transition-transform duration-300 overflow-hidden">
 <Image src="/images/marketing/step-id.png" alt="Create Your ID" className="w-full h-full object-cover" fill sizes="80px" />
 </div>
 <span className="stats-font text-6xl font-bold text-white/5 absolute -z-10 -translate-y-6 select-none group-hover:text-white/10 transition-colors">01</span>
@@ -287,8 +287,8 @@ export default function Page() {
 <p className="text-text-grey text-sm max-w-xs">Build your verified profile with academic records, biometrics, and basic info.</p>
 </div>
 {/*  Step 2  */}
-<div className="flex flex-col items-center text-center group">
-<div className="w-20 h-20 rounded-lg bg-[#050505] border border-white/10 flex items-center justify-center text-3xl mb-6 group-hover:border-primary/30 group-hover:shadow-gold-glow group-hover:scale-110 transition-all duration-300 overflow-hidden">
+<div className="relative flex flex-col items-center text-center group">
+<div className="relative w-20 h-20 rounded-lg bg-[#050505] border border-white/10 flex items-center justify-center text-3xl mb-6 group-hover:border-primary/30 group-hover:shadow-gold-glow group-hover:scale-110 transition-all duration-300 overflow-hidden">
 <Image src="/images/marketing/step-video.png" alt="Upload Highlights" className="w-full h-full object-cover" fill sizes="80px" />
 </div>
 <span className="stats-font text-6xl font-bold text-white/5 absolute -z-10 -translate-y-6 select-none group-hover:text-white/10 transition-colors">02</span>
@@ -296,8 +296,8 @@ export default function Page() {
 <p className="text-text-grey text-sm max-w-xs">Upload your game tape. Our AI automatically analyzes and tags your best plays.</p>
 </div>
 {/*  Step 3  */}
-<div className="flex flex-col items-center text-center group">
-<div className="w-20 h-20 rounded-lg bg-[#050505] border border-white/10 flex items-center justify-center text-3xl mb-6 group-hover:border-primary/30 group-hover:shadow-gold-glow group-hover:scale-110 transition-all duration-300 overflow-hidden">
+<div className="relative flex flex-col items-center text-center group">
+<div className="relative w-20 h-20 rounded-lg bg-[#050505] border border-white/10 flex items-center justify-center text-3xl mb-6 group-hover:border-primary/30 group-hover:shadow-gold-glow group-hover:scale-110 transition-all duration-300 overflow-hidden">
 <Image src="/images/marketing/step-trophy.png" alt="Get Recruited" className="w-full h-full object-cover" fill sizes="80px" />
 </div>
 <span className="stats-font text-6xl font-bold text-white/5 absolute -z-10 -translate-y-6 select-none group-hover:text-white/10 transition-colors">03</span>

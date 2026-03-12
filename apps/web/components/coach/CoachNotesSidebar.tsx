@@ -6,7 +6,7 @@ interface CoachNote {
   id: string;
   content: string;
   category: 'General' | 'Urgent' | 'Call Log' | 'Strategy';
-  athleteName?: string;
+  athleteName?: string | null;
   isPinned: boolean;
   createdAt: string;
 }
