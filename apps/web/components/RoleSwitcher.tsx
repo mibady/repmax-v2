@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ROLE_LABELS } from "@/lib/utils/role-labels";
 
 export type UserRole = "athlete" | "parent" | "coach" | "recruiter" | "club";
 
@@ -10,32 +11,20 @@ interface RoleSwitcherProps {
   onRoleChange: (role: UserRole) => void;
 }
 
+const roleColors: Record<UserRole, string> = {
+  athlete: "bg-primary",
+  parent: "bg-blue-500",
+  coach: "bg-green-500",
+  recruiter: "bg-purple-500",
+  club: "bg-orange-500",
+};
+
 const roleConfig: Record<UserRole, { label: string; icon: string; color: string }> = {
-  athlete: {
-    label: "Athlete",
-    icon: "sports_football",
-    color: "bg-primary",
-  },
-  parent: {
-    label: "Parent",
-    icon: "family_restroom",
-    color: "bg-blue-500",
-  },
-  coach: {
-    label: "Head Coach",
-    icon: "sports",
-    color: "bg-green-500",
-  },
-  recruiter: {
-    label: "College Recruiter",
-    icon: "search",
-    color: "bg-purple-500",
-  },
-  club: {
-    label: "Club Organizer",
-    icon: "groups",
-    color: "bg-orange-500",
-  },
+  athlete: { label: ROLE_LABELS.athlete.full, icon: ROLE_LABELS.athlete.icon, color: roleColors.athlete },
+  parent: { label: ROLE_LABELS.parent.full, icon: ROLE_LABELS.parent.icon, color: roleColors.parent },
+  coach: { label: ROLE_LABELS.coach.full, icon: ROLE_LABELS.coach.icon, color: roleColors.coach },
+  recruiter: { label: ROLE_LABELS.recruiter.full, icon: ROLE_LABELS.recruiter.icon, color: roleColors.recruiter },
+  club: { label: ROLE_LABELS.club.full, icon: ROLE_LABELS.club.icon, color: roleColors.club },
 };
 
 export function RoleSwitcher({ currentRole, availableRoles, onRoleChange }: RoleSwitcherProps) {

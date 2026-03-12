@@ -403,6 +403,7 @@ function CoachSidebar({ user, onSignOut }: { user: SidebarUser; onSignOut?: () =
           <div className="flex flex-col">
             <h1 className="text-white text-base font-bold leading-tight">{user.name}</h1>
             <p className="text-primary text-[10px] font-bold uppercase tracking-widest">{user.title || 'Head Coach'}</p>
+            {user.teamName && <p className="text-white/40 text-[10px] truncate">{user.teamName}</p>}
           </div>
         </div>
         <nav className="flex flex-col gap-1">

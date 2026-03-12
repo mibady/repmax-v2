@@ -17,6 +17,7 @@ function getDefaultTab(role?: string | null): string {
     case 'athlete':
       return 'athletes';
     case 'coach':
+      return 'hs-program';
     case 'recruiter':
       return 'recruiters';
     case 'club':

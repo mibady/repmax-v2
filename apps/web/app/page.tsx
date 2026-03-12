@@ -363,8 +363,11 @@ export default function Page() {
 <Link href="/signup" className="w-full sm:w-auto rounded-md bg-primary px-10 py-4 text-lg font-bold text-[#050505] transition-all hover:bg-primary-hover hover:scale-105 shadow-[0_0_20px_rgba(212,175,53,0.4)] text-center">
                     Create Free Athlete Account
                 </Link>
-<Link href="/login" className="w-full sm:w-auto rounded-md border border-white/10 bg-white/5 px-10 py-4 text-lg font-bold text-white transition-all hover:bg-white/10 hover:border-white/20 text-center">
-                    Coach / Recruiter Login
+<Link href="/login" className="w-full sm:w-auto rounded-md border border-white/10 bg-white/5 px-8 py-4 text-lg font-bold text-white transition-all hover:bg-white/10 hover:border-white/20 text-center">
+                    Coach Login
+                </Link>
+<Link href="/login" className="w-full sm:w-auto rounded-md border border-primary/30 bg-primary/5 px-8 py-4 text-lg font-bold text-primary transition-all hover:bg-primary/10 hover:border-primary/50 text-center">
+                    Recruiter Login
                 </Link>
 </div>
 </div>
