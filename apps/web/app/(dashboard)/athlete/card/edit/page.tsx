@@ -401,6 +401,39 @@ export default function EditCardPage() {
                   />
                 </div>
                 <div>
+                  <label className="block text-sm text-text-grey mb-2">10Y Split (s)</label>
+                  <input
+                    type="text"
+                    name="tenYardSplit"
+                    value={formData.tenYardSplit}
+                    onChange={handleChange}
+                    placeholder="1.55"
+                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-text-grey mb-2">5-10-5 (s)</label>
+                  <input
+                    type="text"
+                    name="fiveTenFive"
+                    value={formData.fiveTenFive}
+                    onChange={handleChange}
+                    placeholder="4.35"
+                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-text-grey mb-2">Broad Jump (in)</label>
+                  <input
+                    type="text"
+                    name="broadJump"
+                    value={formData.broadJump}
+                    onChange={handleChange}
+                    placeholder="120"
+                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                  />
+                </div>
+                <div>
                   <label className="block text-sm text-text-grey mb-2">Bench Press (lbs)</label>
                   <input
                     type="text"
@@ -451,6 +484,17 @@ export default function EditCardPage() {
                     value={formData.gpa}
                     onChange={handleChange}
                     placeholder="3.8"
+                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-text-grey mb-2">Weighted GPA</label>
+                  <input
+                    type="text"
+                    name="weightedGpa"
+                    value={formData.weightedGpa}
+                    onChange={handleChange}
+                    placeholder="4.2"
                     className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
                   />
                 </div>
@@ -516,6 +560,70 @@ export default function EditCardPage() {
                     value={formData.youtubeLink}
                     onChange={handleChange}
                     placeholder="https://www.youtube.com/watch?v=..."
+                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                  />
+                </div>
+              </div>
+            </section>
+
+            {/* Coach Notes & Player Summary */}
+            <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">sports</span>
+                Coach Notes & Summary
+              </h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm text-text-grey mb-2">Coach Notes</label>
+                  <textarea
+                    name="coachNotes"
+                    value={formData.coachNotes}
+                    onChange={handleChange}
+                    rows={3}
+                    placeholder="Coach intangibles, work ethic, leadership..."
+                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors resize-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-text-grey mb-2">Player Summary</label>
+                  <textarea
+                    name="playerSummary"
+                    value={formData.playerSummary}
+                    onChange={handleChange}
+                    rows={3}
+                    placeholder="Player summary and best program fit..."
+                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors resize-none"
+                  />
+                </div>
+              </div>
+            </section>
+
+            {/* Coach Contact */}
+            <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">contact_phone</span>
+                HS Coach Contact
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm text-text-grey mb-2">Coach Phone</label>
+                  <input
+                    type="tel"
+                    name="coachPhone"
+                    value={formData.coachPhone}
+                    onChange={handleChange}
+                    placeholder="(555) 123-4567"
+                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-text-grey mb-2">Coach Email</label>
+                  <input
+                    type="email"
+                    name="coachEmail"
+                    value={formData.coachEmail}
+                    onChange={handleChange}
+                    placeholder="coach@school.edu"
                     className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
                   />
                 </div>

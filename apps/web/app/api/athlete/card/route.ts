@@ -57,7 +57,15 @@ export async function GET() {
         squat_lbs,
         vertical_inches,
         secondary_position,
-        desired_major
+        desired_major,
+        ten_yard_split,
+        five_ten_five,
+        broad_jump_inches,
+        weighted_gpa,
+        coach_notes,
+        player_summary,
+        coach_phone,
+        coach_email
       `)
       .eq("profile_id", profile.id)
       .single();
@@ -94,6 +102,14 @@ export async function GET() {
       major: athlete.desired_major || "",
       hudlLink: athlete.hudl_link || "",
       youtubeLink: athlete.youtube_link || "",
+      tenYardSplit: athlete.ten_yard_split?.toFixed(2) || "",
+      fiveTenFive: athlete.five_ten_five?.toFixed(2) || "",
+      broadJump: athlete.broad_jump_inches?.toString() || "",
+      weightedGpa: athlete.weighted_gpa?.toFixed(2) || "",
+      coachNotes: athlete.coach_notes || "",
+      playerSummary: athlete.player_summary || "",
+      coachPhone: athlete.coach_phone || "",
+      coachEmail: athlete.coach_email || "",
     };
 
     return NextResponse.json(cardData);
@@ -168,6 +184,14 @@ export async function PUT(request: Request) {
       major: z.string().nullable().optional(),
       hudlLink: z.string().nullable().optional(),
       youtubeLink: z.string().nullable().optional(),
+      tenYardSplit: z.string().nullable().optional(),
+      fiveTenFive: z.string().nullable().optional(),
+      broadJump: z.string().nullable().optional(),
+      weightedGpa: z.string().nullable().optional(),
+      coachNotes: z.string().nullable().optional(),
+      playerSummary: z.string().nullable().optional(),
+      coachPhone: z.string().nullable().optional(),
+      coachEmail: z.string().nullable().optional(),
     }).partial();
 
     const parsed = cardUpdateSchema.safeParse(body);
@@ -213,6 +237,22 @@ export async function PUT(request: Request) {
       athleteUpdate.hudl_link = body.hudlLink || null;
     if (body.youtubeLink !== undefined)
       athleteUpdate.youtube_link = body.youtubeLink || null;
+    if (body.tenYardSplit !== undefined)
+      athleteUpdate.ten_yard_split = body.tenYardSplit ? parseFloat(body.tenYardSplit) : null;
+    if (body.fiveTenFive !== undefined)
+      athleteUpdate.five_ten_five = body.fiveTenFive ? parseFloat(body.fiveTenFive) : null;
+    if (body.broadJump !== undefined)
+      athleteUpdate.broad_jump_inches = body.broadJump ? parseInt(body.broadJump) : null;
+    if (body.weightedGpa !== undefined)
+      athleteUpdate.weighted_gpa = body.weightedGpa ? parseFloat(body.weightedGpa) : null;
+    if (body.coachNotes !== undefined)
+      athleteUpdate.coach_notes = body.coachNotes || null;
+    if (body.playerSummary !== undefined)
+      athleteUpdate.player_summary = body.playerSummary || null;
+    if (body.coachPhone !== undefined)
+      athleteUpdate.coach_phone = body.coachPhone || null;
+    if (body.coachEmail !== undefined)
+      athleteUpdate.coach_email = body.coachEmail || null;
 
     if (Object.keys(athleteUpdate).length > 0) {
       const { error } = await supabase

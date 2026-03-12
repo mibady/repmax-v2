@@ -20,6 +20,11 @@ function formatHeight(inches: number | null): string {
   return `${feet}'${remaining}"`;
 }
 
+function formatValue(val: number | null | undefined, suffix = ""): string {
+  if (val === null || val === undefined || val === 0) return "--";
+  return `${val}${suffix}`;
+}
+
 export default async function AthleteCardPage({
   params,
 }: {
@@ -48,6 +53,31 @@ export default async function AthleteCardPage({
 
   const typedAthlete = athleteData as AthleteWithProfile;
 
+  // Query document counts by type
+  const [transcriptRes, recommendationRes, otherRes] = await Promise.all([
+    supabase
+      .from("documents")
+      .select("id", { count: "exact", head: true })
+      .eq("athlete_id", typedAthlete.id)
+      .eq("document_type", "transcript"),
+    supabase
+      .from("documents")
+      .select("id", { count: "exact", head: true })
+      .eq("athlete_id", typedAthlete.id)
+      .eq("document_type", "recommendation"),
+    supabase
+      .from("documents")
+      .select("id", { count: "exact", head: true })
+      .eq("athlete_id", typedAthlete.id)
+      .eq("document_type", "other"),
+  ]);
+
+  const documentCounts = {
+    transcripts: transcriptRes.count ?? 0,
+    recommendations: recommendationRes.count ?? 0,
+    other: otherRes.count ?? 0,
+  };
+
   // Record the view — do not await, do not block card render
   void Promise.resolve(
     supabase.from("profile_views").insert({
@@ -74,17 +104,30 @@ export default async function AthleteCardPage({
     verified: typedAthlete.verified,
     avatarUrl: typedAthlete.profile?.avatar_url ||
       "https://lh3.googleusercontent.com/aida-public/AB6AXuCz5tdm2iqfJ4HWNltYdzZxqDD6zvFqQFxnt8XAnlYNU5PepMx3HTwvhTH-esYE5zA4sgEvuLBo7PxEdcvYiBbXA7_loyZ49uw3KPhiG5s0H5PLQFYekJM4E6nKivPokKcEDg4l0cDCyg2eEJgsZz5FpYskvM5EYz5PCbDeWUyiB3r5lrztrr53ZUGsJ_FoaDdS7b0wv4EQuoJAgbTNAo_2LBmejJ7qGoSIDGQnEPDBLujfO4I48IZ12Yfa4lE-S6jUgG40lXh2rnQ",
-    measurables: {
+    metrics: {
       height: formatHeight(typedAthlete.height_inches),
-      weight: typedAthlete.weight_lbs || 0,
-      fortyYard: typedAthlete.forty_yard_time || 0,
-      vertical: typedAthlete.vertical_inches || 0,
+      weight: typedAthlete.weight_lbs,
+      fortyYard: typedAthlete.forty_yard_time,
+      tenYardSplit: typedAthlete.ten_yard_split,
+      fiveTenFive: typedAthlete.five_ten_five,
+      broadJump: typedAthlete.broad_jump_inches,
+      vertical: typedAthlete.vertical_inches,
+      wingspan: typedAthlete.wingspan_inches,
+      bench: typedAthlete.bench_press_lbs,
+      squat: typedAthlete.squat_lbs,
     },
     academics: {
-      gpa: typedAthlete.gpa || 0,
-      sat: typedAthlete.sat_score || 0,
+      gpa: typedAthlete.gpa,
+      weightedGpa: typedAthlete.weighted_gpa,
+      sat: typedAthlete.sat_score,
+      act: typedAthlete.act_score,
       ncaaCleared: typedAthlete.ncaa_cleared || false,
     },
+    offersCount: typedAthlete.offers_count || 0,
+    coachNotes: typedAthlete.coach_notes,
+    playerSummary: typedAthlete.player_summary,
+    coachPhone: typedAthlete.coach_phone,
+    coachEmail: typedAthlete.coach_email,
     highlightVideo: typedAthlete.highlights?.[0] ? {
       thumbnail: typedAthlete.highlights[0].thumbnail_url ||
         "https://lh3.googleusercontent.com/aida-public/AB6AXuD0kL36A2BWxzFzDUEhlWJflUxzoToTl3AVBx8LzI8iXl6P_Z2w19x4UrmKu2VUVyUBN16sRxKirK-0xo1Q3OEi-cm8wO11Ss4uNOiRuWCTvioea_8BO16HCcKknhuyrRjhmh0AB2SG28LVgZu0kgYmiqig0zn4MTbOoRAf5NbTSu-kU5DvK6uoxxTYuIRZU9QWNLIHWpwN_G6Pd7A38-TGI-yTko6oAGBpneHDt5iI0UzinakkTymm-Gr4TeQk9oco8CsaakatJMs",
@@ -96,6 +139,8 @@ export default async function AthleteCardPage({
       videoUrl: null,
     },
   };
+
+  const hasDocuments = documentCounts.transcripts > 0 || documentCounts.recommendations > 0 || documentCounts.other > 0;
 
   return (
     <div className="bg-background-dark text-white min-h-screen flex justify-center py-8 px-4 relative overflow-x-hidden">
@@ -229,75 +274,131 @@ export default async function AthleteCardPage({
 
         {/* Scrollable Content Area */}
         <div className="p-6 flex flex-col gap-6">
-          {/* Section: Measurables */}
+          {/* Section: Quick Metrics (2x4 grid) */}
           <section>
             <div className="flex items-center gap-2 mb-4">
               <span className="material-symbols-outlined text-primary text-[20px]">
                 straighten
               </span>
               <h2 className="text-sm font-bold tracking-wider text-gray-400 uppercase">
-                Measurables
+                Athletic Metrics
               </h2>
             </div>
+            {/* Height & Weight row */}
+            <div className="grid grid-cols-2 gap-3 mb-3">
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col gap-1 hover:bg-white/10 transition-colors">
+                <span className="text-xs text-gray-500 font-medium">Height</span>
+                <span className="text-2xl text-white font-bold font-mono">
+                  {athlete.metrics.height}
+                </span>
+              </div>
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col gap-1 hover:bg-white/10 transition-colors">
+                <span className="text-xs text-gray-500 font-medium">Weight</span>
+                <span className="text-2xl text-white font-bold font-mono">
+                  {formatValue(athlete.metrics.weight)}
+                </span>
+                {athlete.metrics.weight ? <span className="text-[10px] text-gray-500 -mt-1">lbs</span> : null}
+              </div>
+            </div>
+            {/* 2x4 metrics grid */}
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col gap-1 hover:bg-white/10 transition-colors">
-                <span className="text-xs text-gray-500 font-medium">
-                  Height
-                </span>
-                <span className="text-2xl text-white font-bold font-mono">
-                  {athlete.measurables.height}
-                </span>
-              </div>
-              <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col gap-1 hover:bg-white/10 transition-colors">
-                <span className="text-xs text-gray-500 font-medium">
-                  Weight
-                </span>
-                <span className="text-2xl text-white font-bold font-mono">
-                  {athlete.measurables.weight}
-                </span>
-                <span className="text-[10px] text-gray-500 -mt-1">lbs</span>
-              </div>
-              <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col gap-1 hover:bg-white/10 transition-colors">
-                <span className="text-xs text-gray-500 font-medium">
-                  40-Yard
-                </span>
+                <span className="text-xs text-gray-500 font-medium">40-Yard</span>
                 <span className="text-2xl text-primary font-bold font-mono">
-                  {athlete.measurables.fortyYard}s
+                  {athlete.metrics.fortyYard ? `${athlete.metrics.fortyYard}s` : "--"}
                 </span>
               </div>
               <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col gap-1 hover:bg-white/10 transition-colors">
-                <span className="text-xs text-gray-500 font-medium">
-                  Vertical
-                </span>
+                <span className="text-xs text-gray-500 font-medium">10Y Split</span>
                 <span className="text-2xl text-white font-bold font-mono">
-                  {athlete.measurables.vertical}&quot;
+                  {athlete.metrics.tenYardSplit ? `${athlete.metrics.tenYardSplit}s` : "--"}
                 </span>
+              </div>
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col gap-1 hover:bg-white/10 transition-colors">
+                <span className="text-xs text-gray-500 font-medium">5-10-5</span>
+                <span className="text-2xl text-white font-bold font-mono">
+                  {athlete.metrics.fiveTenFive ? `${athlete.metrics.fiveTenFive}s` : "--"}
+                </span>
+              </div>
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col gap-1 hover:bg-white/10 transition-colors">
+                <span className="text-xs text-gray-500 font-medium">Broad Jump</span>
+                <span className="text-2xl text-white font-bold font-mono">
+                  {formatValue(athlete.metrics.broadJump, '"')}
+                </span>
+              </div>
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col gap-1 hover:bg-white/10 transition-colors">
+                <span className="text-xs text-gray-500 font-medium">Vertical</span>
+                <span className="text-2xl text-white font-bold font-mono">
+                  {formatValue(athlete.metrics.vertical, '"')}
+                </span>
+              </div>
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col gap-1 hover:bg-white/10 transition-colors">
+                <span className="text-xs text-gray-500 font-medium">Wingspan</span>
+                <span className="text-2xl text-white font-bold font-mono">
+                  {formatValue(athlete.metrics.wingspan, '"')}
+                </span>
+              </div>
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col gap-1 hover:bg-white/10 transition-colors">
+                <span className="text-xs text-gray-500 font-medium">Bench</span>
+                <span className="text-2xl text-white font-bold font-mono">
+                  {formatValue(athlete.metrics.bench)}
+                </span>
+                {athlete.metrics.bench ? <span className="text-[10px] text-gray-500 -mt-1">lbs</span> : null}
+              </div>
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col gap-1 hover:bg-white/10 transition-colors">
+                <span className="text-xs text-gray-500 font-medium">Squat</span>
+                <span className="text-2xl text-white font-bold font-mono">
+                  {formatValue(athlete.metrics.squat)}
+                </span>
+                {athlete.metrics.squat ? <span className="text-[10px] text-gray-500 -mt-1">lbs</span> : null}
               </div>
             </div>
           </section>
 
-          {/* Section: Academics */}
+          {/* Section: Profile Snapshot */}
           <section>
             <div className="flex items-center gap-2 mb-4">
               <span className="material-symbols-outlined text-primary text-[20px]">
                 school
               </span>
               <h2 className="text-sm font-bold tracking-wider text-gray-400 uppercase">
-                Academics
+                Profile Snapshot
               </h2>
             </div>
-            <div className="bg-white/5 border border-white/5 rounded-2xl p-5 flex items-center justify-between">
-              <div className="flex flex-col gap-1">
+            {/* Top row: GPA tiles + Offers */}
+            <div className="grid grid-cols-3 gap-3 mb-3">
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col gap-1 hover:bg-white/10 transition-colors">
                 <span className="text-xs text-gray-500 font-medium">GPA</span>
                 <span className="text-xl text-white font-bold font-mono">
-                  {athlete.academics.gpa}
+                  {formatValue(athlete.academics.gpa)}
+                </span>
+              </div>
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col gap-1 hover:bg-white/10 transition-colors">
+                <span className="text-xs text-gray-500 font-medium">W. GPA</span>
+                <span className="text-xl text-white font-bold font-mono">
+                  {formatValue(athlete.academics.weightedGpa)}
+                </span>
+              </div>
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col gap-1 hover:bg-white/10 transition-colors">
+                <span className="text-xs text-gray-500 font-medium">Offers</span>
+                <span className="text-xl text-primary font-bold font-mono">
+                  {athlete.offersCount}
+                </span>
+              </div>
+            </div>
+            {/* Bottom row: SAT, ACT, NCAA */}
+            <div className="bg-white/5 border border-white/5 rounded-2xl p-5 flex items-center justify-between">
+              <div className="flex flex-col gap-1">
+                <span className="text-xs text-gray-500 font-medium">SAT</span>
+                <span className="text-xl text-white font-bold font-mono">
+                  {formatValue(athlete.academics.sat)}
                 </span>
               </div>
               <div className="h-8 w-px bg-white/10" />
               <div className="flex flex-col gap-1">
-                <span className="text-xs text-gray-500 font-medium">SAT</span>
+                <span className="text-xs text-gray-500 font-medium">ACT</span>
                 <span className="text-xl text-white font-bold font-mono">
-                  {athlete.academics.sat}
+                  {formatValue(athlete.academics.act)}
                 </span>
               </div>
               <div className="h-8 w-px bg-white/10" />
@@ -318,6 +419,49 @@ export default async function AthleteCardPage({
               </div>
             </div>
           </section>
+
+          {/* Section: Documents */}
+          {hasDocuments && (
+            <section>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="material-symbols-outlined text-primary text-[20px]">
+                  description
+                </span>
+                <h2 className="text-sm font-bold tracking-wider text-gray-400 uppercase">
+                  Documents
+                </h2>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col items-center gap-2 hover:bg-white/10 transition-colors">
+                  <span className="material-symbols-outlined text-gray-400 text-[24px]">
+                    description
+                  </span>
+                  <span className="text-xs text-gray-500 font-medium">Transcripts</span>
+                  <span className="text-lg text-white font-bold font-mono">
+                    {documentCounts.transcripts}
+                  </span>
+                </div>
+                <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col items-center gap-2 hover:bg-white/10 transition-colors">
+                  <span className="material-symbols-outlined text-gray-400 text-[24px]">
+                    mail
+                  </span>
+                  <span className="text-xs text-gray-500 font-medium">Letters</span>
+                  <span className="text-lg text-white font-bold font-mono">
+                    {documentCounts.recommendations}
+                  </span>
+                </div>
+                <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col items-center gap-2 hover:bg-white/10 transition-colors">
+                  <span className="material-symbols-outlined text-gray-400 text-[24px]">
+                    folder
+                  </span>
+                  <span className="text-xs text-gray-500 font-medium">Other</span>
+                  <span className="text-lg text-white font-bold font-mono">
+                    {documentCounts.other}
+                  </span>
+                </div>
+              </div>
+            </section>
+          )}
 
           {/* Section: Film */}
           <section>
@@ -340,13 +484,57 @@ export default async function AthleteCardPage({
               videoUrl={athlete.highlightVideo.videoUrl}
             />
           </section>
+
+          {/* Section: Coach Notes */}
+          {athlete.coachNotes && (
+            <section>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="material-symbols-outlined text-primary text-[20px]">
+                  sports
+                </span>
+                <h2 className="text-sm font-bold tracking-wider text-gray-400 uppercase">
+                  Coach Notes
+                </h2>
+              </div>
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-5">
+                <p className="text-sm text-gray-300 leading-relaxed whitespace-pre-line">
+                  {athlete.coachNotes}
+                </p>
+              </div>
+            </section>
+          )}
+
+          {/* Section: Player Summary */}
+          {athlete.playerSummary && (
+            <section>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="material-symbols-outlined text-primary text-[20px]">
+                  person_search
+                </span>
+                <h2 className="text-sm font-bold tracking-wider text-gray-400 uppercase">
+                  Player Summary
+                </h2>
+              </div>
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-5">
+                <p className="text-sm text-gray-300 leading-relaxed whitespace-pre-line">
+                  {athlete.playerSummary}
+                </p>
+              </div>
+            </section>
+          )}
         </div>
 
         {/* QR Code */}
         <CardQRCode url={cardUrl} />
 
         {/* Sticky Footer Actions */}
-        <CardActions athleteId={athlete.id} repMaxId={typedAthlete.repmax_id ?? null} athleteName={athlete.name} />
+        <CardActions
+          athleteId={athlete.id}
+          repMaxId={typedAthlete.repmax_id ?? null}
+          athleteName={athlete.name}
+          coachPhone={athlete.coachPhone ?? null}
+          coachEmail={athlete.coachEmail ?? null}
+        />
       </main>
     </div>
   );

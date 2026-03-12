@@ -183,6 +183,18 @@ async function seedUser(supabase: SupabaseClient, userData: TestUserData): Promi
         gpa: userData.athleteProfile.gpa,
         sat_score: userData.athleteProfile.sat,
         act_score: userData.athleteProfile.act,
+        bench_press_lbs: userData.athleteProfile.bench,
+        squat_lbs: userData.athleteProfile.squat,
+        wingspan_inches: userData.athleteProfile.wingspan,
+        ten_yard_split: userData.athleteProfile.tenYardSplit,
+        five_ten_five: userData.athleteProfile.fiveTenFive,
+        broad_jump_inches: userData.athleteProfile.broadJump,
+        weighted_gpa: userData.athleteProfile.weightedGpa,
+        bio: userData.athleteProfile.bio,
+        coach_notes: userData.athleteProfile.coachNotes,
+        player_summary: userData.athleteProfile.playerSummary,
+        coach_phone: userData.athleteProfile.coachPhone,
+        coach_email: userData.athleteProfile.coachEmail,
         verified: userData.athleteProfile.verified,
       });
 

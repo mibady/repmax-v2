@@ -34,6 +34,15 @@ export interface AthleteProfileData {
   sat?: number;
   act?: number;
   bio?: string;
+  tenYardSplit?: number;
+  fiveTenFive?: number;
+  broadJump?: number;
+  wingspan?: number;
+  weightedGpa?: number;
+  coachNotes?: string;
+  playerSummary?: string;
+  coachPhone?: string;
+  coachEmail?: string;
   verified: boolean;
   profileCompleteness: number;
 }
@@ -255,6 +264,15 @@ export const testUserData: TestUserData[] = [
       gpa: 3.8,
       sat: 1280,
       bio: 'Elite dual-threat QB. State semifinalist 2025. Camp MVP at Elite 11 Regional. 3-year starter with 8,500+ career passing yards.',
+      tenYardSplit: 1.52,
+      fiveTenFive: 4.28,
+      broadJump: 118,
+      wingspan: 76,
+      weightedGpa: 4.2,
+      coachNotes: 'Natural leader on and off the field. First one in, last one out. Film room junkie — studies opponents like a college-level QB. Vocal in the huddle, calms the team in pressure moments.',
+      playerSummary: 'Pro-style dual-threat QB with elite arm talent and above-average mobility. Best fit for spread or RPO-heavy offenses at Power 5 programs. Projects as a multi-year starter at the next level.',
+      coachPhone: '(951) 555-0147',
+      coachEmail: 'coach.reynolds@riversidepoly.edu',
       verified: true,
       profileCompleteness: 100,
     },
@@ -299,6 +317,15 @@ export const testUserData: TestUserData[] = [
       vertical: 38.0,
       gpa: 3.5,
       bio: 'Speed receiver with excellent route running. 1,200 yards receiving junior year.',
+      tenYardSplit: 1.48,
+      fiveTenFive: 4.15,
+      broadJump: 124,
+      wingspan: 74,
+      weightedGpa: 3.9,
+      coachNotes: 'Explosive off the line. Tracks the deep ball as well as any receiver in the state. Competitive in blocking — not just a route runner.',
+      playerSummary: 'Elite speed receiver with deep ball tracking ability. Ideal fit for vertical passing offenses. Projects as an early contributor at the college level.',
+      coachPhone: '(770) 555-0293',
+      coachEmail: 'coach.johnson@northgwinnett.edu',
       verified: true,
       profileCompleteness: 85,
     },

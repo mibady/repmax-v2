@@ -30,6 +30,18 @@ export interface AthleteCardData {
   // Film
   hudlLink: string;
   youtubeLink: string;
+  // New metrics
+  tenYardSplit: string;
+  fiveTenFive: string;
+  broadJump: string;
+  // Weighted GPA
+  weightedGpa: string;
+  // Text sections
+  coachNotes: string;
+  playerSummary: string;
+  // Coach contact
+  coachPhone: string;
+  coachEmail: string;
 }
 
 interface UseAthleteCardEditorReturn {
