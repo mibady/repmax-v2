@@ -22,14 +22,14 @@ const typeConfig = {
   report: { label: 'REPORT', color: 'slate', icon: 'description' },
 };
 
-// Zone positions on map
-const ZONE_POSITIONS: Record<string, { top?: string; bottom?: string; left?: string; right?: string; width: string; height: string }> = {
-  WEST: { top: '5%', left: '5%', width: '25%', height: '35%' },
-  SOUTHWEST: { bottom: '10%', left: '10%', width: '25%', height: '35%' },
-  MIDWEST: { top: '10%', left: '35%', width: '25%', height: '35%' },
-  PLAINS: { top: '30%', left: '30%', width: '20%', height: '40%' },
-  SOUTHEAST: { bottom: '5%', right: '20%', width: '25%', height: '40%' },
-  NORTHEAST: { top: '5%', right: '10%', width: '20%', height: '30%' },
+// Zone label positions (percentage-based, anchored to geographic center of each region)
+const ZONE_LABEL_POSITIONS: Record<string, { top: string; left: string }> = {
+  WEST: { top: '32%', left: '12%' },
+  SOUTHWEST: { top: '62%', left: '25%' },
+  MIDWEST: { top: '30%', left: '52%' },
+  PLAINS: { top: '48%', left: '38%' },
+  SOUTHEAST: { top: '62%', left: '68%' },
+  NORTHEAST: { top: '22%', left: '80%' },
 };
 
 // Zone short codes
@@ -40,6 +40,17 @@ const ZONE_SHORT_CODES: Record<string, string> = {
   PLAINS: 'PL',
   SOUTHEAST: 'SE',
   NORTHEAST: 'NE',
+};
+
+// Simplified US map SVG paths grouped by recruiting zone
+// Each zone is a single merged path for its states
+const US_ZONE_PATHS: Record<string, string> = {
+  WEST: 'M 50,80 L 50,30 L 80,20 L 140,20 L 160,30 L 160,100 L 180,120 L 180,180 L 160,200 L 130,230 L 100,240 L 80,230 L 50,200 Z',
+  SOUTHWEST: 'M 130,230 L 160,200 L 180,180 L 180,240 L 220,260 L 260,300 L 280,340 L 260,370 L 220,380 L 180,370 L 140,340 L 120,300 L 110,260 Z',
+  PLAINS: 'M 260,100 L 310,90 L 360,100 L 380,120 L 380,200 L 360,240 L 320,260 L 280,240 L 260,200 L 240,160 L 240,120 Z',
+  MIDWEST: 'M 360,80 L 420,60 L 480,70 L 520,90 L 530,130 L 520,180 L 500,210 L 460,230 L 420,220 L 380,200 L 360,160 L 350,120 Z',
+  SOUTHEAST: 'M 380,200 L 420,220 L 460,230 L 500,210 L 530,230 L 560,260 L 570,300 L 560,340 L 530,370 L 480,390 L 430,380 L 380,360 L 340,330 L 320,290 L 320,260 L 340,230 Z',
+  NORTHEAST: 'M 520,40 L 560,30 L 600,40 L 630,60 L 640,100 L 630,140 L 600,170 L 560,180 L 530,170 L 520,140 L 510,100 L 510,60 Z',
 };
 
 export default function ZoneMapPage() {
@@ -161,39 +172,100 @@ export default function ZoneMapPage() {
             </div>
           ) : (
             <>
-              {/* Zone Overlays */}
+              {/* US Map with Zone Regions */}
               <div className="absolute inset-0 flex items-center justify-center p-8">
-                <div className="relative w-full h-full max-w-6xl max-h-[800px]">
+                <div className="relative w-full h-full max-w-5xl max-h-[700px]">
+                  {/* SVG Map */}
+                  <svg viewBox="0 0 700 420" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
+                    {/* US outline (simplified) */}
+                    <path
+                      d="M 45,25 L 80,18 L 140,15 L 200,20 L 260,18 L 310,15 L 360,12 L 420,10 L 480,15 L 530,10 L 580,8 L 630,15 L 650,35 L 660,70 L 655,110 L 645,150 L 640,180 L 620,200 L 600,180 L 580,195 L 570,230 L 575,265 L 570,300 L 555,335 L 535,365 L 505,385 L 470,395 L 435,388 L 400,375 L 370,355 L 340,340 L 310,330 L 285,340 L 265,360 L 245,378 L 220,385 L 195,375 L 170,355 L 150,340 L 130,310 L 115,275 L 105,250 L 95,240 L 80,235 L 55,210 L 45,185 L 40,155 L 42,120 L 45,85 Z"
+                      fill="none"
+                      stroke="rgba(255,255,255,0.08)"
+                      strokeWidth="1.5"
+                    />
+
+                    {/* Zone regions */}
+                    {zones.map((zone) => {
+                      const zoneCode = zone.zone_code as ZoneCode;
+                      const path = US_ZONE_PATHS[zoneCode];
+                      if (!path) return null;
+
+                      // Map zone codes to fill values
+                      const fillMap: Record<string, string> = {
+                        WEST: 'rgba(34, 197, 94, 0.08)',
+                        SOUTHWEST: 'rgba(249, 115, 22, 0.08)',
+                        MIDWEST: 'rgba(59, 130, 246, 0.08)',
+                        PLAINS: 'rgba(168, 85, 247, 0.08)',
+                        SOUTHEAST: 'rgba(19, 127, 236, 0.12)',
+                        NORTHEAST: 'rgba(236, 72, 153, 0.08)',
+                      };
+                      const strokeMap: Record<string, string> = {
+                        WEST: 'rgba(34, 197, 94, 0.3)',
+                        SOUTHWEST: 'rgba(249, 115, 22, 0.3)',
+                        MIDWEST: 'rgba(59, 130, 246, 0.3)',
+                        PLAINS: 'rgba(168, 85, 247, 0.3)',
+                        SOUTHEAST: 'rgba(19, 127, 236, 0.4)',
+                        NORTHEAST: 'rgba(236, 72, 153, 0.3)',
+                      };
+
+                      return (
+                        <a key={zoneCode} href={`/zones/${zoneCode}`}>
+                          <path
+                            d={path}
+                            fill={fillMap[zoneCode] || 'rgba(100,100,200,0.08)'}
+                            stroke={strokeMap[zoneCode] || 'rgba(100,100,200,0.3)'}
+                            strokeWidth="1"
+                            className="transition-all duration-300 hover:brightness-200 cursor-pointer"
+                          />
+                        </a>
+                      );
+                    })}
+
+                    {/* State boundary hints (subtle internal lines) */}
+                    <g stroke="rgba(255,255,255,0.04)" strokeWidth="0.5" fill="none">
+                      {/* Vertical dividers */}
+                      <line x1="180" y1="20" x2="180" y2="380" />
+                      <line x1="260" y1="18" x2="260" y2="360" />
+                      <line x1="380" y1="12" x2="380" y2="375" />
+                      <line x1="520" y1="10" x2="520" y2="390" />
+                      {/* Horizontal dividers */}
+                      <line x1="45" y1="200" x2="650" y2="200" />
+                    </g>
+                  </svg>
+
+                  {/* Zone Labels (positioned over the map) */}
                   {zones.map((zone) => {
                     const zoneCode = zone.zone_code as ZoneCode;
-                    const position = ZONE_POSITIONS[zoneCode] || { top: '50%', left: '50%', width: '15%', height: '20%' };
+                    const pos = ZONE_LABEL_POSITIONS[zoneCode];
+                    if (!pos) return null;
                     const shortCode = ZONE_SHORT_CODES[zoneCode] || zoneCode.slice(0, 2);
                     const colors = ZONE_COLORS[zoneCode] || ZONE_COLORS.SOUTHWEST;
-                    const isSE = zoneCode === 'SOUTHEAST';
 
                     return (
                       <Link
                         key={zone.zone_code}
                         href={`/zones/${zoneCode}`}
-                        className="absolute rounded-full transition-all duration-500 border border-transparent hover:border-white/30 cursor-pointer hover:scale-105"
-                        style={{
-                          ...position,
-                          backgroundColor: `rgba(${isSE ? '19, 127, 236' : '100, 100, 200'}, 0.1)`,
-                        }}
+                        className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-0.5 group cursor-pointer"
+                        style={{ top: pos.top, left: pos.left }}
                       >
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
-                          <span className={`bg-[#050505]/80 backdrop-blur border px-2 py-1 rounded text-[10px] font-mono ${colors.border} ${colors.text}`}>
-                            {shortCode} ZONE
+                        <span className={`bg-[#0a0e12]/90 backdrop-blur border px-2 py-0.5 rounded text-[10px] font-mono ${colors.border} ${colors.text} group-hover:scale-110 transition-transform`}>
+                          {shortCode} ZONE
+                        </span>
+                        <span className="text-xl font-bold font-mono text-white group-hover:text-primary transition-colors">
+                          {zone.total_recruits.toLocaleString()}
+                        </span>
+                        {zone.blue_chip_count > 0 && (
+                          <span className="text-[10px] text-yellow-400 font-medium">
+                            {zone.blue_chip_count} blue chip{zone.blue_chip_count !== 1 ? 's' : ''}
                           </span>
-                          <span className={`${isSE ? 'text-2xl' : 'text-lg'} font-bold font-mono text-white`}>
-                            {zone.total_recruits.toLocaleString()}
+                        )}
+                        {zone.upcoming_events_30d > 0 && (
+                          <span className="text-[10px] text-green-400 font-medium flex items-center gap-1">
+                            <span className="w-1 h-1 rounded-full bg-green-500 animate-pulse" />
+                            {zone.upcoming_events_30d} event{zone.upcoming_events_30d !== 1 ? 's' : ''}
                           </span>
-                          {zone.blue_chip_count > 0 && (
-                            <span className="text-[10px] text-yellow-400 font-medium">
-                              * {zone.blue_chip_count} blue chips
-                            </span>
-                          )}
-                        </div>
+                        )}
                       </Link>
                     );
                   })}
