@@ -3,6 +3,7 @@
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getStripe } from "@/lib/stripe";
+import { getBaseUrl } from "@/lib/utils/get-base-url";
 
 function getPriceId(planSlug: string): string | undefined {
   const map: Record<string, string | undefined> = {
@@ -180,7 +181,7 @@ export async function createCheckoutSession(planSlug: string) {
         .eq("id", profile.id);
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
+    const baseUrl = getBaseUrl();
     const mode = PAYMENT_SLUGS.has(planSlug) ? "payment" : "subscription";
 
     const session = await stripe.checkout.sessions.create({
@@ -226,7 +227,7 @@ export async function createBillingPortalSession() {
 
   try {
     const stripe = getStripe();
-    const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
+    const baseUrl = getBaseUrl();
 
     const session = await stripe.billingPortal.sessions.create({
       customer: profile.stripe_customer_id,
@@ -293,7 +294,7 @@ export async function createOneTimeCheckout(
         .eq("id", profile.id);
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
+    const baseUrl = getBaseUrl();
 
     const session = await stripe.checkout.sessions.create({
       customer: stripeCustomerId,

@@ -12,6 +12,27 @@ export default function Page() {
   const [error, setError] = useState<string | null>(null);
 
   async function handleCheckout(planSlug: string) {
+    // School plans route through /api/checkout (has school-admin logic)
+    if (planSlug.startsWith('school-')) {
+      setLoadingPlan(planSlug);
+      setError(null);
+      try {
+        const res = await fetch('/api/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ planSlug }),
+        });
+        const data = await res.json();
+        if (data.error) { setError(data.error); return; }
+        if (data.sessionUrl) { window.location.href = data.sessionUrl; }
+      } catch {
+        setError('Something went wrong. Please try again.');
+      } finally {
+        setLoadingPlan(null);
+      }
+      return;
+    }
+
     setLoadingPlan(planSlug);
     setError(null);
 

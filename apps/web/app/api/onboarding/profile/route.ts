@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { generateRepmaxId, stateToZone } from "@/lib/utils/athlete-helpers";
 
 // Schema for profile update
 const updateProfileSchema = z.object({
@@ -262,41 +263,58 @@ export async function POST(request: NextRequest) {
     if (data.ncaa_cleared !== undefined) athleteUpdates.ncaa_cleared = data.ncaa_cleared;
 
     if (athleteError && athleteError.code === "PGRST116") {
-      // Create athlete record if it doesn't exist and we have athlete data
-      if (Object.keys(athleteUpdates).length > 0) {
-        const { data: newAthlete, error: createAthleteError } = await supabase
-          .from("athletes")
-          .insert({
-            profile_id: profile.id,
-            high_school: athleteUpdates.high_school as string || "TBD",
-            city: athleteUpdates.city as string || "TBD",
-            state: athleteUpdates.state as string || "TBD",
-            class_year: athleteUpdates.class_year as number || new Date().getFullYear() + 1,
-            primary_position: athleteUpdates.primary_position as string || "ATH",
-            secondary_position: athleteUpdates.secondary_position as string | null || null,
-            height_inches: athleteUpdates.height_inches as number | null || null,
-            weight_lbs: athleteUpdates.weight_lbs as number | null || null,
-            forty_yard_time: athleteUpdates.forty_yard_time as number | null || null,
-            vertical_inches: athleteUpdates.vertical_inches as number | null || null,
-            gpa: athleteUpdates.gpa as number | null || null,
-            sat_score: athleteUpdates.sat_score as number | null || null,
-            act_score: athleteUpdates.act_score as number | null || null,
-            ncaa_id: athleteUpdates.ncaa_id as string | null || null,
-            ncaa_cleared: athleteUpdates.ncaa_cleared as boolean || false,
-          })
-          .select()
-          .single();
+      // Create athlete record if it doesn't exist — always create for athlete role
+      const stateVal = athleteUpdates.state as string || "TBD";
+      const classYearVal = athleteUpdates.class_year as number || new Date().getFullYear() + 1;
+      const fullName = profile.full_name || user.user_metadata?.full_name || user.email?.split("@")[0] || "User";
+      const repmaxId = await generateRepmaxId(supabase, fullName, classYearVal);
+      const zone = stateVal !== "TBD" ? stateToZone(stateVal) : null;
 
-        if (createAthleteError) {
-          console.error("Error creating athlete:", createAthleteError);
-          return NextResponse.json({ error: "Failed to create athlete record" }, { status: 500 });
-        }
-        athlete = newAthlete;
+      const { data: newAthlete, error: createAthleteError } = await supabase
+        .from("athletes")
+        .insert({
+          profile_id: profile.id,
+          high_school: athleteUpdates.high_school as string || "TBD",
+          city: athleteUpdates.city as string || "TBD",
+          state: stateVal,
+          class_year: classYearVal,
+          primary_position: athleteUpdates.primary_position as string || "ATH",
+          secondary_position: athleteUpdates.secondary_position as string | null || null,
+          height_inches: athleteUpdates.height_inches as number | null || null,
+          weight_lbs: athleteUpdates.weight_lbs as number | null || null,
+          forty_yard_time: athleteUpdates.forty_yard_time as number | null || null,
+          vertical_inches: athleteUpdates.vertical_inches as number | null || null,
+          gpa: athleteUpdates.gpa as number | null || null,
+          sat_score: athleteUpdates.sat_score as number | null || null,
+          act_score: athleteUpdates.act_score as number | null || null,
+          ncaa_id: athleteUpdates.ncaa_id as string | null || null,
+          ncaa_cleared: athleteUpdates.ncaa_cleared as boolean || false,
+          repmax_id: repmaxId,
+          zone: zone,
+        })
+        .select()
+        .single();
+
+      if (createAthleteError) {
+        console.error("Error creating athlete:", createAthleteError);
+        return NextResponse.json({ error: "Failed to create athlete record" }, { status: 500 });
       }
+      athlete = newAthlete;
     } else if (athleteError) {
       console.error("Error fetching athlete:", athleteError);
       return NextResponse.json({ error: "Failed to fetch athlete" }, { status: 500 });
     } else if (athlete && Object.keys(athleteUpdates).length > 0) {
+      // Auto-derive zone when state changes
+      if (athleteUpdates.state) {
+        const derivedZone = stateToZone(athleteUpdates.state as string);
+        if (derivedZone) athleteUpdates.zone = derivedZone;
+      }
+      // Generate repmax_id if missing (backfill for pre-fix athletes)
+      if (!athlete.repmax_id) {
+        const fullName = profile.full_name || user.user_metadata?.full_name || "User";
+        const classYear = (athleteUpdates.class_year as number) || athlete.class_year || new Date().getFullYear() + 1;
+        athleteUpdates.repmax_id = await generateRepmaxId(supabase, fullName, classYear);
+      }
       // Update existing athlete record
       athleteUpdates.updated_at = new Date().toISOString();
       const { data: updatedAthlete, error: updateAthleteError } = await supabase

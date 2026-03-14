@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { getStripe } from "@/lib/stripe";
+import { getBaseUrl } from "@/lib/utils/get-base-url";
 import { z } from "zod";
 
 function getPriceId(planSlug: string): string | undefined {
@@ -134,7 +135,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
+    const baseUrl = getBaseUrl();
 
     const session = await stripe.checkout.sessions.create({
       customer: stripeCustomerId!,

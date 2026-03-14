@@ -8,40 +8,11 @@ import {
   ZONE_METADATA,
   ZONE_DISPLAY_NAMES,
   getPlaceholderImage,
+  getProgramsByZone,
 } from "@/lib/data/zone-data";
 import { getCached, setCache } from "@/lib/utils/mcp-cache";
 
 const zoneSchema = z.enum(["MIDWEST", "NORTHEAST", "PLAINS", "SOUTHEAST", "SOUTHWEST", "WEST"]);
-
-// Static programs data — no DB table for HS football programs
-const PROGRAMS: Record<ZoneCode, Program[]> = {
-  SOUTHWEST: [
-    { id: "7c644cd5-ea93-49c9-85f4-9345e201dec2", team_name: "North Shore", city: "Houston", state: "TX", zone_code: "SOUTHWEST", current_rating: 891.164, state_rank: 1, current_record: "14-2", d1_prospect_count: 159 },
-    { id: "064da9c8-77fd-48e6-a030-4cc7b3922267", team_name: "South Oak Cliff", city: "Dallas", state: "TX", zone_code: "SOUTHWEST", current_rating: 390.971, state_rank: 2, current_record: "14-1", d1_prospect_count: 159 },
-    { id: "f992f604-7aed-4990-852a-aac71531be74", team_name: "DeSoto", city: "DeSoto", state: "TX", zone_code: "SOUTHWEST", current_rating: 86.377, state_rank: 3, current_record: "13-3", d1_prospect_count: 159 },
-    { id: "fea929e6-60f2-43ea-9c70-53de4fef03d0", team_name: "Southlake Carroll", city: "Southlake", state: "TX", zone_code: "SOUTHWEST", current_rating: 86.324, state_rank: 4, current_record: "14-1", d1_prospect_count: 159 },
-  ],
-  SOUTHEAST: [
-    { id: "se-1", team_name: "IMG Academy", city: "Bradenton", state: "FL", zone_code: "SOUTHEAST", current_rating: 950.0, state_rank: 1, current_record: "10-1", d1_prospect_count: 45 },
-    { id: "se-2", team_name: "Buford", city: "Buford", state: "GA", zone_code: "SOUTHEAST", current_rating: 890.5, state_rank: 1, current_record: "15-0", d1_prospect_count: 32 },
-    { id: "se-3", team_name: "Thompson", city: "Alabaster", state: "AL", zone_code: "SOUTHEAST", current_rating: 875.2, state_rank: 1, current_record: "14-1", d1_prospect_count: 28 },
-  ],
-  MIDWEST: [
-    { id: "mw-1", team_name: "St. Edward", city: "Lakewood", state: "OH", zone_code: "MIDWEST", current_rating: 820.0, state_rank: 1, current_record: "14-1", d1_prospect_count: 22 },
-    { id: "mw-2", team_name: "Loyola Academy", city: "Wilmette", state: "IL", zone_code: "MIDWEST", current_rating: 780.5, state_rank: 1, current_record: "12-2", d1_prospect_count: 18 },
-  ],
-  WEST: [
-    { id: "w-1", team_name: "Mater Dei", city: "Santa Ana", state: "CA", zone_code: "WEST", current_rating: 920.0, state_rank: 1, current_record: "13-1", d1_prospect_count: 38 },
-    { id: "w-2", team_name: "St. John Bosco", city: "Bellflower", state: "CA", zone_code: "WEST", current_rating: 905.0, state_rank: 2, current_record: "12-2", d1_prospect_count: 35 },
-  ],
-  NORTHEAST: [
-    { id: "ne-1", team_name: "St. Joseph's Prep", city: "Philadelphia", state: "PA", zone_code: "NORTHEAST", current_rating: 780.0, state_rank: 1, current_record: "12-1", d1_prospect_count: 15 },
-    { id: "ne-2", team_name: "Don Bosco Prep", city: "Ramsey", state: "NJ", zone_code: "NORTHEAST", current_rating: 760.0, state_rank: 1, current_record: "11-2", d1_prospect_count: 12 },
-  ],
-  PLAINS: [
-    { id: "pl-1", team_name: "De Smet Jesuit", city: "St. Louis", state: "MO", zone_code: "PLAINS", current_rating: 720.0, state_rank: 1, current_record: "10-3", d1_prospect_count: 8 },
-  ],
-};
 
 export async function GET(
   request: NextRequest,
@@ -82,7 +53,7 @@ export async function GET(
           pending_alerts: 0,
           upcoming_events_30d: 0,
         } as ZoneInfo,
-        programs: PROGRAMS[zoneCode] || [],
+        programs: getProgramsByZone(zoneCode),
         prospects: [] as Prospect[],
       };
       setCache(cacheKey, result);
@@ -134,7 +105,7 @@ export async function GET(
 
     const result = {
       zone: zoneInfo,
-      programs: PROGRAMS[zoneCode] || [],
+      programs: getProgramsByZone(zoneCode),
       prospects,
     };
 

@@ -1,42 +1,16 @@
 {
-  "generated": "2026-02-01T20:58:00.471Z",
-  "project": "repmax-v2",
-  "source": "stitch-exports/screens.json",
-  "results": [
+  "name": "RepMax - Recruiting Intelligence",
+  "short_name": "RepMax",
+  "description": "Data-driven recruiting intelligence platform connecting elite football talent with top-tier college programs.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#F5A524",
+  "icons": [
     {
-      "screen": "RepMax Landing Page",
-      "output": "apps\\web\\app\\page.tsx",
-      "success": true,
-      "lines": 393
-    },
-    {
-      "screen": "RepMax Landing Page Variant",
-      "output": "apps\\web\\app\\alt\\page.tsx",
-      "success": true,
-      "lines": 447
-    },
-    {
-      "screen": "RepMax Pricing Page",
-      "output": "apps\\web\\app\\pricing\\page.tsx",
-      "success": true,
-      "lines": 249
-    },
-    {
-      "screen": "Athlete Companion Card Profile",
-      "output": "apps\\web\\app\\athlete\\[id]\\page.tsx",
-      "success": true,
-      "lines": 182
-    },
-    {
-      "screen": "RepMax 404 Error Page",
-      "output": "apps\\web\\app\\not-found\\page.tsx",
-      "success": true,
-      "lines": 54
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
     }
-  ],
-  "summary": {
-    "total": 5,
-    "success": 5,
-    "failed": 0
-  }
+  ]
 }

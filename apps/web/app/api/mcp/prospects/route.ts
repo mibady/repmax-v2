@@ -1,16 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import type { Prospect } from "@/lib/data/zone-data";
 import { DB_ZONE_TO_UI, UI_ZONE_TO_DB, getPlaceholderImage } from "@/lib/data/zone-data";
 import { getCached, setCache } from "@/lib/utils/mcp-cache";
 
+const querySchema = z.object({
+  position: z.string().max(10).regex(/^[A-Za-z/]+$/).optional(),
+  zone: z.enum(["MIDWEST", "NORTHEAST", "PLAINS", "SOUTHEAST", "SOUTHWEST", "WEST"]).optional(),
+  minStars: z.coerce.number().int().min(0).max(5).default(0),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+});
+
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const position = searchParams.get("position");
-    const zone = searchParams.get("zone");
-    const minStars = parseInt(searchParams.get("minStars") || "0", 10);
-    const limit = parseInt(searchParams.get("limit") || "20", 10);
+    const parsed = querySchema.safeParse({
+      position: searchParams.get("position") || undefined,
+      zone: searchParams.get("zone")?.toUpperCase() || undefined,
+      minStars: searchParams.get("minStars") || "0",
+      limit: searchParams.get("limit") || "20",
+    });
+
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid query parameters", details: parsed.error.flatten() }, { status: 400 });
+    }
+
+    const { position, zone, minStars, limit } = parsed.data;
 
     const supabase = await createClient();
 
@@ -28,8 +44,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (zone) {
-      const upperZone = zone.toUpperCase();
-      const dbZones = UI_ZONE_TO_DB[upperZone as keyof typeof UI_ZONE_TO_DB];
+      const dbZones = UI_ZONE_TO_DB[zone as keyof typeof UI_ZONE_TO_DB];
       if (dbZones && dbZones.length > 0) {
         query = query.in("zone", dbZones);
       }

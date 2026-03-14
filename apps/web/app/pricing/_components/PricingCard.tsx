@@ -70,29 +70,36 @@ export default function PricingCard({
   let priceSuffix: string = '';
   let priceSubtitle: string = '';
 
-  switch (plan.billingMode) {
-    case 'free':
-      displayPrice = '$0';
-      priceSuffix = '/mo';
-      break;
-    case 'subscription':
-      if (isAnnual && plan.annualPrice) {
-        const monthlyEquivalent = plan.annualPrice / 12;
-        displayPrice = formatPrice(Math.round(monthlyEquivalent * 100) / 100);
+  if (plan.priceLabel) {
+    displayPrice = plan.priceLabel;
+    priceSuffix = '';
+    priceSubtitle = plan.billingMode === 'contact' ? '' :
+                    plan.billingMode === 'payment' ? 'one-time' : 'billed annually';
+  } else {
+    switch (plan.billingMode) {
+      case 'free':
+        displayPrice = '$0';
         priceSuffix = '/mo';
-        priceSubtitle = 'billed annually';
-      } else {
+        break;
+      case 'subscription':
+        if (isAnnual && plan.annualPrice) {
+          const monthlyEquivalent = plan.annualPrice / 12;
+          displayPrice = formatPrice(Math.round(monthlyEquivalent * 100) / 100);
+          priceSuffix = '/mo';
+          priceSubtitle = 'billed annually';
+        } else {
+          displayPrice = formatPrice(plan.monthlyPrice);
+          priceSuffix = plan.monthlyPrice >= 1000 ? '/yr' : '/mo';
+        }
+        break;
+      case 'payment':
         displayPrice = formatPrice(plan.monthlyPrice);
-        priceSuffix = plan.monthlyPrice >= 1000 ? '/yr' : '/mo';
-      }
-      break;
-    case 'payment':
-      displayPrice = formatPrice(plan.monthlyPrice);
-      priceSubtitle = 'one-time';
-      break;
-    case 'contact':
-      displayPrice = 'Contact';
-      break;
+        priceSubtitle = 'one-time';
+        break;
+      case 'contact':
+        displayPrice = 'Contact';
+        break;
+    }
   }
 
   // Determine which slug to use for checkout

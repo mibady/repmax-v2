@@ -17,7 +17,7 @@ function getDefaultTab(role?: string | null): string {
     case 'athlete':
       return 'athletes';
     case 'coach':
-      return 'hs-program';
+      return 'schools';
     case 'recruiter':
       return 'recruiters';
     case 'club':
@@ -34,13 +34,21 @@ export default function PricingTabs({
 }: PricingTabsProps) {
   const { user } = useUser();
   const [activeTab, setActiveTab] = useState('athletes');
+  const [activeSubTab, setActiveSubTab] = useState<string | null>(null);
   const [isAnnual, setIsAnnual] = useState(false);
   const [hasSetDefault, setHasSetDefault] = useState(false);
 
   // Set default tab based on user role on first load
   useEffect(() => {
     if (!hasSetDefault && user?.profile?.role) {
-      setActiveTab(getDefaultTab(user.profile.role));
+      const defaultTab = getDefaultTab(user.profile.role);
+      setActiveTab(defaultTab);
+      const category = pricingCategories.find((c) => c.id === defaultTab);
+      if (category?.subCategories?.length) {
+        setActiveSubTab(category.subCategories[0].id);
+      } else {
+        setActiveSubTab(null);
+      }
       setHasSetDefault(true);
     }
   }, [user, hasSetDefault]);
@@ -50,14 +58,27 @@ export default function PricingTabs({
   function handleTabChange(tabId: string) {
     setActiveTab(tabId);
     setIsAnnual(false);
+    const category = pricingCategories.find((c) => c.id === tabId);
+    if (category?.subCategories?.length) {
+      setActiveSubTab(category.subCategories[0].id);
+    } else {
+      setActiveSubTab(null);
+    }
   }
 
+  // Determine active plans and billing note based on sub-categories
+  const activeSubCategory = activeCategory.subCategories?.find((sc) => sc.id === activeSubTab);
+  const activePlans = activeSubCategory ? activeSubCategory.plans : activeCategory.plans;
+  const billingNote = activeSubCategory?.billingNote ?? activeCategory.billingNote;
+
   // Determine grid columns based on plan count
-  const planCount = activeCategory.plans.length;
+  const planCount = activePlans.length;
   const gridCols =
     planCount <= 3
       ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
-      : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4';
+      : planCount <= 4
+        ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+        : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5';
 
   return (
     <div className="w-full max-w-7xl mx-auto">
@@ -79,6 +100,25 @@ export default function PricingTabs({
         ))}
       </div>
 
+      {/* Sub-tab bar */}
+      {activeCategory.subCategories && activeCategory.subCategories.length > 0 && (
+        <div className="flex items-center justify-center gap-2 mb-8 flex-wrap">
+          {activeCategory.subCategories.map((subCat) => (
+            <button
+              key={subCat.id}
+              onClick={() => setActiveSubTab(subCat.id)}
+              className={`px-4 py-2 rounded-full text-xs font-medium transition-all duration-200 ${
+                activeSubTab === subCat.id
+                  ? 'bg-white/10 text-white border border-white/20'
+                  : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
+              }`}
+            >
+              {subCat.label}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Billing toggle */}
       {activeCategory.hasToggle && (
         <BillingToggle isAnnual={isAnnual} onChange={setIsAnnual} />
@@ -86,7 +126,7 @@ export default function PricingTabs({
 
       {/* Plan cards grid */}
       <div className={`grid ${gridCols} gap-6 items-stretch`}>
-        {activeCategory.plans.map((plan) => (
+        {activePlans.map((plan) => (
           <PricingCard
             key={plan.slug}
             plan={plan}
@@ -99,9 +139,9 @@ export default function PricingTabs({
       </div>
 
       {/* Billing note */}
-      {activeCategory.billingNote && (
+      {billingNote && (
         <div className="mt-12 text-center">
-          <p className="text-text-muted text-sm font-light">{activeCategory.billingNote}</p>
+          <p className="text-text-muted text-sm font-light">{billingNote}</p>
         </div>
       )}
     </div>

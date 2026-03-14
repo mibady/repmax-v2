@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { z } from "zod";
 import { getStripe } from "@/lib/stripe";
+import { getBaseUrl } from "@/lib/utils/get-base-url";
 
 const bookingSchema = z.object({
   quantity: z.number().int().positive().max(10).default(1),
@@ -160,7 +161,7 @@ export async function POST(
     }
 
     // Create Stripe checkout session
-    const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
+    const baseUrl = getBaseUrl();
 
     const session = await stripe.checkout.sessions.create({
       customer: stripeCustomerId,

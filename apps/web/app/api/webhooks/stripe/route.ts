@@ -175,10 +175,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ received: true });
   } catch (error) {
+    // Log error but return 200 to prevent Stripe from retrying indefinitely.
+    // Stripe treats non-2xx as failure and will retry up to ~72 hours.
     console.error("Webhook handler error:", error);
-    return NextResponse.json(
-      { error: "Webhook handler failed" },
-      { status: 500 }
-    );
+    return NextResponse.json({ received: true, error: "Processing failed" });
   }
 }

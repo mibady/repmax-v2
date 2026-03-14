@@ -79,6 +79,37 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Content is required" }, { status: 400 });
     }
 
+    const validCategories = ["general", "urgent", "call_log", "strategy"];
+    if (category && !validCategories.includes(category)) {
+      return NextResponse.json({ error: "Invalid category" }, { status: 400 });
+    }
+
+    // Verify athleteId belongs to this coach's roster
+    if (athleteId) {
+      const { data: rosterEntry } = await supabase
+        .from("team_rosters")
+        .select("id")
+        .eq("athlete_id", athleteId)
+        .eq("team_id", (
+          await supabase
+            .from("teams")
+            .select("id")
+            .eq("coach_profile_id", (
+              await supabase
+                .from("coaches")
+                .select("profile_id")
+                .eq("id", coachId)
+                .single()
+            ).data?.profile_id)
+            .single()
+        ).data?.id)
+        .single();
+
+      if (!rosterEntry) {
+        return NextResponse.json({ error: "Athlete not on your roster" }, { status: 403 });
+      }
+    }
+
     const { data, error } = await supabase
       .from("coach_structured_notes")
       .insert({

@@ -2,6 +2,8 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { getBaseUrl } from "@/lib/utils/get-base-url";
+import { generateRepmaxId } from "@/lib/utils/athlete-helpers";
 
 export interface AuthResult {
   success: boolean;
@@ -53,7 +55,7 @@ export async function signup(formData: FormData): Promise<AuthResult> {
       data: {
         full_name: fullName,
       },
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/auth/callback`,
+      emailRedirectTo: `${getBaseUrl()}/auth/callback`,
     },
   });
 
@@ -77,7 +79,7 @@ export async function signInWithGoogle(): Promise<AuthResult> {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/auth/callback`,
+      redirectTo: `${getBaseUrl()}/auth/callback`,
     },
   });
 
@@ -98,7 +100,7 @@ export async function signInWithApple(): Promise<AuthResult> {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "apple",
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/auth/callback`,
+      redirectTo: `${getBaseUrl()}/auth/callback`,
     },
   });
 
@@ -117,7 +119,7 @@ export async function resetPassword(email: string): Promise<AuthResult> {
   const supabase = await createClient();
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/auth/reset-password`,
+    redirectTo: `${getBaseUrl()}/auth/reset-password`,
   });
 
   if (error) {
@@ -225,6 +227,20 @@ export async function updateUserRole(role: UserRole): Promise<AuthResult> {
       division: "D1",
       school_type: "college",
       title: "Recruiting Coordinator",
+    }, { onConflict: "profile_id" });
+  } else if (role === "athlete") {
+    const fullName = user.user_metadata?.full_name || user.email?.split("@")[0] || "User";
+    const classYear = new Date().getFullYear() + 1;
+    const repmaxId = await generateRepmaxId(supabase, fullName, classYear);
+    await supabase.from("athletes").upsert({
+      profile_id: profileId,
+      high_school: "TBD",
+      city: "TBD",
+      state: "TBD",
+      class_year: classYear,
+      primary_position: "ATH",
+      repmax_id: repmaxId,
+      ncaa_cleared: false,
     }, { onConflict: "profile_id" });
   }
   // club role does NOT get a coaches record
