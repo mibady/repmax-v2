@@ -107,8 +107,6 @@ export interface HighlightData {
   thumbnailUrl?: string;
   durationSeconds?: number;
   viewCount?: number;
-  aiAnalyzed?: boolean;
-  aiTags?: string[];
   createdAt?: string;
 }
 
@@ -121,8 +119,6 @@ export const highlightData: HighlightData[] = [
     thumbnailUrl: 'https://storage.repmax.io/thumbnails/jaylen-junior-thumb.jpg',
     durationSeconds: 245,
     viewCount: 1847,
-    aiAnalyzed: true,
-    aiTags: ['dual-threat', 'deep-ball', 'pocket-presence'],
     createdAt: '2025-11-15T10:00:00Z',
   },
   {
@@ -133,7 +129,6 @@ export const highlightData: HighlightData[] = [
     thumbnailUrl: 'https://storage.repmax.io/thumbnails/jaylen-elite11-thumb.jpg',
     durationSeconds: 180,
     viewCount: 523,
-    aiAnalyzed: false,
     createdAt: '2025-06-22T14:30:00Z',
   },
   {
@@ -144,7 +139,6 @@ export const highlightData: HighlightData[] = [
     thumbnailUrl: 'https://storage.repmax.io/thumbnails/jaylen-week8-thumb.jpg',
     durationSeconds: 7200,
     viewCount: 312,
-    aiAnalyzed: false,
     createdAt: '2025-10-20T08:00:00Z',
   },
   {
@@ -154,7 +148,6 @@ export const highlightData: HighlightData[] = [
     videoUrl: 'https://storage.repmax.io/films/deshawn-routes.mp4',
     durationSeconds: 120,
     viewCount: 89,
-    aiAnalyzed: false,
     createdAt: '2025-12-01T16:00:00Z',
   },
 ];

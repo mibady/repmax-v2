@@ -166,8 +166,6 @@ export type Database = {
           thumbnail_url: string | null;
           duration_seconds: number | null;
           view_count: number;
-          ai_analyzed: boolean;
-          ai_tags: Json | null;
           created_at: string;
         };
         Insert: {
@@ -179,8 +177,6 @@ export type Database = {
           thumbnail_url?: string | null;
           duration_seconds?: number | null;
           view_count?: number;
-          ai_analyzed?: boolean;
-          ai_tags?: Json | null;
           created_at?: string;
         };
         Update: {
@@ -192,8 +188,6 @@ export type Database = {
           thumbnail_url?: string | null;
           duration_seconds?: number | null;
           view_count?: number;
-          ai_analyzed?: boolean;
-          ai_tags?: Json | null;
           created_at?: string;
         };
       };

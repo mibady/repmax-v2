@@ -58,16 +58,6 @@ function HighlightCard({
         </div>
       )}
 
-      {/* AI Analyzed Badge */}
-      {highlight.ai_analyzed && (
-        <div className="absolute top-3 right-3 z-10">
-          <span className="px-2 py-1 bg-purple-600/80 text-white text-xs font-bold rounded-md shadow-sm uppercase tracking-wider flex items-center gap-1">
-            <span className="material-symbols-outlined text-[14px]">smart_toy</span>
-            AI
-          </span>
-        </div>
-      )}
-
       {/* Thumbnail */}
       <div className="relative w-full aspect-video bg-gray-900 group/image cursor-pointer overflow-hidden">
         <div

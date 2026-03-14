@@ -23,18 +23,6 @@ interface ViewerSection {
   color: string;
 }
 
-interface ProfileSection {
-  label: string;
-  heightPercent: number;
-  isHighlighted?: boolean;
-}
-
-const profileSections: ProfileSection[] = [
-  { label: 'Highlights', heightPercent: 80, isHighlighted: true },
-  { label: 'Stats', heightPercent: 45 },
-  { label: 'Academics', heightPercent: 60 },
-  { label: 'Bio', heightPercent: 30 },
-];
 
 function LoadingSkeleton() {
   return (
@@ -85,9 +73,7 @@ export default function AthleteAnalyticsPage() {
       icon: 'visibility',
       label: 'Profile Views',
       value: summary?.total_views?.toString() || '0',
-      trend: summary?.total_views && summary.total_views > 10
-        ? { value: '+12%', positive: true }
-        : undefined,
+      trend: undefined,
     },
     {
       icon: 'bookmark',
@@ -102,10 +88,9 @@ export default function AthleteAnalyticsPage() {
     {
       icon: 'verified',
       label: 'Completeness',
-      value: '85%',
-      progress: 85,
-      actionLabel: 'Complete now',
-      actionHref: '/athlete/profile',
+      value: 'N/A',
+      actionLabel: 'Edit Card',
+      actionHref: '/athlete/card/edit',
     },
   ];
 
@@ -121,11 +106,7 @@ export default function AthleteAnalyticsPage() {
         percentage: Math.round((count as number / (summary?.total_views || 1)) * 100),
         color: idx === 0 ? 'bg-primary' : idx === 1 ? 'bg-gray-500' : 'bg-gray-700',
       }))
-    : [
-        { label: 'College Recruiters', percentage: 65, color: 'bg-primary' },
-        { label: 'Coaches', percentage: 25, color: 'bg-gray-500' },
-        { label: 'Scouts/Media', percentage: 10, color: 'bg-gray-700' },
-      ];
+    : [];
 
   // Get top viewers from recent data
   const topViewers = (recent || []).slice(0, 5).map((view, idx) => ({
@@ -286,7 +267,7 @@ export default function AthleteAnalyticsPage() {
                     <div key={i} className="w-full h-px bg-surface-border/50 border-t border-dashed border-gray-700"></div>
                   ))}
                 </div>
-                {/* SVG Line Chart */}
+                {/* SVG Line Chart — data-driven */}
                 <svg className="w-full h-[calc(100%-2rem)] absolute top-0 left-0 overflow-visible" preserveAspectRatio="none" viewBox="0 0 100 100">
                   <defs>
                     <linearGradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
@@ -294,8 +275,31 @@ export default function AthleteAnalyticsPage() {
                       <stop offset="100%" stopColor="#d4af35" stopOpacity="0"></stop>
                     </linearGradient>
                   </defs>
-                  <path d="M0,85 C10,80 20,88 30,65 C40,42 50,55 60,40 C70,25 80,35 90,20 C95,12 100,10 100,10 V100 H0 Z" fill="url(#chartGradient)"></path>
-                  <path d="M0,85 C10,80 20,88 30,65 C40,42 50,55 60,40 C70,25 80,35 90,20 C95,12 100,10 100,10" fill="none" stroke="#d4af35" strokeWidth="2" vectorEffect="non-scaling-stroke"></path>
+                  {(() => {
+                    const values = grouped ? Object.values(grouped) : [];
+                    if (values.length === 0) {
+                      return (
+                        <>
+                          <path d="M0,95 L100,95 V100 H0 Z" fill="url(#chartGradient)" />
+                          <path d="M0,95 L100,95" fill="none" stroke="#d4af35" strokeWidth="2" vectorEffect="non-scaling-stroke" />
+                        </>
+                      );
+                    }
+                    const maxVal = Math.max(...values, 1);
+                    const points = values.map((v, i) => {
+                      const x = values.length === 1 ? 50 : (i / (values.length - 1)) * 100;
+                      const y = 95 - (v / maxVal) * 85;
+                      return `${x},${y}`;
+                    });
+                    const linePath = `M${points.join(' L')}`;
+                    const fillPath = `${linePath} V100 H0 Z`;
+                    return (
+                      <>
+                        <path d={fillPath} fill="url(#chartGradient)" />
+                        <path d={linePath} fill="none" stroke="#d4af35" strokeWidth="2" vectorEffect="non-scaling-stroke" />
+                      </>
+                    );
+                  })()}
                 </svg>
                 {/* X-Axis Labels */}
                 <div className="absolute bottom-0 left-0 right-0 flex justify-between text-xs text-gray-500 font-medium pt-2">
@@ -322,35 +326,48 @@ export default function AthleteAnalyticsPage() {
               <span className="material-symbols-outlined text-8xl text-purple-500">public</span>
             </div>
             <h3 className="text-white text-lg font-bold mb-2">Zone Benchmark</h3>
-            <p className="text-purple-400 text-sm font-medium mb-6">Regional Performance</p>
-            <div className="flex-1 flex flex-col justify-center gap-6">
-              <div className="text-center">
-                <span className="text-4xl font-bold text-white block">
-                  Top {summary?.total_views && summary.total_views > 30 ? '15' : '25'}%
-                </span>
-                <span className="text-xs text-gray-400 uppercase tracking-wider">In Your Region</span>
+            <p className="text-purple-400 text-sm font-medium mb-4">Regional Visibility</p>
+            {geoData?.by_zone && geoData.by_zone.length > 0 ? (
+              <div className="flex-1 flex flex-col gap-3">
+                {geoData.by_zone.map((zone: { zone: string; view_count: number; unique_schools: number }) => {
+                  const maxViews = geoData.by_zone[0].view_count || 1;
+                  const pct = Math.round((zone.view_count / maxViews) * 100);
+                  return (
+                    <div key={zone.zone}>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="text-gray-300 flex items-center gap-1.5">
+                          <span className="material-symbols-outlined text-[14px] text-purple-400">location_on</span>
+                          {zone.zone}
+                        </span>
+                        <span className="text-white font-bold text-xs">
+                          {zone.view_count} view{zone.view_count !== 1 ? 's' : ''}
+                          {zone.unique_schools > 0 && (
+                            <span className="text-gray-500 font-normal ml-1">({zone.unique_schools} school{zone.unique_schools !== 1 ? 's' : ''})</span>
+                          )}
+                        </span>
+                      </div>
+                      <div className="h-2 bg-surface-border rounded-full overflow-hidden">
+                        <div className="h-full bg-purple-500 rounded-full transition-all" style={{ width: `${pct}%` }} />
+                      </div>
+                    </div>
+                  );
+                })}
+                {geoData.top_zone && (
+                  <p className="text-xs text-purple-400 mt-auto pt-2 border-t border-white/5">
+                    <span className="material-symbols-outlined text-[12px] align-middle mr-1">trending_up</span>
+                    Most views from <span className="font-bold text-white">{geoData.top_zone}</span>
+                  </p>
+                )}
               </div>
-              <div className="relative pt-6">
-                <div className="h-2 bg-surface-border rounded-full relative">
-                  <div
-                    className="absolute top-0 left-0 bottom-0 bg-gradient-to-r from-purple-900 to-purple-500 rounded-full"
-                    style={{ width: `${summary?.total_views && summary.total_views > 30 ? 85 : 75}%` }}
-                  ></div>
-                </div>
-                <div className="flex justify-between mt-2 text-[10px] text-gray-500 font-medium uppercase">
-                  <span>Bottom 10%</span>
-                  <span>Average</span>
-                  <span>Top 1%</span>
-                </div>
-                <div
-                  className="absolute top-0 -mt-2"
-                  style={{ left: `${summary?.total_views && summary.total_views > 30 ? 85 : 75}%`, transform: 'translateX(-50%)' }}
-                >
-                  <div className="w-0.5 h-4 bg-white mx-auto mb-1"></div>
-                  <div className="bg-purple-600 text-white text-xs font-bold px-2 py-0.5 rounded">You</div>
+            ) : (
+              <div className="flex-1 flex flex-col items-center justify-center gap-3 py-6">
+                <span className="material-symbols-outlined text-4xl text-purple-500/30">public</span>
+                <div className="text-center">
+                  <span className="text-sm font-medium text-gray-400 block">No zone data yet</span>
+                  <span className="text-xs text-gray-500 mt-1 block">Share your card to start seeing which regions are viewing your profile.</span>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
@@ -361,36 +378,28 @@ export default function AthleteAnalyticsPage() {
             {/* Viewer Types */}
             <div className="bg-surface-dark border border-surface-border rounded-xl p-6">
               <h3 className="text-white text-lg font-bold mb-4">Who&apos;s Viewing You</h3>
-              <div className="space-y-4">
-                {viewerTypes.map((viewer, idx) => (
-                  <div key={idx}>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="text-gray-300">{viewer.label}</span>
-                      <span className="text-white font-bold">{viewer.percentage}%</span>
+              {viewerTypes.length > 0 ? (
+                <div className="space-y-4">
+                  {viewerTypes.map((viewer, idx) => (
+                    <div key={idx}>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="text-gray-300">{viewer.label}</span>
+                        <span className="text-white font-bold">{viewer.percentage}%</span>
+                      </div>
+                      <div className="h-2 bg-surface-border rounded-full overflow-hidden">
+                        <div className={`h-full ${viewer.color} rounded-full`} style={{ width: `${viewer.percentage}%` }}></div>
+                      </div>
                     </div>
-                    <div className="h-2 bg-surface-border rounded-full overflow-hidden">
-                      <div className={`h-full ${viewer.color} rounded-full`} style={{ width: `${viewer.percentage}%` }}></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-6 gap-2">
+                  <span className="material-symbols-outlined text-3xl text-gray-600">visibility_off</span>
+                  <span className="text-sm text-gray-500">No viewer breakdown data yet</span>
+                </div>
+              )}
             </div>
 
-            {/* Most Viewed Sections */}
-            <div className="bg-surface-dark border border-surface-border rounded-xl p-6 flex-1">
-              <h3 className="text-white text-lg font-bold mb-4">Most Viewed Sections</h3>
-              <div className="flex items-end gap-3 h-32 pt-2">
-                {profileSections.map((section, idx) => (
-                  <div key={idx} className="flex-1 flex flex-col justify-end gap-2 group">
-                    <div
-                      className={`w-full rounded-t-sm transition-colors ${section.isHighlighted ? 'bg-primary opacity-90 group-hover:opacity-100' : 'bg-surface-border group-hover:bg-gray-600'}`}
-                      style={{ height: `${section.heightPercent}%` }}
-                    ></div>
-                    <span className="text-[10px] text-gray-400 text-center truncate">{section.label}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
 
           {/* Top Viewers List (Right Column) */}

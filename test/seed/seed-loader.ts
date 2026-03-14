@@ -369,8 +369,6 @@ export async function seedHighlights(): Promise<SeedResult> {
         thumbnail_url: highlight.thumbnailUrl || null,
         duration_seconds: highlight.durationSeconds || null,
         view_count: highlight.viewCount || 0,
-        ai_analyzed: highlight.aiAnalyzed || false,
-        ai_tags: highlight.aiTags || null,
         created_at: highlight.createdAt || new Date().toISOString(),
       });
 
@@ -759,6 +757,111 @@ export async function seedRelationships(): Promise<SeedResult> {
     }
   }
   console.log(`  ✓ Offers: ${offerCount}`);
+
+  // 4b. Create offers for test athletes (Jaylen, DeShawn, Marcus)
+  const testAthleteOffers: { email: string; offers: { school_name: string; division: string; scholarship_type: string; daysAgo: number; committed: boolean }[] }[] = [
+    {
+      email: 'jaylen.washington@test.repmax.io',
+      offers: [
+        { school_name: 'TCU', division: 'D1', scholarship_type: 'full', daysAgo: 45, committed: false },
+        { school_name: 'Oregon', division: 'D1', scholarship_type: 'full', daysAgo: 30, committed: false },
+        { school_name: 'USC', division: 'D1', scholarship_type: 'full', daysAgo: 20, committed: false },
+        { school_name: 'Texas A&M', division: 'D1', scholarship_type: 'full', daysAgo: 12, committed: false },
+        { school_name: 'Ohio State', division: 'D1', scholarship_type: 'full', daysAgo: 5, committed: false },
+      ],
+    },
+    {
+      email: 'deshawn.harris@test.repmax.io',
+      offers: [
+        { school_name: 'UCLA', division: 'D1', scholarship_type: 'partial', daysAgo: 40, committed: false },
+        { school_name: 'Arizona State', division: 'D1', scholarship_type: 'full', daysAgo: 18, committed: false },
+      ],
+    },
+    {
+      email: 'marcus.thompson@test.repmax.io',
+      offers: [
+        { school_name: 'San Diego State', division: 'D1', scholarship_type: 'preferred-walk-on', daysAgo: 25, committed: false },
+      ],
+    },
+  ];
+
+  let testOfferCount = 0;
+  for (const entry of testAthleteOffers) {
+    const athleteId = athleteIdMap.get(entry.email);
+    if (!athleteId) continue;
+
+    for (const o of entry.offers) {
+      try {
+        const { error } = await supabase.from('offers').insert({
+          athlete_id: athleteId,
+          school_name: o.school_name,
+          division: o.division,
+          scholarship_type: o.scholarship_type,
+          offer_date: new Date(Date.now() - o.daysAgo * 24 * 60 * 60 * 1000).toISOString(),
+          committed: o.committed,
+        });
+        if (!error) testOfferCount++;
+      } catch (e) {
+        errors.push(`Test offer: ${e instanceof Error ? e.message : String(e)}`);
+      }
+    }
+  }
+  console.log(`  ✓ Test athlete offers: ${testOfferCount}`);
+
+  // 4c. Create athlete_events for test athletes
+  const today = new Date();
+  const testAthleteEvents: { email: string; events: { title: string; event_type: string; daysFromNow: number; location: string; priority: string; description?: string; time?: string }[] }[] = [
+    {
+      email: 'jaylen.washington@test.repmax.io',
+      events: [
+        { title: 'TCU Official Visit', event_type: 'visit', daysFromNow: 7, location: 'Fort Worth, TX', priority: 'high', description: 'Official campus visit with coaching staff meeting and facility tour.', time: '09:00' },
+        { title: 'Elite 11 Regional', event_type: 'camp', daysFromNow: 14, location: 'Los Angeles, CA', priority: 'high', description: 'Top QB showcase event. Film and live evaluation.', time: '08:00' },
+        { title: 'Oregon Virtual Meeting', event_type: 'visit', daysFromNow: 3, location: 'Virtual', priority: 'normal', description: 'Zoom with offensive coordinator.', time: '16:00' },
+        { title: 'USC Junior Day', event_type: 'visit', daysFromNow: 21, location: 'Los Angeles, CA', priority: 'normal', time: '10:00' },
+        { title: 'Allen vs Plano - District Game', event_type: 'game', daysFromNow: 10, location: 'Eagle Stadium, Allen TX', priority: 'high', time: '19:00' },
+        { title: 'Dashr Pro Combine', event_type: 'combine', daysFromNow: 28, location: 'Frisco, TX', priority: 'normal', description: 'NFL-grade Dashr timing. 40yd, pro agility, 3-cone, vertical.', time: '07:30' },
+        { title: 'NCAA Early Signing Period', event_type: 'deadline', daysFromNow: 60, location: '', priority: 'high', description: 'First day to sign NLI for early signing period.' },
+        { title: 'Ohio State Game Day Visit', event_type: 'visit', daysFromNow: 35, location: 'Columbus, OH', priority: 'normal', description: 'Gameday experience with recruiting staff.' },
+        // Past events
+        { title: 'The Opening Regional', event_type: 'camp', daysFromNow: -14, location: 'Dallas, TX', priority: 'high', time: '08:00' },
+        { title: 'Allen vs Southlake Carroll', event_type: 'game', daysFromNow: -7, location: 'Eagle Stadium, Allen TX', priority: 'normal', time: '19:30' },
+      ],
+    },
+    {
+      email: 'deshawn.harris@test.repmax.io',
+      events: [
+        { title: 'UCLA Camp Invite', event_type: 'camp', daysFromNow: 12, location: 'Westwood, CA', priority: 'normal', time: '09:00' },
+        { title: 'Arizona State Visit', event_type: 'visit', daysFromNow: 20, location: 'Tempe, AZ', priority: 'high' },
+      ],
+    },
+  ];
+
+  let eventCount = 0;
+  for (const entry of testAthleteEvents) {
+    const athleteId = athleteIdMap.get(entry.email);
+    if (!athleteId) continue;
+
+    for (const evt of entry.events) {
+      const eventDate = new Date(today);
+      eventDate.setDate(eventDate.getDate() + evt.daysFromNow);
+      try {
+        const { error } = await supabase.from('athlete_events').insert({
+          athlete_id: athleteId,
+          title: evt.title,
+          event_type: evt.event_type,
+          event_date: eventDate.toISOString().split('T')[0],
+          event_time: evt.time || null,
+          location: evt.location || null,
+          priority: evt.priority,
+          description: evt.description || null,
+        });
+        if (!error) eventCount++;
+      } catch (e) {
+        errors.push(`Test event: ${e instanceof Error ? e.message : String(e)}`);
+      }
+    }
+  }
+  console.log(`  ✓ Test athlete events: ${eventCount}`);
 
   // 5. Create messages between TCU recruiter and real athletes
   if (tcuProfileId) {
