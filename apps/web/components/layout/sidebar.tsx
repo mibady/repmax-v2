@@ -33,8 +33,12 @@ interface NavItem {
 const athleteNavItems: NavItem[] = [
   { icon: 'dashboard', label: 'Dashboard', href: '/athlete' },
   { icon: 'badge', label: 'My Card', href: '/athlete/card/edit' },
-  { icon: 'map', label: 'Zone Intel', href: '/zone/map' },
+  { icon: 'videocam', label: 'Film', href: '/athlete/film' },
+  { icon: 'bar_chart', label: 'Analytics', href: '/athlete/analytics' },
   { icon: 'campaign', label: 'Offers', href: '/athlete/offers' },
+  { icon: 'calendar_month', label: 'Calendar', href: '/athlete/calendar' },
+  { icon: 'description', label: 'Documents', href: '/athlete/documents' },
+  { icon: 'map', label: 'Zone Intel', href: '/zone/map' },
   { icon: 'trophy', label: 'Tournaments', href: '/tournaments' },
   { icon: 'mail', label: 'Messages', href: '/messages' },
 ];

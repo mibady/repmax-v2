@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
+import { generateRepmaxId, stateToZone } from "@/lib/utils/athlete-helpers";
 
 function formatHeight(inches: number | null): string {
   if (!inches) return "";
@@ -37,14 +38,14 @@ export async function GET() {
       .from("athletes")
       .select(`
         id,
-        school,
+        high_school,
         city,
         state,
         class_year,
-        position,
+        primary_position,
         height_inches,
         weight_lbs,
-        forty_yard_dash,
+        forty_yard_time,
         gpa,
         sat_score,
         act_score,
@@ -80,10 +81,10 @@ export async function GET() {
     // Format response
     const cardData = {
       name: profile.full_name || "",
-      position: athlete.position || "",
+      position: athlete.primary_position || "",
       secondaryPosition: athlete.secondary_position || "",
       classYear: athlete.class_year || new Date().getFullYear() + 1,
-      highSchool: athlete.school || "",
+      highSchool: athlete.high_school || "",
       city: athlete.city || "",
       state: athlete.state || "",
       bio: athlete.bio || "",
@@ -92,7 +93,7 @@ export async function GET() {
       height: formatHeight(athlete.height_inches),
       weight: athlete.weight_lbs?.toString() || "",
       wingspan: athlete.wingspan_inches?.toString() || "",
-      fortyYard: athlete.forty_yard_dash?.toFixed(2) || "",
+      fortyYard: athlete.forty_yard_time?.toFixed(2) || "",
       benchPress: athlete.bench_press_lbs?.toString() || "",
       squat: athlete.squat_lbs?.toString() || "",
       vertical: athlete.vertical_inches?.toString() || "",
@@ -210,11 +211,11 @@ export async function PUT(request: Request) {
     // Update athlete data
     const athleteUpdate: Record<string, unknown> = {};
 
-    if (body.position) athleteUpdate.position = body.position;
+    if (body.position) athleteUpdate.primary_position = body.position;
     if (body.secondaryPosition !== undefined)
       athleteUpdate.secondary_position = body.secondaryPosition || null;
     if (body.classYear) athleteUpdate.class_year = body.classYear;
-    if (body.highSchool) athleteUpdate.school = body.highSchool;
+    if (body.highSchool) athleteUpdate.high_school = body.highSchool;
     if (body.city) athleteUpdate.city = body.city;
     if (body.state) athleteUpdate.state = body.state;
     if (body.bio !== undefined) athleteUpdate.bio = body.bio || null;
@@ -224,7 +225,7 @@ export async function PUT(request: Request) {
     if (body.weightLbs !== undefined) athleteUpdate.weight_lbs = body.weightLbs;
     if (body.wingspan) athleteUpdate.wingspan_inches = parseInt(body.wingspan);
     if (body.fortyYardDash !== undefined)
-      athleteUpdate.forty_yard_dash = body.fortyYardDash;
+      athleteUpdate.forty_yard_time = body.fortyYardDash;
     if (body.benchPress)
       athleteUpdate.bench_press_lbs = parseInt(body.benchPress);
     if (body.squat) athleteUpdate.squat_lbs = parseInt(body.squat);
@@ -254,6 +255,12 @@ export async function PUT(request: Request) {
     if (body.coachEmail !== undefined)
       athleteUpdate.coach_email = body.coachEmail || null;
 
+    // Auto-derive zone when state changes and zone not explicitly set
+    if (body.state && !body.zone) {
+      const derivedZone = stateToZone(body.state);
+      if (derivedZone) athleteUpdate.zone = derivedZone;
+    }
+
     if (Object.keys(athleteUpdate).length > 0) {
       const { error } = await supabase
         .from("athletes")
@@ -267,6 +274,30 @@ export async function PUT(request: Request) {
           { status: 500 }
         );
       }
+    }
+
+    // Backfill repmax_id if missing
+    const { data: currentAthlete } = await supabase
+      .from("athletes")
+      .select("repmax_id, class_year")
+      .eq("id", athlete.id)
+      .single();
+
+    if (currentAthlete && !currentAthlete.repmax_id) {
+      const { data: prof } = await supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("id", profile.id)
+        .single();
+      const repmaxId = await generateRepmaxId(
+        supabase,
+        prof?.full_name || "User",
+        currentAthlete.class_year || new Date().getFullYear() + 1
+      );
+      await supabase
+        .from("athletes")
+        .update({ repmax_id: repmaxId })
+        .eq("id", athlete.id);
     }
 
     return NextResponse.json({ success: true });

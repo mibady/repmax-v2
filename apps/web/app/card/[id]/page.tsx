@@ -123,7 +123,7 @@ export default async function AthleteCardPage({
       act: typedAthlete.act_score,
       ncaaCleared: typedAthlete.ncaa_cleared || false,
     },
-    offersCount: typedAthlete.offers_count || 0,
+    offersCount: 0, // Will be replaced with live count below
     coachNotes: typedAthlete.coach_notes,
     playerSummary: typedAthlete.player_summary,
     coachPhone: typedAthlete.coach_phone,
@@ -139,6 +139,14 @@ export default async function AthleteCardPage({
       videoUrl: null,
     },
   };
+
+  // Query live offers count
+  const { count: liveOffersCount } = await supabase
+    .from('offers')
+    .select('*', { count: 'exact', head: true })
+    .eq('athlete_id', typedAthlete.id);
+
+  athlete.offersCount = liveOffersCount || 0;
 
   const hasDocuments = documentCounts.transcripts > 0 || documentCounts.recommendations > 0 || documentCounts.other > 0;
 
@@ -263,9 +271,9 @@ export default async function AthleteCardPage({
                 Status
               </span>
               <div className="flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-sm font-bold text-green-400">
-                  Verified
+                <span className={`w-1.5 h-1.5 rounded-full ${athlete.verified ? 'bg-green-500 animate-pulse' : 'bg-gray-500'}`} />
+                <span className={`text-sm font-bold ${athlete.verified ? 'text-green-400' : 'text-gray-400'}`}>
+                  {athlete.verified ? 'Verified' : 'Unverified'}
                 </span>
               </div>
             </div>

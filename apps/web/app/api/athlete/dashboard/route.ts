@@ -176,6 +176,7 @@ export async function GET() {
       type: evt.event_type,
       location: evt.location || null,
       description: evt.description || null,
+      priority: evt.priority || null,
     }));
 
     return NextResponse.json({
