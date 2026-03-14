@@ -73,6 +73,7 @@ export async function GET(request: Request) {
     return NextResponse.json({
       messages: data,
       unread_count: unreadCount || 0,
+      profile_id: profile.id,
     });
   } catch (error) {
     console.error("Messages API error:", error);

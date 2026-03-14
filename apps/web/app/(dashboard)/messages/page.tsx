@@ -106,7 +106,7 @@ function LoadingSkeleton() {
 }
 
 export default function MessagesPage() {
-  const { messages, unreadCount, isLoading, sendMessage } = useMessages();
+  const { messages, unreadCount, profileId, isLoading, sendMessage } = useMessages();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all');
@@ -114,8 +114,8 @@ export default function MessagesPage() {
 
   // Convert messages to conversations
   const conversations = useMemo(() => {
-    return groupMessagesIntoConversations(messages);
-  }, [messages]);
+    return groupMessagesIntoConversations(messages, profileId);
+  }, [messages, profileId]);
 
   const filteredConversations = conversations.filter((conv) => {
     // Search filter

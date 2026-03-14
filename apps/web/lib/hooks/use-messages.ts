@@ -12,18 +12,33 @@ type Message = Tables<"messages"> & {
 export function useMessages() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [profileId, setProfileId] = useState<string | undefined>();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   const fetchMessages = useCallback(async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("/api/messages");
-      if (!res.ok) throw new Error("Failed to fetch messages");
+      const [inboxRes, sentRes] = await Promise.all([
+        fetch("/api/messages?folder=inbox"),
+        fetch("/api/messages?folder=sent"),
+      ]);
+      if (!inboxRes.ok) throw new Error("Failed to fetch messages");
 
-      const data = await res.json();
-      setMessages(data.messages || []);
-      setUnreadCount(data.unreadCount || 0);
+      const inboxData = await inboxRes.json();
+      const sentData = sentRes.ok ? await sentRes.json() : { messages: [] };
+
+      // Merge and deduplicate by id, sort by created_at desc
+      const allMessages = [...(inboxData.messages || []), ...(sentData.messages || [])];
+      const uniqueMap = new Map<string, Message>();
+      allMessages.forEach((m: Message) => uniqueMap.set(m.id, m));
+      const merged = Array.from(uniqueMap.values()).sort(
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+
+      setMessages(merged);
+      setUnreadCount(inboxData.unread_count || inboxData.unreadCount || 0);
+      if (inboxData.profile_id) setProfileId(inboxData.profile_id);
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Unknown error"));
     } finally {
@@ -66,6 +81,7 @@ export function useMessages() {
   return {
     messages,
     unreadCount,
+    profileId,
     isLoading,
     error,
     sendMessage,
