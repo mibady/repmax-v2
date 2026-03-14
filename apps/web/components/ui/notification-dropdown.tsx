@@ -22,7 +22,7 @@ function formatTimeAgo(dateString: string): string {
   return `${months}mo ago`;
 }
 
-const NOTIFICATION_ICONS: Record<Notification['type'], string> = {
+const NOTIFICATION_ICONS: Record<Notification['notification_type'], string> = {
   profile_view: 'visibility',
   shortlist: 'bookmark_added',
   deadline: 'schedule',
@@ -148,7 +148,7 @@ export function NotificationDropdown({ userId }: NotificationDropdownProps) {
                     !notification.read ? 'bg-primary/15 text-primary' : 'bg-white/5 text-white/40'
                   }`}>
                     <span className="material-symbols-outlined text-[18px]">
-                      {NOTIFICATION_ICONS[notification.type] || 'notifications'}
+                      {NOTIFICATION_ICONS[notification.notification_type] || 'notifications'}
                     </span>
                   </div>
 
@@ -157,8 +157,8 @@ export function NotificationDropdown({ userId }: NotificationDropdownProps) {
                     <p className={`text-sm leading-tight ${!notification.read ? 'text-white font-medium' : 'text-slate-400'}`}>
                       {notification.title}
                     </p>
-                    {notification.description && (
-                      <p className="text-xs text-slate-500 mt-0.5 line-clamp-2">{notification.description}</p>
+                    {notification.message && (
+                      <p className="text-xs text-slate-500 mt-0.5 line-clamp-2">{notification.message}</p>
                     )}
                     <p className="text-xs text-slate-500 mt-1">{formatTimeAgo(notification.created_at)}</p>
                   </div>

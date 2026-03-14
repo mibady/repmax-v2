@@ -6,11 +6,11 @@ import type { RealtimeChannel } from '@supabase/supabase-js';
 
 export interface Notification {
   id: string;
-  user_id: string;
-  type: 'profile_view' | 'shortlist' | 'deadline' | 'parent_link' | 'summary' | 'message' | 'offer';
+  profile_id: string;
+  notification_type: 'profile_view' | 'shortlist' | 'deadline' | 'parent_link' | 'summary' | 'message' | 'offer';
   title: string;
-  description?: string;
-  metadata?: Record<string, unknown>;
+  message: string;
+  data?: Record<string, unknown>;
   read: boolean;
   created_at: string;
 }
@@ -47,7 +47,7 @@ export function useNotifications(options: UseNotificationsOptions = {}): UseNoti
       let query = supabase
         .from('notifications')
         .select('*')
-        .eq('user_id', userId)
+        .eq('profile_id', userId)
         .order('created_at', { ascending: false })
         .limit(limit);
 
@@ -57,7 +57,15 @@ export function useNotifications(options: UseNotificationsOptions = {}): UseNoti
 
       const { data, error: fetchError } = await query;
 
-      if (fetchError) throw fetchError;
+      if (fetchError) {
+        // RLS requires authenticated user matching profile_id via profiles.user_id = auth.uid().
+        // Silently return empty if RLS blocks the query.
+        console.warn('Notifications query failed:', fetchError.message);
+        setNotifications([]);
+        setError(null);
+        setIsLoading(false);
+        return;
+      }
       setNotifications(data || []);
       setError(null);
     } catch (err) {
@@ -82,7 +90,7 @@ export function useNotifications(options: UseNotificationsOptions = {}): UseNoti
             event: 'INSERT',
             schema: 'public',
             table: 'notifications',
-            filter: `user_id=eq.${userId}`,
+            filter: `profile_id=eq.${userId}`,
           },
           (payload) => {
             const newNotification = payload.new as Notification;
@@ -95,7 +103,7 @@ export function useNotifications(options: UseNotificationsOptions = {}): UseNoti
             event: 'UPDATE',
             schema: 'public',
             table: 'notifications',
-            filter: `user_id=eq.${userId}`,
+            filter: `profile_id=eq.${userId}`,
           },
           (payload) => {
             const updatedNotification = payload.new as Notification;
@@ -112,7 +120,7 @@ export function useNotifications(options: UseNotificationsOptions = {}): UseNoti
             event: 'DELETE',
             schema: 'public',
             table: 'notifications',
-            filter: `user_id=eq.${userId}`,
+            filter: `profile_id=eq.${userId}`,
           },
           (payload) => {
             const deletedId = payload.old.id;
@@ -161,7 +169,7 @@ export function useNotifications(options: UseNotificationsOptions = {}): UseNoti
       const { error: updateError } = await supabase
         .from('notifications')
         .update({ read: true })
-        .eq('user_id', userId)
+        .eq('profile_id', userId)
         .eq('read', false);
 
       if (updateError) throw updateError;

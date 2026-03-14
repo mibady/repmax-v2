@@ -19,7 +19,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     // Only show tournaments whose registration deadline hasn't passed (or has no deadline)
     const now = new Date().toISOString();
-    query = query.or(`registration_deadline.gte.${now},registration_deadline.is.null`);
+    query = query.or(`registration_deadline.gte."${now}",registration_deadline.is.null`);
 
     if (from) {
       query = query.gte("start_date", from);

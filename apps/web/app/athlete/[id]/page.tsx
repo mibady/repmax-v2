@@ -28,22 +28,33 @@ function LoadingSkeleton() {
   );
 }
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export default function AthletePage() {
   const params = useParams();
   const router = useRouter();
   const athleteId = params.id as string;
 
-  const { athlete, isLoading, error } = useAthlete(athleteId);
-  const { highlights } = useHighlights(athleteId);
+  // Guard: only fetch when id is a valid UUID to avoid collisions with
+  // sibling named routes like (dashboard)/athlete/offers that share the
+  // /athlete/* URL space via route groups.
+  const isValidId = UUID_RE.test(athleteId);
+
+  const { athlete, isLoading, error } = useAthlete(isValidId ? athleteId : "");
+  const { highlights } = useHighlights(isValidId ? athleteId : "");
   const firstHighlight = highlights?.[0];
 
-  if (error) {
+  if (!isValidId || error) {
     return (
       <div className="min-h-screen bg-[#050505] flex items-center justify-center p-4">
         <div className="text-center">
           <span className="material-symbols-outlined text-6xl text-red-500 mb-4">error</span>
-          <h1 className="text-2xl font-bold text-white mb-2">Error Loading Athlete</h1>
-          <p className="text-gray-400 mb-4">{error.message}</p>
+          <h1 className="text-2xl font-bold text-white mb-2">
+            {!isValidId ? "Athlete Not Found" : "Error Loading Athlete"}
+          </h1>
+          <p className="text-gray-400 mb-4">
+            {!isValidId ? "The requested athlete profile does not exist." : error?.message}
+          </p>
           <Link href="/athletes" className="text-orange-500 hover:text-orange-400">
             ← Back to Athletes
           </Link>

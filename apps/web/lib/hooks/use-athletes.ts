@@ -82,7 +82,11 @@ export function useAthlete(id: string) {
       setIsLoading(false);
     }
 
-    if (id) fetchAthlete();
+    if (id) {
+      fetchAthlete();
+    } else {
+      setIsLoading(false);
+    }
   }, [id]);
 
   return { athlete, isLoading, error };

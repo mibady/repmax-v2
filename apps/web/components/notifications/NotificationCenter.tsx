@@ -5,12 +5,12 @@ import { Bell, Star, User, Calendar, Users, BarChart3, Check, Eye, Settings, Che
 
 export interface Notification {
   id: string;
-  type: 'profile_view' | 'shortlist' | 'deadline' | 'parent_link' | 'summary' | 'message' | 'offer';
+  notification_type: 'profile_view' | 'shortlist' | 'deadline' | 'parent_link' | 'summary' | 'message' | 'offer';
   title: string;
-  description?: string;
+  message?: string;
   timestamp: string;
   read: boolean;
-  metadata?: {
+  data?: {
     schoolName?: string;
     schoolLogo?: string;
   };
@@ -25,7 +25,7 @@ interface NotificationCenterProps {
   isLoading?: boolean;
 }
 
-const NOTIFICATION_ICONS: Record<Notification['type'], React.ElementType> = {
+const NOTIFICATION_ICONS: Record<Notification['notification_type'], React.ElementType> = {
   profile_view: Star,
   shortlist: User,
   deadline: Calendar,
@@ -115,7 +115,7 @@ export function NotificationCenter({
               ) : (
                 <div className="divide-y divide-[#2a2a2d]">
                   {notifications.map((notification) => {
-                    const Icon = NOTIFICATION_ICONS[notification.type] || Bell;
+                    const Icon = NOTIFICATION_ICONS[notification.notification_type] || Bell;
                     return (
                       <button
                         key={notification.id}
@@ -141,9 +141,9 @@ export function NotificationCenter({
                           >
                             {notification.title}
                           </p>
-                          {notification.description && (
+                          {notification.message && (
                             <p className="text-xs text-gray-500 mt-0.5 truncate">
-                              {notification.description}
+                              {notification.message}
                             </p>
                           )}
                           <p className="text-xs text-gray-500 mt-1">{notification.timestamp}</p>

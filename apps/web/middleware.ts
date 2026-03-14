@@ -49,6 +49,14 @@ export async function middleware(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
 
+  // Public API routes (no auth required)
+  const publicApiRoutes = [
+    "/api/tournaments/public",
+  ];
+  const isPublicApi = publicApiRoutes.some((route) =>
+    pathname.startsWith(route)
+  );
+
   // API routes that require authentication
   const protectedApiRoutes = [
     "/api/athletes",
@@ -67,7 +75,7 @@ export async function middleware(request: NextRequest) {
     "/api/club",
     "/api/parent",
   ];
-  const isProtectedApi = protectedApiRoutes.some((route) =>
+  const isProtectedApi = !isPublicApi && protectedApiRoutes.some((route) =>
     pathname.startsWith(route)
   );
 
@@ -121,6 +129,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|manifest\\.json|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
