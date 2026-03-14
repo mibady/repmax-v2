@@ -42,6 +42,38 @@ export interface AthleteCardData {
   // Coach contact
   coachPhone: string;
   coachEmail: string;
+  // Contact & Social
+  phone: string;
+  twitter: string;
+  instagram: string;
+  // Parent/Guardian 1
+  parent1Name: string;
+  parent1Phone: string;
+  parent1Email: string;
+  // Parent/Guardian 2
+  parent2Name: string;
+  parent2Phone: string;
+  parent2Email: string;
+  // Family
+  siblingsInfo: string;
+  // Team Info
+  jerseyNumber: string;
+  organizationName: string;
+  // Additional Academics
+  coreGpa: string;
+  academicInterest: string;
+  collegePriority: string;
+  // Recruiting
+  awards: string;
+  otherSports: string;
+  campsAttended: string;
+  dreamSchools: string;
+  // Equipment Sizes
+  cleatSize: string;
+  shirtSize: string;
+  pantsSize: string;
+  helmetSize: string;
+  gloveSize: string;
 }
 
 interface UseAthleteCardEditorReturn {
@@ -130,6 +162,7 @@ export function useAthleteCardEditor(): UseAthleteCardEditorReturn {
           weightLbs: data.weight ? parseInt(data.weight) : null,
           fortyYardDash: data.fortyYard ? parseFloat(data.fortyYard) : null,
           gpa: data.gpa ? parseFloat(data.gpa) : null,
+          coreGpa: data.coreGpa || null,
         }),
       });
 

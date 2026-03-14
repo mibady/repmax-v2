@@ -733,6 +733,337 @@ export default function EditCardPage() {
               </div>
             </section>
 
+            {/* Contact & Social */}
+            <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">share</span>
+                Contact & Social
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm text-text-grey mb-2">Phone Number</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder="(555) 123-4567"
+                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-text-grey mb-2">Twitter</label>
+                  <input
+                    type="text"
+                    name="twitter"
+                    value={formData.twitter}
+                    onChange={handleChange}
+                    placeholder="@handle"
+                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-text-grey mb-2">Instagram</label>
+                  <input
+                    type="text"
+                    name="instagram"
+                    value={formData.instagram}
+                    onChange={handleChange}
+                    placeholder="@handle"
+                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                  />
+                </div>
+              </div>
+            </section>
+
+            {/* Parent/Guardian Information */}
+            <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">family_restroom</span>
+                Parent/Guardian Information
+              </h2>
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm text-text-grey mb-2 font-medium">Parent/Guardian 1</p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm text-text-grey mb-2">Name</label>
+                      <input
+                        type="text"
+                        name="parent1Name"
+                        value={formData.parent1Name}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-text-grey mb-2">Phone</label>
+                      <input
+                        type="tel"
+                        name="parent1Phone"
+                        value={formData.parent1Phone}
+                        onChange={handleChange}
+                        placeholder="(555) 123-4567"
+                        className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-text-grey mb-2">Email</label>
+                      <input
+                        type="email"
+                        name="parent1Email"
+                        value={formData.parent1Email}
+                        onChange={handleChange}
+                        placeholder="parent@email.com"
+                        className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm text-text-grey mb-2 font-medium">Parent/Guardian 2</p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm text-text-grey mb-2">Name</label>
+                      <input
+                        type="text"
+                        name="parent2Name"
+                        value={formData.parent2Name}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-text-grey mb-2">Phone</label>
+                      <input
+                        type="tel"
+                        name="parent2Phone"
+                        value={formData.parent2Phone}
+                        onChange={handleChange}
+                        placeholder="(555) 123-4567"
+                        className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-text-grey mb-2">Email</label>
+                      <input
+                        type="email"
+                        name="parent2Email"
+                        value={formData.parent2Email}
+                        onChange={handleChange}
+                        placeholder="parent@email.com"
+                        className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm text-text-grey mb-2">Siblings</label>
+                  <textarea
+                    name="siblingsInfo"
+                    value={formData.siblingsInfo}
+                    onChange={handleChange}
+                    rows={2}
+                    placeholder="Names, ages, schools, sports..."
+                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors resize-none"
+                  />
+                </div>
+              </div>
+            </section>
+
+            {/* Team & Equipment */}
+            <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">sports_football</span>
+                Team & Equipment
+              </h2>
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-text-grey mb-2">Organization/Team Name</label>
+                    <input
+                      type="text"
+                      name="organizationName"
+                      value={formData.organizationName}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-text-grey mb-2">Jersey Number</label>
+                    <input
+                      type="text"
+                      name="jerseyNumber"
+                      value={formData.jerseyNumber}
+                      onChange={handleChange}
+                      placeholder="#"
+                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm text-text-grey mb-2">Cleat Size</label>
+                    <input
+                      type="text"
+                      name="cleatSize"
+                      value={formData.cleatSize}
+                      onChange={handleChange}
+                      placeholder="10.5"
+                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-text-grey mb-2">Shirt Size</label>
+                    <select
+                      name="shirtSize"
+                      value={formData.shirtSize}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:border-primary focus:outline-none transition-colors"
+                    >
+                      <option value="" className="bg-surface-dark">Select</option>
+                      {["S", "M", "L", "XL", "XXL", "XXXL"].map((size) => (
+                        <option key={size} value={size} className="bg-surface-dark">{size}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-text-grey mb-2">Pants Size</label>
+                    <select
+                      name="pantsSize"
+                      value={formData.pantsSize}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:border-primary focus:outline-none transition-colors"
+                    >
+                      <option value="" className="bg-surface-dark">Select</option>
+                      {["S", "M", "L", "XL", "XXL", "XXXL"].map((size) => (
+                        <option key={size} value={size} className="bg-surface-dark">{size}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-text-grey mb-2">Helmet Size</label>
+                    <select
+                      name="helmetSize"
+                      value={formData.helmetSize}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:border-primary focus:outline-none transition-colors"
+                    >
+                      <option value="" className="bg-surface-dark">Select</option>
+                      {["S", "M", "L", "XL", "XXL"].map((size) => (
+                        <option key={size} value={size} className="bg-surface-dark">{size}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-text-grey mb-2">Glove Size</label>
+                    <select
+                      name="gloveSize"
+                      value={formData.gloveSize}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:border-primary focus:outline-none transition-colors"
+                    >
+                      <option value="" className="bg-surface-dark">Select</option>
+                      {["S", "M", "L", "XL", "XXL"].map((size) => (
+                        <option key={size} value={size} className="bg-surface-dark">{size}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Recruiting Profile */}
+            <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">military_tech</span>
+                Recruiting Profile
+              </h2>
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-text-grey mb-2">Core GPA</label>
+                    <input
+                      type="text"
+                      name="coreGpa"
+                      value={formData.coreGpa}
+                      onChange={handleChange}
+                      placeholder="3.5"
+                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-text-grey mb-2">Academic Interest</label>
+                    <input
+                      type="text"
+                      name="academicInterest"
+                      value={formData.academicInterest}
+                      onChange={handleChange}
+                      placeholder="Business, Engineering, Undecided..."
+                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm text-text-grey mb-2">College Priority</label>
+                  <textarea
+                    name="collegePriority"
+                    value={formData.collegePriority}
+                    onChange={handleChange}
+                    rows={2}
+                    placeholder="What's important to you when selecting a college?"
+                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors resize-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-text-grey mb-2">Awards</label>
+                  <textarea
+                    name="awards"
+                    value={formData.awards}
+                    onChange={handleChange}
+                    rows={2}
+                    placeholder="Academic and sports awards..."
+                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors resize-none"
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-text-grey mb-2">Other Sports</label>
+                    <input
+                      type="text"
+                      name="otherSports"
+                      value={formData.otherSports}
+                      onChange={handleChange}
+                      placeholder="Track, Basketball..."
+                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-text-grey mb-2">Dream Schools</label>
+                    <input
+                      type="text"
+                      name="dreamSchools"
+                      value={formData.dreamSchools}
+                      onChange={handleChange}
+                      placeholder="USC, Oregon, UCLA..."
+                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm text-text-grey mb-2">Camps Attended</label>
+                  <textarea
+                    name="campsAttended"
+                    value={formData.campsAttended}
+                    onChange={handleChange}
+                    rows={2}
+                    placeholder="Nike Elite 11, Rivals Camp..."
+                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors resize-none"
+                  />
+                </div>
+              </div>
+            </section>
+
             {/* Coach Contact */}
             <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
               <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
