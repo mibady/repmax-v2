@@ -529,20 +529,18 @@ export default async function AthleteCardPage({
           {/* Section: NCAA EC ID / Recruiting # */}
           {athlete.ncaaEcId && (
             <section>
-              <div className="bg-primary/15 border border-primary/40 rounded-2xl p-5 flex items-center gap-4">
-                <div className="flex-shrink-0 w-11 h-11 rounded-full bg-primary flex items-center justify-center">
+              <div className="bg-primary/15 border border-primary/40 rounded-2xl p-5 flex flex-col items-center gap-3 text-center">
+                <div className="w-11 h-11 rounded-full bg-primary flex items-center justify-center">
                   <span className="material-symbols-outlined text-black text-[22px]" style={{ fontVariationSettings: "'FILL' 1" }}>
                     verified
                   </span>
                 </div>
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-[10px] uppercase tracking-widest text-primary font-bold">
-                    NCAA EC ID / Recruiting #
-                  </span>
-                  <span className="text-lg font-bold text-white font-mono tracking-wide">
-                    {athlete.ncaaEcId}
-                  </span>
-                </div>
+                <span className="text-[10px] uppercase tracking-widest text-primary font-bold">
+                  NCAA EC ID / Recruiting #
+                </span>
+                <span className="text-lg font-bold text-white font-mono tracking-wide">
+                  {athlete.ncaaEcId}
+                </span>
               </div>
             </section>
           )}
