@@ -1029,15 +1029,15 @@ export default function EditCardPage() {
               </div>
             </section>
 
-            {/* NCAA EC ID / Recruiting # */}
+            {/* NCAA ID / Recruiting # */}
             <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
               <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
                 <span className="material-symbols-outlined text-primary">verified</span>
-                NCAA EC ID / Recruiting #
+                NCAA ID / Recruiting #
               </h2>
               <p className="text-xs text-text-grey mb-4">If applicable</p>
               <div>
-                <label className="block text-sm text-text-grey mb-2">NCAA EC ID</label>
+                <label className="block text-sm text-text-grey mb-2">NCAA ID</label>
                 <input
                   type="text"
                   name="ncaaEcId"

@@ -526,7 +526,7 @@ export default async function AthleteCardPage({
             </section>
           )}
 
-          {/* Section: NCAA EC ID / Recruiting # */}
+          {/* Section: NCAA ID / Recruiting # */}
           {athlete.ncaaEcId && (
             <section>
               <div className="bg-primary/15 border border-primary/40 rounded-2xl p-5 flex flex-col items-center gap-3 text-center">
@@ -536,7 +536,7 @@ export default async function AthleteCardPage({
                   </span>
                 </div>
                 <span className="text-[10px] uppercase tracking-widest text-primary font-bold">
-                  NCAA EC ID / Recruiting #
+                  NCAA ID / Recruiting #
                 </span>
                 <span className="text-lg font-bold text-white font-mono tracking-wide">
                   {athlete.ncaaEcId}
