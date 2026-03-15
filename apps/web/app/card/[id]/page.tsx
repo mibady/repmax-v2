@@ -279,70 +279,66 @@ export default async function AthleteCardPage({
                 Athletic Metrics
               </h2>
             </div>
-            {/* Height & Weight row */}
-            <div className="grid grid-cols-2 gap-3 mb-3">
-              <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col gap-1 hover:bg-white/10 transition-colors">
-                <span className="text-xs text-gray-500 font-medium">Height</span>
-                <span className="text-2xl text-white font-bold font-mono">
+            <div className="grid grid-cols-3 gap-3">
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-3 flex flex-col gap-1 hover:bg-white/10 transition-colors">
+                <span className="text-[10px] text-gray-500 font-medium">Height</span>
+                <span className="text-xl text-white font-bold font-mono">
                   {athlete.metrics.height}
                 </span>
               </div>
-              <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col gap-1 hover:bg-white/10 transition-colors">
-                <span className="text-xs text-gray-500 font-medium">Weight</span>
-                <span className="text-2xl text-white font-bold font-mono">
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-3 flex flex-col gap-1 hover:bg-white/10 transition-colors">
+                <span className="text-[10px] text-gray-500 font-medium">Weight</span>
+                <span className="text-xl text-white font-bold font-mono">
                   {formatValue(athlete.metrics.weight)}
                 </span>
                 {athlete.metrics.weight ? <span className="text-[10px] text-gray-500 -mt-1">lbs</span> : null}
               </div>
-            </div>
-            {/* 2x4 metrics grid */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col gap-1 hover:bg-white/10 transition-colors">
-                <span className="text-xs text-gray-500 font-medium">40-Yard</span>
-                <span className="text-2xl text-primary font-bold font-mono">
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-3 flex flex-col gap-1 hover:bg-white/10 transition-colors">
+                <span className="text-[10px] text-gray-500 font-medium">40-Yard</span>
+                <span className="text-xl text-primary font-bold font-mono">
                   {athlete.metrics.fortyYard ? `${athlete.metrics.fortyYard}s` : "--"}
                 </span>
               </div>
-              <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col gap-1 hover:bg-white/10 transition-colors">
-                <span className="text-xs text-gray-500 font-medium">10Y Split</span>
-                <span className="text-2xl text-white font-bold font-mono">
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-3 flex flex-col gap-1 hover:bg-white/10 transition-colors">
+                <span className="text-[10px] text-gray-500 font-medium">10Y Split</span>
+                <span className="text-xl text-white font-bold font-mono">
                   {athlete.metrics.tenYardSplit ? `${athlete.metrics.tenYardSplit}s` : "--"}
                 </span>
               </div>
-              <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col gap-1 hover:bg-white/10 transition-colors">
-                <span className="text-xs text-gray-500 font-medium">5-10-5</span>
-                <span className="text-2xl text-white font-bold font-mono">
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-3 flex flex-col gap-1 hover:bg-white/10 transition-colors">
+                <span className="text-[10px] text-gray-500 font-medium">5-10-5</span>
+                <span className="text-xl text-white font-bold font-mono">
                   {athlete.metrics.fiveTenFive ? `${athlete.metrics.fiveTenFive}s` : "--"}
                 </span>
               </div>
-              <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col gap-1 hover:bg-white/10 transition-colors">
-                <span className="text-xs text-gray-500 font-medium">Broad Jump</span>
-                <span className="text-2xl text-white font-bold font-mono">
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-3 flex flex-col gap-1 hover:bg-white/10 transition-colors">
+                <span className="text-[10px] text-gray-500 font-medium">Broad Jump</span>
+                <span className="text-xl text-white font-bold font-mono">
                   {formatValue(athlete.metrics.broadJump, '"')}
                 </span>
               </div>
-              <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col gap-1 hover:bg-white/10 transition-colors">
-                <span className="text-xs text-gray-500 font-medium">Vertical</span>
-                <span className="text-2xl text-white font-bold font-mono">
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-3 flex flex-col gap-1 hover:bg-white/10 transition-colors">
+                <span className="text-[10px] text-gray-500 font-medium">Vertical</span>
+                <span className="text-xl text-white font-bold font-mono">
                   {formatValue(athlete.metrics.vertical, '"')}
                 </span>
               </div>
-              <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col gap-1 hover:bg-white/10 transition-colors">
-                <span className="text-xs text-gray-500 font-medium">Wingspan</span>
-                <span className="text-2xl text-white font-bold font-mono">
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-3 flex flex-col gap-1 hover:bg-white/10 transition-colors">
+                <span className="text-[10px] text-gray-500 font-medium">Wingspan</span>
+                <span className="text-xl text-white font-bold font-mono">
                   {formatValue(athlete.metrics.wingspan, '"')}
                 </span>
               </div>
-              <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col gap-1 hover:bg-white/10 transition-colors">
-                <span className="text-xs text-gray-500 font-medium">Bench</span>
-                <span className="text-2xl text-white font-bold font-mono">
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-3 flex flex-col gap-1 hover:bg-white/10 transition-colors">
+                <span className="text-[10px] text-gray-500 font-medium">Bench</span>
+                <span className="text-xl text-white font-bold font-mono">
                   {formatValue(athlete.metrics.bench)}
                 </span>
                 {athlete.metrics.bench ? <span className="text-[10px] text-gray-500 -mt-1">lbs</span> : null}
               </div>
-              <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col gap-1 hover:bg-white/10 transition-colors">
-                <span className="text-xs text-gray-500 font-medium">Squat</span>
-                <span className="text-2xl text-white font-bold font-mono">
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-3 flex flex-col gap-1 hover:bg-white/10 transition-colors">
+                <span className="text-[10px] text-gray-500 font-medium">Squat</span>
+                <span className="text-xl text-white font-bold font-mono">
                   {formatValue(athlete.metrics.squat)}
                 </span>
                 {athlete.metrics.squat ? <span className="text-[10px] text-gray-500 -mt-1">lbs</span> : null}
