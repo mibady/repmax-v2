@@ -1067,66 +1067,61 @@ export default function EditCardPage() {
             <div className="sticky top-24">
               <h3 className="text-sm font-medium text-text-grey mb-4">LIVE PREVIEW</h3>
               <div className="rounded-2xl bg-[#0A0A0A] border border-white/10 overflow-hidden shadow-2xl">
-                {/* Preview Header */}
-                <div className="relative h-24 bg-gradient-to-br from-primary/30 to-purple-900/30">
-                  <div className="absolute top-3 right-3 px-2 py-1 rounded bg-purple-900/80 border border-purple-500/30">
-                    <span className="text-[10px] font-bold text-purple-200">{formData.zone || "ZONE"}</span>
+                {/* Hero Image */}
+                <div className="relative aspect-[4/3] bg-gradient-to-b from-[#1a1a1a] to-[#0A0A0A] overflow-hidden">
+                  <Image
+                    src={profileImage}
+                    alt="Preview"
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/40 to-transparent" />
+                  <div className="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-purple-900/80 border border-purple-500/30 flex items-center gap-1">
+                    <span className="material-symbols-outlined text-purple-200 text-[10px]">location_on</span>
+                    <span className="text-[8px] font-bold text-purple-200 uppercase">{formData.zone || "Zone"}</span>
                   </div>
                 </div>
 
-                {/* Preview Content */}
-                <div className="p-4 -mt-10 relative">
-                  <div className="flex gap-3 mb-3">
-                    <div className="h-16 w-16 rounded-full border-3 border-primary bg-surface-dark overflow-hidden">
-                      <Image
-                        src={profileImage}
-                        alt="Preview"
-                        width={64}
-                        height={64}
-                        className="object-cover w-full h-full"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-bold text-white text-lg">
-                        {formData.name || "Your Name"}
-                      </h4>
-                      <p className="text-xs text-text-grey">{formData.position || "Position"}</p>
-                      <div className="flex gap-1 mt-1">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <span
-                            key={star}
-                            className="material-symbols-outlined text-[14px] text-primary"
-                            style={{ fontVariationSettings: "'FILL' 1" }}
-                          >
-                            star
-                          </span>
-                        ))}
-                      </div>
-                    </div>
+                {/* Identity */}
+                <div className="p-4 text-center">
+                  <h4 className="font-bold text-white text-base leading-tight">
+                    {formData.name || "Your Name"}
+                  </h4>
+                  <p className="text-[10px] text-text-grey mt-0.5">{formData.position || "Position"}</p>
+                  <div className="flex gap-0.5 justify-center mt-1.5">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <span
+                        key={star}
+                        className="material-symbols-outlined text-[12px] text-primary"
+                        style={{ fontVariationSettings: "'FILL' 1" }}
+                      >
+                        star
+                      </span>
+                    ))}
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2 mb-3">
-                    <div className="rounded bg-white/5 p-2 text-center">
-                      <p className="text-[10px] text-text-grey">Height</p>
-                      <p className="text-sm font-bold text-white font-mono">
+                  <div className="grid grid-cols-3 gap-2 mt-3 mb-3">
+                    <div className="rounded-lg bg-white/5 p-2 text-center">
+                      <p className="text-[8px] text-text-grey uppercase">Height</p>
+                      <p className="text-xs font-bold text-white font-mono">
                         {formData.height || "--"}
                       </p>
                     </div>
-                    <div className="rounded bg-white/5 p-2 text-center">
-                      <p className="text-[10px] text-text-grey">Weight</p>
-                      <p className="text-sm font-bold text-white font-mono">
+                    <div className="rounded-lg bg-white/5 p-2 text-center">
+                      <p className="text-[8px] text-text-grey uppercase">Weight</p>
+                      <p className="text-xs font-bold text-white font-mono">
                         {formData.weight || "--"}
                       </p>
                     </div>
-                    <div className="rounded bg-white/5 p-2 text-center">
-                      <p className="text-[10px] text-text-grey">40YD</p>
-                      <p className="text-sm font-bold text-primary font-mono">
+                    <div className="rounded-lg bg-white/5 p-2 text-center">
+                      <p className="text-[8px] text-text-grey uppercase">40YD</p>
+                      <p className="text-xs font-bold text-primary font-mono">
                         {formData.fortyYard || "--"}
                       </p>
                     </div>
                   </div>
 
-                  <div className="text-xs text-text-grey text-center">
+                  <div className="text-[10px] text-text-grey">
                     {formData.highSchool || "School"}, {formData.city || "City"}, {formData.state || "ST"}
                   </div>
                 </div>
