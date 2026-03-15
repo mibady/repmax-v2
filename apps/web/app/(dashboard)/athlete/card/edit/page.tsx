@@ -482,6 +482,101 @@ export default function EditCardPage() {
                   <p className="text-xs text-text-grey mt-1">{formData.bio.length}/280 characters</p>
                 </div>
               </div>
+
+              {/* Parent/Guardian subsection */}
+              <div className="border-t border-white/5 mt-6 pt-6">
+                <h3 className="text-sm font-semibold text-text-grey uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary text-[18px]">family_restroom</span>
+                  Parent/Guardian Information
+                </h3>
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm text-text-grey mb-2 font-medium">Parent/Guardian 1</p>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-sm text-text-grey mb-2">Name</label>
+                        <input
+                          type="text"
+                          name="parent1Name"
+                          value={formData.parent1Name}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-text-grey mb-2">Phone</label>
+                        <input
+                          type="tel"
+                          name="parent1Phone"
+                          value={formData.parent1Phone}
+                          onChange={handleChange}
+                          placeholder="(555) 123-4567"
+                          className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-text-grey mb-2">Email</label>
+                        <input
+                          type="email"
+                          name="parent1Email"
+                          value={formData.parent1Email}
+                          onChange={handleChange}
+                          placeholder="parent@email.com"
+                          className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm text-text-grey mb-2 font-medium">Parent/Guardian 2</p>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-sm text-text-grey mb-2">Name</label>
+                        <input
+                          type="text"
+                          name="parent2Name"
+                          value={formData.parent2Name}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-text-grey mb-2">Phone</label>
+                        <input
+                          type="tel"
+                          name="parent2Phone"
+                          value={formData.parent2Phone}
+                          onChange={handleChange}
+                          placeholder="(555) 123-4567"
+                          className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-text-grey mb-2">Email</label>
+                        <input
+                          type="email"
+                          name="parent2Email"
+                          value={formData.parent2Email}
+                          onChange={handleChange}
+                          placeholder="parent@email.com"
+                          className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-text-grey mb-2">Siblings</label>
+                    <textarea
+                      name="siblingsInfo"
+                      value={formData.siblingsInfo}
+                      onChange={handleChange}
+                      rows={2}
+                      placeholder="Names, ages, schools, sports..."
+                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors resize-none"
+                    />
+                  </div>
+                </div>
+              </div>
             </section>
 
             {/* Measurables */}
@@ -776,100 +871,7 @@ export default function EditCardPage() {
               </div>
             </section>
 
-            {/* Parent/Guardian Information */}
-            <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
-              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary">family_restroom</span>
-                Parent/Guardian Information
-              </h2>
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm text-text-grey mb-2 font-medium">Parent/Guardian 1</p>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-sm text-text-grey mb-2">Name</label>
-                      <input
-                        type="text"
-                        name="parent1Name"
-                        value={formData.parent1Name}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm text-text-grey mb-2">Phone</label>
-                      <input
-                        type="tel"
-                        name="parent1Phone"
-                        value={formData.parent1Phone}
-                        onChange={handleChange}
-                        placeholder="(555) 123-4567"
-                        className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm text-text-grey mb-2">Email</label>
-                      <input
-                        type="email"
-                        name="parent1Email"
-                        value={formData.parent1Email}
-                        onChange={handleChange}
-                        placeholder="parent@email.com"
-                        className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-sm text-text-grey mb-2 font-medium">Parent/Guardian 2</p>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-sm text-text-grey mb-2">Name</label>
-                      <input
-                        type="text"
-                        name="parent2Name"
-                        value={formData.parent2Name}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm text-text-grey mb-2">Phone</label>
-                      <input
-                        type="tel"
-                        name="parent2Phone"
-                        value={formData.parent2Phone}
-                        onChange={handleChange}
-                        placeholder="(555) 123-4567"
-                        className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm text-text-grey mb-2">Email</label>
-                      <input
-                        type="email"
-                        name="parent2Email"
-                        value={formData.parent2Email}
-                        onChange={handleChange}
-                        placeholder="parent@email.com"
-                        className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">Siblings</label>
-                  <textarea
-                    name="siblingsInfo"
-                    value={formData.siblingsInfo}
-                    onChange={handleChange}
-                    rows={2}
-                    placeholder="Names, ages, schools, sports..."
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors resize-none"
-                  />
-                </div>
-              </div>
-            </section>
+
 
             {/* Team & Equipment */}
             <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
