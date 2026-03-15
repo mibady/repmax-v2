@@ -292,7 +292,24 @@ export default function EditCardPage() {
               {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
               {isSaving ? "Saving..." : "Save Changes"}
             </button>
+            {formData.repmaxId && (
+              <Link
+                href={`/card/${formData.repmaxId}`}
+                target="_blank"
+                className="px-4 py-2 rounded-lg bg-white/10 text-white font-bold text-sm hover:bg-white/20 transition-colors flex items-center gap-2"
+              >
+                <span className="material-symbols-outlined text-[16px]">open_in_new</span>
+                View Card
+              </Link>
+            )}
           </div>
+          {formData.repmaxId && (
+            <div className="mt-2 text-right">
+              <span className="text-xs font-mono text-primary/70 bg-primary/10 px-2 py-1 rounded border border-primary/20">
+                {formData.repmaxId}
+              </span>
+            </div>
+          )}
         </div>
       </div>
 

@@ -38,6 +38,7 @@ export async function GET() {
       .from("athletes")
       .select(`
         id,
+        repmax_id,
         high_school,
         city,
         state,
@@ -104,6 +105,8 @@ export async function GET() {
 
     // Format response
     const cardData = {
+      athleteId: athlete.id,
+      repmaxId: athlete.repmax_id || "",
       name: profile.full_name || "",
       position: athlete.primary_position || "",
       secondaryPosition: athlete.secondary_position || "",

@@ -3,6 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 
 export interface AthleteCardData {
+  // Identity
+  athleteId: string;
+  repmaxId: string;
   // Basic Info
   name: string;
   position: string;
