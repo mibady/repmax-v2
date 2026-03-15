@@ -367,6 +367,30 @@ export default function EditCardPage() {
                   </p>
                 </div>
               </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 pt-6 border-t border-white/5">
+                <div>
+                  <label className="block text-sm text-text-grey mb-2">Organization/Team Name</label>
+                  <input
+                    type="text"
+                    name="organizationName"
+                    value={formData.organizationName}
+                    onChange={handleChange}
+                    placeholder="SoCal Elite 7v7"
+                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-text-grey mb-2">Jersey Number</label>
+                  <input
+                    type="text"
+                    name="jerseyNumber"
+                    value={formData.jerseyNumber}
+                    onChange={handleChange}
+                    placeholder="#7"
+                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                  />
+                </div>
+              </div>
             </section>
 
             {/* Basic Information */}
@@ -697,6 +721,83 @@ export default function EditCardPage() {
                   />
                 </div>
               </div>
+
+              {/* Equipment Sizes subsection */}
+              <div className="border-t border-white/5 mt-6 pt-6">
+                <h3 className="text-sm font-semibold text-text-grey uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary text-[18px]">checkroom</span>
+                  Equipment Sizes
+                </h3>
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                  <div>
+                    <label className="block text-sm text-text-grey mb-2">Cleat Size</label>
+                    <input
+                      type="text"
+                      name="cleatSize"
+                      value={formData.cleatSize}
+                      onChange={handleChange}
+                      placeholder="10.5"
+                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-text-grey mb-2">Shirt</label>
+                    <select
+                      name="shirtSize"
+                      value={formData.shirtSize}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:border-primary focus:outline-none transition-colors"
+                    >
+                      <option value="" className="bg-surface-dark">-</option>
+                      {["S", "M", "L", "XL", "XXL", "XXXL"].map((size) => (
+                        <option key={size} value={size} className="bg-surface-dark">{size}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-text-grey mb-2">Pants</label>
+                    <select
+                      name="pantsSize"
+                      value={formData.pantsSize}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:border-primary focus:outline-none transition-colors"
+                    >
+                      <option value="" className="bg-surface-dark">-</option>
+                      {["S", "M", "L", "XL", "XXL", "XXXL"].map((size) => (
+                        <option key={size} value={size} className="bg-surface-dark">{size}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-text-grey mb-2">Helmet</label>
+                    <select
+                      name="helmetSize"
+                      value={formData.helmetSize}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:border-primary focus:outline-none transition-colors"
+                    >
+                      <option value="" className="bg-surface-dark">-</option>
+                      {["S", "M", "L", "XL", "XXL"].map((size) => (
+                        <option key={size} value={size} className="bg-surface-dark">{size}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-text-grey mb-2">Gloves</label>
+                    <select
+                      name="gloveSize"
+                      value={formData.gloveSize}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:border-primary focus:outline-none transition-colors"
+                    >
+                      <option value="" className="bg-surface-dark">-</option>
+                      {["S", "M", "L", "XL", "XXL"].map((size) => (
+                        <option key={size} value={size} className="bg-surface-dark">{size}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
             </section>
 
             {/* Academics */}
@@ -872,108 +973,6 @@ export default function EditCardPage() {
             </section>
 
 
-
-            {/* Team & Equipment */}
-            <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
-              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary">sports_football</span>
-                Team & Equipment
-              </h2>
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm text-text-grey mb-2">Organization/Team Name</label>
-                    <input
-                      type="text"
-                      name="organizationName"
-                      value={formData.organizationName}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm text-text-grey mb-2">Jersey Number</label>
-                    <input
-                      type="text"
-                      name="jerseyNumber"
-                      value={formData.jerseyNumber}
-                      onChange={handleChange}
-                      placeholder="#"
-                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm text-text-grey mb-2">Cleat Size</label>
-                    <input
-                      type="text"
-                      name="cleatSize"
-                      value={formData.cleatSize}
-                      onChange={handleChange}
-                      placeholder="10.5"
-                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm text-text-grey mb-2">Shirt Size</label>
-                    <select
-                      name="shirtSize"
-                      value={formData.shirtSize}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:border-primary focus:outline-none transition-colors"
-                    >
-                      <option value="" className="bg-surface-dark">Select</option>
-                      {["S", "M", "L", "XL", "XXL", "XXXL"].map((size) => (
-                        <option key={size} value={size} className="bg-surface-dark">{size}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm text-text-grey mb-2">Pants Size</label>
-                    <select
-                      name="pantsSize"
-                      value={formData.pantsSize}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:border-primary focus:outline-none transition-colors"
-                    >
-                      <option value="" className="bg-surface-dark">Select</option>
-                      {["S", "M", "L", "XL", "XXL", "XXXL"].map((size) => (
-                        <option key={size} value={size} className="bg-surface-dark">{size}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm text-text-grey mb-2">Helmet Size</label>
-                    <select
-                      name="helmetSize"
-                      value={formData.helmetSize}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:border-primary focus:outline-none transition-colors"
-                    >
-                      <option value="" className="bg-surface-dark">Select</option>
-                      {["S", "M", "L", "XL", "XXL"].map((size) => (
-                        <option key={size} value={size} className="bg-surface-dark">{size}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm text-text-grey mb-2">Glove Size</label>
-                    <select
-                      name="gloveSize"
-                      value={formData.gloveSize}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:border-primary focus:outline-none transition-colors"
-                    >
-                      <option value="" className="bg-surface-dark">Select</option>
-                      {["S", "M", "L", "XL", "XXL"].map((size) => (
-                        <option key={size} value={size} className="bg-surface-dark">{size}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </section>
 
             {/* Recruiting Profile */}
             <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
