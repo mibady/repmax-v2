@@ -1066,7 +1066,7 @@ export default function EditCardPage() {
           <div className="lg:col-span-1">
             <div className="sticky top-24">
               <h3 className="text-sm font-medium text-text-grey mb-4">LIVE PREVIEW</h3>
-              <div className="rounded-2xl bg-[#0A0A0A] border border-white/10 overflow-hidden shadow-2xl">
+              <div className="rounded-2xl bg-[#0A0A0A] border border-white/10 overflow-hidden shadow-2xl max-h-[80vh] overflow-y-auto">
                 {/* Hero Image */}
                 <div className="relative aspect-[4/3] bg-gradient-to-b from-[#1a1a1a] to-[#0A0A0A] overflow-hidden">
                   <Image
@@ -1083,48 +1083,165 @@ export default function EditCardPage() {
                 </div>
 
                 {/* Identity */}
-                <div className="p-4 text-center">
-                  <h4 className="font-bold text-white text-base leading-tight">
+                <div className="px-3 pt-3 text-center">
+                  <h4 className="font-bold text-white text-sm leading-tight">
                     {formData.name || "Your Name"}
                   </h4>
-                  <p className="text-[10px] text-text-grey mt-0.5">{formData.position || "Position"}</p>
-                  <div className="flex gap-0.5 justify-center mt-1.5">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <span
-                        key={star}
-                        className="material-symbols-outlined text-[12px] text-primary"
-                        style={{ fontVariationSettings: "'FILL' 1" }}
-                      >
-                        star
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-2 mt-3 mb-3">
-                    <div className="rounded-lg bg-white/5 p-2 text-center">
-                      <p className="text-[8px] text-text-grey uppercase">Height</p>
-                      <p className="text-xs font-bold text-white font-mono">
-                        {formData.height || "--"}
-                      </p>
-                    </div>
-                    <div className="rounded-lg bg-white/5 p-2 text-center">
-                      <p className="text-[8px] text-text-grey uppercase">Weight</p>
-                      <p className="text-xs font-bold text-white font-mono">
-                        {formData.weight || "--"}
-                      </p>
-                    </div>
-                    <div className="rounded-lg bg-white/5 p-2 text-center">
-                      <p className="text-[8px] text-text-grey uppercase">40YD</p>
-                      <p className="text-xs font-bold text-primary font-mono">
-                        {formData.fortyYard || "--"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="text-[10px] text-text-grey">
+                  <p className="text-[9px] text-text-grey mt-0.5">
                     {formData.highSchool || "School"}, {formData.city || "City"}, {formData.state || "ST"}
+                  </p>
+
+                  {/* Position Pills */}
+                  <div className="flex gap-1.5 justify-center mt-2">
+                    <span className="px-2 py-0.5 rounded-full bg-primary/20 border border-primary/30 text-primary text-[8px] font-bold">
+                      {formData.position || "POS"}
+                    </span>
+                    {formData.secondaryPosition && (
+                      <span className="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-gray-300 text-[8px] font-bold">
+                        {formData.secondaryPosition}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Class / Rating row */}
+                  <div className="flex items-center justify-between mt-2 border-y border-white/5 py-2 px-1">
+                    <div className="flex flex-col items-start">
+                      <span className="text-[7px] uppercase tracking-wider text-gray-500 font-bold">Class</span>
+                      <span className="text-[10px] font-bold text-white">{formData.classYear || "--"}</span>
+                    </div>
+                    <div className="h-4 w-px bg-white/10" />
+                    <div className="flex flex-col items-center">
+                      <span className="text-[7px] uppercase tracking-wider text-gray-500 font-bold">Rating</span>
+                      <div className="flex gap-px">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <span
+                            key={star}
+                            className="material-symbols-outlined text-[10px] text-primary"
+                            style={{ fontVariationSettings: "'FILL' 1" }}
+                          >
+                            star
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="h-4 w-px bg-white/10" />
+                    <div className="flex flex-col items-end">
+                      <span className="text-[7px] uppercase tracking-wider text-gray-500 font-bold">Offers</span>
+                      <span className="text-[10px] font-bold text-primary">0</span>
+                    </div>
                   </div>
                 </div>
+
+                {/* Athletic Metrics */}
+                <div className="px-3 pt-3">
+                  <div className="flex items-center gap-1 mb-2">
+                    <span className="material-symbols-outlined text-primary text-[12px]">straighten</span>
+                    <span className="text-[8px] font-bold tracking-wider text-gray-400 uppercase">Athletic Metrics</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {[
+                      { label: "Height", value: formData.height },
+                      { label: "Weight", value: formData.weight, suffix: "lbs" },
+                      { label: "40-Yard", value: formData.fortyYard, suffix: "s", highlight: true },
+                      { label: "10Y Split", value: formData.tenYardSplit, suffix: "s" },
+                      { label: "5-10-5", value: formData.fiveTenFive, suffix: "s" },
+                      { label: "Broad Jump", value: formData.broadJump, suffix: "\"" },
+                      { label: "Vertical", value: formData.vertical, suffix: "\"" },
+                      { label: "Wingspan", value: formData.wingspan, suffix: "\"" },
+                      { label: "Bench", value: formData.benchPress, suffix: "lbs" },
+                      { label: "", value: "" },
+                      { label: "Squat", value: formData.squat, suffix: "lbs" },
+                    ].map((m, i) =>
+                      m.label === "" ? (
+                        <div key={i} />
+                      ) : (
+                        <div key={i} className="rounded-lg bg-white/5 p-1.5">
+                          <p className="text-[7px] text-gray-500">{m.label}</p>
+                          <p className={`text-[11px] font-bold font-mono ${m.highlight ? "text-primary" : "text-white"}`}>
+                            {m.value ? `${m.value}${m.suffix && !m.value.includes(m.suffix) ? m.suffix : ""}` : "--"}
+                          </p>
+                        </div>
+                      )
+                    )}
+                  </div>
+                </div>
+
+                {/* Profile Snapshot */}
+                <div className="px-3 pt-3">
+                  <div className="flex items-center gap-1 mb-2">
+                    <span className="material-symbols-outlined text-primary text-[12px]">school</span>
+                    <span className="text-[8px] font-bold tracking-wider text-gray-400 uppercase">Profile Snapshot</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-1.5 mb-1.5">
+                    <div className="rounded-lg bg-white/5 p-1.5">
+                      <p className="text-[7px] text-gray-500">GPA</p>
+                      <p className="text-[11px] font-bold text-white font-mono">{formData.gpa || "--"}</p>
+                    </div>
+                    <div className="rounded-lg bg-white/5 p-1.5">
+                      <p className="text-[7px] text-gray-500">W. GPA</p>
+                      <p className="text-[11px] font-bold text-white font-mono">{formData.weightedGpa || "--"}</p>
+                    </div>
+                    <div className="rounded-lg bg-white/5 p-1.5">
+                      <p className="text-[7px] text-gray-500">SAT</p>
+                      <p className="text-[11px] font-bold text-white font-mono">{formData.sat || "--"}</p>
+                    </div>
+                  </div>
+                  <div className="rounded-lg bg-white/5 p-2 flex items-center justify-between">
+                    <div>
+                      <p className="text-[7px] text-gray-500">ACT</p>
+                      <p className="text-[11px] font-bold text-white font-mono">{formData.act || "--"}</p>
+                    </div>
+                    <div className="h-4 w-px bg-white/10" />
+                    <div>
+                      <p className="text-[7px] text-gray-500">Major</p>
+                      <p className="text-[9px] font-medium text-white truncate max-w-[80px]">{formData.academicInterest || "--"}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Coach Notes / Player Summary */}
+                {(formData.coachNotes || formData.playerSummary) && (
+                  <div className="px-3 pt-3">
+                    {formData.coachNotes && (
+                      <div className="mb-2">
+                        <div className="flex items-center gap-1 mb-1">
+                          <span className="material-symbols-outlined text-primary text-[12px]">sports</span>
+                          <span className="text-[8px] font-bold tracking-wider text-gray-400 uppercase">Coach Notes</span>
+                        </div>
+                        <div className="rounded-lg bg-white/5 p-2">
+                          <p className="text-[8px] text-gray-300 leading-relaxed line-clamp-3">{formData.coachNotes}</p>
+                        </div>
+                      </div>
+                    )}
+                    {formData.playerSummary && (
+                      <div>
+                        <div className="flex items-center gap-1 mb-1">
+                          <span className="material-symbols-outlined text-primary text-[12px]">person_search</span>
+                          <span className="text-[8px] font-bold tracking-wider text-gray-400 uppercase">Player Summary</span>
+                        </div>
+                        <div className="rounded-lg bg-white/5 p-2">
+                          <p className="text-[8px] text-gray-300 leading-relaxed line-clamp-3">{formData.playerSummary}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Coach Contact */}
+                {(formData.coachPhone || formData.coachEmail) && (
+                  <div className="px-3 pt-3">
+                    <div className="flex items-center gap-1 mb-1">
+                      <span className="material-symbols-outlined text-primary text-[12px]">call</span>
+                      <span className="text-[8px] font-bold tracking-wider text-gray-400 uppercase">Coach Contact</span>
+                    </div>
+                    <div className="rounded-lg bg-white/5 p-2 space-y-0.5">
+                      {formData.coachPhone && <p className="text-[8px] text-gray-300">{formData.coachPhone}</p>}
+                      {formData.coachEmail && <p className="text-[8px] text-gray-300">{formData.coachEmail}</p>}
+                    </div>
+                  </div>
+                )}
+
+                <div className="h-3" />
               </div>
             </div>
           </div>
