@@ -800,126 +800,95 @@ export default function EditCardPage() {
               </div>
             </section>
 
-            {/* Academics & Recruiting Profile */}
+            {/* Academics & Recruiting */}
             <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
               <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
                 <span className="material-symbols-outlined text-primary">school</span>
                 Academics & Recruiting
               </h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">GPA</label>
-                  <input
-                    type="text"
-                    name="gpa"
-                    value={formData.gpa}
-                    onChange={handleChange}
-                    placeholder="3.8"
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                  />
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-sm text-text-grey mb-2">GPA</label>
+                    <input
+                      type="text"
+                      name="gpa"
+                      value={formData.gpa}
+                      onChange={handleChange}
+                      placeholder="3.8"
+                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-text-grey mb-2">Weighted GPA</label>
+                    <input
+                      type="text"
+                      name="weightedGpa"
+                      value={formData.weightedGpa}
+                      onChange={handleChange}
+                      placeholder="4.2"
+                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-text-grey mb-2">SAT Score</label>
+                    <input
+                      type="text"
+                      name="sat"
+                      value={formData.sat}
+                      onChange={handleChange}
+                      placeholder="1280"
+                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-text-grey mb-2">ACT Score</label>
+                    <input
+                      type="text"
+                      name="act"
+                      value={formData.act}
+                      onChange={handleChange}
+                      placeholder="28"
+                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                    />
+                  </div>
                 </div>
                 <div>
-                  <label className="block text-sm text-text-grey mb-2">Weighted GPA</label>
+                  <label className="block text-sm text-text-grey mb-2">Academic Interest</label>
                   <input
                     type="text"
-                    name="weightedGpa"
-                    value={formData.weightedGpa}
+                    name="academicInterest"
+                    value={formData.academicInterest}
                     onChange={handleChange}
-                    placeholder="4.2"
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">SAT Score</label>
-                  <input
-                    type="text"
-                    name="sat"
-                    value={formData.sat}
-                    onChange={handleChange}
-                    placeholder="1280"
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">ACT Score</label>
-                  <input
-                    type="text"
-                    name="act"
-                    value={formData.act}
-                    onChange={handleChange}
-                    placeholder="28"
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">Educational Pathway</label>
-                  <input
-                    type="text"
-                    name="major"
-                    value={formData.major}
-                    onChange={handleChange}
-                    placeholder="Business"
+                    placeholder="Business, Engineering, Undecided..."
                     className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
                   />
                 </div>
-              </div>
-
-              {/* Recruiting Profile subsection */}
-              <div className="border-t border-white/5 mt-6 pt-6">
-                <h3 className="text-sm font-semibold text-text-grey uppercase tracking-wider mb-4 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-primary text-[18px]">military_tech</span>
-                  Recruiting Profile
-                </h3>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm text-text-grey mb-2">Core GPA</label>
-                      <input
-                        type="text"
-                        name="coreGpa"
-                        value={formData.coreGpa}
-                        onChange={handleChange}
-                        placeholder="3.5"
-                        className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm text-text-grey mb-2">Academic Interest</label>
-                      <input
-                        type="text"
-                        name="academicInterest"
-                        value={formData.academicInterest}
-                        onChange={handleChange}
-                        placeholder="Business, Engineering, Undecided..."
-                        className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                      />
-                    </div>
-                  </div>
+                <div>
+                  <label className="block text-sm text-text-grey mb-2">College Priority</label>
+                  <textarea
+                    name="collegePriority"
+                    value={formData.collegePriority}
+                    onChange={handleChange}
+                    rows={2}
+                    placeholder="What's important to you when selecting a college?"
+                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors resize-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-text-grey mb-2">Awards</label>
+                  <textarea
+                    name="awards"
+                    value={formData.awards}
+                    onChange={handleChange}
+                    rows={2}
+                    placeholder="Academic and sports awards..."
+                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors resize-none"
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm text-text-grey mb-2">College Priority</label>
-                    <textarea
-                      name="collegePriority"
-                      value={formData.collegePriority}
-                      onChange={handleChange}
-                      rows={2}
-                      placeholder="What's important to you when selecting a college?"
-                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors resize-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm text-text-grey mb-2">Awards</label>
-                    <textarea
-                      name="awards"
-                      value={formData.awards}
-                      onChange={handleChange}
-                      rows={2}
-                      placeholder="Academic and sports awards..."
-                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors resize-none"
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm text-text-grey mb-2">Other Sports</label>
+                    <label className="block text-sm text-text-grey mb-2">Other Sports</label>
                       <input
                         type="text"
                         name="otherSports"
@@ -941,17 +910,16 @@ export default function EditCardPage() {
                       />
                     </div>
                   </div>
-                  <div>
-                    <label className="block text-sm text-text-grey mb-2">Camps Attended</label>
-                    <textarea
-                      name="campsAttended"
-                      value={formData.campsAttended}
-                      onChange={handleChange}
-                      rows={2}
-                      placeholder="Nike Elite 11, Rivals Camp..."
-                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors resize-none"
-                    />
-                  </div>
+                <div>
+                  <label className="block text-sm text-text-grey mb-2">Camps Attended</label>
+                  <textarea
+                    name="campsAttended"
+                    value={formData.campsAttended}
+                    onChange={handleChange}
+                    rows={2}
+                    placeholder="Nike Elite 11, Rivals Camp..."
+                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors resize-none"
+                  />
                 </div>
               </div>
             </section>
