@@ -336,6 +336,7 @@ export default async function AthleteCardPage({
                 </span>
                 {athlete.metrics.bench ? <span className="text-[10px] text-gray-500 -mt-1">lbs</span> : null}
               </div>
+              <div />
               <div className="bg-white/5 border border-white/5 rounded-2xl p-3 flex flex-col gap-1 hover:bg-white/10 transition-colors">
                 <span className="text-[10px] text-gray-500 font-medium">Squat</span>
                 <span className="text-xl text-white font-bold font-mono">
