@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Tables } from "@/types/database";
 import CardActions from "./CardActions";
-import CardQRCode from "./CardQRCode";
 import HighlightVideo from "./HighlightVideo";
 
 type AthleteWithProfile = Tables<"athletes"> & {
@@ -53,30 +52,16 @@ export default async function AthleteCardPage({
 
   const typedAthlete = athleteData as AthleteWithProfile;
 
-  // Query document counts by type
-  const [transcriptRes, recommendationRes, otherRes] = await Promise.all([
-    supabase
-      .from("documents")
-      .select("id", { count: "exact", head: true })
-      .eq("athlete_id", typedAthlete.id)
-      .eq("document_type", "transcript"),
-    supabase
-      .from("documents")
-      .select("id", { count: "exact", head: true })
-      .eq("athlete_id", typedAthlete.id)
-      .eq("document_type", "recommendation"),
-    supabase
-      .from("documents")
-      .select("id", { count: "exact", head: true })
-      .eq("athlete_id", typedAthlete.id)
-      .eq("document_type", "other"),
-  ]);
+  // Query documents by type
+  const { data: documents } = await supabase
+    .from("documents")
+    .select("id, title, document_type, file_url")
+    .eq("athlete_id", typedAthlete.id)
+    .order("uploaded_at", { ascending: false });
 
-  const documentCounts = {
-    transcripts: transcriptRes.count ?? 0,
-    recommendations: recommendationRes.count ?? 0,
-    other: otherRes.count ?? 0,
-  };
+  const transcripts = (documents ?? []).filter(d => d.document_type === "transcript");
+  const recommendations = (documents ?? []).filter(d => d.document_type === "recommendation");
+  const otherDocs = (documents ?? []).filter(d => d.document_type === "other");
 
   // Record the view — do not await, do not block card render
   void Promise.resolve(
@@ -85,9 +70,6 @@ export default async function AthleteCardPage({
       viewer_id: null,
     })
   ).catch(() => {});
-
-  // Build the canonical card URL using repmax_id if available, else UUID
-  const cardUrl = `https://repmax.io/card/${typedAthlete.repmax_id || typedAthlete.id}`;
 
   // Map to display format
   const athlete = {
@@ -150,7 +132,7 @@ export default async function AthleteCardPage({
 
   athlete.offersCount = liveOffersCount || 0;
 
-  const hasDocuments = documentCounts.transcripts > 0 || documentCounts.recommendations > 0 || documentCounts.other > 0;
+  const hasDocuments = transcripts.length > 0 || recommendations.length > 0 || otherDocs.length > 0;
 
   return (
     <div className="bg-background-dark text-white min-h-screen flex justify-center py-8 px-4 relative overflow-x-hidden">
@@ -434,34 +416,37 @@ export default async function AthleteCardPage({
                   Documents
                 </h2>
               </div>
-              <div className="grid grid-cols-3 gap-3">
-                <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col items-center gap-2 hover:bg-white/10 transition-colors">
-                  <span className="material-symbols-outlined text-gray-400 text-[24px]">
-                    description
-                  </span>
-                  <span className="text-xs text-gray-500 font-medium">Transcripts</span>
-                  <span className="text-lg text-white font-bold font-mono">
-                    {documentCounts.transcripts}
-                  </span>
-                </div>
-                <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col items-center gap-2 hover:bg-white/10 transition-colors">
-                  <span className="material-symbols-outlined text-gray-400 text-[24px]">
-                    mail
-                  </span>
-                  <span className="text-xs text-gray-500 font-medium">Letters</span>
-                  <span className="text-lg text-white font-bold font-mono">
-                    {documentCounts.recommendations}
-                  </span>
-                </div>
-                <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col items-center gap-2 hover:bg-white/10 transition-colors">
-                  <span className="material-symbols-outlined text-gray-400 text-[24px]">
-                    folder
-                  </span>
-                  <span className="text-xs text-gray-500 font-medium">Other</span>
-                  <span className="text-lg text-white font-bold font-mono">
-                    {documentCounts.other}
-                  </span>
-                </div>
+              <div className="flex flex-col gap-2">
+                {transcripts.map((doc) => (
+                  <a key={doc.id} href={doc.file_url} target="_blank" rel="noopener noreferrer" className="bg-white/5 border border-white/5 rounded-2xl p-4 flex items-center gap-3 hover:bg-white/10 transition-colors cursor-pointer">
+                    <span className="material-symbols-outlined text-primary text-[24px]">description</span>
+                    <div className="flex flex-col gap-0.5 flex-1 min-w-0">
+                      <span className="text-sm text-white font-medium truncate">{doc.title}</span>
+                      <span className="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Transcript</span>
+                    </div>
+                    <span className="material-symbols-outlined text-gray-500 text-[18px]">open_in_new</span>
+                  </a>
+                ))}
+                {recommendations.map((doc) => (
+                  <a key={doc.id} href={doc.file_url} target="_blank" rel="noopener noreferrer" className="bg-white/5 border border-white/5 rounded-2xl p-4 flex items-center gap-3 hover:bg-white/10 transition-colors cursor-pointer">
+                    <span className="material-symbols-outlined text-primary text-[24px]">mail</span>
+                    <div className="flex flex-col gap-0.5 flex-1 min-w-0">
+                      <span className="text-sm text-white font-medium truncate">{doc.title}</span>
+                      <span className="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Letter</span>
+                    </div>
+                    <span className="material-symbols-outlined text-gray-500 text-[18px]">open_in_new</span>
+                  </a>
+                ))}
+                {otherDocs.map((doc) => (
+                  <a key={doc.id} href={doc.file_url} target="_blank" rel="noopener noreferrer" className="bg-white/5 border border-white/5 rounded-2xl p-4 flex items-center gap-3 hover:bg-white/10 transition-colors cursor-pointer">
+                    <span className="material-symbols-outlined text-primary text-[24px]">folder</span>
+                    <div className="flex flex-col gap-0.5 flex-1 min-w-0">
+                      <span className="text-sm text-white font-medium truncate">{doc.title}</span>
+                      <span className="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Document</span>
+                    </div>
+                    <span className="material-symbols-outlined text-gray-500 text-[18px]">open_in_new</span>
+                  </a>
+                ))}
               </div>
             </section>
           )}
@@ -536,18 +521,15 @@ export default async function AthleteCardPage({
                   </span>
                 </div>
                 <span className="text-[10px] uppercase tracking-widest text-primary font-bold">
-                  NCAA ID / Recruiting #
+                  NCAA ID
                 </span>
-                <span className="text-lg font-bold text-white font-mono tracking-wide">
+                <span className="text-2xl font-bold text-white font-mono tracking-wide">
                   {athlete.ncaaEcId}
                 </span>
               </div>
             </section>
           )}
         </div>
-
-        {/* QR Code */}
-        <CardQRCode url={cardUrl} />
 
         {/* Sticky Footer Actions */}
         <CardActions
