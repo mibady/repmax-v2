@@ -125,6 +125,7 @@ export default async function AthleteCardPage({
     },
     offersCount: 0, // Will be replaced with live count below
     bio: typedAthlete.bio,
+    ncaaEcId: typedAthlete.ncaa_id,
     coachNotes: typedAthlete.coach_notes,
     playerSummary: typedAthlete.player_summary,
     coachPhone: typedAthlete.coach_phone,
@@ -521,6 +522,27 @@ export default async function AthleteCardPage({
                 <p className="text-sm text-gray-300 leading-relaxed whitespace-pre-line">
                   {athlete.playerSummary}
                 </p>
+              </div>
+            </section>
+          )}
+
+          {/* Section: NCAA EC ID / Recruiting # */}
+          {athlete.ncaaEcId && (
+            <section>
+              <div className="bg-primary/15 border border-primary/40 rounded-2xl p-5 flex items-center gap-4">
+                <div className="flex-shrink-0 w-11 h-11 rounded-full bg-primary flex items-center justify-center">
+                  <span className="material-symbols-outlined text-black text-[22px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                    verified
+                  </span>
+                </div>
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-[10px] uppercase tracking-widest text-primary font-bold">
+                    NCAA EC ID / Recruiting #
+                  </span>
+                  <span className="text-lg font-bold text-white font-mono tracking-wide">
+                    {athlete.ncaaEcId}
+                  </span>
+                </div>
               </div>
             </section>
           )}

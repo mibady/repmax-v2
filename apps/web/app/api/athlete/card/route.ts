@@ -91,7 +91,8 @@ export async function GET() {
         shirt_size,
         pants_size,
         helmet_size,
-        glove_size
+        glove_size,
+        ncaa_id
       `)
       .eq("profile_id", profile.id)
       .single();
@@ -136,6 +137,7 @@ export async function GET() {
       weightedGpa: athlete.weighted_gpa?.toFixed(2) || "",
       coachNotes: athlete.coach_notes || "",
       playerSummary: athlete.player_summary || "",
+      ncaaEcId: athlete.ncaa_id || "",
       coachPhone: athlete.coach_phone || "",
       coachEmail: athlete.coach_email || "",
       phone: athlete.phone || "",
@@ -242,6 +244,7 @@ export async function PUT(request: Request) {
       weightedGpa: z.string().nullable().optional(),
       coachNotes: z.string().nullable().optional(),
       playerSummary: z.string().nullable().optional(),
+      ncaaEcId: z.string().nullable().optional(),
       coachPhone: z.string().nullable().optional(),
       coachEmail: z.string().nullable().optional(),
       phone: z.string().nullable().optional(),
@@ -325,6 +328,8 @@ export async function PUT(request: Request) {
       athleteUpdate.coach_notes = body.coachNotes || null;
     if (body.playerSummary !== undefined)
       athleteUpdate.player_summary = body.playerSummary || null;
+    if (body.ncaaEcId !== undefined)
+      athleteUpdate.ncaa_id = body.ncaaEcId || null;
     if (body.coachPhone !== undefined)
       athleteUpdate.coach_phone = body.coachPhone || null;
     if (body.coachEmail !== undefined)

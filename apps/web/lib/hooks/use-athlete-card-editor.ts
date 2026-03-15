@@ -42,6 +42,8 @@ export interface AthleteCardData {
   // Text sections
   coachNotes: string;
   playerSummary: string;
+  // NCAA EC ID / Recruiting #
+  ncaaEcId: string;
   // Coach contact
   coachPhone: string;
   coachEmail: string;

@@ -1029,6 +1029,26 @@ export default function EditCardPage() {
               </div>
             </section>
 
+            {/* NCAA EC ID / Recruiting # */}
+            <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">verified</span>
+                NCAA EC ID / Recruiting #
+              </h2>
+              <p className="text-xs text-text-grey mb-4">If applicable</p>
+              <div>
+                <label className="block text-sm text-text-grey mb-2">NCAA EC ID</label>
+                <input
+                  type="text"
+                  name="ncaaEcId"
+                  value={formData.ncaaEcId}
+                  onChange={handleChange}
+                  placeholder="e.g. 2503129456"
+                  className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
+                />
+              </div>
+            </section>
+
             {/* Coach Contact */}
             <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
               <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
