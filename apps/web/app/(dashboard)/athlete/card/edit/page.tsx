@@ -852,7 +852,7 @@ export default function EditCardPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-text-grey mb-2">Desired Major</label>
+                  <label className="block text-sm text-text-grey mb-2">Educational Pathway</label>
                   <input
                     type="text"
                     name="major"
