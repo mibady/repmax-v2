@@ -160,17 +160,19 @@ export default async function AthleteCardPage({
 
       {/* Main Card Container */}
       <main className="relative z-10 w-full max-w-[480px] bg-card-dark border border-white/10 rounded-3xl shadow-2xl overflow-hidden">
-        {/* Header Background */}
-        <div className="h-32 w-full bg-gradient-to-b from-[#1a1a1a] to-card-dark relative">
-          <div
-            className="absolute inset-0 opacity-20"
-            style={{
-              backgroundImage:
-                "url('https://www.transparenttextures.com/patterns/carbon-fibre.png')",
-            }}
+        {/* Hero Image */}
+        <div className="relative w-full aspect-[4/3] bg-gradient-to-b from-[#1a1a1a] to-card-dark overflow-hidden">
+          <Image
+            src={athlete.avatarUrl}
+            alt={`Portrait of athlete ${athlete.name}`}
+            fill
+            className="object-cover"
+            priority
           />
+          {/* Gradient overlay at bottom for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-card-dark via-card-dark/40 to-transparent" />
           {/* Zone Badge */}
-          <div className="absolute top-4 right-4 bg-purple-900/80 border border-purple-500/50 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-1">
+          <div className="absolute top-4 right-4 bg-purple-900/80 border border-purple-500/50 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-1 z-10">
             <span className="material-symbols-outlined text-purple-200 text-[14px]">
               location_on
             </span>
@@ -178,38 +180,26 @@ export default async function AthleteCardPage({
               {athlete.zone}
             </span>
           </div>
+          {/* Verified Badge */}
+          {athlete.verified && (
+            <div className="absolute bottom-4 right-4 z-10 bg-green-900/80 border border-green-500/50 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-1.5">
+              <span
+                className="material-symbols-outlined text-green-400 text-[16px] leading-none"
+                style={{
+                  fontVariationSettings: "'FILL' 1, 'wght' 700",
+                }}
+              >
+                verified
+              </span>
+              <span className="text-[10px] font-bold tracking-wider text-green-300 uppercase">Verified</span>
+            </div>
+          )}
         </div>
 
-        {/* Avatar & Identity Section */}
-        <div className="px-6 relative -mt-16 flex flex-col items-center text-center">
-          {/* Avatar */}
-          <div className="relative group">
-            <div className="w-24 h-24 rounded-full border-4 border-primary shadow-glow p-0.5 bg-card-dark overflow-hidden relative z-10 transition-transform duration-300 group-hover:scale-105">
-              <Image
-                src={athlete.avatarUrl}
-                alt={`Portrait of athlete ${athlete.name}`}
-                width={96}
-                height={96}
-                className="w-full h-full object-cover rounded-full"
-              />
-            </div>
-            {/* Verified Badge */}
-            {athlete.verified && (
-              <div className="absolute bottom-0 right-0 z-20 bg-green-900 border-2 border-card-dark rounded-full p-1.5 flex items-center justify-center shadow-md">
-                <span
-                  className="material-symbols-outlined text-green-400 text-[16px] leading-none"
-                  style={{
-                    fontVariationSettings: "'FILL' 1, 'wght' 700",
-                  }}
-                >
-                  verified
-                </span>
-              </div>
-            )}
-          </div>
-
+        {/* Identity Section */}
+        <div className="px-6 pt-5 flex flex-col items-center text-center">
           {/* Name & School */}
-          <div className="mt-4 flex flex-col gap-1">
+          <div className="flex flex-col gap-1">
             <h1 className="text-3xl font-bold tracking-tight text-white">
               {athlete.name}
             </h1>
@@ -268,14 +258,11 @@ export default async function AthleteCardPage({
             <div className="h-8 w-px bg-white/10" />
             <div className="flex flex-col items-end gap-1">
               <span className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">
-                Status
+                Offers
               </span>
-              <div className="flex items-center gap-1">
-                <span className={`w-1.5 h-1.5 rounded-full ${athlete.verified ? 'bg-green-500 animate-pulse' : 'bg-gray-500'}`} />
-                <span className={`text-sm font-bold ${athlete.verified ? 'text-green-400' : 'text-gray-400'}`}>
-                  {athlete.verified ? 'Verified' : 'Unverified'}
-                </span>
-              </div>
+              <span className="text-sm font-bold text-primary">
+                {athlete.offersCount}
+              </span>
             </div>
           </div>
         </div>
