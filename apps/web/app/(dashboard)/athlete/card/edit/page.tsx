@@ -1132,6 +1132,15 @@ export default function EditCardPage() {
                   </div>
                 </div>
 
+                {/* Bio */}
+                {formData.bio && (
+                  <div className="px-3 pt-3">
+                    <div className="rounded-lg bg-white/5 p-2">
+                      <p className="text-[8px] text-gray-300 leading-relaxed line-clamp-3">{formData.bio}</p>
+                    </div>
+                  </div>
+                )}
+
                 {/* Athletic Metrics */}
                 <div className="px-3 pt-3">
                   <div className="flex items-center gap-1 mb-2">

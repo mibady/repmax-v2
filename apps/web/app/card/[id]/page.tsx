@@ -124,6 +124,7 @@ export default async function AthleteCardPage({
       ncaaCleared: typedAthlete.ncaa_cleared || false,
     },
     offersCount: 0, // Will be replaced with live count below
+    bio: typedAthlete.bio,
     coachNotes: typedAthlete.coach_notes,
     playerSummary: typedAthlete.player_summary,
     coachPhone: typedAthlete.coach_phone,
@@ -269,7 +270,16 @@ export default async function AthleteCardPage({
 
         {/* Scrollable Content Area */}
         <div className="p-6 flex flex-col gap-6">
-          {/* Section: Quick Metrics (2x4 grid) */}
+          {/* Section: Bio */}
+          {athlete.bio && (
+            <section>
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-5">
+                <p className="text-sm text-gray-300 leading-relaxed">{athlete.bio}</p>
+              </div>
+            </section>
+          )}
+
+          {/* Section: Quick Metrics (3-col grid) */}
           <section>
             <div className="flex items-center gap-2 mb-4">
               <span className="material-symbols-outlined text-primary text-[20px]">
