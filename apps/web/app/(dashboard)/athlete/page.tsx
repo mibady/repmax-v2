@@ -2,9 +2,10 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useAthleteDashboard } from '@/lib/hooks';
+import { calculateProfileCompletion, type ProfileCompletionResult } from '@/lib/utils/profile-completion';
 
 function formatHeight(inches: number | null): string {
   if (!inches) return "N/A";
@@ -30,6 +31,16 @@ function getEventPriorityStyles(priority?: string) {
 export default function AthleteDashboardPage() {
   const { profile, stats, shortlistCoaches, calendarEvents, isLoading, error } = useAthleteDashboard();
   const [shareStatus, setShareStatus] = useState<'idle' | 'copied'>('idle');
+  const [completion, setCompletion] = useState<ProfileCompletionResult | null>(null);
+
+  useEffect(() => {
+    fetch('/api/athlete/card')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (data) setCompletion(calculateProfileCompletion(data));
+      })
+      .catch(() => {});
+  }, []);
 
   const handleShare = async () => {
     if (!profile) return;
@@ -102,6 +113,68 @@ export default function AthleteDashboardPage() {
             View Your Analytics
           </Link>
         </div>
+
+        {/* Profile Completion Widget */}
+        {completion && completion.percentage < 100 && (
+          <div className="bg-surface-dark rounded-xl border border-[#333] p-6">
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="relative size-14">
+                  <svg className="size-14 -rotate-90" viewBox="0 0 56 56">
+                    <circle cx="28" cy="28" r="24" fill="none" stroke="currentColor" strokeWidth="4" className="text-white/10" />
+                    <circle cx="28" cy="28" r="24" fill="none" stroke="currentColor" strokeWidth="4" className="text-primary" strokeDasharray={`${completion.percentage * 1.508} 150.8`} strokeLinecap="round" />
+                  </svg>
+                  <span className="absolute inset-0 flex items-center justify-center text-sm font-bold text-primary">{completion.percentage}%</span>
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-lg">Complete Your Player Card</h3>
+                  <p className="text-gray-500 text-sm">
+                    {completion.percentage >= 90
+                      ? 'Almost there! Just a few more fields to stand out.'
+                      : completion.percentage >= 60
+                      ? 'Good progress. Add more details to boost your visibility.'
+                      : 'Recruiters prioritize complete profiles. Fill in key fields to get noticed.'}
+                  </p>
+                </div>
+              </div>
+              <Link
+                href="/athlete/card/edit"
+                className="flex items-center gap-1.5 bg-primary text-black font-bold px-4 py-2 rounded-lg text-sm hover:bg-primary/90 transition-colors whitespace-nowrap"
+              >
+                <span className="material-symbols-outlined text-[18px]">edit</span>
+                Edit Card
+              </Link>
+            </div>
+
+            {/* Top missing fields */}
+            {completion.topActions.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                {completion.topActions.map((action) => (
+                  <Link
+                    key={action.field}
+                    href="/athlete/card/edit"
+                    className="flex items-center gap-3 bg-white/5 hover:bg-white/10 rounded-lg px-3 py-2.5 transition-colors group"
+                  >
+                    <span className="material-symbols-outlined text-[18px] text-primary">{action.icon}</span>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-sm text-white font-medium">{action.label}</span>
+                      <span className="text-[10px] text-gray-600 block">{action.section}</span>
+                    </div>
+                    <span className="material-symbols-outlined text-[14px] text-gray-600 group-hover:text-primary transition-colors">arrow_forward</span>
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            {/* Progress bar */}
+            <div className="mt-4 h-2 bg-white/10 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-primary rounded-full transition-all duration-500"
+                style={{ width: `${completion.percentage}%` }}
+              />
+            </div>
+          </div>
+        )}
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
