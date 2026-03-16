@@ -50,6 +50,7 @@ const recruiterNavItems: NavItem[] = [
   { icon: 'view_kanban', label: 'Pipeline', href: '/recruiter/pipeline' },
   { icon: 'groups', label: 'Athletes', href: '/recruiter/prospects' },
   { icon: 'campaign', label: 'Campaigns', href: '/recruiter/communications' },
+  { icon: 'trophy', label: 'Off Season Events', href: '/tournaments' },
   { icon: 'chat_bubble', label: 'Messages', href: '/messages' },
   { icon: 'analytics', label: 'Analytics', href: '/recruiter/reports' },
 ];
@@ -64,6 +65,7 @@ const parentNavItems: NavItem[] = [
   { icon: 'chat_bubble', label: 'Messages', href: '/messages' },
   { icon: 'calendar_today', label: 'Calendar', href: '/parent/calendar' },
   { icon: 'school', label: 'Schools', href: '/parent/schools' },
+  { icon: 'trophy', label: 'Off Season Events', href: '/tournaments' },
   { icon: 'library_books', label: 'Resources', href: '/parent/resources' },
 ];
 
@@ -92,6 +94,7 @@ const coachSettingsItems: NavItem[] = [
 const clubNavItems: NavItem[] = [
   { icon: 'dashboard', label: 'Dashboard', href: '/club' },
   { icon: 'event', label: 'Events', href: '/club/events' },
+  { icon: 'trophy', label: 'Off Season Events', href: '/tournaments' },
   { icon: 'groups', label: 'Athletes', href: '/club/athletes' },
   { icon: 'sports', label: 'Scouts', href: '/club/scouts' },
   { icon: 'analytics', label: 'Analytics', href: '/club/analytics' },
@@ -106,6 +109,7 @@ const adminNavItems: NavItem[] = [
   { icon: 'group', label: 'User Management', href: '/admin/users' },
   { icon: 'shield', label: 'Content Moderation', href: '/admin/moderation' },
   { icon: 'toggle_on', label: 'Feature Flags', href: '/admin/flags' },
+  { icon: 'trophy', label: 'Off Season Events', href: '/tournaments' },
 ];
 
 const adminSettingsItems: NavItem[] = [
