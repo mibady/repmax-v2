@@ -53,16 +53,28 @@ export async function GET() {
             state,
             zone,
             verified,
-            profile:profiles(full_name, avatar_url)
+            profile:profiles(id, full_name, avatar_url)
           )
         `)
         .eq("team_id", team.id)
         .order("added_at", { ascending: false });
 
+      // Fetch invite statuses for this team
+      const { data: invites } = await supabase
+        .from("coach_athlete_invites")
+        .select("athlete_profile_id, status")
+        .eq("team_id", team.id);
+
+      const inviteMap = new Map(
+        (invites || []).map((inv: { athlete_profile_id: string; status: string }) => [inv.athlete_profile_id, inv.status])
+      );
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       roster = (rosterRows || []).map((row: any) => {
         const a = row.athlete;
         const p = Array.isArray(a?.profile) ? a.profile[0] : a?.profile;
+        const profileId = p?.id;
+        const inviteStatus = profileId ? inviteMap.get(profileId) || null : null;
         return {
           id: a?.id || row.id,
           name: p?.full_name || "Unknown",
@@ -83,6 +95,7 @@ export async function GET() {
           state: a?.state ?? null,
           zone: a?.zone ?? null,
           verified: a?.verified ?? false,
+          inviteStatus,
         };
       });
     }

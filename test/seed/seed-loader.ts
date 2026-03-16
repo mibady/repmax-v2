@@ -1342,33 +1342,36 @@ interface SchoolConfig {
   displayName: string;
   highSchool: string; // must match athletes.high_school exactly
   client: 'repmax' | 'ca_recruits';
+  city: string;
+  state: string;
+  zone: string;
 }
 
 const SCHOOL_PASSWORD = 'RepMax2026!School';
 
 const schoolConfigs: SchoolConfig[] = [
   // RepMax schools (6 core)
-  { key: 'wilson', email: 'wilson@repmax.io', displayName: 'Wilson HS Coach', highSchool: 'Woodrow Wilson High School', client: 'repmax' },
-  { key: 'western', email: 'western@repmax.io', displayName: 'Western HS Coach', highSchool: 'Western High School', client: 'repmax' },
-  { key: 'sierracanyon', email: 'sierracanyon@repmax.io', displayName: 'Sierra Canyon Coach', highSchool: 'Sierra Canyon School', client: 'repmax' },
-  { key: 'stpius', email: 'stpius@repmax.io', displayName: 'St. Pius Coach', highSchool: 'St. Pius X - St. Matthias Academy', client: 'repmax' },
-  { key: 'newburypark', email: 'newburypark@repmax.io', displayName: 'Newbury Park Coach', highSchool: 'Newbury Park High School', client: 'repmax' },
-  { key: 'mayfair', email: 'mayfair@repmax.io', displayName: 'Mayfair HS Coach', highSchool: 'Mayfair High School', client: 'repmax' },
+  { key: 'wilson', email: 'wilson@repmax.io', displayName: 'Wilson HS Coach', highSchool: 'Woodrow Wilson High School', client: 'repmax', city: 'Long Beach', state: 'CA', zone: 'West' },
+  { key: 'western', email: 'western@repmax.io', displayName: 'Western HS Coach', highSchool: 'Western High School', client: 'repmax', city: 'Anaheim', state: 'CA', zone: 'West' },
+  { key: 'sierracanyon', email: 'sierracanyon@repmax.io', displayName: 'Sierra Canyon Coach', highSchool: 'Sierra Canyon School', client: 'repmax', city: 'Chatsworth', state: 'CA', zone: 'West' },
+  { key: 'stpius', email: 'stpius@repmax.io', displayName: 'St. Pius Coach', highSchool: 'St. Pius X - St. Matthias Academy', client: 'repmax', city: 'Downey', state: 'CA', zone: 'West' },
+  { key: 'newburypark', email: 'newburypark@repmax.io', displayName: 'Newbury Park Coach', highSchool: 'Newbury Park High School', client: 'repmax', city: 'Newbury Park', state: 'CA', zone: 'West' },
+  { key: 'mayfair', email: 'mayfair@repmax.io', displayName: 'Mayfair HS Coach', highSchool: 'Mayfair High School', client: 'repmax', city: 'Lakewood', state: 'CA', zone: 'West' },
   // RepMax additional (batch5)
-  { key: 'riversidepoly', email: 'riversidepoly@repmax.io', displayName: 'Riverside Poly Coach', highSchool: 'Riverside Poly High School', client: 'repmax' },
+  { key: 'riversidepoly', email: 'riversidepoly@repmax.io', displayName: 'Riverside Poly Coach', highSchool: 'Riverside Poly High School', client: 'repmax', city: 'Riverside', state: 'CA', zone: 'West' },
   // CA Recruits schools (10)
-  { key: 'frontier', email: 'frontier@repmax.io', displayName: 'Frontier HS Coach', highSchool: 'Frontier High School', client: 'ca_recruits' },
-  { key: 'bakersfield', email: 'bakersfield@repmax.io', displayName: 'Bakersfield Christian Coach', highSchool: 'Bakersfield Christian High School', client: 'ca_recruits' },
-  { key: 'garces', email: 'garces@repmax.io', displayName: 'Garces Memorial Coach', highSchool: 'Garces Memorial High School', client: 'ca_recruits' },
-  { key: 'heritage', email: 'heritage@repmax.io', displayName: 'Heritage Christian Coach', highSchool: 'Heritage Christian School', client: 'ca_recruits' },
-  { key: 'independence', email: 'independence@repmax.io', displayName: 'Independence HS Coach', highSchool: 'Independence High School', client: 'ca_recruits' },
-  { key: 'knight', email: 'knight@repmax.io', displayName: 'Knight HS Coach', highSchool: 'Knight High School', client: 'ca_recruits' },
-  { key: 'ontario', email: 'ontario@repmax.io', displayName: 'Ontario Christian Coach', highSchool: 'Ontario Christian High School', client: 'ca_recruits' },
-  { key: 'paraclete', email: 'paraclete@repmax.io', displayName: 'Paraclete HS Coach', highSchool: 'Paraclete High School', client: 'ca_recruits' },
-  { key: 'redwood', email: 'redwood@repmax.io', displayName: 'Redwood HS Coach', highSchool: 'Redwood High School', client: 'ca_recruits' },
-  { key: 'southeast', email: 'southeast@repmax.io', displayName: 'South East HS Coach', highSchool: 'South East High School', client: 'ca_recruits' },
+  { key: 'frontier', email: 'frontier@repmax.io', displayName: 'Frontier HS Coach', highSchool: 'Frontier High School', client: 'ca_recruits', city: 'Bakersfield', state: 'CA', zone: 'West' },
+  { key: 'bakersfield', email: 'bakersfield@repmax.io', displayName: 'Bakersfield Christian Coach', highSchool: 'Bakersfield Christian High School', client: 'ca_recruits', city: 'Bakersfield', state: 'CA', zone: 'West' },
+  { key: 'garces', email: 'garces@repmax.io', displayName: 'Garces Memorial Coach', highSchool: 'Garces Memorial High School', client: 'ca_recruits', city: 'Bakersfield', state: 'CA', zone: 'West' },
+  { key: 'heritage', email: 'heritage@repmax.io', displayName: 'Heritage Christian Coach', highSchool: 'Heritage Christian School', client: 'ca_recruits', city: 'Northridge', state: 'CA', zone: 'West' },
+  { key: 'independence', email: 'independence@repmax.io', displayName: 'Independence HS Coach', highSchool: 'Independence High School', client: 'ca_recruits', city: 'Bakersfield', state: 'CA', zone: 'West' },
+  { key: 'knight', email: 'knight@repmax.io', displayName: 'Knight HS Coach', highSchool: 'Knight High School', client: 'ca_recruits', city: 'Palmdale', state: 'CA', zone: 'West' },
+  { key: 'ontario', email: 'ontario@repmax.io', displayName: 'Ontario Christian Coach', highSchool: 'Ontario Christian High School', client: 'ca_recruits', city: 'Ontario', state: 'CA', zone: 'West' },
+  { key: 'paraclete', email: 'paraclete@repmax.io', displayName: 'Paraclete HS Coach', highSchool: 'Paraclete High School', client: 'ca_recruits', city: 'Lancaster', state: 'CA', zone: 'West' },
+  { key: 'redwood', email: 'redwood@repmax.io', displayName: 'Redwood HS Coach', highSchool: 'Redwood High School', client: 'ca_recruits', city: 'Visalia', state: 'CA', zone: 'West' },
+  { key: 'southeast', email: 'southeast@repmax.io', displayName: 'South East HS Coach', highSchool: 'South East High School', client: 'ca_recruits', city: 'South Gate', state: 'CA', zone: 'West' },
   // CA Recruits aggregate — sees ALL CA Recruits athletes
-  { key: 'carecruits', email: 'carecruits@repmax.io', displayName: 'CA Recruits', highSchool: '__CA_RECRUITS_ALL__', client: 'ca_recruits' },
+  { key: 'carecruits', email: 'carecruits@repmax.io', displayName: 'CA Recruits', highSchool: '__CA_RECRUITS_ALL__', client: 'ca_recruits', city: 'Los Angeles', state: 'CA', zone: 'West' },
 ];
 
 export async function seedSchoolCoaches(): Promise<SeedResult> {
@@ -1458,6 +1461,37 @@ export async function seedSchoolCoaches(): Promise<SeedResult> {
         coachId = newCoach!.id;
       }
 
+      // 3.5. Create or find team
+      let teamId: string;
+      const teamName = school.highSchool === '__CA_RECRUITS_ALL__'
+        ? 'CA Recruits Football'
+        : `${school.highSchool} Football`;
+      const teamSchoolName = school.highSchool === '__CA_RECRUITS_ALL__'
+        ? 'CA Recruits'
+        : school.highSchool;
+
+      const { data: existingTeam } = await supabase
+        .from('teams').select('id').eq('coach_profile_id', profileId).single();
+
+      if (existingTeam) {
+        teamId = existingTeam.id;
+      } else {
+        const { data: newTeam, error: teamErr } = await supabase
+          .from('teams')
+          .insert({
+            name: teamName,
+            school_name: teamSchoolName,
+            city: school.city,
+            state: school.state,
+            zone: school.zone,
+            coach_profile_id: profileId,
+          })
+          .select('id')
+          .single();
+        if (teamErr) throw new Error(`Team: ${teamErr.message}`);
+        teamId = newTeam!.id;
+      }
+
       // 4. Query school's athletes
       let athleteQuery;
       if (school.highSchool === '__CA_RECRUITS_ALL__') {
@@ -1483,6 +1517,7 @@ export async function seedSchoolCoaches(): Promise<SeedResult> {
 
       // 5. Create shortlist entries (skip existing)
       let shortlisted = 0;
+      let rostered = 0;
       for (const athlete of athletes) {
         const { error: slErr } = await supabase.from('shortlists').insert({
           coach_id: coachId,
@@ -1495,14 +1530,29 @@ export async function seedSchoolCoaches(): Promise<SeedResult> {
           if (!slErr.message.includes('duplicate')) {
             console.log(`    ✗ shortlist: ${slErr.message}`);
           }
-          // duplicate is fine — skip
         } else {
           shortlisted++;
         }
+
+        // 5.5. Create team_roster entry
+        const { error: trErr } = await supabase.from('team_rosters').insert({
+          team_id: teamId,
+          athlete_id: athlete.id,
+          priority: 'high',
+          notes: `${teamSchoolName} roster`,
+        });
+
+        if (trErr) {
+          if (!trErr.message.includes('duplicate')) {
+            console.log(`    ✗ team_roster: ${trErr.message}`);
+          }
+        } else {
+          rostered++;
+        }
       }
 
-      created.push(`${school.key}: ${shortlisted}/${athletes.length} athletes`);
-      console.log(`  ✓ ${school.key} (${school.email}): ${shortlisted} athletes shortlisted`);
+      created.push(`${school.key}: ${shortlisted}/${athletes.length} shortlisted, ${rostered} rostered`);
+      console.log(`  ✓ ${school.key} (${school.email}): ${shortlisted} shortlisted, ${rostered} rostered`);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       errors.push(`${school.key}: ${message}`);

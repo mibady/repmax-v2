@@ -11,6 +11,11 @@ const statusColors: Record<string, { bg: string; text: string; label: string }> 
   graduated: { bg: 'bg-slate-500/10', text: 'text-slate-400', label: 'Graduated' },
 };
 
+const inviteColors: Record<string, { bg: string; text: string; label: string }> = {
+  pending: { bg: 'bg-amber-500/10', text: 'text-amber-400', label: 'Invited' },
+  claimed: { bg: 'bg-green-500/10', text: 'text-green-400', label: 'Claimed' },
+};
+
 export default function CoachRosterPage(): React.JSX.Element {
   const { roster, isLoading, error } = useCoachDashboard();
 
@@ -18,6 +23,7 @@ export default function CoachRosterPage(): React.JSX.Element {
   const [filterPosition, setFilterPosition] = useState<string>('all');
   const [filterClass, setFilterClass] = useState<string>('all');
   const [exportStatus, setExportStatus] = useState<'idle' | 'exporting' | 'done'>('idle');
+  const [resendingId, setResendingId] = useState<string | null>(null);
 
   const filteredRoster = useMemo(() => {
     return roster.filter((athlete) => {
@@ -49,6 +55,25 @@ export default function CoachRosterPage(): React.JSX.Element {
     setExportStatus('done');
     setTimeout(() => setExportStatus('idle'), 2000);
   }, [selectedAthletes, roster]);
+
+  const handleResendInvite = useCallback(async (athleteId: string) => {
+    setResendingId(athleteId);
+    try {
+      const res = await fetch('/api/coach/roster/invite/resend', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ athlete_id: athleteId }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        alert(data.error || 'Failed to resend invite');
+      }
+    } catch {
+      alert('Failed to resend invite');
+    } finally {
+      setResendingId(null);
+    }
+  }, []);
 
   const toggleSelect = (id: string): void => {
     setSelectedAthletes((prev) =>
@@ -213,12 +238,31 @@ export default function CoachRosterPage(): React.JSX.Element {
                         <span className="text-sm text-white font-bold">{athlete.offers}</span>
                       </td>
                       <td className="px-4 py-3">
-                        <span className={`text-xs font-bold px-2 py-1 rounded ${statusColors[athlete.status]?.bg || 'bg-slate-500/10'} ${statusColors[athlete.status]?.text || 'text-slate-400'}`}>
-                          {statusColors[athlete.status]?.label || athlete.status}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className={`text-xs font-bold px-2 py-1 rounded ${statusColors[athlete.status]?.bg || 'bg-slate-500/10'} ${statusColors[athlete.status]?.text || 'text-slate-400'}`}>
+                            {statusColors[athlete.status]?.label || athlete.status}
+                          </span>
+                          {athlete.inviteStatus && inviteColors[athlete.inviteStatus] && (
+                            <span className={`text-xs font-bold px-2 py-1 rounded ${inviteColors[athlete.inviteStatus].bg} ${inviteColors[athlete.inviteStatus].text}`}>
+                              {inviteColors[athlete.inviteStatus].label}
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="px-4 py-3 text-right">
                         <div className="flex items-center justify-end gap-2">
+                          {athlete.inviteStatus === 'pending' && (
+                            <button
+                              onClick={() => handleResendInvite(athlete.id)}
+                              disabled={resendingId === athlete.id}
+                              className="p-1.5 rounded hover:bg-amber-500/10 text-amber-400 hover:text-amber-300 transition-colors disabled:opacity-50"
+                              title="Resend Invite"
+                            >
+                              <span className="material-symbols-outlined text-[18px]">
+                                {resendingId === athlete.id ? 'hourglass_empty' : 'forward_to_inbox'}
+                              </span>
+                            </button>
+                          )}
                           <Link
                             href={`/coach/roster/${athlete.id}`}
                             className="p-1.5 rounded hover:bg-white/10 text-slate-400 hover:text-white transition-colors"

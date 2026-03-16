@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -11,13 +12,12 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
-      // Check if user has a profile, create one if not
       const { data: { user } } = await supabase.auth.getUser();
 
       if (user) {
         const { data: profile } = await supabase
           .from("profiles")
-          .select("id")
+          .select("id, role")
           .eq("user_id", user.id)
           .single();
 
@@ -29,6 +29,25 @@ export async function GET(request: Request) {
             full_name: metadata.full_name || metadata.name || user.email?.split("@")[0] || "User",
             role: metadata.role || "athlete",
           });
+        }
+
+        // Handle invited athletes: skip onboarding, claim invite
+        if (
+          profile &&
+          profile.role === "athlete" &&
+          user.user_metadata?.invited_by_coach
+        ) {
+          // Claim the invite using service client (bypasses RLS)
+          if (user.email) {
+            const serviceClient = createServiceClient();
+            await serviceClient
+              .from("coach_athlete_invites")
+              .update({ status: "claimed", claimed_at: new Date().toISOString() })
+              .eq("athlete_email", user.email.toLowerCase())
+              .eq("status", "pending");
+          }
+
+          return NextResponse.redirect(`${origin}/athlete`);
         }
       }
 

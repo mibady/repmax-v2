@@ -29,6 +29,7 @@ export interface RosterAthlete {
   state: string | null;
   zone: string | null;
   verified: boolean;
+  inviteStatus: string | null;
 }
 
 export interface CoachTask {

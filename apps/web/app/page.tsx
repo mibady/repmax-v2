@@ -110,7 +110,7 @@ export default function Page() {
 {/*  Image Header  */}
 <div className="relative h-64 w-full overflow-hidden">
 <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] to-transparent z-10"></div>
-<Image src="/images/marketing/hero-athlete.png" alt="Athletic football player in action pose holding a ball with intense focus" className="w-full h-full object-cover" fill sizes="(max-width: 440px) 100vw, 440px" />
+<Image src="/images/marketing/hero-athlete.png" alt="Athletic football player in action pose holding a ball with intense focus" className="object-cover" fill sizes="(max-width: 440px) 100vw, 440px" />
 <div className="absolute top-4 right-4 z-20 flex items-center gap-1 rounded bg-black/60 px-2 py-1 backdrop-blur-sm border border-primary/30">
 <span className="text-xs font-bold text-primary">ELITE 11</span>
 </div>
@@ -353,7 +353,7 @@ export default function Page() {
 {/*  Final CTA  */}
 <section className="py-24 bg-surface-dark border-t border-white/5 relative overflow-hidden">
 <div className="absolute inset-0 opacity-20 pointer-events-none">
-<Image src="/images/marketing/cta-background.png" alt="" className="w-full h-full object-cover" fill sizes="100vw" />
+<Image src="/images/marketing/cta-background.png" alt="" className="object-cover" fill sizes="100vw" />
 </div>
 <div className="absolute inset-0 bg-gradient-to-b from-surface-dark via-transparent to-surface-dark"></div>
 <div className="mx-auto max-w-4xl px-6 lg:px-8 text-center relative z-10">

@@ -6,6 +6,8 @@ import { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useAthleteDashboard } from '@/lib/hooks';
 import { calculateProfileCompletion, type ProfileCompletionResult } from '@/lib/utils/profile-completion';
+import { WelcomeModal } from '@/components/athlete/WelcomeModal';
+import { checkMilestones } from '@/lib/utils/milestone-toasts';
 
 function formatHeight(inches: number | null): string {
   if (!inches) return "N/A";
@@ -32,12 +34,23 @@ export default function AthleteDashboardPage() {
   const { profile, stats, shortlistCoaches, calendarEvents, isLoading, error } = useAthleteDashboard();
   const [shareStatus, setShareStatus] = useState<'idle' | 'copied'>('idle');
   const [completion, setCompletion] = useState<ProfileCompletionResult | null>(null);
+  const [showWelcome, setShowWelcome] = useState(false);
+
+  useEffect(() => {
+    if (!localStorage.getItem('repmax_welcome_seen')) {
+      setShowWelcome(true);
+    }
+  }, []);
 
   useEffect(() => {
     fetch('/api/athlete/card')
       .then(r => r.ok ? r.json() : null)
       .then(data => {
-        if (data) setCompletion(calculateProfileCompletion(data));
+        if (data) {
+          const result = calculateProfileCompletion(data);
+          setCompletion(result);
+          checkMilestones(result.percentage);
+        }
       })
       .catch(() => {});
   }, []);
@@ -407,6 +420,12 @@ export default function AthleteDashboardPage() {
           </div>
         </div>
       </div>
+
+      <WelcomeModal
+        isOpen={showWelcome}
+        onClose={() => setShowWelcome(false)}
+        firstName={profile.firstName}
+      />
     </div>
   );
 }
