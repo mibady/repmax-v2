@@ -40,14 +40,31 @@ function formatScholarship(type: string | null): string {
   return type.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 }
 
-function OfferCard({ offer }: { offer: Offer }) {
+function OfferCard({ offer, index }: { offer: Offer; index: number }) {
   const meta = getSchoolMeta(offer.school_name);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setVisible(true), 100 + index * 120);
+    return () => clearTimeout(timer);
+  }, [index]);
 
   const card = (
-    <div className="bg-surface-dark rounded-xl border border-[#333] hover:border-primary/40 transition-colors p-5 flex flex-col gap-4 group">
+    <div
+      className={`relative rounded-2xl p-5 flex flex-col gap-4 group overflow-hidden transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+      style={{ background: 'linear-gradient(145deg, rgba(30,30,30,1) 0%, rgba(20,20,20,1) 100%)' }}
+    >
+      {/* Ambient glow behind card */}
+      <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-br from-primary/30 via-primary/5 to-transparent -z-10 opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
+      {/* Inner border glow */}
+      <div className="absolute inset-0 rounded-2xl border border-primary/20 group-hover:border-primary/50 transition-colors duration-500" />
+      {/* Corner accent flare */}
+      <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/20 transition-colors duration-700" />
+      <div className="absolute -bottom-8 -left-8 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/15 transition-colors duration-700" />
+
       {/* Logo + Division badge */}
-      <div className="flex items-start justify-between">
-        <div className="size-16 rounded-xl bg-white flex items-center justify-center p-2 overflow-hidden">
+      <div className="flex items-start justify-between relative z-10">
+        <div className="size-16 rounded-xl bg-white flex items-center justify-center p-2 overflow-hidden shadow-lg shadow-primary/10 group-hover:shadow-primary/25 transition-shadow duration-500">
           {meta?.logo ? (
             <Image
               src={meta.logo}
@@ -67,20 +84,20 @@ function OfferCard({ offer }: { offer: Offer }) {
       </div>
 
       {/* School name */}
-      <div>
-        <h3 className="text-white font-bold text-lg group-hover:text-primary transition-colors">{offer.school_name}</h3>
-        <div className="flex items-center gap-2 mt-1 text-xs text-text-muted">
+      <div className="relative z-10">
+        <h3 className="text-white font-bold text-lg group-hover:text-primary transition-colors duration-300">{offer.school_name}</h3>
+        <div className="flex items-center gap-2 mt-1 text-xs text-gray-400">
           {meta?.conference && <span>{meta.conference}</span>}
-          {meta?.conference && <span>·</span>}
-          <span>{formatScholarship(offer.scholarship_type)}</span>
-          <span>·</span>
+          {meta?.conference && <span className="text-gray-600">·</span>}
+          <span className="text-primary/80 font-semibold">{formatScholarship(offer.scholarship_type)}</span>
+          <span className="text-gray-600">·</span>
           <span>{formatDate(offer.offer_date)}</span>
         </div>
       </div>
 
-      {/* Visit link hint */}
+      {/* Visit link */}
       {meta?.url && (
-        <div className="flex items-center gap-1 text-xs text-text-muted group-hover:text-primary transition-colors mt-auto">
+        <div className="flex items-center gap-1.5 text-xs text-gray-500 group-hover:text-primary transition-colors duration-300 mt-auto relative z-10">
           <span className="material-symbols-outlined text-[14px]">open_in_new</span>
           <span>Visit Program</span>
         </div>
@@ -136,93 +153,114 @@ export default function AthleteOffersPage() {
   const activeOffers = offers.filter(o => !o.committed);
 
   return (
-    <div className="p-8">
-      <div className="max-w-5xl mx-auto space-y-8 pb-10">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <Link href="/athlete" className="text-text-muted hover:text-white transition-colors">
-                <span className="material-symbols-outlined text-[20px]">arrow_back</span>
-              </Link>
-              <h1 className="text-3xl font-bold text-white">Offers</h1>
-            </div>
-            <p className="text-text-muted ml-8">Track your recruiting offers and commitments.</p>
-          </div>
-          <div className="flex items-center gap-2 bg-surface-dark border border-[#333] rounded-xl px-4 py-3">
-            <span className="material-symbols-outlined text-primary text-[24px]">campaign</span>
+    <div className="relative min-h-screen overflow-hidden">
+      {/* Page-level ambient background glow */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/[0.04] rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 left-1/4 w-[500px] h-[300px] bg-primary/[0.03] rounded-full blur-[100px]" />
+      </div>
+
+      <div className="relative z-10 p-8">
+        <div className="max-w-5xl mx-auto space-y-8 pb-10">
+          {/* Header */}
+          <div className="flex items-center justify-between">
             <div>
-              <div className="text-2xl font-bold text-white">{offers.length}</div>
-              <div className="text-xs text-text-muted">Total Offers</div>
+              <div className="flex items-center gap-3 mb-2">
+                <Link href="/athlete" className="text-gray-500 hover:text-white transition-colors">
+                  <span className="material-symbols-outlined text-[20px]">arrow_back</span>
+                </Link>
+                <h1 className="text-3xl font-bold text-white">Offers</h1>
+              </div>
+              <p className="text-gray-500 ml-8">Track your recruiting offers and commitments.</p>
+            </div>
+            {/* Offer count badge with glow */}
+            <div className="relative">
+              <div className="absolute -inset-2 bg-primary/10 rounded-2xl blur-xl animate-pulse" />
+              <div className="relative flex items-center gap-3 bg-[#1a1a1a] border border-primary/30 rounded-2xl px-5 py-3">
+                <span className="material-symbols-outlined text-primary text-[28px]">campaign</span>
+                <div>
+                  <div className="text-3xl font-black text-white">{offers.length}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-primary/70">Total Offers</div>
+                </div>
+              </div>
             </div>
           </div>
+
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-red-400 text-sm">
+              {error}
+            </div>
+          )}
+
+          {/* Committed Banner */}
+          {committedOffer && (
+            <div className="relative rounded-2xl p-6 overflow-hidden">
+              {/* Committed glow background */}
+              <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 via-green-500/5 to-transparent" />
+              <div className="absolute inset-0 rounded-2xl border border-green-500/30" />
+              <div className="absolute -top-16 -right-16 w-48 h-48 bg-green-500/10 rounded-full blur-3xl" />
+
+              <div className="flex items-center gap-5 relative z-10">
+                <div className="size-18 rounded-xl bg-white flex items-center justify-center p-2 overflow-hidden shadow-lg shadow-green-500/20">
+                  {getSchoolMeta(committedOffer.school_name)?.logo ? (
+                    <Image
+                      src={getSchoolMeta(committedOffer.school_name)!.logo!}
+                      alt={`${committedOffer.school_name} logo`}
+                      width={56}
+                      height={56}
+                      className="object-contain"
+                      unoptimized
+                    />
+                  ) : (
+                    <span className="material-symbols-outlined text-gray-800 text-[36px]">school</span>
+                  )}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="material-symbols-outlined text-green-400 text-[20px]">verified</span>
+                    <span className="text-xs font-black text-green-400 uppercase tracking-widest">Committed</span>
+                  </div>
+                  <h2 className="text-2xl font-bold text-white">{committedOffer.school_name}</h2>
+                  <div className="flex items-center gap-4 mt-1.5 text-sm text-gray-400">
+                    <span className={`px-2 py-0.5 rounded border text-xs font-bold ${getDivisionColor(committedOffer.division)}`}>
+                      {committedOffer.division}
+                    </span>
+                    <span>{formatScholarship(committedOffer.scholarship_type)}</span>
+                    <span>Committed {formatDate(committedOffer.offer_date)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Offers Grid */}
+          {offers.length === 0 ? (
+            <div className="relative rounded-2xl p-16 text-center overflow-hidden">
+              <div className="absolute inset-0 border border-[#222] rounded-2xl" />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
+              <div className="relative z-10">
+                <span className="material-symbols-outlined text-[64px] text-primary/20 mb-6 block">campaign</span>
+                <h3 className="text-xl font-bold text-white mb-3">Your First Offer Awaits</h3>
+                <p className="text-gray-500 text-sm max-w-md mx-auto mb-8">
+                  Keep your profile updated and film current. When coaches extend offers through RepMax, they&apos;ll light up right here.
+                </p>
+                <Link
+                  href="/athlete/card/edit"
+                  className="inline-flex items-center gap-2 bg-primary text-black font-bold px-6 py-3 rounded-xl text-sm hover:bg-primary/90 transition-all hover:shadow-lg hover:shadow-primary/20"
+                >
+                  <span className="material-symbols-outlined text-[18px]">edit</span>
+                  Update Profile
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {activeOffers.map((offer, i) => (
+                <OfferCard key={offer.id} offer={offer} index={i} />
+              ))}
+            </div>
+          )}
         </div>
-
-        {error && (
-          <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-red-400 text-sm">
-            {error}
-          </div>
-        )}
-
-        {/* Committed Banner */}
-        {committedOffer && (
-          <div className="bg-gradient-to-r from-green-500/10 to-green-900/5 border border-green-500/30 rounded-xl p-6">
-            <div className="flex items-center gap-4">
-              <div className="size-16 rounded-xl bg-white flex items-center justify-center p-2 overflow-hidden">
-                {getSchoolMeta(committedOffer.school_name)?.logo ? (
-                  <Image
-                    src={getSchoolMeta(committedOffer.school_name)!.logo!}
-                    alt={`${committedOffer.school_name} logo`}
-                    width={48}
-                    height={48}
-                    className="object-contain"
-                    unoptimized
-                  />
-                ) : (
-                  <span className="material-symbols-outlined text-gray-800 text-[32px]">school</span>
-                )}
-              </div>
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="material-symbols-outlined text-green-400 text-[20px]">verified</span>
-                  <span className="text-xs font-bold text-green-400 uppercase tracking-wider">Committed</span>
-                </div>
-                <h2 className="text-2xl font-bold text-white">{committedOffer.school_name}</h2>
-                <div className="flex items-center gap-4 mt-1 text-sm text-gray-400">
-                  <span className={`px-2 py-0.5 rounded border text-xs font-bold ${getDivisionColor(committedOffer.division)}`}>
-                    {committedOffer.division}
-                  </span>
-                  <span>{formatScholarship(committedOffer.scholarship_type)}</span>
-                  <span>Committed {formatDate(committedOffer.offer_date)}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Offers Grid */}
-        {offers.length === 0 ? (
-          <div className="bg-surface-dark rounded-xl border border-[#333] p-12 text-center">
-            <span className="material-symbols-outlined text-[48px] text-white/10 mb-4">campaign</span>
-            <h3 className="text-lg font-bold text-white mb-2">No Offers Yet</h3>
-            <p className="text-text-muted text-sm max-w-md mx-auto mb-6">
-              Keep your profile updated and film current. Offers will appear here as coaches extend them through RepMax.
-            </p>
-            <Link
-              href="/athlete/card/edit"
-              className="inline-flex items-center gap-2 bg-primary text-black font-bold px-5 py-2.5 rounded-lg text-sm hover:bg-primary/90 transition-colors"
-            >
-              <span className="material-symbols-outlined text-[18px]">edit</span>
-              Update Profile
-            </Link>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {activeOffers.map((offer) => (
-              <OfferCard key={offer.id} offer={offer} />
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );
