@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { createClient } from "@repmax/shared/supabase";
 
 export interface ThreadMessage {
   id: string;
@@ -78,11 +79,42 @@ export function useConversation(contactId: string | null): UseConversationReturn
     fetchConversation();
   }, [fetchConversation]);
 
+  // Realtime subscription — refetch on new messages from this contact
+  const skipNextRefetch = useRef(false);
+  useEffect(() => {
+    if (!contactId) return;
+    const supabase = createClient();
+    const channel = supabase
+      .channel(`thread:${contactId}`)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "messages" },
+        (payload) => {
+          // Skip refetch if we just sent a message (already optimistically added)
+          if (skipNextRefetch.current) {
+            skipNextRefetch.current = false;
+            return;
+          }
+          // Only refetch if this message involves our contact
+          const row = payload.new as { sender_id?: string; recipient_id?: string };
+          if (row.sender_id === contactId || row.recipient_id === contactId) {
+            fetchConversation();
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [contactId, fetchConversation]);
+
   const sendMessage = useCallback(
     async (body: string): Promise<ThreadMessage | null> => {
       if (!contactId || !body.trim()) return null;
 
       try {
+        skipNextRefetch.current = true;
         const res = await fetch(`/api/messages/${contactId}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },

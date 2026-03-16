@@ -50,6 +50,31 @@ export function useMessages() {
     fetchMessages();
   }, [fetchMessages]);
 
+  // Realtime subscription — refresh inbox when a new message arrives
+  useEffect(() => {
+    if (!profileId) return;
+    const supabase = createClient();
+    const channel = supabase
+      .channel(`inbox:${profileId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "messages",
+          filter: `recipient_id=eq.${profileId}`,
+        },
+        () => {
+          fetchMessages();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [profileId, fetchMessages]);
+
   const sendMessage = useCallback(
     async (recipientId: string, body: string, subject?: string) => {
       const res = await fetch("/api/messages", {

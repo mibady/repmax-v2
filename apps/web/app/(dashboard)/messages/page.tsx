@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Search, Plus, Mail } from 'lucide-react';
 import { MessageThread } from '@/components/messages/MessageThread';
 import { ComposeModal } from '@/components/messages/ComposeModal';
@@ -111,6 +111,16 @@ export default function MessagesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all');
   const [isComposeOpen, setIsComposeOpen] = useState(false);
+  const [recipients, setRecipients] = useState<{ id: string; name: string; organization: string; role: string; avatar?: string; isCompliant: boolean }[]>([]);
+
+  // Fetch recipients when compose modal opens
+  useEffect(() => {
+    if (!isComposeOpen) return;
+    fetch('/api/messages/recipients')
+      .then(r => r.json())
+      .then(data => setRecipients(data.recipients || []))
+      .catch(() => setRecipients([]));
+  }, [isComposeOpen]);
 
   // Convert messages to conversations
   const conversations = useMemo(() => {
@@ -328,6 +338,7 @@ export default function MessagesPage() {
         isOpen={isComposeOpen}
         onClose={() => setIsComposeOpen(false)}
         onSend={handleSendMessage}
+        recipients={recipients}
       />
     </div>
   );
