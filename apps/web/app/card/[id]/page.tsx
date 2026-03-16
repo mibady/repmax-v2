@@ -371,7 +371,7 @@ export default async function AthleteCardPage({
                 </span>
               </div>
             </div>
-            {/* Bottom row: SAT, ACT, NCAA */}
+            {/* Bottom row: SAT, ACT */}
             <div className="bg-white/5 border border-white/5 rounded-2xl p-5 flex items-center justify-between">
               <div className="flex flex-col gap-1">
                 <span className="text-xs text-gray-500 font-medium">SAT</span>
@@ -384,15 +384,6 @@ export default async function AthleteCardPage({
                 <span className="text-xs text-gray-500 font-medium">ACT</span>
                 <span className="text-xl text-white font-bold font-mono">
                   {formatValue(athlete.academics.act)}
-                </span>
-              </div>
-              <div className="h-8 w-px bg-white/10" />
-              <div className="flex flex-col gap-1">
-                <span className="text-xs text-gray-500 font-medium">
-                  NCAA ID
-                </span>
-                <span className="text-xl text-white font-bold font-mono">
-                  {athlete.academics.ncaaId || "--"}
                 </span>
               </div>
             </div>
