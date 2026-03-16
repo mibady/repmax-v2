@@ -8,6 +8,7 @@ import ComposeMessageModal from '@/components/modals/ComposeMessageModal';
 import RecruitingIntelFeed from '@/components/coach/RecruitingIntelFeed';
 import AthleteDevelopmentStatus from '@/components/coach/AthleteDevelopmentStatus';
 import ComplianceCalendar from '@/components/coach/ComplianceCalendar';
+import AthleteCard from '@/components/coach/AthleteCard';
 
 export default function CoachDashboardPage() {
   const router = useRouter();
@@ -24,6 +25,29 @@ export default function CoachDashboardPage() {
   } = useCoachDashboard();
 
   const [composeOpen, setComposeOpen] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<'all' | 'recruiting_ready' | 'needs_film' | 'academic_risk'>('all');
+
+  const filteredRoster = useMemo(() => {
+    switch (activeFilter) {
+      case 'recruiting_ready':
+        return roster.filter((a) => a.status === 'active' && a.offers > 0 && a.gpa != null && a.gpa >= 2.5);
+      case 'needs_film':
+        return roster.filter((a) => a.status === 'active' && a.offers === 0);
+      case 'academic_risk':
+        return roster.filter((a) => a.gpa != null && a.gpa < 2.5);
+      default:
+        return [...roster].sort((a, b) => b.offers - a.offers || a.name.localeCompare(b.name));
+    }
+  }, [roster, activeFilter]);
+
+  const displayedAthletes = filteredRoster.slice(0, 8);
+
+  const filters: { key: 'all' | 'recruiting_ready' | 'needs_film' | 'academic_risk'; label: string; count: number }[] = [
+    { key: 'all', label: 'All', count: roster.length },
+    { key: 'recruiting_ready', label: 'Recruiting Ready', count: roster.filter((a) => a.status === 'active' && a.offers > 0 && a.gpa != null && a.gpa >= 2.5).length },
+    { key: 'needs_film', label: 'Needs Film', count: roster.filter((a) => a.status === 'active' && a.offers === 0).length },
+    { key: 'academic_risk', label: 'Academic Risk', count: roster.filter((a) => a.gpa != null && a.gpa < 2.5).length },
+  ];
 
   const pendingTasks = useMemo(
     () => tasks.filter((t) => t.status === 'pending' || t.status === 'in_progress').slice(0, 5),
@@ -198,24 +222,47 @@ export default function CoachDashboardPage() {
           </div>
         </div>
 
-        {/* Recruits CTA */}
+        {/* My Recruits */}
         {roster.length > 0 && (
-          <div className="flex items-center justify-between bg-[#1F1F22] rounded-xl border border-white/5 p-4">
-            <div className="flex items-center gap-3">
-              <div className="size-10 rounded-lg bg-primary/10 flex items-center justify-center">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
                 <span className="material-symbols-outlined text-primary text-[20px]">star</span>
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-white">{roster.filter((a) => a.offers > 0 || a.status === 'committed').length} Active Recruits</p>
-                <p className="text-xs text-white/40">Athletes being tracked for college recruiting</p>
-              </div>
+                My Recruits
+              </h2>
+              <Link
+                href="/coach/recruits"
+                className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
+              >
+                View All →
+              </Link>
             </div>
-            <Link
-              href="/coach/recruits"
-              className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
-            >
-              View Recruits →
-            </Link>
+            <div className="flex items-center gap-2 flex-wrap">
+              {filters.map((f) => (
+                <button
+                  key={f.key}
+                  onClick={() => setActiveFilter(f.key)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                    activeFilter === f.key
+                      ? 'bg-primary text-black'
+                      : 'bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/70'
+                  }`}
+                >
+                  {f.label}
+                  <span className={`ml-1.5 ${activeFilter === f.key ? 'text-black/60' : 'text-white/30'}`}>
+                    {f.count}
+                  </span>
+                </button>
+              ))}
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {displayedAthletes.map((athlete) => (
+                <AthleteCard key={athlete.id} athlete={athlete} />
+              ))}
+            </div>
+            {filteredRoster.length === 0 && (
+              <p className="text-center text-white/30 text-sm py-4">No athletes match this filter</p>
+            )}
           </div>
         )}
       </div>
