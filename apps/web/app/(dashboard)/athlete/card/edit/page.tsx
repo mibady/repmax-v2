@@ -263,7 +263,7 @@ export default function EditCardPage() {
             >
               <span className="material-symbols-outlined">arrow_back</span>
             </Link>
-            <h1 className="text-2xl font-bold text-white">Edit Companion Card</h1>
+            <h1 className="text-2xl font-bold text-white">Edit My Player Card</h1>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">

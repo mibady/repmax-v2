@@ -32,7 +32,7 @@ interface NavItem {
 
 const athleteNavItems: NavItem[] = [
   { icon: 'dashboard', label: 'Dashboard', href: '/athlete' },
-  { icon: 'badge', label: 'My Card', href: '/athlete/card/edit' },
+  { icon: 'badge', label: 'My Player Card', href: '/athlete/card/edit' },
   { icon: 'videocam', label: 'Film', href: '/athlete/film' },
   { icon: 'bar_chart', label: 'Analytics', href: '/athlete/analytics' },
   { icon: 'campaign', label: 'Offers', href: '/athlete/offers' },
