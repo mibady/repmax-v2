@@ -775,32 +775,12 @@ export default function AthleteCalendarPage() {
 
         {/* ─── NCAA Recruiting Periods Breakdown ──────────────── */}
         <section className="space-y-6 pt-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary text-[24px]">shield</span>
-                NCAA Recruiting Periods
-              </h2>
-              <p className="text-sm text-gray-500 mt-1">Know what coaches can and can&apos;t do during each period.</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <a
-                href="/api/athlete/calendar/pdf?division=FBS"
-                download
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium border border-[#333] text-gray-400 hover:text-white hover:border-primary/30 transition-colors"
-              >
-                <span className="material-symbols-outlined text-[16px]">download</span>
-                FBS PDF
-              </a>
-              <a
-                href="/api/athlete/calendar/pdf?division=FCS"
-                download
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium border border-[#333] text-gray-400 hover:text-white hover:border-primary/30 transition-colors"
-              >
-                <span className="material-symbols-outlined text-[16px]">download</span>
-                FCS PDF
-              </a>
-            </div>
+          <div>
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <span className="material-symbols-outlined text-primary text-[24px]">shield</span>
+              NCAA Recruiting Periods
+            </h2>
+            <p className="text-sm text-gray-500 mt-1">Know what coaches can and can&apos;t do during each period.</p>
           </div>
 
           {/* Period Definitions Cards */}
