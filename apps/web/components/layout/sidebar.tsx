@@ -38,7 +38,7 @@ const athleteNavItems: NavItem[] = [
   { icon: 'campaign', label: 'Offers', href: '/athlete/offers' },
   { icon: 'calendar_month', label: 'Calendar', href: '/athlete/calendar' },
   { icon: 'description', label: 'Documents', href: '/athlete/documents' },
-  { icon: 'trophy', label: 'Tournaments', href: '/tournaments' },
+  { icon: 'trophy', label: 'Off Season Events', href: '/tournaments' },
   { icon: 'mail', label: 'Messages', href: '/messages' },
 ];
 
@@ -77,7 +77,7 @@ const coachNavItems: NavItem[] = [
   { icon: 'dashboard', label: 'Dashboard', href: '/coach' },
   { icon: 'groups', label: 'Roster', href: '/coach/roster' },
   { icon: 'playlist_add_check', label: 'Tasks', href: '/coach/tasks' },
-  { icon: 'trophy', label: 'Tournaments', href: '/tournaments' },
+  { icon: 'trophy', label: 'Off Season Events', href: '/tournaments' },
   { icon: 'mail', label: 'Messages', href: '/messages' },
 ];
 

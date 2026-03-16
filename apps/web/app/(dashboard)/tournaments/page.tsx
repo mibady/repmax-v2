@@ -30,10 +30,10 @@ export default function PublicTournamentsPage() {
         {/* Header */}
         <div className="mb-12 text-center">
           <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight">
-            Upcoming <span className="text-primary">Tournaments</span>
+            Off Season <span className="text-primary">Events</span>
           </h1>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Discover elite football tournaments and showcases. Register your team to compete against top-tier talent.
+            Discover elite 7v7 tournaments, college showcases, camps, and combines. Compete against top-tier talent and get recruited.
           </p>
         </div>
 
