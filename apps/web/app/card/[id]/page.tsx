@@ -13,14 +13,14 @@ type AthleteWithProfile = Tables<"athletes"> & {
 };
 
 function formatHeight(inches: number | null): string {
-  if (!inches) return "--";
+  if (!inches) return "N/A";
   const feet = Math.floor(inches / 12);
   const remaining = inches % 12;
   return `${feet}'${remaining}"`;
 }
 
 function formatValue(val: number | null | undefined, suffix = ""): string {
-  if (val === null || val === undefined || val === 0) return "--";
+  if (val === null || val === undefined || val === 0) return "N/A";
   return `${val}${suffix}`;
 }
 
@@ -289,19 +289,19 @@ export default async function AthleteCardPage({
               <div className="bg-white/5 border border-white/5 rounded-2xl p-3 flex flex-col gap-1 hover:bg-white/10 transition-colors">
                 <span className="text-[10px] text-gray-500 font-medium">40-Yard</span>
                 <span className="text-xl text-primary font-bold font-mono">
-                  {athlete.metrics.fortyYard ? `${athlete.metrics.fortyYard}s` : "--"}
+                  {athlete.metrics.fortyYard ? `${athlete.metrics.fortyYard}s` : "N/A"}
                 </span>
               </div>
               <div className="bg-white/5 border border-white/5 rounded-2xl p-3 flex flex-col gap-1 hover:bg-white/10 transition-colors">
                 <span className="text-[10px] text-gray-500 font-medium">10Y Split</span>
                 <span className="text-xl text-white font-bold font-mono">
-                  {athlete.metrics.tenYardSplit ? `${athlete.metrics.tenYardSplit}s` : "--"}
+                  {athlete.metrics.tenYardSplit ? `${athlete.metrics.tenYardSplit}s` : "N/A"}
                 </span>
               </div>
               <div className="bg-white/5 border border-white/5 rounded-2xl p-3 flex flex-col gap-1 hover:bg-white/10 transition-colors">
                 <span className="text-[10px] text-gray-500 font-medium">5-10-5</span>
                 <span className="text-xl text-white font-bold font-mono">
-                  {athlete.metrics.fiveTenFive ? `${athlete.metrics.fiveTenFive}s` : "--"}
+                  {athlete.metrics.fiveTenFive ? `${athlete.metrics.fiveTenFive}s` : "N/A"}
                 </span>
               </div>
               <div className="bg-white/5 border border-white/5 rounded-2xl p-3 flex flex-col gap-1 hover:bg-white/10 transition-colors">

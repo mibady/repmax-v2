@@ -1127,7 +1127,7 @@ export default function EditCardPage() {
                   <div className="flex items-center justify-between mt-2 border-y border-white/5 py-2 px-1">
                     <div className="flex flex-col items-start">
                       <span className="text-[7px] uppercase tracking-wider text-gray-500 font-bold">Class</span>
-                      <span className="text-[10px] font-bold text-white">{formData.classYear || "--"}</span>
+                      <span className="text-[10px] font-bold text-white">{formData.classYear || "N/A"}</span>
                     </div>
                     <div className="h-4 w-px bg-white/10" />
                     <div className="flex flex-col items-center">
@@ -1187,7 +1187,7 @@ export default function EditCardPage() {
                         <div key={i} className="rounded-lg bg-white/5 p-1.5">
                           <p className="text-[7px] text-gray-500">{m.label}</p>
                           <p className={`text-[11px] font-bold font-mono ${m.highlight ? "text-primary" : "text-white"}`}>
-                            {m.value ? `${m.value}${m.suffix && !m.value.includes(m.suffix) ? m.suffix : ""}` : "--"}
+                            {m.value ? `${m.value}${m.suffix && !m.value.includes(m.suffix) ? m.suffix : ""}` : "N/A"}
                           </p>
                         </div>
                       )
@@ -1204,26 +1204,26 @@ export default function EditCardPage() {
                   <div className="grid grid-cols-3 gap-1.5 mb-1.5">
                     <div className="rounded-lg bg-white/5 p-1.5">
                       <p className="text-[7px] text-gray-500">GPA</p>
-                      <p className="text-[11px] font-bold text-white font-mono">{formData.gpa || "--"}</p>
+                      <p className="text-[11px] font-bold text-white font-mono">{formData.gpa || "N/A"}</p>
                     </div>
                     <div className="rounded-lg bg-white/5 p-1.5">
                       <p className="text-[7px] text-gray-500">W. GPA</p>
-                      <p className="text-[11px] font-bold text-white font-mono">{formData.weightedGpa || "--"}</p>
+                      <p className="text-[11px] font-bold text-white font-mono">{formData.weightedGpa || "N/A"}</p>
                     </div>
                     <div className="rounded-lg bg-white/5 p-1.5">
                       <p className="text-[7px] text-gray-500">SAT</p>
-                      <p className="text-[11px] font-bold text-white font-mono">{formData.sat || "--"}</p>
+                      <p className="text-[11px] font-bold text-white font-mono">{formData.sat || "N/A"}</p>
                     </div>
                   </div>
                   <div className="rounded-lg bg-white/5 p-2 flex items-center justify-between">
                     <div>
                       <p className="text-[7px] text-gray-500">ACT</p>
-                      <p className="text-[11px] font-bold text-white font-mono">{formData.act || "--"}</p>
+                      <p className="text-[11px] font-bold text-white font-mono">{formData.act || "N/A"}</p>
                     </div>
                     <div className="h-4 w-px bg-white/10" />
                     <div>
                       <p className="text-[7px] text-gray-500">Major</p>
-                      <p className="text-[9px] font-medium text-white truncate max-w-[80px]">{formData.academicInterest || "--"}</p>
+                      <p className="text-[9px] font-medium text-white truncate max-w-[80px]">{formData.academicInterest || "N/A"}</p>
                     </div>
                   </div>
                 </div>
