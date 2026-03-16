@@ -176,35 +176,7 @@ export default function NotificationSettingsPage() {
             </div>
           </section>
 
-          {/* In-App Notifications */}
-          <section>
-            <div className="flex items-center gap-2 mb-6 px-1">
-              <span className="material-symbols-outlined text-primary">view_quilt</span>
-              <h2 className="text-xl font-bold tracking-tight text-white">In-App Notifications</h2>
-            </div>
-            <div className="grid gap-px bg-white/10 rounded-xl overflow-hidden border border-white/10">
-              <div className="flex items-center justify-between p-6 bg-[#1A1A1A] hover:bg-white/[0.02] transition-colors gap-4">
-                <div className="flex flex-col gap-1">
-                  <p className="text-base font-bold text-white">Badge Count</p>
-                  <p className="text-sm text-slate-500">Show notification count on the sidebar and app icon.</p>
-                </div>
-                <ToggleSwitch
-                  checked={preferences.inApp.badge}
-                  onChange={(v) => updatePreference('inApp', 'badge', v)}
-                />
-              </div>
-              <div className="flex items-center justify-between p-6 bg-[#1A1A1A] hover:bg-white/[0.02] transition-colors gap-4">
-                <div className="flex flex-col gap-1">
-                  <p className="text-base font-bold text-white">System Sounds</p>
-                  <p className="text-sm text-slate-500">Play a subtle sound when a new alert arrives while the app is open.</p>
-                </div>
-                <ToggleSwitch
-                  checked={preferences.inApp.sounds}
-                  onChange={(v) => updatePreference('inApp', 'sounds', v)}
-                />
-              </div>
-            </div>
-          </section>
+
 
           {/* Quiet Hours Section */}
           <section className="mb-12">

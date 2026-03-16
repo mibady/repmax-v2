@@ -43,8 +43,7 @@ const athleteNavItems: NavItem[] = [
 ];
 
 const athleteSettingsItems: NavItem[] = [
-  { icon: 'person', label: 'Profile', href: '/settings' },
-  { icon: 'settings', label: 'Account', href: '/settings/notifications' },
+  { icon: 'notifications', label: 'Notifications', href: '/settings/notifications' },
 ];
 
 const recruiterNavItems: NavItem[] = [
