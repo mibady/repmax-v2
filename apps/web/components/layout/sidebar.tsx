@@ -75,7 +75,8 @@ const parentSettingsItems: NavItem[] = [
 const coachNavItems: NavItem[] = [
   { icon: 'dashboard', label: 'Dashboard', href: '/coach' },
   { icon: 'view_kanban', label: 'Pipeline', href: '/coach/pipeline' },
-  { icon: 'groups', label: 'Recruits', href: '/coach/roster' },
+  { icon: 'star', label: 'Recruits', href: '/coach/recruits' },
+  { icon: 'groups', label: 'Roster', href: '/coach/roster' },
   { icon: 'playlist_add_check', label: 'Tasks', href: '/coach/tasks' },
   { icon: 'videocam', label: 'Film Room', href: '/coach/film' },
   { icon: 'trophy', label: 'Off Season Events', href: '/tournaments' },
