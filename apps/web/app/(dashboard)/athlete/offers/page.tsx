@@ -14,34 +14,7 @@ type Offer = {
   committed: boolean;
 };
 
-// School metadata: logo + website for known programs
-const SCHOOL_META: Record<string, { logo: string; url: string }> = {
-  'USC': { logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/30.png', url: 'https://usctrojans.com/sports/football' },
-  'UCLA': { logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/26.png', url: 'https://uclabruins.com/sports/football' },
-  'Oregon': { logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/2483.png', url: 'https://goducks.com/sports/football' },
-  'Arizona State': { logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/9.png', url: 'https://thesundevils.com/sports/football' },
-  'TCU': { logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/2628.png', url: 'https://gofrogs.com/sports/football' },
-  'San Diego State': { logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/21.png', url: 'https://goaztecs.com/sports/football' },
-  'Cal': { logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/25.png', url: 'https://calbears.com/sports/football' },
-  'Stanford': { logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/24.png', url: 'https://gostanford.com/sports/football' },
-  'Washington': { logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/264.png', url: 'https://gohuskies.com/sports/football' },
-  'Colorado': { logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/38.png', url: 'https://cubuffs.com/sports/football' },
-  'Texas A&M': { logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/245.png', url: 'https://12thman.com/sports/football' },
-  'Ohio State': { logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/194.png', url: 'https://ohiostatebuckeyes.com/sports/football' },
-  'Alabama': { logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/333.png', url: 'https://rolltide.com/sports/football' },
-  'Georgia': { logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/61.png', url: 'https://georgiadogs.com/sports/football' },
-  'Michigan': { logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/130.png', url: 'https://mgoblue.com/sports/football' },
-  'LSU': { logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/99.png', url: 'https://lsusports.net/sports/football' },
-  'Florida': { logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/57.png', url: 'https://floridagators.com/sports/football' },
-  'Penn State': { logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/213.png', url: 'https://gopsusports.com/sports/football' },
-  'Clemson': { logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/228.png', url: 'https://clemsontigers.com/sports/football' },
-  'Notre Dame': { logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/87.png', url: 'https://und.com/sports/football' },
-  'Oklahoma': { logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/201.png', url: 'https://soonersports.com/sports/football' },
-  'Texas': { logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/251.png', url: 'https://texassports.com/sports/football' },
-  'Tennessee': { logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/2633.png', url: 'https://utsports.com/sports/football' },
-  'Miami': { logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/2390.png', url: 'https://miamihurricanes.com/sports/football' },
-  'Florida State': { logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/52.png', url: 'https://seminoles.com/sports/football' },
-};
+import { getSchoolMeta } from '@/lib/data/school-data';
 
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('en-US', {
@@ -67,10 +40,6 @@ function formatScholarship(type: string | null): string {
   return type.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 }
 
-function getSchoolMeta(name: string) {
-  return SCHOOL_META[name] || null;
-}
-
 function OfferCard({ offer }: { offer: Offer }) {
   const meta = getSchoolMeta(offer.school_name);
 
@@ -79,7 +48,7 @@ function OfferCard({ offer }: { offer: Offer }) {
       {/* Logo + Division badge */}
       <div className="flex items-start justify-between">
         <div className="size-16 rounded-xl bg-white flex items-center justify-center p-2 overflow-hidden">
-          {meta ? (
+          {meta?.logo ? (
             <Image
               src={meta.logo}
               alt={`${offer.school_name} logo`}
@@ -101,6 +70,8 @@ function OfferCard({ offer }: { offer: Offer }) {
       <div>
         <h3 className="text-white font-bold text-lg group-hover:text-primary transition-colors">{offer.school_name}</h3>
         <div className="flex items-center gap-2 mt-1 text-xs text-text-muted">
+          {meta?.conference && <span>{meta.conference}</span>}
+          {meta?.conference && <span>·</span>}
           <span>{formatScholarship(offer.scholarship_type)}</span>
           <span>·</span>
           <span>{formatDate(offer.offer_date)}</span>
@@ -108,7 +79,7 @@ function OfferCard({ offer }: { offer: Offer }) {
       </div>
 
       {/* Visit link hint */}
-      {meta && (
+      {meta?.url && (
         <div className="flex items-center gap-1 text-xs text-text-muted group-hover:text-primary transition-colors mt-auto">
           <span className="material-symbols-outlined text-[14px]">open_in_new</span>
           <span>Visit Program</span>
@@ -117,7 +88,7 @@ function OfferCard({ offer }: { offer: Offer }) {
     </div>
   );
 
-  if (meta) {
+  if (meta?.url) {
     return (
       <a href={meta.url} target="_blank" rel="noopener noreferrer" className="block">
         {card}
@@ -198,9 +169,9 @@ export default function AthleteOffersPage() {
           <div className="bg-gradient-to-r from-green-500/10 to-green-900/5 border border-green-500/30 rounded-xl p-6">
             <div className="flex items-center gap-4">
               <div className="size-16 rounded-xl bg-white flex items-center justify-center p-2 overflow-hidden">
-                {getSchoolMeta(committedOffer.school_name) ? (
+                {getSchoolMeta(committedOffer.school_name)?.logo ? (
                   <Image
-                    src={getSchoolMeta(committedOffer.school_name)!.logo}
+                    src={getSchoolMeta(committedOffer.school_name)!.logo!}
                     alt={`${committedOffer.school_name} logo`}
                     width={48}
                     height={48}
