@@ -24,7 +24,6 @@ import {
   FCS_PERIODS,
   PERIOD_COLORS,
   PERIOD_LABELS,
-  PERIOD_DEFINITIONS,
   formatPeriodRange,
   type PeriodType,
 } from '@/lib/data/ncaa-calendar';
@@ -576,6 +575,165 @@ function EventRow({ event, onDelete }: { event: CalendarEvent; onDelete: (id: st
   );
 }
 
+// ─── NCAA Recruiting Section ───────────────────────────────────
+
+const TIMELINE_COLORS: Record<PeriodType, { bar: string; bg: string; badge: string; badgeText: string }> = {
+  contact: { bar: 'bg-green-500', bg: 'bg-green-500/[0.12]', badge: 'bg-green-500/20', badgeText: 'text-green-400' },
+  evaluation: { bar: 'bg-blue-500', bg: 'bg-blue-500/[0.12]', badge: 'bg-blue-500/20', badgeText: 'text-blue-400' },
+  quiet: { bar: 'bg-primary', bg: 'bg-primary/[0.12]', badge: 'bg-primary/20', badgeText: 'text-primary' },
+  dead: { bar: 'bg-red-500', bg: 'bg-red-500/[0.12]', badge: 'bg-red-500/20', badgeText: 'text-red-400' },
+};
+
+const PERIOD_TYPE_LABELS: Record<PeriodType, string> = {
+  contact: 'Contact Period',
+  evaluation: 'Evaluation Period',
+  quiet: 'Quiet Period',
+  dead: 'Dead Period',
+};
+
+const DEF_CARDS: { type: PeriodType; description: string }[] = [
+  { type: 'contact', description: 'Coaches can make in-person, off-campus contacts and evaluations with recruits. Highest level of access allowed.' },
+  { type: 'quiet', description: 'In-person contact is only allowed on the college campus. No off-campus visits, contacts, or evaluations by coaches.' },
+  { type: 'dead', description: 'Zero in-person contact — on or off campus. No official or unofficial visits. Phone, email, and mail contact is still permitted.' },
+  { type: 'evaluation', description: 'Coaches may watch prospects play or work out off-campus to assess ability, but cannot make in-person recruiting contact.' },
+];
+
+function NcaaRecruitingSection() {
+  const [ncaaDivision, setNcaaDivision] = useState<'FBS' | 'FCS'>('FBS');
+  const periods = ncaaDivision === 'FBS' ? FBS_PERIODS : FCS_PERIODS;
+  const todayStr = format(new Date(), 'yyyy-MM-dd');
+  const currentPeriods = getPeriodsForDate(todayStr, ncaaDivision);
+  const currentPeriodLabel = currentPeriods.length > 0 ? PERIOD_TYPE_LABELS[currentPeriods[0].type] : 'No Active Period';
+
+  return (
+    <section className="space-y-6 pt-6">
+      {/* Header */}
+      <div className="text-center">
+        <div className="text-[11px] font-bold tracking-[0.2em] uppercase text-primary mb-1.5">
+          RepMax Intelligence &bull; 2025–26 NCAA
+        </div>
+        <h2 className="text-2xl font-bold text-white" style={{ fontFamily: 'Georgia, serif' }}>
+          Football Recruiting Calendar
+        </h2>
+        <p className="text-[13px] text-gray-500 mt-1.5">
+          Official NCAA Division I periods — Aug 1, 2025 through Jul 31, 2026
+        </p>
+        <div className="inline-block mt-3 bg-primary/[0.12] border border-primary/30 text-primary text-xs font-medium px-4 py-1.5 rounded-full">
+          Today: {format(new Date(), 'MMMM d, yyyy')} — {currentPeriodLabel}
+        </div>
+      </div>
+
+      {/* Controls: Toggle + Legend + Download */}
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex items-center gap-4">
+          {/* FBS/FCS Toggle */}
+          <div className="flex bg-[#1e1e1e] border border-primary/[0.18] rounded-lg p-1">
+            <button
+              onClick={() => setNcaaDivision('FBS')}
+              className={`px-5 py-1.5 rounded-md text-[13px] font-semibold tracking-wide transition-all ${
+                ncaaDivision === 'FBS' ? 'bg-primary text-black' : 'text-gray-500 hover:text-gray-300'
+              }`}
+            >
+              FBS
+            </button>
+            <button
+              onClick={() => setNcaaDivision('FCS')}
+              className={`px-5 py-1.5 rounded-md text-[13px] font-semibold tracking-wide transition-all ${
+                ncaaDivision === 'FCS' ? 'bg-primary text-black' : 'text-gray-500 hover:text-gray-300'
+              }`}
+            >
+              FCS
+            </button>
+          </div>
+
+          {/* Legend */}
+          <div className="flex flex-wrap gap-3">
+            {(['contact', 'quiet', 'dead', 'evaluation'] as PeriodType[]).map(type => (
+              <div key={type} className="flex items-center gap-1.5 text-xs text-gray-500">
+                <div className={`w-2.5 h-2.5 rounded-sm ${TIMELINE_COLORS[type].bar}`} />
+                <span className="capitalize">{type}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Download */}
+        <a
+          href={`/api/athlete/calendar/pdf?division=${ncaaDivision}`}
+          download
+          className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border border-[#333] text-gray-400 hover:text-primary hover:border-primary/30 transition-colors"
+        >
+          <span className="material-symbols-outlined text-[16px]">download</span>
+          Download {ncaaDivision} PDF
+        </a>
+      </div>
+
+      {/* Section Label */}
+      <div className="text-[10px] font-bold tracking-[0.18em] uppercase text-gray-500">Recruiting Period Timeline</div>
+
+      {/* Timeline Rows */}
+      <div className="flex flex-col gap-1">
+        {periods.map((p, i) => {
+          const isCurrent = todayStr >= p.start && todayStr <= p.end;
+          const colors = TIMELINE_COLORS[p.type];
+          return (
+            <div
+              key={i}
+              className={`flex items-stretch rounded-lg overflow-hidden transition-all ${isCurrent ? 'ring-2 ring-primary' : ''}`}
+            >
+              {/* Color bar */}
+              <div className={`w-[5px] flex-shrink-0 ${colors.bar}`} />
+              {/* Body */}
+              <div className={`flex-1 ${colors.bg} px-4 py-2.5 flex items-center justify-between gap-3`}>
+                <div className="text-[13px] font-semibold text-white min-w-[175px]">
+                  {formatPeriodRange(p.start, p.end)}
+                </div>
+                <div className={`text-[11px] font-bold tracking-[0.1em] uppercase px-3 py-1 rounded-full whitespace-nowrap ${colors.badge} ${colors.badgeText}`}>
+                  {PERIOD_TYPE_LABELS[p.type]}
+                </div>
+                <div className="text-[11px] text-gray-500 text-right max-w-[240px] hidden sm:block">
+                  {p.notes || ''}
+                </div>
+                {isCurrent && (
+                  <div className="text-[10px] font-bold tracking-[0.12em] uppercase text-primary bg-primary/[0.12] border border-primary/30 px-2 py-0.5 rounded-full flex-shrink-0">
+                    NOW
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Period Definitions */}
+      <div className="text-[10px] font-bold tracking-[0.18em] uppercase text-gray-500 mt-2">Period Definitions</div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {DEF_CARDS.map(({ type, description }) => {
+          const colors = TIMELINE_COLORS[type];
+          return (
+            <div key={type} className={`rounded-lg border p-4 ${colors.bg} ${
+              type === 'contact' ? 'border-green-500/25' :
+              type === 'quiet' ? 'border-primary/25' :
+              type === 'dead' ? 'border-red-500/25' :
+              'border-blue-500/25'
+            }`}>
+              <div className={`text-[10px] font-bold tracking-[0.15em] uppercase mb-2 ${colors.badgeText}`}>
+                {PERIOD_TYPE_LABELS[type]}
+              </div>
+              <p className="text-xs text-[#C0BEB5] leading-relaxed">{description}</p>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Footer */}
+      <p className="text-[11px] text-gray-500 text-center border-t border-primary/[0.18] pt-4">
+        Source: <a href="https://www.ncaa.org/sports/2018/5/8/division-i-and-ii-recruiting-calendars.aspx" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">NCAA.org Official Recruiting Calendars</a> &bull; Always verify at ncaa.org for mid-year rule changes
+      </p>
+    </section>
+  );
+}
+
 // ─── Main Page ─────────────────────────────────────────────────
 export default function AthleteCalendarPage() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
@@ -774,132 +932,7 @@ export default function AthleteCalendarPage() {
         )}
 
         {/* ─── NCAA Recruiting Periods Breakdown ──────────────── */}
-        <section className="space-y-6 pt-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary text-[24px]">shield</span>
-                NCAA Recruiting Periods
-              </h2>
-              <p className="text-sm text-gray-500 mt-1">Know what coaches can and can&apos;t do during each period.</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <a
-                href="/api/athlete/calendar/pdf?division=FBS"
-                download
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium border border-[#333] text-gray-400 hover:text-white hover:border-primary/30 transition-colors"
-              >
-                <span className="material-symbols-outlined text-[16px]">download</span>
-                FBS PDF
-              </a>
-              <a
-                href="/api/athlete/calendar/pdf?division=FCS"
-                download
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium border border-[#333] text-gray-400 hover:text-white hover:border-primary/30 transition-colors"
-              >
-                <span className="material-symbols-outlined text-[16px]">download</span>
-                FCS PDF
-              </a>
-            </div>
-          </div>
-
-          {/* Period Definitions Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {(['contact', 'evaluation', 'quiet', 'dead'] as PeriodType[]).map(type => {
-              const def = PERIOD_DEFINITIONS[type];
-              const colors = PERIOD_COLORS[type];
-              return (
-                <div key={type} className={`rounded-2xl border p-5 ${colors.bg} ${colors.border}`}>
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className={`w-3 h-3 rounded-full ${colors.dot}`} />
-                    <h3 className={`text-sm font-bold uppercase tracking-wider ${colors.text}`}>{def.title}</h3>
-                  </div>
-                  <p className="text-xs text-gray-400 mb-4 leading-relaxed">{def.definition}</p>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <div className="text-[10px] font-bold uppercase tracking-wider text-green-400 mb-1.5">You Can</div>
-                      <ul className="space-y-1">
-                        {def.canDo.map((item, i) => (
-                          <li key={i} className="text-[11px] text-gray-300 flex items-start gap-1.5">
-                            <span className="material-symbols-outlined text-green-400 text-[12px] mt-0.5 flex-shrink-0">check</span>
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div>
-                      <div className="text-[10px] font-bold uppercase tracking-wider text-red-400 mb-1.5">You Can&apos;t</div>
-                      <ul className="space-y-1">
-                        {def.cantDo.map((item, i) => (
-                          <li key={i} className="text-[11px] text-gray-300 flex items-start gap-1.5">
-                            <span className="material-symbols-outlined text-red-400 text-[12px] mt-0.5 flex-shrink-0">close</span>
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* FBS Schedule Table */}
-          <div className="bg-[#1a1a1e] rounded-2xl border border-[#333] overflow-hidden">
-            <div className="px-5 py-4 border-b border-[#333] flex items-center justify-between">
-              <h3 className="text-sm font-bold text-white">FBS Schedule — Aug. 1, 2025 – July 31, 2026</h3>
-              <a href="/api/athlete/calendar/pdf?division=FBS" download className="text-xs text-primary hover:underline flex items-center gap-1">
-                <span className="material-symbols-outlined text-[14px]">download</span>
-                Download PDF
-              </a>
-            </div>
-            <div className="divide-y divide-[#2a2a2a]">
-              {FBS_PERIODS.map((p, i) => (
-                <div key={i} className="px-5 py-3 flex items-center gap-4">
-                  <div className={`w-2 h-2 rounded-full flex-shrink-0 ${PERIOD_COLORS[p.type].dot}`} />
-                  <div className="flex-1 min-w-0">
-                    <span className="text-sm text-white">{formatPeriodRange(p.start, p.end)}</span>
-                    {p.notes && <span className="text-[10px] text-gray-600 block mt-0.5">{p.notes}</span>}
-                  </div>
-                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${PERIOD_COLORS[p.type].bg} ${PERIOD_COLORS[p.type].text}`}>
-                    {p.type}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* FCS Schedule Table */}
-          <div className="bg-[#1a1a1e] rounded-2xl border border-[#333] overflow-hidden">
-            <div className="px-5 py-4 border-b border-[#333] flex items-center justify-between">
-              <h3 className="text-sm font-bold text-white">FCS Schedule — Aug. 1, 2025 – July 31, 2026</h3>
-              <a href="/api/athlete/calendar/pdf?division=FCS" download className="text-xs text-primary hover:underline flex items-center gap-1">
-                <span className="material-symbols-outlined text-[14px]">download</span>
-                Download PDF
-              </a>
-            </div>
-            <div className="divide-y divide-[#2a2a2a]">
-              {FCS_PERIODS.map((p, i) => (
-                <div key={i} className="px-5 py-3 flex items-center gap-4">
-                  <div className={`w-2 h-2 rounded-full flex-shrink-0 ${PERIOD_COLORS[p.type].dot}`} />
-                  <div className="flex-1 min-w-0">
-                    <span className="text-sm text-white">{formatPeriodRange(p.start, p.end)}</span>
-                    {p.notes && <span className="text-[10px] text-gray-600 block mt-0.5">{p.notes}</span>}
-                  </div>
-                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${PERIOD_COLORS[p.type].bg} ${PERIOD_COLORS[p.type].text}`}>
-                    {p.type}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Disclaimer */}
-          <p className="text-[10px] text-gray-600 text-center">
-            Source: NCAA Division I Recruiting Calendars 2025-26. NCAA is a trademark of the National Collegiate Athletic Association.
-            Always verify current rules at <a href="https://www.ncaa.org" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">ncaa.org</a>.
-          </p>
-        </section>
+        <NcaaRecruitingSection />
       </div>
 
       <AddEventModal
