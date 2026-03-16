@@ -1,8 +1,29 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+  addDays,
+  addMonths,
+  subMonths,
+  isSameMonth,
+  isSameDay,
+  isToday,
+  parseISO,
+} from 'date-fns';
+import {
+  getPeriodsForDate,
+  getPeriodTintForDate,
+  PERIOD_COLORS,
+  PERIOD_LABELS,
+  type PeriodType,
+} from '@/lib/data/ncaa-calendar';
 
 type CalendarEvent = {
   id: string;
@@ -18,31 +39,17 @@ type CalendarEvent = {
 type ViewMode = 'list' | 'calendar';
 
 const EVENT_TYPES = [
-  { value: 'visit', label: 'Visit', icon: 'location_on' },
-  { value: 'camp', label: 'Camp', icon: 'camping' },
-  { value: 'combine', label: 'Combine', icon: 'speed' },
-  { value: 'game', label: 'Game', icon: 'sports_football' },
-  { value: 'deadline', label: 'Deadline', icon: 'schedule' },
-  { value: 'signing', label: 'Signing', icon: 'draw' },
-  { value: 'other', label: 'Personal', icon: 'event' },
+  { value: 'visit', label: 'Visit', icon: 'location_on', color: 'bg-blue-500 text-white' },
+  { value: 'camp', label: 'Camp', icon: 'camping', color: 'bg-green-500 text-white' },
+  { value: 'combine', label: 'Combine', icon: 'speed', color: 'bg-primary text-black' },
+  { value: 'game', label: 'Game', icon: 'sports_football', color: 'bg-red-500 text-white' },
+  { value: 'deadline', label: 'Deadline', icon: 'schedule', color: 'bg-orange-500 text-white' },
+  { value: 'signing', label: 'Signing', icon: 'draw', color: 'bg-purple-500 text-white' },
+  { value: 'other', label: 'Personal', icon: 'event', color: 'bg-gray-500 text-white' },
 ];
 
-function formatDate(dateStr: string): { month: string; day: string; year: string } {
-  const date = new Date(dateStr + 'T00:00:00');
-  return {
-    month: date.toLocaleString('en-US', { month: 'short' }),
-    day: date.getDate().toString().padStart(2, '0'),
-    year: date.getFullYear().toString(),
-  };
-}
-
-function formatTime(timeStr: string | null): string {
-  if (!timeStr) return '';
-  const [hours, minutes] = timeStr.split(':');
-  const h = parseInt(hours);
-  const ampm = h >= 12 ? 'PM' : 'AM';
-  const h12 = h % 12 || 12;
-  return `${h12}:${minutes} ${ampm}`;
+function getEventChipColor(type: string): string {
+  return EVENT_TYPES.find(t => t.value === type)?.color || 'bg-gray-500 text-white';
 }
 
 function getEventTypeIcon(type: string): string {
@@ -65,16 +72,13 @@ function getEventTypeColor(type: string): string {
   }
 }
 
-function getEventDotColor(type: string): string {
-  switch (type) {
-    case 'visit': return 'bg-blue-400';
-    case 'camp': return 'bg-green-400';
-    case 'combine': return 'bg-primary';
-    case 'game': return 'bg-red-400';
-    case 'deadline': return 'bg-orange-400';
-    case 'signing': return 'bg-purple-400';
-    default: return 'bg-gray-400';
-  }
+function formatTime12(timeStr: string | null): string {
+  if (!timeStr) return '';
+  const [hours, minutes] = timeStr.split(':');
+  const h = parseInt(hours);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const h12 = h % 12 || 12;
+  return `${h12}:${minutes} ${ampm}`;
 }
 
 // ─── Add Event Modal ───────────────────────────────────────────
@@ -99,14 +103,10 @@ function AddEventModal({
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (isOpen && prefillDate) setEventDate(prefillDate);
-  }, [isOpen, prefillDate]);
-
-  useEffect(() => {
-    if (!isOpen) {
+    if (isOpen) {
+      setEventDate(prefillDate || '');
       setTitle('');
       setEventType('other');
-      setEventDate(prefillDate || '');
       setEventTime('');
       setLocation('');
       setDescription('');
@@ -136,6 +136,9 @@ function AddEventModal({
     }
   }
 
+  // Check NCAA period for selected date
+  const ncaaPeriods = eventDate ? getPeriodsForDate(eventDate) : [];
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
@@ -151,8 +154,17 @@ function AddEventModal({
             </button>
           </div>
 
+          {/* NCAA Period Alert */}
+          {ncaaPeriods.length > 0 && (
+            <div className={`mb-4 rounded-xl p-3 border ${PERIOD_COLORS[ncaaPeriods[0].type].bg} ${PERIOD_COLORS[ncaaPeriods[0].type].border}`}>
+              <div className={`text-xs font-bold uppercase tracking-wider mb-1 ${PERIOD_COLORS[ncaaPeriods[0].type].text}`}>
+                NCAA {ncaaPeriods[0].label}
+              </div>
+              <p className="text-xs text-gray-400">{PERIOD_LABELS[ncaaPeriods[0].type]}</p>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Title */}
             <div>
               <label className="text-xs font-medium text-gray-400 mb-1 block">Title *</label>
               <input
@@ -165,7 +177,6 @@ function AddEventModal({
               />
             </div>
 
-            {/* Event Type */}
             <div>
               <label className="text-xs font-medium text-gray-400 mb-2 block">Type *</label>
               <div className="grid grid-cols-4 gap-2">
@@ -187,7 +198,6 @@ function AddEventModal({
               </div>
             </div>
 
-            {/* Date + Time */}
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-xs font-medium text-gray-400 mb-1 block">Date *</label>
@@ -210,7 +220,6 @@ function AddEventModal({
               </div>
             </div>
 
-            {/* Location */}
             <div>
               <label className="text-xs font-medium text-gray-400 mb-1 block">Location</label>
               <input
@@ -222,7 +231,6 @@ function AddEventModal({
               />
             </div>
 
-            {/* Description */}
             <div>
               <label className="text-xs font-medium text-gray-400 mb-1 block">Notes</label>
               <textarea
@@ -234,7 +242,6 @@ function AddEventModal({
               />
             </div>
 
-            {/* Priority */}
             <div className="flex items-center gap-3">
               <label className="text-xs font-medium text-gray-400">Priority:</label>
               <button
@@ -251,7 +258,6 @@ function AddEventModal({
               </button>
             </div>
 
-            {/* Actions */}
             <div className="flex gap-3 pt-2">
               <button
                 type="button"
@@ -276,57 +282,38 @@ function AddEventModal({
   );
 }
 
-// ─── Calendar Grid View ────────────────────────────────────────
-function CalendarGrid({
+// ─── Big Calendar Grid ─────────────────────────────────────────
+function BigCalendar({
   allEvents,
   onDayClick,
   onDeleteEvent,
+  showNcaaPeriods,
 }: {
   allEvents: CalendarEvent[];
   onDayClick: (date: string) => void;
   onDeleteEvent: (id: string) => void;
+  showNcaaPeriods: boolean;
 }) {
-  const [currentMonth, setCurrentMonth] = useState(() => {
-    const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth(), 1);
-  });
-  const [selectedDay, setSelectedDay] = useState<string | null>(null);
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [selectedDay, setSelectedDay] = useState<Date | null>(null);
 
-  const monthLabel = currentMonth.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-  const today = new Date();
-  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  const monthStart = startOfMonth(currentMonth);
+  const monthEnd = endOfMonth(currentMonth);
+  const calendarStart = startOfWeek(monthStart);
+  const calendarEnd = endOfWeek(monthEnd);
 
-  const calendarDays = useMemo(() => {
-    const year = currentMonth.getFullYear();
-    const month = currentMonth.getMonth();
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const daysInPrevMonth = new Date(year, month, 0).getDate();
-
-    const days: { date: string; dayNum: number; isCurrentMonth: boolean }[] = [];
-
-    // Previous month padding
-    for (let i = firstDay - 1; i >= 0; i--) {
-      const d = daysInPrevMonth - i;
-      const m = month === 0 ? 12 : month;
-      const y = month === 0 ? year - 1 : year;
-      days.push({ date: `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`, dayNum: d, isCurrentMonth: false });
+  // Build days array
+  const days = useMemo(() => {
+    const result: Date[] = [];
+    let day = calendarStart;
+    while (day <= calendarEnd) {
+      result.push(day);
+      day = addDays(day, 1);
     }
-    // Current month
-    for (let d = 1; d <= daysInMonth; d++) {
-      days.push({ date: `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`, dayNum: d, isCurrentMonth: true });
-    }
-    // Next month padding
-    const remaining = 42 - days.length;
-    for (let d = 1; d <= remaining; d++) {
-      const m = month + 2 > 12 ? 1 : month + 2;
-      const y = month + 2 > 12 ? year + 1 : year;
-      days.push({ date: `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`, dayNum: d, isCurrentMonth: false });
-    }
-    return days;
-  }, [currentMonth]);
+    return result;
+  }, [calendarStart, calendarEnd]);
 
-  // Events grouped by date
+  // Events by date
   const eventsByDate = useMemo(() => {
     const map: Record<string, CalendarEvent[]> = {};
     for (const e of allEvents) {
@@ -336,111 +323,180 @@ function CalendarGrid({
     return map;
   }, [allEvents]);
 
-  const selectedEvents = selectedDay ? (eventsByDate[selectedDay] || []) : [];
+  const selectedDateStr = selectedDay ? format(selectedDay, 'yyyy-MM-dd') : null;
+  const selectedEvents = selectedDateStr ? (eventsByDate[selectedDateStr] || []) : [];
+  const selectedNcaaPeriods = selectedDateStr ? getPeriodsForDate(selectedDateStr) : [];
+
+  const handlePrev = useCallback(() => setCurrentMonth(d => subMonths(d, 1)), []);
+  const handleNext = useCallback(() => setCurrentMonth(d => addMonths(d, 1)), []);
+  const handleToday = useCallback(() => { setCurrentMonth(new Date()); setSelectedDay(new Date()); }, []);
+
+  const eventCount = allEvents.length;
 
   return (
-    <div className="space-y-4">
-      {/* Month navigation */}
-      <div className="flex items-center justify-between">
-        <button
-          onClick={() => setCurrentMonth(d => new Date(d.getFullYear(), d.getMonth() - 1, 1))}
-          className="p-2 rounded-lg hover:bg-white/5 text-gray-400 hover:text-white transition-colors"
-        >
-          <span className="material-symbols-outlined text-[20px]">chevron_left</span>
-        </button>
-        <h3 className="text-lg font-bold text-white">{monthLabel}</h3>
-        <button
-          onClick={() => setCurrentMonth(d => new Date(d.getFullYear(), d.getMonth() + 1, 1))}
-          className="p-2 rounded-lg hover:bg-white/5 text-gray-400 hover:text-white transition-colors"
-        >
-          <span className="material-symbols-outlined text-[20px]">chevron_right</span>
-        </button>
+    <div className="space-y-0">
+      {/* Calendar Header Bar */}
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-3">
+          <div className="bg-white/5 border border-[#333] rounded-xl px-3 py-2 text-center">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-primary">{format(currentMonth, 'MMM')}</div>
+            <div className="text-lg font-bold text-white leading-none">{format(currentMonth, 'yyyy')}</div>
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-white">{format(currentMonth, 'MMMM yyyy')}</h3>
+            <p className="text-xs text-gray-500">{eventCount} events</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button onClick={handleToday} className="px-3 py-1.5 rounded-lg text-xs font-medium text-gray-400 hover:text-white hover:bg-white/5 border border-[#333] transition-colors">
+            Today
+          </button>
+          <div className="flex bg-white/5 rounded-lg border border-[#333]">
+            <button onClick={handlePrev} className="p-1.5 hover:bg-white/10 rounded-l-lg text-gray-400 hover:text-white transition-colors">
+              <span className="material-symbols-outlined text-[18px]">chevron_left</span>
+            </button>
+            <button onClick={handleNext} className="p-1.5 hover:bg-white/10 rounded-r-lg text-gray-400 hover:text-white transition-colors">
+              <span className="material-symbols-outlined text-[18px]">chevron_right</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Day headers */}
-      <div className="grid grid-cols-7 gap-1">
+      <div className="grid grid-cols-7 border-b border-[#333]">
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (
-          <div key={d} className="text-center text-[10px] font-bold uppercase tracking-wider text-gray-400 py-2">{d}</div>
+          <div key={d} className="text-center text-[11px] font-bold uppercase tracking-wider text-gray-400 py-3">{d}</div>
         ))}
       </div>
 
-      {/* Day cells */}
-      <div className="grid grid-cols-7 gap-1">
-        {calendarDays.map(({ date, dayNum, isCurrentMonth }) => {
-          const dayEvents = eventsByDate[date] || [];
-          const isToday = date === todayStr;
-          const isSelected = date === selectedDay;
+      {/* Calendar grid */}
+      <div className="grid grid-cols-7 border-l border-[#333]">
+        {days.map(day => {
+          const dateStr = format(day, 'yyyy-MM-dd');
+          const dayEvents = eventsByDate[dateStr] || [];
+          const inMonth = isSameMonth(day, currentMonth);
+          const today = isToday(day);
+          const selected = selectedDay ? isSameDay(day, selectedDay) : false;
+          const periodTint = showNcaaPeriods ? getPeriodTintForDate(dateStr) : null;
 
           return (
             <button
-              key={date}
-              onClick={() => {
-                setSelectedDay(date === selectedDay ? null : date);
-              }}
-              className={`relative aspect-square rounded-xl p-1 flex flex-col items-center justify-start pt-2 transition-all text-sm ${
-                !isCurrentMonth ? 'text-gray-600' :
-                isSelected ? 'bg-primary/20 border border-primary/40 text-white' :
-                isToday ? 'bg-white/15 text-white font-bold' :
-                'text-white hover:bg-white/10'
-              }`}
+              key={dateStr}
+              onClick={() => setSelectedDay(selected ? null : day)}
+              className={`relative min-h-[100px] border-r border-b border-[#333] p-1.5 text-left transition-colors ${
+                !inMonth ? 'bg-white/[0.02]' :
+                selected ? 'bg-primary/10' :
+                'hover:bg-white/[0.04]'
+              } ${periodTint && inMonth ? periodTint : ''}`}
             >
-              <span className={`text-xs ${isToday && !isSelected ? 'bg-primary text-black rounded-full w-6 h-6 flex items-center justify-center font-bold' : ''}`}>
-                {dayNum}
-              </span>
-              {dayEvents.length > 0 && (
-                <div className="flex gap-0.5 mt-1 flex-wrap justify-center">
-                  {dayEvents.slice(0, 3).map(e => (
-                    <div key={e.id} className={`w-1.5 h-1.5 rounded-full ${getEventDotColor(e.event_type)}`} />
-                  ))}
-                  {dayEvents.length > 3 && (
-                    <span className="text-[8px] text-gray-500">+{dayEvents.length - 3}</span>
-                  )}
-                </div>
-              )}
+              {/* Day number */}
+              <div className="flex items-center justify-between mb-1">
+                <span className={`text-xs font-medium inline-flex items-center justify-center w-6 h-6 rounded-full ${
+                  today ? 'bg-primary text-black font-bold' :
+                  !inMonth ? 'text-gray-700' :
+                  selected ? 'text-primary font-bold' :
+                  'text-gray-300'
+                }`}>
+                  {format(day, 'd')}
+                </span>
+              </div>
+
+              {/* Event chips (max 3 visible) */}
+              <div className="space-y-0.5">
+                {dayEvents.slice(0, 3).map(e => (
+                  <div
+                    key={e.id}
+                    className={`text-[10px] font-medium px-1.5 py-0.5 rounded truncate leading-tight ${getEventChipColor(e.event_type)}`}
+                    title={`${e.title}${e.event_time ? ` · ${formatTime12(e.event_time)}` : ''}`}
+                  >
+                    {e.title}{e.event_time ? ` ${formatTime12(e.event_time)}` : ''}
+                  </div>
+                ))}
+                {dayEvents.length > 3 && (
+                  <div className="text-[10px] text-gray-500 px-1.5 font-medium">
+                    +{dayEvents.length - 3} more
+                  </div>
+                )}
+              </div>
             </button>
           );
         })}
       </div>
 
-      {/* Selected day events */}
+      {/* NCAA Period Legend */}
+      {showNcaaPeriods && (
+        <div className="flex flex-wrap items-center gap-4 pt-4 mt-2 border-t border-[#333]">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">NCAA Periods:</span>
+          {(['contact', 'evaluation', 'quiet', 'dead'] as PeriodType[]).map(type => (
+            <div key={type} className="flex items-center gap-1.5">
+              <div className={`w-3 h-3 rounded-sm ${PERIOD_COLORS[type].dot}`} />
+              <span className={`text-[10px] font-medium capitalize ${PERIOD_COLORS[type].text}`}>{type}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Selected day detail panel */}
       {selectedDay && (
-        <div className="border-t border-[#333] pt-4 mt-4 space-y-2">
-          <div className="flex items-center justify-between mb-3">
-            <h4 className="text-sm font-bold text-white">
-              {new Date(selectedDay + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
-            </h4>
+        <div className="mt-4 bg-[#1a1a1e] rounded-2xl border border-[#333] p-5">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h4 className="text-base font-bold text-white">
+                {format(selectedDay, 'EEEE, MMMM d, yyyy')}
+              </h4>
+              {selectedNcaaPeriods.length > 0 && (
+                <div className="flex items-center gap-2 mt-1">
+                  {selectedNcaaPeriods.map((p, i) => (
+                    <span key={i} className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${PERIOD_COLORS[p.type].bg} ${PERIOD_COLORS[p.type].text} ${PERIOD_COLORS[p.type].border}`}>
+                      {p.label}
+                    </span>
+                  ))}
+                </div>
+              )}
+              {selectedNcaaPeriods.length > 0 && (
+                <p className="text-xs text-gray-500 mt-1.5">{PERIOD_LABELS[selectedNcaaPeriods[0].type]}</p>
+              )}
+            </div>
             <button
-              onClick={() => onDayClick(selectedDay)}
-              className="flex items-center gap-1 text-xs text-primary font-medium hover:text-primary/80 transition-colors"
+              onClick={() => onDayClick(format(selectedDay, 'yyyy-MM-dd'))}
+              className="flex items-center gap-1.5 bg-primary text-black font-bold px-3 py-2 rounded-xl text-xs hover:bg-primary/90 transition-colors"
             >
               <span className="material-symbols-outlined text-[16px]">add</span>
               Add Event
             </button>
           </div>
+
           {selectedEvents.length === 0 ? (
-            <p className="text-xs text-gray-500 text-center py-4">No events on this day</p>
+            <p className="text-sm text-gray-500 text-center py-6">No events on this day</p>
           ) : (
-            selectedEvents.map(event => (
-              <div key={event.id} className="bg-white/5 rounded-xl p-3 flex items-center gap-3 group">
-                <span className={`inline-flex items-center justify-center w-8 h-8 rounded-lg ${getEventTypeColor(event.event_type)}`}>
-                  <span className="material-symbols-outlined text-[16px]">{getEventTypeIcon(event.event_type)}</span>
-                </span>
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm text-white font-medium truncate">{event.title}</div>
-                  <div className="text-[10px] text-gray-500">
-                    {getEventTypeLabel(event.event_type)}
-                    {event.event_time && ` · ${formatTime(event.event_time)}`}
-                    {event.location && ` · ${event.location}`}
+            <div className="space-y-2">
+              {selectedEvents.map(event => (
+                <div key={event.id} className="flex items-center gap-3 bg-white/5 rounded-xl p-3 group hover:bg-white/[0.07] transition-colors">
+                  <div className={`w-1 h-10 rounded-full flex-shrink-0 ${getEventChipColor(event.event_type).split(' ')[0]}`} />
+                  <span className={`inline-flex items-center justify-center w-9 h-9 rounded-lg flex-shrink-0 ${getEventTypeColor(event.event_type)}`}>
+                    <span className="material-symbols-outlined text-[18px]">{getEventTypeIcon(event.event_type)}</span>
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm text-white font-medium truncate">{event.title}</div>
+                    <div className="text-[11px] text-gray-500">
+                      {getEventTypeLabel(event.event_type)}
+                      {event.event_time && ` · ${formatTime12(event.event_time)}`}
+                      {event.location && ` · ${event.location}`}
+                    </div>
+                    {event.description && (
+                      <p className="text-[11px] text-gray-600 mt-0.5 truncate">{event.description}</p>
+                    )}
                   </div>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onDeleteEvent(event.id); }}
+                    className="opacity-0 group-hover:opacity-100 text-gray-600 hover:text-red-400 transition-all flex-shrink-0"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">delete</span>
+                  </button>
                 </div>
-                <button
-                  onClick={(e) => { e.stopPropagation(); onDeleteEvent(event.id); }}
-                  className="opacity-0 group-hover:opacity-100 text-gray-600 hover:text-red-400 transition-all"
-                >
-                  <span className="material-symbols-outlined text-[18px]">delete</span>
-                </button>
-              </div>
-            ))
+              ))}
+            </div>
           )}
         </div>
       )}
@@ -448,54 +504,64 @@ function CalendarGrid({
   );
 }
 
-// ─── List View (Event Row) ─────────────────────────────────────
+// ─── List View ─────────────────────────────────────────────────
 function EventRow({ event, onDelete }: { event: CalendarEvent; onDelete: (id: string) => void }) {
-  const { month, day } = formatDate(event.event_date);
+  const dateObj = parseISO(event.event_date);
+  const ncaaPeriods = getPeriodsForDate(event.event_date);
 
   return (
-    <div className="bg-surface-dark rounded-xl border border-[#333] hover:border-[#444] transition-colors p-5 flex items-start gap-5 group">
+    <div className="bg-surface-dark rounded-xl border border-[#333] hover:border-[#444] transition-colors p-5 flex items-start gap-4 group">
       {/* Date block */}
-      <div className="flex-shrink-0 w-16 text-center">
-        <div className={`text-xs font-bold uppercase ${event.priority === 'high' ? 'text-red-400' : 'text-text-muted'}`}>
-          {month}
+      <div className="flex-shrink-0 w-14 text-center">
+        <div className={`text-[10px] font-bold uppercase ${event.priority === 'high' ? 'text-red-400' : 'text-gray-500'}`}>
+          {format(dateObj, 'MMM')}
         </div>
-        <div className="text-2xl font-bold text-white">{day}</div>
+        <div className="text-2xl font-bold text-white leading-tight">{format(dateObj, 'dd')}</div>
+        <div className="text-[10px] text-gray-600">{format(dateObj, 'EEE')}</div>
       </div>
+
+      {/* Color bar */}
+      <div className={`w-1 self-stretch rounded-full flex-shrink-0 ${getEventChipColor(event.event_type).split(' ')[0]}`} />
 
       {/* Event details */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
           <h3 className="text-white font-bold truncate">{event.title}</h3>
           {event.priority === 'high' && (
-            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-red-500/10 text-red-400 border border-red-500/20">
-              High Priority
+            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-red-500/10 text-red-400 border border-red-500/20 flex-shrink-0">
+              High
             </span>
           )}
         </div>
-        <div className="flex items-center gap-3 text-xs text-text-muted flex-wrap">
+        <div className="flex items-center gap-3 text-xs text-gray-400 flex-wrap">
           <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${getEventTypeColor(event.event_type)}`}>
             <span className="material-symbols-outlined text-[14px]">{getEventTypeIcon(event.event_type)}</span>
             {getEventTypeLabel(event.event_type)}
           </span>
+          {event.event_time && (
+            <span className="flex items-center gap-1">
+              <span className="material-symbols-outlined text-[14px]">schedule</span>
+              {formatTime12(event.event_time)}
+            </span>
+          )}
           {event.location && (
             <span className="flex items-center gap-1">
               <span className="material-symbols-outlined text-[14px]">location_on</span>
               {event.location}
             </span>
           )}
-          {event.event_time && (
-            <span className="flex items-center gap-1">
-              <span className="material-symbols-outlined text-[14px]">schedule</span>
-              {formatTime(event.event_time)}
+          {ncaaPeriods.length > 0 && (
+            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border ${PERIOD_COLORS[ncaaPeriods[0].type].bg} ${PERIOD_COLORS[ncaaPeriods[0].type].text} ${PERIOD_COLORS[ncaaPeriods[0].type].border}`}>
+              NCAA {ncaaPeriods[0].type}
             </span>
           )}
         </div>
         {event.description && (
-          <p className="text-xs text-gray-400 mt-2 line-clamp-2">{event.description}</p>
+          <p className="text-xs text-gray-500 mt-2 line-clamp-2">{event.description}</p>
         )}
       </div>
 
-      {/* Delete button */}
+      {/* Delete */}
       <button
         onClick={() => onDelete(event.id)}
         className="opacity-0 group-hover:opacity-100 text-gray-600 hover:text-red-400 transition-all flex-shrink-0 mt-1"
@@ -516,8 +582,9 @@ export default function AthleteCalendarPage() {
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [modalOpen, setModalOpen] = useState(false);
   const [prefillDate, setPrefillDate] = useState<string | undefined>();
+  const [showNcaaPeriods, setShowNcaaPeriods] = useState(true);
 
-  async function fetchEvents() {
+  const fetchEvents = useCallback(async () => {
     try {
       const res = await fetch('/api/athlete/calendar');
       if (!res.ok) {
@@ -532,9 +599,9 @@ export default function AthleteCalendarPage() {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, []);
 
-  useEffect(() => { fetchEvents(); }, []);
+  useEffect(() => { fetchEvents(); }, [fetchEvents]);
 
   async function handleAddEvent(event: Omit<CalendarEvent, 'id'>) {
     const res = await fetch('/api/athlete/calendar', {
@@ -574,26 +641,41 @@ export default function AthleteCalendarPage() {
   const allEvents = [...events, ...pastEvents];
 
   return (
-    <div className="p-8">
-      <div className="max-w-4xl mx-auto space-y-6 pb-10">
+    <div className="p-6 lg:p-8">
+      <div className="max-w-6xl mx-auto space-y-6 pb-10">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
-            <div className="flex items-center gap-3 mb-2">
-              <Link href="/athlete" className="text-text-muted hover:text-white transition-colors">
+            <div className="flex items-center gap-3 mb-1">
+              <Link href="/athlete" className="text-gray-500 hover:text-white transition-colors">
                 <span className="material-symbols-outlined text-[20px]">arrow_back</span>
               </Link>
-              <h1 className="text-3xl font-bold text-white">Recruiting Calendar</h1>
+              <h1 className="text-2xl font-bold text-white">Recruiting Calendar</h1>
             </div>
-            <p className="text-text-muted ml-8">Your visits, camps, combines, deadlines, and personal events.</p>
+            <p className="text-gray-500 text-sm ml-8">Visits, camps, combines, deadlines, and NCAA recruiting periods.</p>
           </div>
-          <button
-            onClick={() => { setPrefillDate(undefined); setModalOpen(true); }}
-            className="flex items-center gap-2 bg-primary text-black font-bold px-4 py-2.5 rounded-xl text-sm hover:bg-primary/90 transition-colors"
-          >
-            <span className="material-symbols-outlined text-[18px]">add</span>
-            Add Event
-          </button>
+          <div className="flex items-center gap-3">
+            {/* NCAA toggle */}
+            <button
+              onClick={() => setShowNcaaPeriods(v => !v)}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium border transition-colors ${
+                showNcaaPeriods
+                  ? 'border-primary/30 bg-primary/10 text-primary'
+                  : 'border-[#333] text-gray-500 hover:text-gray-300'
+              }`}
+            >
+              <span className="material-symbols-outlined text-[16px]">shield</span>
+              NCAA
+            </button>
+            {/* Add Event button */}
+            <button
+              onClick={() => { setPrefillDate(undefined); setModalOpen(true); }}
+              className="flex items-center gap-2 bg-primary text-black font-bold px-4 py-2.5 rounded-xl text-sm hover:bg-primary/90 transition-colors"
+            >
+              <span className="material-symbols-outlined text-[18px]">add</span>
+              Add Event
+            </button>
+          </div>
         </div>
 
         {error && (
@@ -602,7 +684,7 @@ export default function AthleteCalendarPage() {
           </div>
         )}
 
-        {/* View Toggle + List Filter */}
+        {/* Controls bar */}
         <div className="flex items-center justify-between">
           <div className="flex gap-2">
             {viewMode === 'list' && (
@@ -628,15 +710,6 @@ export default function AthleteCalendarPage() {
           </div>
           <div className="flex bg-white/5 rounded-xl p-1 border border-[#333]">
             <button
-              onClick={() => setViewMode('calendar')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                viewMode === 'calendar' ? 'bg-primary text-black' : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              <span className="material-symbols-outlined text-[16px]">calendar_month</span>
-              Calendar
-            </button>
-            <button
               onClick={() => setViewMode('list')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                 viewMode === 'list' ? 'bg-primary text-black' : 'text-gray-400 hover:text-white'
@@ -645,18 +718,26 @@ export default function AthleteCalendarPage() {
               <span className="material-symbols-outlined text-[16px]">list</span>
               List
             </button>
+            <button
+              onClick={() => setViewMode('calendar')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                viewMode === 'calendar' ? 'bg-primary text-black' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              <span className="material-symbols-outlined text-[16px]">calendar_month</span>
+              Calendar
+            </button>
           </div>
         </div>
 
         {/* Content */}
         {viewMode === 'calendar' ? (
-          <div className="bg-[#1a1a1e] rounded-2xl border border-[#3a3a3a] p-6">
-            <CalendarGrid
-              allEvents={allEvents}
-              onDayClick={openModalForDate}
-              onDeleteEvent={handleDeleteEvent}
-            />
-          </div>
+          <BigCalendar
+            allEvents={allEvents}
+            onDayClick={openModalForDate}
+            onDeleteEvent={handleDeleteEvent}
+            showNcaaPeriods={showNcaaPeriods}
+          />
         ) : (
           <>
             {displayEvents.length === 0 ? (
@@ -665,7 +746,7 @@ export default function AthleteCalendarPage() {
                 <h3 className="text-lg font-bold text-white mb-2">
                   {showPast ? 'No Past Events' : 'No Upcoming Events'}
                 </h3>
-                <p className="text-text-muted text-sm max-w-md mx-auto mb-6">
+                <p className="text-gray-500 text-sm max-w-md mx-auto mb-6">
                   {showPast
                     ? 'Your completed events will appear here.'
                     : 'Add your first event — visits, camps, games, or personal milestones.'}
@@ -689,7 +770,6 @@ export default function AthleteCalendarPage() {
         )}
       </div>
 
-      {/* Add Event Modal */}
       <AddEventModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
