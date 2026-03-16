@@ -163,12 +163,45 @@ export async function GET() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const totalOffers = roster.reduce((sum: number, r: any) => sum + (r.offers || 0), 0);
 
+    // Collect athlete IDs from roster for aggregate queries
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const rosterAthleteIds: string[] = roster.map((r: any) => r.id).filter(Boolean);
+
+    let profileViewCount = 0;
+    let filmClickCount = 0;
+
+    if (rosterAthleteIds.length > 0) {
+      // Count profile views for roster athletes
+      const { count: pvCount } = await supabase
+        .from("profile_views")
+        .select("id", { count: "exact", head: true })
+        .in("athlete_id", rosterAthleteIds);
+      profileViewCount = pvCount ?? 0;
+
+      // Count film bookmarks for roster athletes (via highlights)
+      const { data: athleteHighlights } = await supabase
+        .from("highlights")
+        .select("id")
+        .in("athlete_id", rosterAthleteIds);
+
+      const highlightIds = (athleteHighlights || []).map((h: { id: string }) => h.id);
+      if (highlightIds.length > 0) {
+        const { count: fbCount } = await supabase
+          .from("film_bookmarks")
+          .select("id", { count: "exact", head: true })
+          .in("highlight_id", highlightIds);
+        filmClickCount = fbCount ?? 0;
+      }
+    }
+
     const metrics = {
       totalAthletes: roster.length,
       activeAthletes,
       committedAthletes,
       totalOffers,
       pendingTasks: tasks.filter((t) => t.status === "pending" || t.status === "in_progress").length,
+      profileViewCount,
+      filmClickCount,
     };
 
     return NextResponse.json({

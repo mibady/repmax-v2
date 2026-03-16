@@ -28,8 +28,8 @@ export default function CoachLayout({ children }: { children: React.ReactNode })
         activeTab={activeTab}
         metrics={{
           activeRecruits: metrics?.totalAthletes ?? roster.length,
-          profileViews: 0,
-          filmClicks: 0,
+          profileViews: metrics?.profileViewCount ?? 0,
+          filmClicks: metrics?.filmClickCount ?? 0,
           newOffers: metrics?.totalOffers ?? 0,
           offerVelocity: metrics?.committedAthletes ?? 0,
         }}

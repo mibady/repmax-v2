@@ -86,6 +86,8 @@ export interface CoachMetrics {
   committedAthletes: number;
   pendingTasks: number;
   totalOffers: number;
+  profileViewCount: number;
+  filmClickCount: number;
 }
 
 export interface CoachProfile {

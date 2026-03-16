@@ -12,63 +12,69 @@ interface StaffMember {
   positions: string[];
   avatarInitials: string;
   yearsOnStaff: number;
+  recruitingSchools: string[];
 }
 
 const DEMO_STAFF: StaffMember[] = [
   {
     id: '1',
-    name: 'Marcus Williams',
-    title: 'Offensive Coordinator',
-    email: 'mwilliams@school.edu',
-    phone: '(555) 234-5678',
-    zones: ['Southeast', 'Mid-Atlantic'],
-    positions: ['QB', 'WR', 'OL'],
-    avatarInitials: 'MW',
+    name: 'Coach James Davis',
+    title: 'Head Coach & Offensive Coordinator',
+    email: 'jdavis@rphs.edu',
+    phone: '(951) 788-7311',
+    zones: ['West', 'Southwest'],
+    positions: ['QB', 'WR'],
+    avatarInitials: 'JD',
     yearsOnStaff: 8,
+    recruitingSchools: ['USC', 'UCLA', 'Oregon'],
   },
   {
     id: '2',
-    name: 'David Chen',
+    name: 'Marcus Thompson',
     title: 'Defensive Coordinator',
-    email: 'dchen@school.edu',
-    phone: '(555) 345-6789',
-    zones: ['Midwest', 'Great Plains'],
-    positions: ['DL', 'LB', 'DB'],
-    avatarInitials: 'DC',
+    email: 'mthompson@rphs.edu',
+    phone: '(951) 788-7312',
+    zones: ['West', 'Southwest'],
+    positions: ['DL', 'LB'],
+    avatarInitials: 'MT',
     yearsOnStaff: 5,
+    recruitingSchools: ['Arizona State', 'Washington'],
   },
   {
     id: '3',
-    name: 'James Robinson',
-    title: 'Recruiting Coordinator',
-    email: 'jrobinson@school.edu',
-    phone: '(555) 456-7890',
-    zones: ['Texas', 'Southwest'],
-    positions: ['All Positions'],
-    avatarInitials: 'JR',
+    name: 'David Chen',
+    title: 'Offensive Line Coach & Recruiting',
+    email: 'dchen@rphs.edu',
+    phone: '(951) 788-7313',
+    zones: ['West'],
+    positions: ['OL', 'TE'],
+    avatarInitials: 'DC',
     yearsOnStaff: 3,
+    recruitingSchools: ['Stanford', 'Cal Berkeley'],
   },
   {
     id: '4',
-    name: 'Anthony Davis',
-    title: 'Wide Receivers Coach',
-    email: 'adavis@school.edu',
-    phone: '(555) 567-8901',
-    zones: ['Florida', 'Georgia'],
-    positions: ['WR', 'TE'],
-    avatarInitials: 'AD',
-    yearsOnStaff: 2,
+    name: 'James Robinson',
+    title: 'DB Coach & Special Teams',
+    email: 'jrobinson@rphs.edu',
+    phone: '(951) 788-7314',
+    zones: ['Southwest', 'South'],
+    positions: ['DB', 'S'],
+    avatarInitials: 'JR',
+    yearsOnStaff: 4,
+    recruitingSchools: ['Colorado', 'Oregon State'],
   },
   {
     id: '5',
-    name: 'Robert Taylor',
-    title: 'Defensive Backs Coach',
-    email: 'rtaylor@school.edu',
-    phone: '(555) 678-9012',
-    zones: ['California', 'Pacific NW'],
-    positions: ['CB', 'S'],
-    avatarInitials: 'RT',
-    yearsOnStaff: 4,
+    name: 'Anthony Rivera',
+    title: 'Strength & Conditioning',
+    email: 'arivera@rphs.edu',
+    phone: '(951) 788-7315',
+    zones: ['West'],
+    positions: ['All'],
+    avatarInitials: 'AR',
+    yearsOnStaff: 2,
+    recruitingSchools: ['Combines/Testing Coordination'],
   },
 ];
 
@@ -81,10 +87,12 @@ interface StaffNote {
 }
 
 const DEMO_NOTES: StaffNote[] = [
-  { id: '1', author: 'Marcus Williams', content: 'Updated QB board — two new prospects from Georgia camp. Need to schedule OVs before dead period.', timestamp: '2026-03-15T14:30:00', category: 'Recruiting' },
-  { id: '2', author: 'James Robinson', content: 'Spring evaluation schedule finalized. All coaches have zone assignments for April contact period.', timestamp: '2026-03-14T09:00:00', category: 'General' },
-  { id: '3', author: 'David Chen', content: 'DL prospect Jaylen Carter (4-star, TX) has us in top 5. OV scheduled for April 20.', timestamp: '2026-03-13T16:45:00', category: 'Urgent' },
-  { id: '4', author: 'Anthony Davis', content: 'Film review complete for 2027 WR targets. Identified 8 priority prospects in FL/GA territory.', timestamp: '2026-03-12T11:15:00', category: 'Strategy' },
+  { id: '1', author: 'Coach James Davis', content: 'Spring practice starts March 24 - all coaches must submit position group evaluation forms by March 21', timestamp: '2026-03-16T08:00:00', category: 'Urgent' },
+  { id: '2', author: 'Coach James Davis', content: 'USC offered Jaylen Washington - Coach Davis to follow up with OC this week', timestamp: '2026-03-15T14:30:00', category: 'Recruiting' },
+  { id: '3', author: 'Marcus Thompson', content: 'Film room schedule updated - Monday/Wednesday after practice, Thursday game prep', timestamp: '2026-03-15T09:00:00', category: 'General' },
+  { id: '4', author: 'David Chen', content: 'Implementing new spread RPO package for spring - need OL coach buy-in on blocking schemes', timestamp: '2026-03-14T16:45:00', category: 'Strategy' },
+  { id: '5', author: 'James Robinson', content: 'Oregon DC reaching out about Carlos Mendez and Jamal Carter - schedule film review call', timestamp: '2026-03-14T11:15:00', category: 'Recruiting' },
+  { id: '6', author: 'Anthony Rivera', content: 'Equipment order submitted for spring practice - delivery expected March 20', timestamp: '2026-03-13T10:00:00', category: 'General' },
 ];
 
 const NOTE_COLORS: Record<string, string> = {
@@ -209,6 +217,7 @@ export default function StaffHubPage() {
                 <tr className="border-b border-white/5">
                   <th className="text-left text-[10px] font-bold uppercase tracking-wider text-white/30 py-2 pr-4">Coach</th>
                   <th className="text-left text-[10px] font-bold uppercase tracking-wider text-white/30 py-2 pr-4">Title</th>
+                  <th className="text-left text-[10px] font-bold uppercase tracking-wider text-white/30 py-2 pr-4">Schools</th>
                   <th className="text-left text-[10px] font-bold uppercase tracking-wider text-white/30 py-2 pr-4">Zones</th>
                   <th className="text-left text-[10px] font-bold uppercase tracking-wider text-white/30 py-2">Positions</th>
                 </tr>
@@ -218,6 +227,13 @@ export default function StaffHubPage() {
                   <tr key={m.id} className="border-b border-white/[0.03] hover:bg-white/[0.02]">
                     <td className="py-3 pr-4 text-white font-medium">{m.name}</td>
                     <td className="py-3 pr-4 text-white/50">{m.title}</td>
+                    <td className="py-3 pr-4">
+                      <div className="flex flex-wrap gap-1">
+                        {m.recruitingSchools.map((s) => (
+                          <span key={s} className="px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400 text-[10px] font-medium">{s}</span>
+                        ))}
+                      </div>
+                    </td>
                     <td className="py-3 pr-4">
                       <div className="flex flex-wrap gap-1">
                         {m.zones.map((z) => (
