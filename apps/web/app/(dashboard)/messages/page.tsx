@@ -7,7 +7,7 @@ import { ComposeModal } from '@/components/messages/ComposeModal';
 import { useMessages, useConversation } from '@/lib/hooks';
 import type { Tables } from '@/types/database';
 
-type MessageRole = 'recruiter' | 'parent' | 'athlete' | 'coach';
+type MessageRole = 'recruiter' | 'parent' | 'athlete' | 'coach' | 'admin' | 'club';
 type FilterTab = 'all' | 'unread' | 'archived';
 
 interface Conversation {
@@ -28,6 +28,8 @@ const ROLE_COLORS: Record<MessageRole, { bg: string; text: string }> = {
   parent: { bg: 'bg-purple-500/20', text: 'text-purple-400' },
   athlete: { bg: 'bg-green-500/20', text: 'text-green-400' },
   coach: { bg: 'bg-[#d4af35]/20', text: 'text-[#d4af35]' },
+  admin: { bg: 'bg-red-500/20', text: 'text-red-400' },
+  club: { bg: 'bg-orange-500/20', text: 'text-orange-400' },
 };
 
 function formatTimestamp(dateString: string): string {
@@ -50,8 +52,8 @@ function formatTimestamp(dateString: string): string {
 // Group messages by sender/recipient into conversations
 function groupMessagesIntoConversations(
   messages: Array<Tables<"messages"> & {
-    sender: Pick<Tables<"profiles">, "id" | "full_name" | "avatar_url"> | null;
-    recipient: Pick<Tables<"profiles">, "id" | "full_name" | "avatar_url"> | null;
+    sender: Pick<Tables<"profiles">, "id" | "full_name" | "avatar_url" | "role"> | null;
+    recipient: Pick<Tables<"profiles">, "id" | "full_name" | "avatar_url" | "role"> | null;
   }>,
   currentUserId?: string
 ): Conversation[] {
@@ -71,7 +73,7 @@ function groupMessagesIntoConversations(
         id: otherParty.id,
         contactName: otherParty.full_name || 'Unknown',
         contactAvatar: otherParty.avatar_url || undefined,
-        role: 'coach', // Default role, would need to come from profile in real app
+        role: otherParty.role || 'coach',
         lastMessage: msg.body,
         timestamp: formatTimestamp(msg.created_at),
         unread: isIncoming && !msg.read,

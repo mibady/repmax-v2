@@ -44,8 +44,8 @@ export async function GET(request: Request) {
     // Build query based on folder
     let query = supabase.from("messages").select(`
       *,
-      sender:profiles!sender_id(id, full_name, avatar_url),
-      recipient:profiles!recipient_id(id, full_name, avatar_url)
+      sender:profiles!sender_id(id, full_name, avatar_url, role),
+      recipient:profiles!recipient_id(id, full_name, avatar_url, role)
     `);
 
     if (folder === "inbox") {

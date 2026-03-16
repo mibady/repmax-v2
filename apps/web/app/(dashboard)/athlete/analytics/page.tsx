@@ -320,13 +320,13 @@ export default function AthleteAnalyticsPage() {
             </div>
           </div>
 
-          {/* Zone Benchmark */}
+          {/* Geographic Interest */}
           <div className="bg-surface-dark border border-purple-900/50 rounded-xl p-6 flex flex-col relative overflow-hidden">
             <div className="absolute top-0 right-0 p-4 opacity-10">
               <span className="material-symbols-outlined text-8xl text-purple-500">public</span>
             </div>
-            <h3 className="text-white text-lg font-bold mb-2">Zone Benchmark</h3>
-            <p className="text-purple-400 text-sm font-medium mb-4">Regional Visibility</p>
+            <h3 className="text-white text-lg font-bold mb-2">Geographic Interest</h3>
+            <p className="text-purple-400 text-sm font-medium mb-4">Where coaches are viewing you</p>
             {geoData?.by_zone && geoData.by_zone.length > 0 ? (
               <div className="flex-1 flex flex-col gap-3">
                 {geoData.by_zone.map((zone: { zone: string; view_count: number; unique_schools: number }) => {
@@ -363,7 +363,7 @@ export default function AthleteAnalyticsPage() {
               <div className="flex-1 flex flex-col items-center justify-center gap-3 py-6">
                 <span className="material-symbols-outlined text-4xl text-purple-500/30">public</span>
                 <div className="text-center">
-                  <span className="text-sm font-medium text-gray-400 block">No zone data yet</span>
+                  <span className="text-sm font-medium text-gray-400 block">No geographic data yet</span>
                   <span className="text-xs text-gray-500 mt-1 block">Share your card to start seeing which regions are viewing your profile.</span>
                 </div>
               </div>

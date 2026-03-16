@@ -55,8 +55,7 @@ export default function NotificationSettingsPage() {
             Notification Settings
           </h1>
           <p className="text-slate-400 max-w-2xl text-lg">
-            Customize your intelligence flow. Choose how and when you receive critical recruiting alerts, offers,
-            and scout updates.
+            Choose how and when you receive recruiting alerts, offers, messages, and deadline reminders.
           </p>
           {error && (
             <p className="text-red-500 text-sm mt-2">Error: {error.message}</p>
@@ -74,7 +73,7 @@ export default function NotificationSettingsPage() {
               <div className="flex items-center justify-between p-6 bg-[#1A1A1A] hover:bg-white/[0.02] transition-colors gap-4">
                 <div className="flex flex-col gap-1">
                   <p className="text-base font-bold text-white">Profile Views</p>
-                  <p className="text-sm text-slate-500">Notify when a scout or coach views a prospect profile.</p>
+                  <p className="text-sm text-slate-500">Notify when a coach or recruiter views your player card.</p>
                 </div>
                 <ToggleSwitch
                   checked={preferences.push.profileViews}
@@ -84,7 +83,7 @@ export default function NotificationSettingsPage() {
               <div className="flex items-center justify-between p-6 bg-[#1A1A1A] hover:bg-white/[0.02] transition-colors gap-4">
                 <div className="flex flex-col gap-1">
                   <p className="text-base font-bold text-white">New Offers</p>
-                  <p className="text-sm text-slate-500">Instant alerts when an athlete in your watchlist receives a scholarship offer.</p>
+                  <p className="text-sm text-slate-500">Instant alerts when you receive a new scholarship offer.</p>
                 </div>
                 <ToggleSwitch
                   checked={preferences.push.newOffers}
@@ -93,8 +92,8 @@ export default function NotificationSettingsPage() {
               </div>
               <div className="flex items-center justify-between p-6 bg-[#1A1A1A] hover:bg-white/[0.02] transition-colors gap-4">
                 <div className="flex flex-col gap-1">
-                  <p className="text-base font-bold text-white">Shortlist Activity</p>
-                  <p className="text-sm text-slate-500">Updates on movement within your recruitment shortlist.</p>
+                  <p className="text-base font-bold text-white">Recruiting Interest</p>
+                  <p className="text-sm text-slate-500">Updates when coaches add you to their recruiting board.</p>
                 </div>
                 <ToggleSwitch
                   checked={preferences.push.shortlist}
@@ -104,7 +103,7 @@ export default function NotificationSettingsPage() {
               <div className="flex items-center justify-between p-6 bg-[#1A1A1A] hover:bg-white/[0.02] transition-colors gap-4">
                 <div className="flex flex-col gap-1">
                   <p className="text-base font-bold text-white">Messages</p>
-                  <p className="text-sm text-slate-500">Direct notifications for internal staff messages.</p>
+                  <p className="text-sm text-slate-500">Notify when you receive a new message from a coach or recruiter.</p>
                 </div>
                 <ToggleSwitch
                   checked={preferences.push.messages}
@@ -133,8 +132,8 @@ export default function NotificationSettingsPage() {
             <div className="grid gap-px bg-white/10 rounded-xl overflow-hidden border border-white/10">
               <div className="flex flex-col @[480px]:flex-row @[480px]:items-center justify-between p-6 bg-[#1A1A1A] hover:bg-white/[0.02] transition-colors gap-4">
                 <div className="flex flex-col gap-1">
-                  <p className="text-base font-bold text-white">Recruiting Intelligence Digest</p>
-                  <p className="text-sm text-slate-500">A summarized report of all recruiting activity.</p>
+                  <p className="text-base font-bold text-white">Weekly Recruiting Summary</p>
+                  <p className="text-sm text-slate-500">A summary of your profile views, new interest, and recruiting activity.</p>
                 </div>
                 <div className="flex items-center gap-4">
                   <select
@@ -156,7 +155,7 @@ export default function NotificationSettingsPage() {
               <div className="flex items-center justify-between p-6 bg-[#1A1A1A] hover:bg-white/[0.02] transition-colors gap-4">
                 <div className="flex flex-col gap-1">
                   <p className="text-base font-bold text-white">Important Deadlines</p>
-                  <p className="text-sm text-slate-500">Emails regarding NCAA compliance periods and dead periods.</p>
+                  <p className="text-sm text-slate-500">Reminders for NCAA recruiting periods, signing days, and camp deadlines.</p>
                 </div>
                 <ToggleSwitch
                   checked={preferences.email.deadlines}

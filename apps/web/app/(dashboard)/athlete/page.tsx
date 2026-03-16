@@ -88,20 +88,19 @@ export default function AthleteDashboardPage() {
           <p className="text-text-muted">Here&apos;s what&apos;s happening in your recruitment journey today.</p>
         </div>
 
-        {/* Zone Pulse Banner */}
-        <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-[#2e1065] to-surface-dark border border-accent-purple/30 p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-lg shadow-accent-purple/5">
+        {/* Recruiting Activity Banner */}
+        <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-primary/20 to-surface-dark border border-primary/20 p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="relative z-10">
             <div className="flex items-center gap-2 mb-2">
-              <span className="material-symbols-outlined text-accent-purple animate-pulse">leak_add</span>
-              <span className="text-xs font-bold text-accent-purple uppercase tracking-wider">Zone Pulse: {profile.zone}</span>
+              <span className="material-symbols-outlined text-primary">trending_up</span>
+              <span className="text-xs font-bold text-primary uppercase tracking-wider">Recruiting Activity</span>
             </div>
-            <h3 className="text-2xl font-bold text-white mb-1">Recruiting activity is Active</h3>
-            <p className="text-gray-300 text-sm max-w-lg">Coaches in your region are actively scouting {profile.position}s. Keep your profile updated.</p>
+            <h3 className="text-2xl font-bold text-white mb-1">Stay on top of your recruiting journey</h3>
+            <p className="text-gray-300 text-sm max-w-lg">Track profile views, scout interest, and see how your card is performing with college coaches.</p>
           </div>
-          <Link href="/athlete/analytics" className="relative z-10 bg-white text-black hover:bg-gray-100 px-5 py-2.5 rounded-lg text-sm font-bold transition-colors whitespace-nowrap">
+          <Link href="/athlete/analytics" className="relative z-10 bg-primary text-black hover:bg-primary/90 px-5 py-2.5 rounded-lg text-sm font-bold transition-colors whitespace-nowrap">
             View Your Analytics
           </Link>
-          <div className="absolute right-0 top-0 h-full w-1/3 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] mix-blend-overlay"></div>
         </div>
 
         {/* Stats Grid */}

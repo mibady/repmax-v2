@@ -5,8 +5,8 @@ import { useEffect, useState, useCallback } from "react";
 import type { Tables } from "@/types/database";
 
 type Message = Tables<"messages"> & {
-  sender: Pick<Tables<"profiles">, "id" | "full_name" | "avatar_url"> | null;
-  recipient: Pick<Tables<"profiles">, "id" | "full_name" | "avatar_url"> | null;
+  sender: Pick<Tables<"profiles">, "id" | "full_name" | "avatar_url" | "role"> | null;
+  recipient: Pick<Tables<"profiles">, "id" | "full_name" | "avatar_url" | "role"> | null;
 };
 
 export function useMessages() {

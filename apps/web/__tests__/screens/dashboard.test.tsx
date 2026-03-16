@@ -54,7 +54,7 @@ function AthleteDashboard({
     return (
       <div data-testid="dashboard-empty" className="text-center py-16">
         <h3 className="text-lg font-semibold text-text-primary mb-2">Complete Your Profile</h3>
-        <p className="text-text-secondary mb-6">Get discovered by recruiters by completing your Companion Card.</p>
+        <p className="text-text-secondary mb-6">Get discovered by recruiters by completing your Player Card.</p>
         <button className="bg-gold text-background px-6 py-2 rounded-lg">Complete Profile</button>
       </div>
     );
