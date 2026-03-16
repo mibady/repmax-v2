@@ -360,7 +360,7 @@ function CalendarGrid({
       {/* Day headers */}
       <div className="grid grid-cols-7 gap-1">
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (
-          <div key={d} className="text-center text-[10px] font-bold uppercase tracking-wider text-gray-600 py-2">{d}</div>
+          <div key={d} className="text-center text-[10px] font-bold uppercase tracking-wider text-gray-400 py-2">{d}</div>
         ))}
       </div>
 
@@ -378,10 +378,10 @@ function CalendarGrid({
                 setSelectedDay(date === selectedDay ? null : date);
               }}
               className={`relative aspect-square rounded-xl p-1 flex flex-col items-center justify-start pt-2 transition-all text-sm ${
-                !isCurrentMonth ? 'text-gray-700' :
+                !isCurrentMonth ? 'text-gray-600' :
                 isSelected ? 'bg-primary/20 border border-primary/40 text-white' :
-                isToday ? 'bg-white/10 text-white font-bold' :
-                'text-gray-300 hover:bg-white/5'
+                isToday ? 'bg-white/15 text-white font-bold' :
+                'text-white hover:bg-white/10'
               }`}
             >
               <span className={`text-xs ${isToday && !isSelected ? 'bg-primary text-black rounded-full w-6 h-6 flex items-center justify-center font-bold' : ''}`}>
@@ -513,7 +513,7 @@ export default function AthleteCalendarPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showPast, setShowPast] = useState(false);
-  const [viewMode, setViewMode] = useState<ViewMode>('calendar');
+  const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [modalOpen, setModalOpen] = useState(false);
   const [prefillDate, setPrefillDate] = useState<string | undefined>();
 
@@ -650,7 +650,7 @@ export default function AthleteCalendarPage() {
 
         {/* Content */}
         {viewMode === 'calendar' ? (
-          <div className="bg-surface-dark rounded-2xl border border-[#333] p-6">
+          <div className="bg-[#1a1a1e] rounded-2xl border border-[#3a3a3a] p-6">
             <CalendarGrid
               allEvents={allEvents}
               onDayClick={openModalForDate}
