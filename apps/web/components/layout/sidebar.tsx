@@ -74,10 +74,14 @@ const parentSettingsItems: NavItem[] = [
 
 const coachNavItems: NavItem[] = [
   { icon: 'dashboard', label: 'Dashboard', href: '/coach' },
-  { icon: 'groups', label: 'Roster', href: '/coach/roster' },
+  { icon: 'view_kanban', label: 'Pipeline', href: '/coach/pipeline' },
+  { icon: 'groups', label: 'Recruits', href: '/coach/roster' },
   { icon: 'playlist_add_check', label: 'Tasks', href: '/coach/tasks' },
+  { icon: 'videocam', label: 'Film Room', href: '/coach/film' },
   { icon: 'trophy', label: 'Off Season Events', href: '/tournaments' },
   { icon: 'mail', label: 'Messages', href: '/messages' },
+  { icon: 'group_work', label: 'Staff Hub', href: '/coach/staff' },
+  { icon: 'gavel', label: 'Compliance', href: '/coach/compliance' },
 ];
 
 const coachSettingsItems: NavItem[] = [
@@ -447,7 +451,7 @@ function CoachSidebar({ user, onSignOut }: { user: SidebarUser; onSignOut?: () =
           <p className="text-sm font-medium">Sign Out</p>
         </button>
         <button
-          onClick={() => router.push('/recruiter/pipeline')}
+          onClick={() => router.push('/coach/roster/new')}
           className="w-full flex items-center justify-center gap-2 rounded-lg py-3 bg-primary text-black font-bold text-sm tracking-wide mt-2 hover:bg-primary/90 transition-colors"
         >
           <span className="material-symbols-outlined text-[20px]">person_add</span>
