@@ -20,12 +20,9 @@ import {
 import {
   getPeriodsForDate,
   getPeriodTintForDate,
-  FBS_PERIODS,
-  FCS_PERIODS,
   PERIOD_COLORS,
   PERIOD_LABELS,
   PERIOD_DEFINITIONS,
-  formatPeriodRange,
   type PeriodType,
 } from '@/lib/data/ncaa-calendar';
 
@@ -844,60 +841,34 @@ export default function AthleteCalendarPage() {
             })}
           </div>
 
-          {/* FBS Schedule Table */}
-          <div className="bg-[#1a1a1e] rounded-2xl border border-[#333] overflow-hidden">
-            <div className="px-5 py-4 border-b border-[#333] flex items-center justify-between">
-              <h3 className="text-sm font-bold text-white">FBS Schedule — Aug. 1, 2025 – July 31, 2026</h3>
-              <a href="/api/athlete/calendar/pdf?division=FBS" download className="text-xs text-primary hover:underline flex items-center gap-1">
-                <span className="material-symbols-outlined text-[14px]">download</span>
-                Download PDF
-              </a>
-            </div>
-            <div className="divide-y divide-[#2a2a2a]">
-              {FBS_PERIODS.map((p, i) => (
-                <div key={i} className="px-5 py-3 flex items-center gap-4">
-                  <div className={`w-2 h-2 rounded-full flex-shrink-0 ${PERIOD_COLORS[p.type].dot}`} />
-                  <div className="flex-1 min-w-0">
-                    <span className="text-sm text-white">{formatPeriodRange(p.start, p.end)}</span>
-                    {p.notes && <span className="text-[10px] text-gray-600 block mt-0.5">{p.notes}</span>}
-                  </div>
-                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${PERIOD_COLORS[p.type].bg} ${PERIOD_COLORS[p.type].text}`}>
-                    {p.type}
-                  </span>
-                </div>
-              ))}
-            </div>
+          {/* Download PDFs */}
+          <div className="flex flex-wrap gap-3">
+            <a
+              href="/api/athlete/calendar/pdf?division=FBS"
+              download
+              className="flex items-center gap-2 bg-white/5 border border-[#333] hover:border-primary/30 rounded-xl px-4 py-3 text-sm font-medium text-white hover:text-primary transition-colors"
+            >
+              <span className="material-symbols-outlined text-[20px]">download</span>
+              <div>
+                <div className="font-bold">FBS Recruiting Calendar</div>
+                <div className="text-[10px] text-gray-500">D1 Bowl Subdivision • 2025-26</div>
+              </div>
+            </a>
+            <a
+              href="/api/athlete/calendar/pdf?division=FCS"
+              download
+              className="flex items-center gap-2 bg-white/5 border border-[#333] hover:border-primary/30 rounded-xl px-4 py-3 text-sm font-medium text-white hover:text-primary transition-colors"
+            >
+              <span className="material-symbols-outlined text-[20px]">download</span>
+              <div>
+                <div className="font-bold">FCS Recruiting Calendar</div>
+                <div className="text-[10px] text-gray-500">D1 Championship Subdivision • 2025-26</div>
+              </div>
+            </a>
           </div>
 
-          {/* FCS Schedule Table */}
-          <div className="bg-[#1a1a1e] rounded-2xl border border-[#333] overflow-hidden">
-            <div className="px-5 py-4 border-b border-[#333] flex items-center justify-between">
-              <h3 className="text-sm font-bold text-white">FCS Schedule — Aug. 1, 2025 – July 31, 2026</h3>
-              <a href="/api/athlete/calendar/pdf?division=FCS" download className="text-xs text-primary hover:underline flex items-center gap-1">
-                <span className="material-symbols-outlined text-[14px]">download</span>
-                Download PDF
-              </a>
-            </div>
-            <div className="divide-y divide-[#2a2a2a]">
-              {FCS_PERIODS.map((p, i) => (
-                <div key={i} className="px-5 py-3 flex items-center gap-4">
-                  <div className={`w-2 h-2 rounded-full flex-shrink-0 ${PERIOD_COLORS[p.type].dot}`} />
-                  <div className="flex-1 min-w-0">
-                    <span className="text-sm text-white">{formatPeriodRange(p.start, p.end)}</span>
-                    {p.notes && <span className="text-[10px] text-gray-600 block mt-0.5">{p.notes}</span>}
-                  </div>
-                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${PERIOD_COLORS[p.type].bg} ${PERIOD_COLORS[p.type].text}`}>
-                    {p.type}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Disclaimer */}
           <p className="text-[10px] text-gray-600 text-center">
-            Source: NCAA Division I Recruiting Calendars 2025-26. NCAA is a trademark of the National Collegiate Athletic Association.
-            Always verify current rules at <a href="https://www.ncaa.org" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">ncaa.org</a>.
+            Source: NCAA Division I Recruiting Calendars 2025-26. Always verify current rules at <a href="https://www.ncaa.org" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">ncaa.org</a>.
           </p>
         </section>
       </div>
