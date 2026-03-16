@@ -23,7 +23,10 @@ import {
   PERIOD_COLORS,
   PERIOD_LABELS,
   PERIOD_DEFINITIONS,
+  DIVISION_INFO,
+  ALL_DIVISIONS,
   type PeriodType,
+  type DivisionKey,
 } from '@/lib/data/ncaa-calendar';
 
 type CalendarEvent = {
@@ -841,35 +844,32 @@ export default function AthleteCalendarPage() {
             })}
           </div>
 
-          {/* Download PDFs */}
-          <div className="flex flex-wrap gap-3">
-            <a
-              href="/api/athlete/calendar/pdf?division=FBS"
-              download
-              className="flex items-center gap-2 bg-white/5 border border-[#333] hover:border-primary/30 rounded-xl px-4 py-3 text-sm font-medium text-white hover:text-primary transition-colors"
-            >
-              <span className="material-symbols-outlined text-[20px]">download</span>
-              <div>
-                <div className="font-bold">FBS Recruiting Calendar</div>
-                <div className="text-[10px] text-gray-500">D1 Bowl Subdivision • 2025-26</div>
-              </div>
-            </a>
-            <a
-              href="/api/athlete/calendar/pdf?division=FCS"
-              download
-              className="flex items-center gap-2 bg-white/5 border border-[#333] hover:border-primary/30 rounded-xl px-4 py-3 text-sm font-medium text-white hover:text-primary transition-colors"
-            >
-              <span className="material-symbols-outlined text-[20px]">download</span>
-              <div>
-                <div className="font-bold">FCS Recruiting Calendar</div>
-                <div className="text-[10px] text-gray-500">D1 Championship Subdivision • 2025-26</div>
-              </div>
-            </a>
+          {/* Download PDFs — All Divisions */}
+          <div>
+            <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
+              <span className="material-symbols-outlined text-primary text-[18px]">download</span>
+              Download Recruiting Calendars
+            </h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {ALL_DIVISIONS.map((div: DivisionKey) => {
+                const info = DIVISION_INFO[div];
+                return (
+                  <a
+                    key={div}
+                    href={`/api/athlete/calendar/pdf?division=${div}`}
+                    download
+                    className="flex items-center gap-3 bg-white/5 border border-[#333] hover:border-primary/30 rounded-xl px-4 py-3 text-sm font-medium text-white hover:text-primary transition-colors group"
+                  >
+                    <span className="material-symbols-outlined text-[20px] text-gray-500 group-hover:text-primary transition-colors">picture_as_pdf</span>
+                    <div>
+                      <div className="font-bold text-sm">{info.label}</div>
+                      <div className="text-[10px] text-gray-500">{info.subtitle}</div>
+                    </div>
+                  </a>
+                );
+              })}
+            </div>
           </div>
-
-          <p className="text-[10px] text-gray-600 text-center">
-            Source: NCAA Division I Recruiting Calendars 2025-26. Always verify current rules at <a href="https://www.ncaa.org" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">ncaa.org</a>.
-          </p>
         </section>
       </div>
 

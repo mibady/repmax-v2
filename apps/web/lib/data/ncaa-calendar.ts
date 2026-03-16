@@ -50,6 +50,59 @@ export const FCS_PERIODS: RecruitingPeriod[] = [
   { start: '2026-05-28', end: '2026-07-31', type: 'quiet', label: 'Quiet Period', division: 'FCS' },
 ];
 
+// ─── D2 (Division II) ──────────────────────────────────────────
+// NCAA D2 uses similar period structure but with different dates
+export const D2_PERIODS: RecruitingPeriod[] = [
+  { start: '2025-08-01', end: '2025-08-31', type: 'quiet', label: 'Quiet Period', division: 'both' },
+  { start: '2025-09-01', end: '2025-11-30', type: 'evaluation', label: 'Evaluation Period', notes: 'Fall evaluation — coaches may attend games and practices', division: 'both' },
+  { start: '2025-12-01', end: '2025-12-14', type: 'contact', label: 'Contact Period', division: 'both' },
+  { start: '2025-12-15', end: '2026-01-04', type: 'dead', label: 'Dead Period', notes: 'Holiday dead period', division: 'both' },
+  { start: '2026-01-05', end: '2026-01-31', type: 'contact', label: 'Contact Period', division: 'both' },
+  { start: '2026-02-01', end: '2026-02-01', type: 'quiet', label: 'Quiet Period', division: 'both' },
+  { start: '2026-02-02', end: '2026-02-28', type: 'dead', label: 'Dead Period', notes: 'National Signing Period', division: 'both' },
+  { start: '2026-03-01', end: '2026-04-14', type: 'quiet', label: 'Quiet Period', division: 'both' },
+  { start: '2026-04-15', end: '2026-05-23', type: 'contact', label: 'Contact Period', notes: 'Spring contact period', division: 'both' },
+  { start: '2026-05-24', end: '2026-05-27', type: 'dead', label: 'Dead Period', division: 'both' },
+  { start: '2026-05-28', end: '2026-07-31', type: 'quiet', label: 'Quiet Period', division: 'both' },
+];
+
+// ─── D3 (Division III) ─────────────────────────────────────────
+// NCAA D3 does not offer athletic scholarships — no official recruiting periods
+export const D3_PERIODS: RecruitingPeriod[] = [
+  { start: '2025-08-01', end: '2025-08-31', type: 'quiet', label: 'Quiet Period', notes: 'D3 has limited recruiting restrictions — no athletic scholarships offered', division: 'both' },
+  { start: '2025-09-01', end: '2025-11-30', type: 'contact', label: 'Contact Period', notes: 'Coaches may contact prospects and attend events year-round with fewer restrictions', division: 'both' },
+  { start: '2025-12-01', end: '2025-12-14', type: 'contact', label: 'Contact Period', division: 'both' },
+  { start: '2025-12-15', end: '2026-01-04', type: 'dead', label: 'Dead Period', notes: 'Holiday dead period', division: 'both' },
+  { start: '2026-01-05', end: '2026-04-14', type: 'contact', label: 'Contact Period', notes: 'Open contact — D3 coaches have fewer period restrictions', division: 'both' },
+  { start: '2026-04-15', end: '2026-07-31', type: 'contact', label: 'Contact Period', notes: 'Spring/summer open contact', division: 'both' },
+];
+
+// ─── NAIA ──────────────────────────────────────────────────────
+// NAIA operates under its own rules, not NCAA — fewer restrictions
+export const NAIA_PERIODS: RecruitingPeriod[] = [
+  { start: '2025-08-01', end: '2026-07-31', type: 'contact', label: 'Open Recruiting', notes: 'NAIA has no mandated dead/quiet periods — coaches may contact prospects year-round. Individual conferences may set additional rules.', division: 'both' },
+];
+
+// ─── NJCAA (Junior College) ────────────────────────────────────
+// NJCAA has its own recruiting rules separate from NCAA
+export const NJCAA_PERIODS: RecruitingPeriod[] = [
+  { start: '2025-08-01', end: '2026-07-31', type: 'contact', label: 'Open Recruiting', notes: 'NJCAA does not mandate recruiting periods like NCAA D1. Coaches may contact prospects year-round. Check with specific schools for conference rules.', division: 'both' },
+];
+
+// All divisions map
+export type DivisionKey = 'FBS' | 'FCS' | 'D2' | 'D3' | 'NAIA' | 'NJCAA';
+
+export const DIVISION_INFO: Record<DivisionKey, { label: string; subtitle: string; periods: RecruitingPeriod[] }> = {
+  FBS: { label: 'D1 FBS', subtitle: 'Division I Bowl Subdivision', periods: FBS_PERIODS },
+  FCS: { label: 'D1 FCS', subtitle: 'Division I Championship Subdivision', periods: FCS_PERIODS },
+  D2: { label: 'Division II', subtitle: 'NCAA Division II Football', periods: D2_PERIODS },
+  D3: { label: 'Division III', subtitle: 'NCAA Division III Football', periods: D3_PERIODS },
+  NAIA: { label: 'NAIA', subtitle: 'National Association of Intercollegiate Athletics', periods: NAIA_PERIODS },
+  NJCAA: { label: 'NJCAA', subtitle: 'National Junior College Athletic Association', periods: NJCAA_PERIODS },
+};
+
+export const ALL_DIVISIONS: DivisionKey[] = ['FBS', 'FCS', 'D2', 'D3', 'NAIA', 'NJCAA'];
+
 // Combined for lookup
 export const NCAA_RECRUITING_PERIODS: RecruitingPeriod[] = [...FBS_PERIODS, ...FCS_PERIODS];
 
