@@ -2,6 +2,16 @@
 
 import { useCallback, useEffect, useState } from "react";
 
+export type OffSeasonEventType = "tournament" | "showcase" | "camp" | "combine";
+
+export type ZoneCode = "south" | "southeast" | "midwest" | "northeast" | "west" | "northwest";
+
+export interface TournamentProspect {
+  player_name: string;
+  position: string | null;
+  class_year: number | null;
+}
+
 export interface PublicTournament {
   id: string;
   name: string;
@@ -15,32 +25,44 @@ export interface PublicTournament {
   registration_deadline: string | null;
   is_public: boolean;
   event_tier: string | null;
-  status: "upcoming" | "active" | "completed";
+  status: "draft" | "registration_open" | "registration_closed" | "in_progress" | "completed";
   registration_count: number;
+  event_type: OffSeasonEventType | null;
+  zone: string | null;
+  prospects: TournamentProspect[];
 }
 
-interface DateFilter {
+interface Filters {
   from: string | null;
   to: string | null;
+  eventType: OffSeasonEventType | null;
+  zone: ZoneCode | null;
 }
 
 interface UsePublicTournamentsReturn {
   tournaments: PublicTournament[];
   isLoading: boolean;
   error: Error | null;
-  filters: DateFilter;
+  filters: Filters;
   setDateFilter: (from: string | null, to: string | null) => void;
+  setEventTypeFilter: (eventType: OffSeasonEventType | null) => void;
+  setZoneFilter: (zone: ZoneCode | null) => void;
+  clearFilters: () => void;
   refetch: () => void;
 }
+
+const INITIAL_FILTERS: Filters = {
+  from: null,
+  to: null,
+  eventType: null,
+  zone: null,
+};
 
 export function usePublicTournaments(): UsePublicTournamentsReturn {
   const [tournaments, setTournaments] = useState<PublicTournament[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const [filters, setFilters] = useState<DateFilter>({
-    from: null,
-    to: null,
-  });
+  const [filters, setFilters] = useState<Filters>(INITIAL_FILTERS);
 
   const fetchTournaments = useCallback(async () => {
     setIsLoading(true);
@@ -50,6 +72,8 @@ export function usePublicTournaments(): UsePublicTournamentsReturn {
       const params = new URLSearchParams();
       if (filters.from) params.set("from", filters.from);
       if (filters.to) params.set("to", filters.to);
+      if (filters.eventType) params.set("event_type", filters.eventType);
+      if (filters.zone) params.set("zone", filters.zone);
 
       const queryString = params.toString();
       const url = `/api/tournaments/public${queryString ? `?${queryString}` : ""}`;
@@ -71,10 +95,28 @@ export function usePublicTournaments(): UsePublicTournamentsReturn {
 
   const setDateFilter = useCallback(
     (from: string | null, to: string | null) => {
-      setFilters({ from, to });
+      setFilters((prev) => ({ ...prev, from, to }));
     },
     []
   );
+
+  const setEventTypeFilter = useCallback(
+    (eventType: OffSeasonEventType | null) => {
+      setFilters((prev) => ({ ...prev, eventType }));
+    },
+    []
+  );
+
+  const setZoneFilter = useCallback(
+    (zone: ZoneCode | null) => {
+      setFilters((prev) => ({ ...prev, zone }));
+    },
+    []
+  );
+
+  const clearFilters = useCallback(() => {
+    setFilters(INITIAL_FILTERS);
+  }, []);
 
   useEffect(() => {
     fetchTournaments();
@@ -86,6 +128,9 @@ export function usePublicTournaments(): UsePublicTournamentsReturn {
     error,
     filters,
     setDateFilter,
+    setEventTypeFilter,
+    setZoneFilter,
+    clearFilters,
     refetch: fetchTournaments,
   };
 }

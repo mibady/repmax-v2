@@ -255,6 +255,9 @@ export {
 export {
   usePublicTournaments,
   type PublicTournament,
+  type OffSeasonEventType,
+  type ZoneCode,
+  type TournamentProspect,
 } from "./use-public-tournaments";
 
 // Tournament Detail
