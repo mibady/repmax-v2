@@ -61,7 +61,7 @@ export default async function AthleteCardPage({
 
   const transcripts = (documents ?? []).filter(d => d.document_type === "transcript");
   const recommendations = (documents ?? []).filter(d => d.document_type === "recommendation");
-  const otherDocs = (documents ?? []).filter(d => d.document_type === "other");
+
 
   // Record the view — do not await, do not block card render
   void Promise.resolve(
@@ -132,7 +132,6 @@ export default async function AthleteCardPage({
 
   athlete.offersCount = liveOffersCount || 0;
 
-  const hasDocuments = transcripts.length > 0 || recommendations.length > 0 || otherDocs.length > 0;
 
   return (
     <div className="bg-background-dark text-white min-h-screen flex justify-center py-8 px-4 relative overflow-x-hidden">
@@ -406,50 +405,47 @@ export default async function AthleteCardPage({
           </section>
 
           {/* Section: Documents */}
-          {hasDocuments && (
-            <section>
-              <div className="flex items-center gap-2 mb-4">
-                <span className="material-symbols-outlined text-primary text-[20px]">
-                  description
-                </span>
-                <h2 className="text-sm font-bold tracking-wider text-gray-400 uppercase">
-                  Documents
-                </h2>
+          <section>
+            <div className="flex items-center gap-2 mb-4">
+              <span className="material-symbols-outlined text-primary text-[20px]">
+                description
+              </span>
+              <h2 className="text-sm font-bold tracking-wider text-gray-400 uppercase">
+                Documents
+              </h2>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {/* Transcript box */}
+              {transcripts.length > 0 ? (
+                <a href={transcripts[0].file_url} target="_blank" rel="noopener noreferrer" className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col items-center gap-2 hover:bg-white/10 transition-colors cursor-pointer text-center">
+                  <span className="material-symbols-outlined text-primary text-[28px]">description</span>
+                  <span className="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Transcript</span>
+                </a>
+              ) : (
+                <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col items-center gap-2 opacity-40 text-center">
+                  <span className="material-symbols-outlined text-gray-500 text-[28px]">description</span>
+                  <span className="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Transcript</span>
+                </div>
+              )}
+              {/* Recommendation box */}
+              {recommendations.length > 0 ? (
+                <a href={recommendations[0].file_url} target="_blank" rel="noopener noreferrer" className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col items-center gap-2 hover:bg-white/10 transition-colors cursor-pointer text-center">
+                  <span className="material-symbols-outlined text-primary text-[28px]">mail</span>
+                  <span className="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Letter</span>
+                </a>
+              ) : (
+                <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col items-center gap-2 opacity-40 text-center">
+                  <span className="material-symbols-outlined text-gray-500 text-[28px]">mail</span>
+                  <span className="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Letter</span>
+                </div>
+              )}
+              {/* Scouting Report box */}
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col items-center gap-2 opacity-40 text-center">
+                <span className="material-symbols-outlined text-gray-500 text-[28px]">query_stats</span>
+                <span className="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Scouting Report</span>
               </div>
-              <div className="flex flex-col gap-2">
-                {transcripts.map((doc) => (
-                  <a key={doc.id} href={doc.file_url} target="_blank" rel="noopener noreferrer" className="bg-white/5 border border-white/5 rounded-2xl p-4 flex items-center gap-3 hover:bg-white/10 transition-colors cursor-pointer">
-                    <span className="material-symbols-outlined text-primary text-[24px]">description</span>
-                    <div className="flex flex-col gap-0.5 flex-1 min-w-0">
-                      <span className="text-sm text-white font-medium truncate">{doc.title}</span>
-                      <span className="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Transcript</span>
-                    </div>
-                    <span className="material-symbols-outlined text-gray-500 text-[18px]">open_in_new</span>
-                  </a>
-                ))}
-                {recommendations.map((doc) => (
-                  <a key={doc.id} href={doc.file_url} target="_blank" rel="noopener noreferrer" className="bg-white/5 border border-white/5 rounded-2xl p-4 flex items-center gap-3 hover:bg-white/10 transition-colors cursor-pointer">
-                    <span className="material-symbols-outlined text-primary text-[24px]">mail</span>
-                    <div className="flex flex-col gap-0.5 flex-1 min-w-0">
-                      <span className="text-sm text-white font-medium truncate">{doc.title}</span>
-                      <span className="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Letter</span>
-                    </div>
-                    <span className="material-symbols-outlined text-gray-500 text-[18px]">open_in_new</span>
-                  </a>
-                ))}
-                {otherDocs.map((doc) => (
-                  <a key={doc.id} href={doc.file_url} target="_blank" rel="noopener noreferrer" className="bg-white/5 border border-white/5 rounded-2xl p-4 flex items-center gap-3 hover:bg-white/10 transition-colors cursor-pointer">
-                    <span className="material-symbols-outlined text-primary text-[24px]">folder</span>
-                    <div className="flex flex-col gap-0.5 flex-1 min-w-0">
-                      <span className="text-sm text-white font-medium truncate">{doc.title}</span>
-                      <span className="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Document</span>
-                    </div>
-                    <span className="material-symbols-outlined text-gray-500 text-[18px]">open_in_new</span>
-                  </a>
-                ))}
-              </div>
-            </section>
-          )}
+            </div>
+          </section>
 
           {/* Section: Film */}
           <section>
