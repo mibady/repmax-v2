@@ -38,7 +38,6 @@ const athleteNavItems: NavItem[] = [
   { icon: 'campaign', label: 'Offers', href: '/athlete/offers' },
   { icon: 'calendar_month', label: 'Calendar', href: '/athlete/calendar' },
   { icon: 'description', label: 'Documents', href: '/athlete/documents' },
-  { icon: 'map', label: 'Zone Intel', href: '/zone/map' },
   { icon: 'trophy', label: 'Tournaments', href: '/tournaments' },
   { icon: 'mail', label: 'Messages', href: '/messages' },
 ];
