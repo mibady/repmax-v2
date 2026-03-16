@@ -87,7 +87,17 @@ export interface CoachMetrics {
   totalOffers: number;
 }
 
+export interface CoachProfile {
+  name: string;
+  school: string;
+  division: string | null;
+  conference: string | null;
+  title: string;
+  avatarUrl: string | null;
+}
+
 interface UseCoachDashboardReturn {
+  coach: CoachProfile | null;
   team: CoachTeam | null;
   roster: RosterAthlete[];
   tasks: CoachTask[];
@@ -106,6 +116,7 @@ interface UseCoachDashboardReturn {
 }
 
 export function useCoachDashboard(): UseCoachDashboardReturn {
+  const [coach, setCoach] = useState<CoachProfile | null>(null);
   const [team, setTeam] = useState<CoachTeam | null>(null);
   const [roster, setRoster] = useState<RosterAthlete[]>([]);
   const [tasks, setTasks] = useState<CoachTask[]>([]);
@@ -170,6 +181,16 @@ export function useCoachDashboard(): UseCoachDashboardReturn {
       }
 
       const data = await dashRes.json();
+      if (data.coach) {
+        setCoach({
+          name: data.coach.name || '',
+          school: data.coach.school || '',
+          division: data.coach.division || null,
+          conference: data.coach.conference || null,
+          title: data.coach.title || 'Head Coach',
+          avatarUrl: data.coach.avatarUrl || null,
+        });
+      }
       setTeam(data.coach?.team || null);
       setRoster(data.roster || []);
       setTasks(data.tasks || []);
@@ -248,6 +269,7 @@ export function useCoachDashboard(): UseCoachDashboardReturn {
   }, [fetchDashboard]);
 
   return {
+    coach,
     team,
     roster,
     tasks,
