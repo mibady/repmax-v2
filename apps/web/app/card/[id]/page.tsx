@@ -104,6 +104,7 @@ export default async function AthleteCardPage({
       sat: typedAthlete.sat_score,
       act: typedAthlete.act_score,
       ncaaCleared: typedAthlete.ncaa_cleared || false,
+      ncaaId: typedAthlete.ncaa_id,
     },
     offersCount: 0, // Will be replaced with live count below
     bio: typedAthlete.bio,
@@ -390,16 +391,9 @@ export default async function AthleteCardPage({
                 <span className="text-xs text-gray-500 font-medium">
                   NCAA ID
                 </span>
-                {athlete.academics.ncaaCleared ? (
-                  <div className="flex items-center gap-1 text-green-400">
-                    <span className="material-symbols-outlined text-[16px]">
-                      check_circle
-                    </span>
-                    <span className="text-xs font-bold">Cleared</span>
-                  </div>
-                ) : (
-                  <span className="text-xs text-gray-400">Pending</span>
-                )}
+                <span className="text-xl text-white font-bold font-mono">
+                  {athlete.academics.ncaaId || "--"}
+                </span>
               </div>
             </div>
           </section>
@@ -440,10 +434,10 @@ export default async function AthleteCardPage({
                 </div>
               )}
               {/* Scouting Report box */}
-              <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col items-center gap-2 opacity-40 text-center">
-                <span className="material-symbols-outlined text-gray-500 text-[28px]">query_stats</span>
+              <a href="#" className="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col items-center gap-2 hover:bg-white/10 transition-colors cursor-pointer text-center">
+                <span className="material-symbols-outlined text-primary text-[28px]">query_stats</span>
                 <span className="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Scouting Report</span>
-              </div>
+              </a>
             </div>
           </section>
 
