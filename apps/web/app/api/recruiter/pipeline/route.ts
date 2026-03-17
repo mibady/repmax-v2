@@ -28,7 +28,7 @@ export async function GET() {
     const { data: pipeline } = await supabase
       .from("crm_pipeline")
       .select(`
-        id, stage, priority, notes, last_touch, tags,
+        id, stage, priority, notes, last_touch, sort_order, tags,
         athlete:athletes(
           id, primary_position, class_year, zone, state, star_rating,
           repmax_score, offers_count, high_school,
@@ -36,6 +36,7 @@ export async function GET() {
         )
       `)
       .eq("recruiter_id", coachRecord.id)
+      .order("sort_order", { ascending: true })
       .order("last_touch", { ascending: false });
 
     return NextResponse.json({ pipeline: pipeline || [] });
@@ -56,11 +57,17 @@ export async function PATCH(request: NextRequest) {
     const { data: coachRecord } = await supabase.from("coaches").select("id").eq("profile_id", profile!.id).single();
 
     const body = await request.json();
-    const { pipeline_id, stage } = body;
+    const { pipeline_id, stage, notes, priority, sort_order } = body;
+
+    const updateFields: Record<string, unknown> = { last_touch: new Date().toISOString() };
+    if (stage !== undefined) updateFields.stage = stage;
+    if (notes !== undefined) updateFields.notes = notes;
+    if (priority !== undefined) updateFields.priority = priority;
+    if (sort_order !== undefined) updateFields.sort_order = sort_order;
 
     await supabase
       .from("crm_pipeline")
-      .update({ stage, last_touch: new Date().toISOString() })
+      .update(updateFields)
       .eq("id", pipeline_id)
       .eq("recruiter_id", coachRecord!.id);
 

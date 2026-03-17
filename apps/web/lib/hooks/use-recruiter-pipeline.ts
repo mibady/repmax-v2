@@ -8,6 +8,7 @@ export interface PipelineEntry {
   priority: string | null;
   notes: string | null;
   last_touch: string;
+  sort_order: number;
   tags: string[] | null;
   athlete: {
     id: string;
@@ -57,5 +58,32 @@ export function useRecruiterPipeline() {
     if (res.ok) await fetchPipeline();
   }, [fetchPipeline]);
 
-  return { pipeline, isLoading, moveToStage, addToPipeline };
+  const updateNotes = useCallback(async (pipeline_id: string, notes: string) => {
+    setPipeline(prev => prev.map(e => e.id === pipeline_id ? { ...e, notes } : e));
+    await fetch("/api/recruiter/pipeline", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pipeline_id, notes }),
+    });
+  }, []);
+
+  const updatePriority = useCallback(async (pipeline_id: string, priority: string) => {
+    setPipeline(prev => prev.map(e => e.id === pipeline_id ? { ...e, priority } : e));
+    await fetch("/api/recruiter/pipeline", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pipeline_id, priority }),
+    });
+  }, []);
+
+  const reorderInColumn = useCallback(async (pipeline_id: string, sort_order: number) => {
+    setPipeline(prev => prev.map(e => e.id === pipeline_id ? { ...e, sort_order } : e));
+    await fetch("/api/recruiter/pipeline", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pipeline_id, sort_order }),
+    });
+  }, []);
+
+  return { pipeline, isLoading, moveToStage, addToPipeline, updateNotes, updatePriority, reorderInColumn };
 }
