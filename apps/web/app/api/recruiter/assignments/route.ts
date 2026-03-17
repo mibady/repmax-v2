@@ -47,13 +47,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       .select(`
         id,
         zone,
-        assigned_at,
+        created_at,
         recruiter:coaches!recruiter_id(
           id,
-          user_id,
           school_name,
           title,
-          profile:profiles!user_id(full_name, email, avatar_url)
+          profile:profiles!profile_id(full_name, email, avatar_url)
         )
       `);
 
