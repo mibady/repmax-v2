@@ -1,9 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
-import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
+import { useParams } from 'next/navigation';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { toast } from 'sonner';
+import { useImageUpload, useDropzone } from '@/hooks/useImageUpload';
 
 const positions = [
   'Quarterback', 'Running Back', 'Wide Receiver', 'Tight End',
@@ -13,6 +15,9 @@ const positions = [
 
 const currentYear = new Date().getFullYear();
 const classYears = Array.from({ length: 5 }, (_, i) => currentYear + i);
+
+const DEFAULT_AVATAR =
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuCpFOEUz_rfWWSVZf8V8mFWpvSX0XbEvnGhfEPVxD3mYrqKA6J94E78iBa_bR1caG28xt4BCjjnmdpZ8gfWL2lqcqVjfRncL7V0MxJBJxQQLl315vZyu2h6k9L5D4eNTwqVSBKB6cji7NJkO3WIoWyV4PeQrLPwNIgFa36RdDTOOR035pkGUVlwoADx0noxixr0W7lVDf9paHXe5l3fXR4SoKoRwegF0Uejyfdrq-vkbtjy7k-3snSTmQeCc6x5BHmksTTT1Aer9Qo';
 
 interface AthleteData {
   athleteId: string;
@@ -26,7 +31,6 @@ interface AthleteData {
   state: string;
   bio: string;
   zone: string;
-  // Measurables
   height: string;
   weight: string;
   fortyYard: string;
@@ -37,7 +41,6 @@ interface AthleteData {
   wingspan: string;
   benchPress: string;
   squat: string;
-  // Academics
   gpa: string;
   weightedGpa: string;
   coreGpa: string;
@@ -46,20 +49,16 @@ interface AthleteData {
   major: string;
   academicInterest: string;
   collegePriority: string;
-  // Film
   hudlLink: string;
   youtubeLink: string;
-  // Coach assessment
   coachNotes: string;
   playerSummary: string;
   ncaaEcId: string;
   coachPhone: string;
   coachEmail: string;
-  // Contact & Social
   phone: string;
   twitter: string;
   instagram: string;
-  // Parent/Guardian
   parent1Name: string;
   parent1Phone: string;
   parent1Email: string;
@@ -67,15 +66,12 @@ interface AthleteData {
   parent2Phone: string;
   parent2Email: string;
   siblingsInfo: string;
-  // Team
   jerseyNumber: string;
   organizationName: string;
-  // Recruiting
   awards: string;
   otherSports: string;
   campsAttended: string;
   dreamSchools: string;
-  // Equipment
   cleatSize: string;
   shirtSize: string;
   pantsSize: string;
@@ -83,51 +79,49 @@ interface AthleteData {
   gloveSize: string;
 }
 
-function SectionHeader({ icon, title }: { icon: string; title: string }) {
-  return (
-    <div className="flex items-center gap-2 mb-5 px-1">
-      <span className="material-symbols-outlined text-primary text-[20px]">{icon}</span>
-      <h2 className="text-lg font-bold tracking-tight text-white">{title}</h2>
-    </div>
-  );
-}
-
-function Field({ label, value, onChange, placeholder, type = 'text', half = false }: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  placeholder?: string;
-  type?: string;
-  half?: boolean;
-}) {
-  return (
-    <div className={half ? '' : 'col-span-full sm:col-span-1'}>
-      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">{label}</label>
-      <input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-white text-sm focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder:text-slate-600"
-      />
-    </div>
-  );
-}
+const inputClass = 'w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors';
+const monoInputClass = `${inputClass} font-mono`;
+const selectClass = 'w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:border-primary focus:outline-none transition-colors';
+const labelClass = 'block text-sm text-text-grey mb-2';
+const textareaClass = `${inputClass} resize-none`;
 
 export default function CoachRosterEditPage(): React.JSX.Element {
   const params = useParams();
-  const router = useRouter();
   const id = params.id as string;
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [data, setData] = useState<AthleteData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Also load roster entry for priority/notes
   const [priority, setPriority] = useState('medium');
   const [notes, setNotes] = useState('');
   const [rosterFound, setRosterFound] = useState(false);
+
+  const { isUploading, progress, error: uploadError, upload } = useImageUpload({
+    type: 'profile',
+    onSuccess: (url) => {
+      updateField('avatarUrl', url);
+      // Also update the athlete's profile avatar_url via the API
+      fetch(`/api/coach/athlete/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ avatarUrl: url }),
+      });
+    },
+  });
+
+  const handleFileSelect = async (file: File) => {
+    try {
+      await upload(file);
+    } catch {
+      // Error handled in hook
+    }
+  };
+
+  const { isDragging, dropzoneProps } = useDropzone(handleFileSelect);
 
   useEffect(() => {
     async function load() {
@@ -137,8 +131,7 @@ export default function CoachRosterEditPage(): React.JSX.Element {
           const err = await res.json();
           throw new Error(err.error || 'Failed to load athlete');
         }
-        const athleteData = await res.json();
-        setData(athleteData);
+        setData(await res.json());
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load');
       } finally {
@@ -162,34 +155,33 @@ export default function CoachRosterEditPage(): React.JSX.Element {
       } catch { /* ignore */ }
     }
 
-    if (id) {
-      load();
-      loadRoster();
-    }
+    if (id) { load(); loadRoster(); }
   }, [id]);
 
   const updateField = useCallback((field: keyof AthleteData, value: string | number) => {
     setData(prev => prev ? { ...prev, [field]: value } : prev);
   }, []);
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    if (data) updateField(name as keyof AthleteData, value);
+  };
+
   const handleSave = async () => {
     if (!data) return;
     setIsSaving(true);
+    setSaveSuccess(false);
 
     try {
-      // Save athlete data
       const res = await fetch(`/api/coach/athlete/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-
       if (!res.ok) {
         const err = await res.json();
         throw new Error(err.error || 'Failed to save');
       }
-
-      // Save roster entry (priority/notes) if found
       if (rosterFound) {
         await fetch('/api/coach/roster', {
           method: 'PATCH',
@@ -197,8 +189,8 @@ export default function CoachRosterEditPage(): React.JSX.Element {
           body: JSON.stringify({ athlete_id: id, priority, notes }),
         });
       }
-
-      toast.success('Changes saved successfully');
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Save failed');
     } finally {
@@ -208,337 +200,534 @@ export default function CoachRosterEditPage(): React.JSX.Element {
 
   if (isLoading) {
     return (
-      <div className="flex-1 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="size-12 rounded-full border-4 border-primary border-t-transparent animate-spin" />
-          <p className="text-slate-400">Loading athlete...</p>
-        </div>
+      <div className="flex-1 flex items-center justify-center p-8">
+        <div className="size-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   if (error || !data) {
     return (
-      <div className="flex-1 flex items-center justify-center">
-        <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-6 max-w-md text-center">
-          <span className="material-symbols-outlined text-red-400 text-4xl mb-3">error</span>
-          <h3 className="text-white font-semibold mb-2">Failed to load athlete</h3>
-          <p className="text-slate-400 text-sm">{error || 'Athlete not found'}</p>
+      <div className="flex-1 flex items-center justify-center p-8">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">{error || 'Athlete not found'}</p>
+          <Link href="/coach/roster" className="text-primary hover:underline">Return to roster</Link>
         </div>
       </div>
     );
   }
 
-  const initials = data.name ? data.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : '?';
+  const profileImage = data.avatarUrl || DEFAULT_AVATAR;
+  const profileCompletion = Math.round(
+    (Object.values(data).filter(v => v !== '' && v !== null && v !== 0).length / Object.keys(data).length) * 100
+  );
 
   return (
-    <div className="h-full overflow-y-auto pb-32">
-      <div className="max-w-4xl mx-auto px-6 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <Link href={`/coach/roster/${id}`} className="flex items-center gap-1 text-slate-400 hover:text-white text-sm transition-colors">
-            <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-            Back to Athlete
-          </Link>
-          <Link href={`/card/${id}`} target="_blank" className="flex items-center gap-1.5 text-primary text-sm hover:underline">
-            <span className="material-symbols-outlined text-[16px]">open_in_new</span>
-            View Public Card
-          </Link>
-        </div>
+    <div className="p-8">
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/gif"
+        className="hidden"
+        onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileSelect(f); }}
+      />
 
-        {/* Title + Avatar */}
-        <div className="flex items-center gap-5 mb-8">
-          <div className="size-16 rounded-full bg-[#2A2A2E] border-2 border-primary/30 flex items-center justify-center overflow-hidden shrink-0">
-            {data.avatarUrl ? (
-              <img src={data.avatarUrl} alt={data.name} className="size-full object-cover" />
-            ) : (
-              <span className="text-xl font-bold text-white/40">{initials}</span>
-            )}
-          </div>
-          <div>
+      {/* Page Header */}
+      <div className="max-w-7xl mx-auto mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <Link href={`/coach/roster/${id}`} className="flex items-center gap-2 text-text-grey hover:text-white transition-colors">
+              <span className="material-symbols-outlined">arrow_back</span>
+            </Link>
             <h1 className="text-2xl font-bold text-white">Edit Player Card</h1>
-            <p className="text-slate-400 text-sm">{data.name} &middot; {data.position || 'No position'} &middot; Class of {data.classYear}</p>
           </div>
-        </div>
-
-        <div className="flex flex-col gap-8">
-          {/* Basic Information */}
-          <section className="bg-[#1A1A1D] rounded-xl border border-white/10 p-6">
-            <SectionHeader icon="person" title="Basic Information" />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Field label="Full Name" value={data.name} onChange={v => updateField('name', v)} placeholder="Athlete name" />
-              <Field label="Jersey #" value={data.jerseyNumber} onChange={v => updateField('jerseyNumber', v)} placeholder="#" />
-              <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Primary Position</label>
-                <select
-                  value={data.position}
-                  onChange={e => updateField('position', e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-white text-sm focus:border-primary focus:ring-1 focus:ring-primary"
-                >
-                  <option value="">Select position</option>
-                  {positions.map(p => <option key={p} value={p}>{p}</option>)}
-                </select>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="h-2 w-24 rounded-full bg-white/10 overflow-hidden">
+                <div className="h-full bg-primary rounded-full transition-all duration-300" style={{ width: `${profileCompletion}%` }} />
               </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Secondary Position</label>
-                <select
-                  value={data.secondaryPosition}
-                  onChange={e => updateField('secondaryPosition', e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-white text-sm focus:border-primary focus:ring-1 focus:ring-primary"
-                >
-                  <option value="">None</option>
-                  {positions.map(p => <option key={p} value={p}>{p}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Class Year</label>
-                <select
-                  value={data.classYear}
-                  onChange={e => updateField('classYear', parseInt(e.target.value))}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-white text-sm focus:border-primary focus:ring-1 focus:ring-primary"
-                >
-                  {classYears.map(y => <option key={y} value={y}>{y}</option>)}
-                </select>
-              </div>
-              <Field label="High School" value={data.highSchool} onChange={v => updateField('highSchool', v)} placeholder="School name" />
-              <Field label="City" value={data.city} onChange={v => updateField('city', v)} placeholder="City" />
-              <Field label="State" value={data.state} onChange={v => updateField('state', v)} placeholder="CA" />
-              <div className="col-span-full">
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Bio</label>
-                <textarea
-                  value={data.bio}
-                  onChange={e => updateField('bio', e.target.value)}
-                  placeholder="Brief bio about the athlete..."
-                  rows={3}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-white text-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-slate-600 resize-none"
-                />
-              </div>
+              <span className="text-sm text-text-grey">{profileCompletion}% Complete</span>
             </div>
-          </section>
-
-          {/* Measurables */}
-          <section className="bg-[#1A1A1D] rounded-xl border border-white/10 p-6">
-            <SectionHeader icon="straighten" title="Measurables" />
-            <p className="text-xs text-yellow-500/80 mb-4 flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-[14px]">verified</span>
-              Coach-verified data takes priority over athlete-entered values
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-              <Field label="Height" value={data.height} onChange={v => updateField('height', v)} placeholder={`6'1"`} />
-              <Field label="Weight (lbs)" value={data.weight} onChange={v => updateField('weight', v)} placeholder="185" />
-              <Field label="40-Yard (s)" value={data.fortyYard} onChange={v => updateField('fortyYard', v)} placeholder="4.60" />
-              <Field label="10Y Split (s)" value={data.tenYardSplit} onChange={v => updateField('tenYardSplit', v)} placeholder="1.55" />
-              <Field label="5-10-5 (s)" value={data.fiveTenFive} onChange={v => updateField('fiveTenFive', v)} placeholder="4.30" />
-              <Field label="Broad Jump (in)" value={data.broadJump} onChange={v => updateField('broadJump', v)} placeholder="120" />
-              <Field label="Vertical (in)" value={data.vertical} onChange={v => updateField('vertical', v)} placeholder="36" />
-              <Field label="Wingspan (in)" value={data.wingspan} onChange={v => updateField('wingspan', v)} placeholder="74" />
-              <Field label="Bench (lbs)" value={data.benchPress} onChange={v => updateField('benchPress', v)} placeholder="225" />
-              <Field label="Squat (lbs)" value={data.squat} onChange={v => updateField('squat', v)} placeholder="405" />
-            </div>
-          </section>
-
-          {/* Academics */}
-          <section className="bg-[#1A1A1D] rounded-xl border border-white/10 p-6">
-            <SectionHeader icon="school" title="Academics" />
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              <Field label="GPA" value={data.gpa} onChange={v => updateField('gpa', v)} placeholder="3.50" />
-              <Field label="Weighted GPA" value={data.weightedGpa} onChange={v => updateField('weightedGpa', v)} placeholder="4.10" />
-              <Field label="Core GPA" value={data.coreGpa} onChange={v => updateField('coreGpa', v)} placeholder="3.40" />
-              <Field label="SAT" value={data.sat} onChange={v => updateField('sat', v)} placeholder="1200" />
-              <Field label="ACT" value={data.act} onChange={v => updateField('act', v)} placeholder="28" />
-              <Field label="Desired Major" value={data.major} onChange={v => updateField('major', v)} placeholder="Business" />
-              <Field label="Academic Interest" value={data.academicInterest} onChange={v => updateField('academicInterest', v)} placeholder="Engineering, Pre-Med..." />
-              <Field label="College Priority" value={data.collegePriority} onChange={v => updateField('collegePriority', v)} placeholder="Academics, athletics..." />
-            </div>
-          </section>
-
-          {/* Film */}
-          <section className="bg-[#1A1A1D] rounded-xl border border-white/10 p-6">
-            <SectionHeader icon="smart_display" title="Film & Highlights" />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Field label="Hudl Link" value={data.hudlLink} onChange={v => updateField('hudlLink', v)} placeholder="https://www.hudl.com/..." />
-              <Field label="YouTube Link" value={data.youtubeLink} onChange={v => updateField('youtubeLink', v)} placeholder="https://youtube.com/..." />
-            </div>
-          </section>
-
-          {/* Coach Assessment */}
-          <section className="bg-[#1A1A1D] rounded-xl border border-white/10 p-6">
-            <SectionHeader icon="sports" title="Coach Assessment" />
-            <div className="flex flex-col gap-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Coach Notes</label>
-                <textarea
-                  value={data.coachNotes}
-                  onChange={e => updateField('coachNotes', e.target.value)}
-                  placeholder="Your observations, strengths, areas for improvement..."
-                  rows={4}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-white text-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-slate-600 resize-none"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Player Summary</label>
-                <textarea
-                  value={data.playerSummary}
-                  onChange={e => updateField('playerSummary', e.target.value)}
-                  placeholder="Recruiting summary visible on the player card..."
-                  rows={4}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-white text-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-slate-600 resize-none"
-                />
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Field label="NCAA ID" value={data.ncaaEcId} onChange={v => updateField('ncaaEcId', v)} placeholder="NCAA eligibility center ID" />
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Roster Priority</label>
-                  <select
-                    value={priority}
-                    onChange={e => setPriority(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-white text-sm focus:border-primary focus:ring-1 focus:ring-primary"
-                  >
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                    <option value="top">Top</option>
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Roster Notes</label>
-                <textarea
-                  value={notes}
-                  onChange={e => setNotes(e.target.value)}
-                  placeholder="Internal notes about this roster entry..."
-                  rows={3}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-white text-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-slate-600 resize-none"
-                />
-              </div>
-            </div>
-          </section>
-
-          {/* Coach Contact */}
-          <section className="bg-[#1A1A1D] rounded-xl border border-white/10 p-6">
-            <SectionHeader icon="call" title="Coach Contact (shown on card)" />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Field label="Coach Phone" value={data.coachPhone} onChange={v => updateField('coachPhone', v)} placeholder="(555) 123-4567" />
-              <Field label="Coach Email" value={data.coachEmail} onChange={v => updateField('coachEmail', v)} placeholder="coach@school.edu" />
-            </div>
-          </section>
-
-          {/* Athlete Contact & Social */}
-          <section className="bg-[#1A1A1D] rounded-xl border border-white/10 p-6">
-            <SectionHeader icon="contacts" title="Athlete Contact & Social" />
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <Field label="Phone" value={data.phone} onChange={v => updateField('phone', v)} placeholder="(555) 123-4567" />
-              <Field label="Twitter / X" value={data.twitter} onChange={v => updateField('twitter', v)} placeholder="@handle" />
-              <Field label="Instagram" value={data.instagram} onChange={v => updateField('instagram', v)} placeholder="@handle" />
-            </div>
-          </section>
-
-          {/* Parent/Guardian Information */}
-          <section className="bg-[#1A1A1D] rounded-xl border border-white/10 p-6">
-            <SectionHeader icon="family_restroom" title="Parent/Guardian Information" />
-            <div className="flex flex-col gap-5">
-              <div>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Parent/Guardian 1</p>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <Field label="Name" value={data.parent1Name} onChange={v => updateField('parent1Name', v)} placeholder="Full name" />
-                  <Field label="Phone" value={data.parent1Phone} onChange={v => updateField('parent1Phone', v)} placeholder="(555) 123-4567" />
-                  <Field label="Email" value={data.parent1Email} onChange={v => updateField('parent1Email', v)} placeholder="parent@email.com" />
-                </div>
-              </div>
-              <div>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Parent/Guardian 2</p>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <Field label="Name" value={data.parent2Name} onChange={v => updateField('parent2Name', v)} placeholder="Full name" />
-                  <Field label="Phone" value={data.parent2Phone} onChange={v => updateField('parent2Phone', v)} placeholder="(555) 123-4567" />
-                  <Field label="Email" value={data.parent2Email} onChange={v => updateField('parent2Email', v)} placeholder="parent@email.com" />
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Siblings / Family Info</label>
-                <textarea
-                  value={data.siblingsInfo}
-                  onChange={e => updateField('siblingsInfo', e.target.value)}
-                  placeholder="Siblings, family athletic background..."
-                  rows={2}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-white text-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-slate-600 resize-none"
-                />
-              </div>
-            </div>
-          </section>
-
-          {/* Team Info */}
-          <section className="bg-[#1A1A1D] rounded-xl border border-white/10 p-6">
-            <SectionHeader icon="groups" title="Team / Organization" />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Field label="Organization Name" value={data.organizationName} onChange={v => updateField('organizationName', v)} placeholder="7v7 club, travel team..." />
-              <Field label="Jersey #" value={data.jerseyNumber} onChange={v => updateField('jerseyNumber', v)} placeholder="#" />
-            </div>
-          </section>
-
-          {/* Recruiting */}
-          <section className="bg-[#1A1A1D] rounded-xl border border-white/10 p-6">
-            <SectionHeader icon="emoji_events" title="Recruiting & Awards" />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="col-span-full">
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Awards & Honors</label>
-                <textarea
-                  value={data.awards}
-                  onChange={e => updateField('awards', e.target.value)}
-                  placeholder="All-State, Team MVP, Camp awards..."
-                  rows={2}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-white text-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-slate-600 resize-none"
-                />
-              </div>
-              <Field label="Other Sports" value={data.otherSports} onChange={v => updateField('otherSports', v)} placeholder="Track, Basketball..." />
-              <Field label="Camps Attended" value={data.campsAttended} onChange={v => updateField('campsAttended', v)} placeholder="Nike Opening, Under Armour..." />
-              <div className="col-span-full">
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Dream Schools</label>
-                <textarea
-                  value={data.dreamSchools}
-                  onChange={e => updateField('dreamSchools', e.target.value)}
-                  placeholder="Top schools the athlete is interested in..."
-                  rows={2}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-white text-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-slate-600 resize-none"
-                />
-              </div>
-            </div>
-          </section>
-
-          {/* Equipment Sizes */}
-          <section className="bg-[#1A1A1D] rounded-xl border border-white/10 p-6">
-            <SectionHeader icon="checkroom" title="Equipment Sizes" />
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-              <Field label="Cleats" value={data.cleatSize} onChange={v => updateField('cleatSize', v)} placeholder="11" />
-              <Field label="Shirt" value={data.shirtSize} onChange={v => updateField('shirtSize', v)} placeholder="L" />
-              <Field label="Pants" value={data.pantsSize} onChange={v => updateField('pantsSize', v)} placeholder="34" />
-              <Field label="Helmet" value={data.helmetSize} onChange={v => updateField('helmetSize', v)} placeholder="L" />
-              <Field label="Gloves" value={data.gloveSize} onChange={v => updateField('gloveSize', v)} placeholder="L" />
-            </div>
-          </section>
-        </div>
-      </div>
-
-      {/* Fixed Bottom Action Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#0a0a0a]/90 backdrop-blur-xl border-t border-white/10 p-4 md:pl-72 flex justify-center">
-        <div className="max-w-4xl w-full flex items-center justify-between px-6">
-          <p className="text-sm text-slate-500 hidden md:block">
-            Editing {data.name}&apos;s player card
-          </p>
-          <div className="flex items-center gap-4 w-full md:w-auto">
-            <button
-              onClick={() => router.back()}
-              className="flex-1 md:flex-none px-6 py-2.5 rounded-lg text-sm font-bold border border-white/10 text-white hover:bg-white/5 transition-colors"
-            >
-              Cancel
-            </button>
+            {saveSuccess && (
+              <span className="text-sm text-green-500 flex items-center gap-1">
+                <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                Saved!
+              </span>
+            )}
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="flex-1 md:flex-none px-8 py-2.5 rounded-lg text-sm font-black bg-primary text-black hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 uppercase tracking-widest disabled:opacity-50 flex items-center justify-center gap-2"
+              className="px-4 py-2 rounded-lg bg-primary text-black font-bold text-sm hover:bg-primary-hover transition-colors disabled:opacity-50 flex items-center gap-2"
             >
-              {isSaving && <div className="size-4 rounded-full border-2 border-black border-t-transparent animate-spin" />}
+              {isSaving && <div className="size-4 border-2 border-black border-t-transparent rounded-full animate-spin" />}
               {isSaving ? 'Saving...' : 'Save Changes'}
             </button>
+            <Link
+              href={`/card/${id}`}
+              target="_blank"
+              className="px-4 py-2 rounded-lg bg-white/10 text-white font-bold text-sm hover:bg-white/20 transition-colors flex items-center gap-2"
+            >
+              <span className="material-symbols-outlined text-[16px]">open_in_new</span>
+              View Card
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Form Sections */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Profile Photo */}
+            <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">photo_camera</span>
+                Profile Photo
+              </h2>
+              <div className="flex items-start gap-6">
+                <div className="relative">
+                  <div
+                    {...dropzoneProps}
+                    className={`h-32 w-32 rounded-xl border-2 border-dashed flex items-center justify-center overflow-hidden transition-colors ${
+                      isDragging ? 'border-primary bg-primary/10' : 'border-white/20 bg-white/5'
+                    } ${isUploading ? 'opacity-50' : ''}`}
+                  >
+                    {isUploading ? (
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="h-8 w-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                        <span className="text-xs text-text-grey">{progress}%</span>
+                      </div>
+                    ) : (
+                      <Image src={profileImage} alt="Profile" width={128} height={128} className="object-cover w-full h-full" />
+                    )}
+                  </div>
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploading}
+                    className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full bg-primary text-black flex items-center justify-center shadow-lg hover:bg-primary-hover transition-colors disabled:opacity-50"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">edit</span>
+                  </button>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm text-text-grey mb-3">
+                    Upload an action shot or headshot. This will be the main image on the card.
+                  </p>
+                  {uploadError && <p className="text-sm text-red-400 mb-3">{uploadError}</p>}
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploading}
+                      className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-sm font-medium hover:bg-white/10 transition-colors disabled:opacity-50"
+                    >
+                      {isUploading ? 'Uploading...' : 'Upload Photo'}
+                    </button>
+                  </div>
+                  <p className="text-xs text-text-grey mt-2">Drag and drop or click to upload. Max 5MB. JPEG, PNG, WebP, or GIF.</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 pt-6 border-t border-white/5">
+                <div>
+                  <label className={labelClass}>Organization/Team Name</label>
+                  <input type="text" name="organizationName" value={data.organizationName} onChange={handleChange} placeholder="SoCal Elite 7v7" className={inputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Jersey Number</label>
+                  <input type="text" name="jerseyNumber" value={data.jerseyNumber} onChange={handleChange} placeholder="#7" className={inputClass} />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div>
+                  <label className={labelClass}>Twitter</label>
+                  <input type="text" name="twitter" value={data.twitter} onChange={handleChange} placeholder="@handle" className={inputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Instagram</label>
+                  <input type="text" name="instagram" value={data.instagram} onChange={handleChange} placeholder="@handle" className={inputClass} />
+                </div>
+              </div>
+            </section>
+
+            {/* Basic Information */}
+            <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">person</span>
+                Basic Information
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className={labelClass}>Full Name</label>
+                  <input type="text" name="name" value={data.name} onChange={handleChange} className={inputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Primary Position</label>
+                  <select name="position" value={data.position} onChange={handleChange} className={selectClass}>
+                    <option value="" className="bg-surface-dark">Select position</option>
+                    {positions.map(pos => <option key={pos} value={pos} className="bg-surface-dark">{pos}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass}>Secondary Position</label>
+                  <select name="secondaryPosition" value={data.secondaryPosition} onChange={handleChange} className={selectClass}>
+                    <option value="" className="bg-surface-dark">None</option>
+                    {positions.map(pos => <option key={pos} value={pos} className="bg-surface-dark">{pos}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass}>Class Year</label>
+                  <select name="classYear" value={data.classYear} onChange={(e) => updateField('classYear', parseInt(e.target.value))} className={selectClass}>
+                    {classYears.map(y => <option key={y} value={y} className="bg-surface-dark">{y}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass}>High School</label>
+                  <input type="text" name="highSchool" value={data.highSchool} onChange={handleChange} className={inputClass} />
+                </div>
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <label className={labelClass}>City</label>
+                    <input type="text" name="city" value={data.city} onChange={handleChange} className={inputClass} />
+                  </div>
+                  <div className="w-24">
+                    <label className={labelClass}>State</label>
+                    <input type="text" name="state" value={data.state} onChange={handleChange} maxLength={2} className={`${inputClass} uppercase`} />
+                  </div>
+                </div>
+                <div className="md:col-span-2">
+                  <label className={labelClass}>Bio</label>
+                  <textarea name="bio" value={data.bio} onChange={handleChange} maxLength={280} rows={3} placeholder="Tell coaches about this athlete..." className={textareaClass} />
+                  <p className="text-xs text-text-grey mt-1">{data.bio.length}/280 characters</p>
+                </div>
+              </div>
+
+              {/* Parent/Guardian subsection */}
+              <div className="border-t border-white/5 mt-6 pt-6">
+                <h3 className="text-sm font-semibold text-text-grey uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary text-[18px]">family_restroom</span>
+                  Parent/Guardian Information
+                </h3>
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm text-text-grey mb-2 font-medium">Parent/Guardian 1</p>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className={labelClass}>Name</label>
+                        <input type="text" name="parent1Name" value={data.parent1Name} onChange={handleChange} className={inputClass} />
+                      </div>
+                      <div>
+                        <label className={labelClass}>Phone</label>
+                        <input type="tel" name="parent1Phone" value={data.parent1Phone} onChange={handleChange} placeholder="(555) 123-4567" className={inputClass} />
+                      </div>
+                      <div>
+                        <label className={labelClass}>Email</label>
+                        <input type="email" name="parent1Email" value={data.parent1Email} onChange={handleChange} placeholder="parent@email.com" className={inputClass} />
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm text-text-grey mb-2 font-medium">Parent/Guardian 2</p>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className={labelClass}>Name</label>
+                        <input type="text" name="parent2Name" value={data.parent2Name} onChange={handleChange} className={inputClass} />
+                      </div>
+                      <div>
+                        <label className={labelClass}>Phone</label>
+                        <input type="tel" name="parent2Phone" value={data.parent2Phone} onChange={handleChange} placeholder="(555) 123-4567" className={inputClass} />
+                      </div>
+                      <div>
+                        <label className={labelClass}>Email</label>
+                        <input type="email" name="parent2Email" value={data.parent2Email} onChange={handleChange} placeholder="parent@email.com" className={inputClass} />
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Siblings</label>
+                    <textarea name="siblingsInfo" value={data.siblingsInfo} onChange={handleChange} rows={2} placeholder="Names, ages, schools, sports..." className={textareaClass} />
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Measurables */}
+            <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">straighten</span>
+                Measurables
+              </h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                  <label className={labelClass}>Height</label>
+                  <input type="text" name="height" value={data.height} onChange={handleChange} placeholder={`6'1"`} className={monoInputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Weight (lbs)</label>
+                  <input type="text" name="weight" value={data.weight} onChange={handleChange} placeholder="185" className={monoInputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Wingspan (in)</label>
+                  <input type="text" name="wingspan" value={data.wingspan} onChange={handleChange} placeholder="74" className={monoInputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>40-Yard (s)</label>
+                  <input type="text" name="fortyYard" value={data.fortyYard} onChange={handleChange} placeholder="4.52" className={`${monoInputClass} text-primary`} />
+                </div>
+                <div>
+                  <label className={labelClass}>10Y Split (s)</label>
+                  <input type="text" name="tenYardSplit" value={data.tenYardSplit} onChange={handleChange} placeholder="1.55" className={monoInputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>5-10-5 (s)</label>
+                  <input type="text" name="fiveTenFive" value={data.fiveTenFive} onChange={handleChange} placeholder="4.35" className={monoInputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Broad Jump (in)</label>
+                  <input type="text" name="broadJump" value={data.broadJump} onChange={handleChange} placeholder="120" className={monoInputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Bench Press (lbs)</label>
+                  <input type="text" name="benchPress" value={data.benchPress} onChange={handleChange} placeholder="225" className={monoInputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Squat (lbs)</label>
+                  <input type="text" name="squat" value={data.squat} onChange={handleChange} placeholder="405" className={monoInputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Vertical (in)</label>
+                  <input type="text" name="vertical" value={data.vertical} onChange={handleChange} placeholder="36" className={monoInputClass} />
+                </div>
+              </div>
+
+              {/* Equipment Sizes subsection */}
+              <div className="border-t border-white/5 mt-6 pt-6">
+                <h3 className="text-sm font-semibold text-text-grey uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary text-[18px]">checkroom</span>
+                  Equipment Sizes
+                </h3>
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                  <div>
+                    <label className={labelClass}>Cleat Size</label>
+                    <input type="text" name="cleatSize" value={data.cleatSize} onChange={handleChange} placeholder="10.5" className={monoInputClass} />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Shirt</label>
+                    <select name="shirtSize" value={data.shirtSize} onChange={handleChange} className={selectClass}>
+                      <option value="" className="bg-surface-dark">-</option>
+                      {['S', 'M', 'L', 'XL', 'XXL', 'XXXL'].map(s => <option key={s} value={s} className="bg-surface-dark">{s}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Pants</label>
+                    <select name="pantsSize" value={data.pantsSize} onChange={handleChange} className={selectClass}>
+                      <option value="" className="bg-surface-dark">-</option>
+                      {['S', 'M', 'L', 'XL', 'XXL', 'XXXL'].map(s => <option key={s} value={s} className="bg-surface-dark">{s}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Helmet</label>
+                    <select name="helmetSize" value={data.helmetSize} onChange={handleChange} className={selectClass}>
+                      <option value="" className="bg-surface-dark">-</option>
+                      {['S', 'M', 'L', 'XL', 'XXL'].map(s => <option key={s} value={s} className="bg-surface-dark">{s}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Gloves</label>
+                    <select name="gloveSize" value={data.gloveSize} onChange={handleChange} className={selectClass}>
+                      <option value="" className="bg-surface-dark">-</option>
+                      {['S', 'M', 'L', 'XL', 'XXL'].map(s => <option key={s} value={s} className="bg-surface-dark">{s}</option>)}
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Academics & Recruiting */}
+            <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">school</span>
+                Academics & Recruiting
+              </h2>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div>
+                    <label className={labelClass}>GPA</label>
+                    <input type="text" name="gpa" value={data.gpa} onChange={handleChange} placeholder="3.8" className={monoInputClass} />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Weighted GPA</label>
+                    <input type="text" name="weightedGpa" value={data.weightedGpa} onChange={handleChange} placeholder="4.2" className={monoInputClass} />
+                  </div>
+                  <div>
+                    <label className={labelClass}>SAT Score</label>
+                    <input type="text" name="sat" value={data.sat} onChange={handleChange} placeholder="1280" className={monoInputClass} />
+                  </div>
+                  <div>
+                    <label className={labelClass}>ACT Score</label>
+                    <input type="text" name="act" value={data.act} onChange={handleChange} placeholder="28" className={monoInputClass} />
+                  </div>
+                </div>
+                <div>
+                  <label className={labelClass}>Academic Interest</label>
+                  <input type="text" name="academicInterest" value={data.academicInterest} onChange={handleChange} placeholder="Business, Engineering, Undecided..." className={inputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>College Priority</label>
+                  <textarea name="collegePriority" value={data.collegePriority} onChange={handleChange} rows={2} placeholder="What's important when selecting a college?" className={textareaClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Awards</label>
+                  <textarea name="awards" value={data.awards} onChange={handleChange} rows={2} placeholder="Academic and sports awards..." className={textareaClass} />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className={labelClass}>Other Sports</label>
+                    <input type="text" name="otherSports" value={data.otherSports} onChange={handleChange} placeholder="Track, Basketball..." className={inputClass} />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Dream Schools</label>
+                    <input type="text" name="dreamSchools" value={data.dreamSchools} onChange={handleChange} placeholder="USC, Oregon, UCLA..." className={inputClass} />
+                  </div>
+                </div>
+                <div>
+                  <label className={labelClass}>Camps Attended</label>
+                  <textarea name="campsAttended" value={data.campsAttended} onChange={handleChange} rows={2} placeholder="Nike Elite 11, Rivals Camp..." className={textareaClass} />
+                </div>
+              </div>
+            </section>
+
+            {/* Film & Highlights */}
+            <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">smart_display</span>
+                Film & Highlights
+              </h2>
+              <div className="space-y-4">
+                <div>
+                  <label className={labelClass}>Hudl Profile Link</label>
+                  <input type="url" name="hudlLink" value={data.hudlLink} onChange={handleChange} placeholder="https://www.hudl.com/profile/..." className={inputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>YouTube Highlight Reel</label>
+                  <input type="url" name="youtubeLink" value={data.youtubeLink} onChange={handleChange} placeholder="https://www.youtube.com/watch?v=..." className={inputClass} />
+                </div>
+              </div>
+            </section>
+
+            {/* Coach Notes & Summary */}
+            <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">sports</span>
+                Coach Notes & Summary
+              </h2>
+              <div className="space-y-4">
+                <div>
+                  <label className={labelClass}>Coach Notes</label>
+                  <textarea name="coachNotes" value={data.coachNotes} onChange={handleChange} rows={3} placeholder="Coach intangibles, work ethic, leadership..." className={textareaClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Player Summary</label>
+                  <textarea name="playerSummary" value={data.playerSummary} onChange={handleChange} rows={3} placeholder="Player summary and best program fit..." className={textareaClass} />
+                </div>
+              </div>
+            </section>
+
+            {/* NCAA ID / Recruiting # */}
+            <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">verified</span>
+                NCAA ID / Recruiting #
+              </h2>
+              <p className="text-xs text-text-grey mb-4">If applicable</p>
+              <div>
+                <label className={labelClass}>NCAA ID</label>
+                <input type="text" name="ncaaEcId" value={data.ncaaEcId} onChange={handleChange} placeholder="e.g. 2503129456" className={inputClass} />
+              </div>
+            </section>
+
+            {/* HS Coach Contact */}
+            <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">contact_phone</span>
+                HS Coach Contact
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className={labelClass}>Coach Phone</label>
+                  <input type="tel" name="coachPhone" value={data.coachPhone} onChange={handleChange} placeholder="(555) 123-4567" className={inputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Coach Email</label>
+                  <input type="email" name="coachEmail" value={data.coachEmail} onChange={handleChange} placeholder="coach@school.edu" className={inputClass} />
+                </div>
+              </div>
+            </section>
+
+            {/* Roster Management (Coach-only) */}
+            <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">assignment</span>
+                Roster Management
+              </h2>
+              <div className="space-y-4">
+                <div>
+                  <label className={labelClass}>Roster Priority</label>
+                  <select value={priority} onChange={e => setPriority(e.target.value)} className={selectClass}>
+                    <option value="low" className="bg-surface-dark">Low</option>
+                    <option value="medium" className="bg-surface-dark">Medium</option>
+                    <option value="high" className="bg-surface-dark">High</option>
+                    <option value="top" className="bg-surface-dark">Top</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass}>Internal Notes</label>
+                  <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={3} placeholder="Internal roster notes (not visible to athlete)..." className={textareaClass} />
+                </div>
+              </div>
+            </section>
+          </div>
+
+          {/* Live Preview */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-24">
+              <h3 className="text-sm font-medium text-text-grey mb-4">LIVE PREVIEW</h3>
+              <div className="rounded-2xl bg-[#0A0A0A] border border-white/10 overflow-hidden shadow-2xl max-h-[80vh] overflow-y-auto">
+                {/* Hero Image */}
+                <div className="relative aspect-[4/3] bg-gradient-to-b from-[#1a1a1a] to-[#0A0A0A] overflow-hidden">
+                  <Image src={profileImage} alt="Preview" fill className="object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
+                </div>
+                {/* Identity */}
+                <div className="p-4 -mt-8 relative z-10">
+                  <h4 className="text-xl font-bold text-white">{data.name || 'Athlete Name'}</h4>
+                  <p className="text-sm text-text-grey">
+                    {[data.highSchool, data.city, data.state].filter(Boolean).join(', ')}
+                  </p>
+                  <div className="flex gap-2 mt-3">
+                    {data.position && (
+                      <span className="px-3 py-1 rounded-full bg-primary/20 border border-primary/30 text-primary text-xs font-bold">{data.position}</span>
+                    )}
+                    {data.secondaryPosition && (
+                      <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-300 text-xs font-bold">{data.secondaryPosition}</span>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between mt-4 border-y border-white/5 py-3 text-xs">
+                    <div className="text-center">
+                      <p className="text-text-grey uppercase tracking-wider">Class</p>
+                      <p className="text-white font-bold mt-1">{data.classYear}</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-text-grey uppercase tracking-wider">GPA</p>
+                      <p className="text-white font-bold font-mono mt-1">{data.gpa || 'N/A'}</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-text-grey uppercase tracking-wider">40-Yard</p>
+                      <p className="text-primary font-bold font-mono mt-1">{data.fortyYard ? `${data.fortyYard}s` : 'N/A'}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
