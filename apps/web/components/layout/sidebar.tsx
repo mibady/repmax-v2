@@ -49,6 +49,7 @@ const athleteSettingsItems: NavItem[] = [
 
 const recruiterNavItems: NavItem[] = [
   { icon: 'view_kanban', label: 'Pipeline', href: '/recruiter/pipeline' },
+  { icon: 'groups', label: 'Prospects', href: '/recruiter/prospects' },
   { icon: 'compare', label: 'Compare', href: '/recruiter/compare' },
   { icon: 'forum', label: 'Communication Log', href: '/recruiter/communications' },
   { icon: 'calendar_month', label: 'Campus Visits', href: '/recruiter/visits' },

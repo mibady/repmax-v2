@@ -2,9 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { Loader2, X } from 'lucide-react';
-import { useCommunicationLogs, type CommunicationLog, useSubscription } from '@/lib/hooks';
-import { getRecruiterTier } from '@/lib/utils/subscription-tier';
-import { UpgradeCTA } from '@/components/upgrade-cta';
+import { useCommunicationLogs, type CommunicationLog } from '@/lib/hooks';
 
 function getTypeStyles(type: CommunicationLog['type']) {
   switch (type) {
@@ -45,9 +43,6 @@ export default function CommunicationsPage() {
     logCommunication,
   } = useCommunicationLogs();
 
-  const { subscription, isLoading: subLoading } = useSubscription();
-  const tier = getRecruiterTier(subscription?.plan?.slug);
-
   const [searchInput, setSearchInput] = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
@@ -64,7 +59,7 @@ export default function CommunicationsPage() {
   );
 
   // Show loading while subscription or logs are being fetched
-  if (subLoading || isLoading) {
+  if (isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -72,17 +67,6 @@ export default function CommunicationsPage() {
     );
   }
 
-  // Free tier: show upgrade CTA instead of communication hub
-  if (tier === 'free') {
-    return (
-      <UpgradeCTA
-        icon="chat"
-        title="Unlock Communication Hub"
-        description="Upgrade to Pro to track and log all prospect communications — calls, emails, visits, and messages — in one place."
-        ctaText="Upgrade to Pro"
-      />
-    );
-  }
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -130,9 +114,7 @@ export default function CommunicationsPage() {
           <p className="text-[#c9bc92] text-base font-normal leading-normal max-w-2xl">Track and manage all prospect interactions across the recruiting team.</p>
         </div>
         <div className="flex items-center gap-3">
-          {tier === 'pro' && (
-            <span className="text-xs text-gray-400 font-mono">50 messages/month</span>
-          )}
+          <span className="text-xs text-gray-400 font-mono">50 messages/month</span>
           <button
             onClick={() => setIsModalOpen(true)}
             className="flex items-center justify-center overflow-hidden rounded-lg h-10 px-5 bg-[#D4AF37] hover:bg-yellow-400 text-[#221e11] gap-2 text-sm font-bold leading-normal tracking-[0.015em] transition-all shadow-lg shadow-yellow-900/20 whitespace-nowrap w-fit"

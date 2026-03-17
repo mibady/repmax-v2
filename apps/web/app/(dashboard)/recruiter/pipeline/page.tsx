@@ -2,8 +2,7 @@
 
 import { useState, useMemo, useCallback, useRef } from "react";
 import Image from "next/image";
-import { useRecruiterPipeline, type CrmStage, type PipelineEntry, useSubscription, useShortlist } from "@/lib/hooks";
-import { getRecruiterTier } from "@/lib/utils/subscription-tier";
+import { useRecruiterPipeline, type CrmStage, type PipelineEntry, useShortlist } from "@/lib/hooks";
 import Link from "next/link";
 import { toast } from "sonner";
 
@@ -506,10 +505,8 @@ function EmptyState() {
 
 export default function RecruiterPipelinePage() {
   const { pipeline, isLoading, moveToStage, updateNotes, reorderInColumn } = useRecruiterPipeline();
-  const { subscription, isLoading: subLoading } = useSubscription();
   const { add: addToShortlist, remove: removeFromShortlist, isInShortlist } = useShortlist();
-  const tier = getRecruiterTier(subscription?.plan?.slug);
-  const isViewOnly = tier === 'free';
+  const isViewOnly = false; // Tier gate removed for demo
 
   const [classYearFilter, setClassYearFilter] = useState<string>('all');
   const [positionFilter, setPositionFilter] = useState<string>('all');
@@ -589,7 +586,7 @@ export default function RecruiterPipelinePage() {
     setDragOverColumnId(null);
   };
 
-  if (isLoading || subLoading) {
+  if (isLoading) {
     return <div className="flex flex-col h-full min-h-0"><LoadingSkeleton /></div>;
   }
 
@@ -600,7 +597,7 @@ export default function RecruiterPipelinePage() {
   return (
     <div className="flex flex-col h-full min-h-0">
       {/* Free-tier upgrade banner */}
-      {!subLoading && isViewOnly && (
+      {isViewOnly && (
         <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 mb-4 flex items-center justify-between">
           <span className="text-sm text-primary">Free tier — view-only pipeline. Upgrade to manage prospects.</span>
           <a href="/pricing" className="text-xs font-bold text-primary hover:underline">Upgrade</a>

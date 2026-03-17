@@ -4,8 +4,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
-import { useShortlist, useSubscription, useRecruiterPipeline } from "@/lib/hooks";
-import { getRecruiterTier } from "@/lib/utils/subscription-tier";
+import { useShortlist, useRecruiterPipeline } from "@/lib/hooks";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -92,9 +91,7 @@ export default function RecruiterProspectsPage() {
   // Hooks
   const { add: addToShortlist, remove: removeFromShortlist, isInShortlist } = useShortlist();
   const { addToPipeline } = useRecruiterPipeline();
-  const { subscription, isLoading: subLoading } = useSubscription();
-  const tier = getRecruiterTier(subscription?.plan?.slug);
-  const isFree = tier === "free";
+  const isFree = false; // Tier gate removed for demo
 
   // ------ Fetch athletes ---------------------------------------------------
 
@@ -180,7 +177,7 @@ export default function RecruiterProspectsPage() {
   return (
     <div className="flex flex-col h-full min-h-0">
       {/* Free-tier upgrade banner */}
-      {!subLoading && isFree && (
+      {isFree && (
         <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 mb-4 flex items-center justify-between">
           <span className="text-sm text-primary">
             Free tier — limited prospect access. Upgrade to unlock full database and pipeline tools.

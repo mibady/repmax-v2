@@ -1,10 +1,8 @@
 'use client';
 
 import { Loader2 } from 'lucide-react';
-import { useRecruitingReports, type StaffMember, useSubscription } from '@/lib/hooks';
+import { useRecruitingReports, type StaffMember } from '@/lib/hooks';
 import { useState } from 'react';
-import { getRecruiterTier } from '@/lib/utils/subscription-tier';
-import { UpgradeCTA } from '@/components/upgrade-cta';
 
 function getRankBadgeColor(rank?: number) {
   if (rank === 1) return 'bg-[#D4AF37]';
@@ -15,14 +13,12 @@ function getRankBadgeColor(rank?: number) {
 
 export default function RecruitingReportsPage() {
   const { funnel, stats, staffActivity, zoneCoverage, isLoading, error } = useRecruitingReports();
-  const { subscription, isLoading: subLoading } = useSubscription();
-  const tier = getRecruiterTier(subscription?.plan?.slug);
   const [activeFilters, setActiveFilters] = useState<Record<string, boolean>>({ classOf2025: false, varsityProgram: false, thisQuarter: false });
   const [showFunnelDetail, setShowFunnelDetail] = useState(false);
   const [showStaffOptions, setShowStaffOptions] = useState(false);
   const [showAllStaff, setShowAllStaff] = useState(false);
 
-  if (isLoading || subLoading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
         <Loader2 className="w-8 h-8 animate-spin text-[#D4AF37]" />
@@ -30,24 +26,6 @@ export default function RecruitingReportsPage() {
     );
   }
 
-  if (tier === 'free') {
-    return (
-      <div className="p-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col gap-2 mb-8">
-            <h1 className="text-3xl font-bold tracking-tight text-white">Recruiting Reports</h1>
-            <p className="text-[#A1A1AA]">Pipeline analytics and staff performance metrics</p>
-          </div>
-          <UpgradeCTA
-            icon="analytics"
-            title="Unlock Recruiting Reports"
-            description="Upgrade to RepMax Pro to access pipeline analytics, staff activity tracking, and regional performance benchmarks."
-            ctaText="Upgrade to Pro"
-          />
-        </div>
-      </div>
-    );
-  }
   return (
     <div className="flex flex-col h-full min-h-0">
       {/* Page Heading & Filters */}
