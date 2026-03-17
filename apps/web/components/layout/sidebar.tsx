@@ -43,6 +43,7 @@ const athleteNavItems: NavItem[] = [
 ];
 
 const athleteSettingsItems: NavItem[] = [
+  { icon: 'account_circle', label: 'Profile', href: '/settings/profile' },
   { icon: 'notifications', label: 'Notifications', href: '/settings/notifications' },
 ];
 
@@ -56,6 +57,7 @@ const recruiterNavItems: NavItem[] = [
 ];
 
 const recruiterSettingsItems: NavItem[] = [
+  { icon: 'account_circle', label: 'Profile', href: '/settings/profile' },
   { icon: 'settings', label: 'Settings', href: '/settings' },
 ];
 
@@ -70,6 +72,7 @@ const parentNavItems: NavItem[] = [
 ];
 
 const parentSettingsItems: NavItem[] = [
+  { icon: 'account_circle', label: 'Profile', href: '/settings/profile' },
   { icon: 'settings', label: 'Settings', href: '/settings' },
   { icon: 'help', label: 'Help Center', href: '/help' },
 ];
@@ -88,6 +91,7 @@ const coachNavItems: NavItem[] = [
 ];
 
 const coachSettingsItems: NavItem[] = [
+  { icon: 'account_circle', label: 'Profile', href: '/settings/profile' },
   { icon: 'settings', label: 'Settings', href: '/settings' },
 ];
 
@@ -101,6 +105,7 @@ const clubNavItems: NavItem[] = [
 ];
 
 const clubSettingsItems: NavItem[] = [
+  { icon: 'account_circle', label: 'Profile', href: '/settings/profile' },
   { icon: 'settings', label: 'Settings', href: '/settings' },
 ];
 
@@ -113,6 +118,7 @@ const adminNavItems: NavItem[] = [
 ];
 
 const adminSettingsItems: NavItem[] = [
+  { icon: 'account_circle', label: 'Profile', href: '/settings/profile' },
   { icon: 'settings', label: 'Settings', href: '/settings' },
 ];
 
