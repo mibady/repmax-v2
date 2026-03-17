@@ -217,7 +217,7 @@ function EmptyState() {
         </div>
         <h3 className="text-white text-xl font-bold mb-2">No Athletes to Compare</h3>
         <p className="text-gray-400 mb-6">
-          Shortlist athletes from the Prospects page to compare their stats side by side. Click the bookmark icon on any athlete to add them to your shortlist.
+          Browse prospects and open an athlete profile, then click &quot;Save&quot; to shortlist them. Shortlisted athletes appear here for side-by-side comparison.
         </p>
         <Link
           href="/recruiter/prospects"

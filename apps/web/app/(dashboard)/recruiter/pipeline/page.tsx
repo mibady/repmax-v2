@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useCallback, useRef } from "react";
 import Image from "next/image";
-import { useRecruiterPipeline, type CrmStage, type PipelineEntry, useSubscription } from "@/lib/hooks";
+import { useRecruiterPipeline, type CrmStage, type PipelineEntry, useSubscription, useShortlist } from "@/lib/hooks";
 import { getRecruiterTier } from "@/lib/utils/subscription-tier";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -266,6 +266,8 @@ function ProspectCardComponent({
   isFirst,
   isLast,
   isViewOnly = false,
+  isBookmarked = false,
+  onToggleBookmark,
   editingNoteId,
   onNoteSave,
   onNoteClose,
@@ -279,6 +281,8 @@ function ProspectCardComponent({
   isFirst: boolean;
   isLast: boolean;
   isViewOnly?: boolean;
+  isBookmarked?: boolean;
+  onToggleBookmark?: (athleteId: string) => void;
   editingNoteId: string | null;
   onNoteSave: (pipelineId: string, notes: string) => void;
   onNoteClose: () => void;
@@ -387,6 +391,16 @@ function ProspectCardComponent({
         {/* Action buttons — visible on hover */}
         {!isViewOnly && (
           <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+            {/* Bookmark / shortlist for compare */}
+            {onToggleBookmark && (
+              <button
+                onClick={(e) => { e.preventDefault(); onToggleBookmark(prospect.athleteId); }}
+                className={`p-1 rounded hover:bg-white/10 transition-colors ${isBookmarked ? 'text-primary' : 'text-gray-500 hover:text-primary'}`}
+                title={isBookmarked ? 'Remove from Compare list' : 'Add to Compare list'}
+              >
+                <span className="material-symbols-outlined text-[14px]" style={isBookmarked ? { fontVariationSettings: "'FILL' 1" } : undefined}>bookmark</span>
+              </button>
+            )}
             {/* Add/edit note */}
             <button
               onClick={(e) => { e.preventDefault(); onNoteEdit(prospect.id); }}
@@ -493,6 +507,7 @@ function EmptyState() {
 export default function RecruiterPipelinePage() {
   const { pipeline, isLoading, moveToStage, updateNotes, reorderInColumn } = useRecruiterPipeline();
   const { subscription, isLoading: subLoading } = useSubscription();
+  const { add: addToShortlist, remove: removeFromShortlist, isInShortlist } = useShortlist();
   const tier = getRecruiterTier(subscription?.plan?.slug);
   const isViewOnly = tier === 'free';
 
@@ -521,6 +536,16 @@ export default function RecruiterPipelinePage() {
   const handleStageChange = useCallback(async (pipelineId: string, newStage: CrmStage) => {
     await moveToStage(pipelineId, newStage);
   }, [moveToStage]);
+
+  const handleToggleBookmark = useCallback(async (athleteId: string) => {
+    if (isInShortlist(athleteId)) {
+      await removeFromShortlist(athleteId);
+      toast.success('Removed from Compare list');
+    } else {
+      await addToShortlist(athleteId);
+      toast.success('Added to Compare list');
+    }
+  }, [isInShortlist, addToShortlist, removeFromShortlist]);
 
   const handleNoteSave = useCallback(async (pipelineId: string, notes: string) => {
     if (updateNotes) {
@@ -750,6 +775,8 @@ export default function RecruiterPipelinePage() {
                           isFirst={idx === 0}
                           isLast={idx === sortedProspects.length - 1}
                           isViewOnly={isViewOnly}
+                          isBookmarked={isInShortlist(prospect.athleteId)}
+                          onToggleBookmark={handleToggleBookmark}
                           editingNoteId={editingNoteId}
                           onNoteSave={handleNoteSave}
                           onNoteClose={() => setEditingNoteId(null)}
