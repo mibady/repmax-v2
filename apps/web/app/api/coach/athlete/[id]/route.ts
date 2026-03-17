@@ -27,21 +27,22 @@ async function verifyCoachOwnsAthlete(supabase: Awaited<ReturnType<typeof create
     return { authorized: false, reason: "Not a coach or admin" };
   }
 
-  // Check if athlete is on coach's roster via team_rosters
-  const { data: coach } = await supabase
-    .from("coaches")
-    .select("team_id")
-    .eq("profile_id", profile.id)
+  // Find team via teams.coach_profile_id (matches existing roster routes)
+  const { data: team } = await supabase
+    .from("teams")
+    .select("id")
+    .eq("coach_profile_id", profile.id)
     .single();
 
-  if (!coach?.team_id) {
+  if (!team) {
     return { authorized: false, reason: "No team found" };
   }
 
+  // Check if athlete is on coach's roster via team_rosters
   const { data: rosterEntry } = await supabase
     .from("team_rosters")
     .select("id")
-    .eq("team_id", coach.team_id)
+    .eq("team_id", team.id)
     .eq("athlete_id", athleteId)
     .single();
 
