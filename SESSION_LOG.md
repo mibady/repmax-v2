@@ -985,3 +985,44 @@ This project existed before tracking was set up.
 
 ### Linear
 - No new issues filed
+
+## Session 23 — 2026-03-17
+
+### Completed
+- **Pipeline visual overhaul:** Redesigned prospect cards with prominent 56px athlete photos, inline note editor (Cmd+Enter save), vertical reordering (up/down), per-column sort menu (name/rating/class asc/desc), search bar
+- **Pipeline API:** Extended PATCH to support notes, priority, sort_order; migration 031 adds sort_order column
+- **Prospects list page:** Created `/recruiter/prospects` with searchable athlete grid, bookmark/shortlist toggle, Add to Pipeline buttons, pagination
+- **Compare flow fixed:** Root cause was Pro tier gate blocking shortlist operations — removed all tier gates for demo; compare now works end-to-end
+- **Sidebar updates:** Renamed "Campaigns" → "Communication Log"; added "Prospects" nav item
+- **Territory API fix:** Fixed 3 broken `coaches→profiles` joins, fixed column name references
+- **DB tables:** Migration 032 creates `campus_visits` + `communication_log` tables with RLS
+- **Seed data:** 10 campus visits, 10 communication logs, 2 zone assignments for TCU recruiter
+- **Unified player card:** Shared `PlayerCardContent` component (prior work in session)
+- **Zone coverage:** 6 new athletes across MIDWEST/NORTHEAST/PLAINS, CRM pipeline seeded all 6 zones
+
+### Audit Snapshot
+- Pages: 81
+- API routes: 80
+- Components: 45
+- Hooks: 46
+- Migrations: 32
+- Build: pass (typecheck clean)
+
+### Decisions Made
+- Removed all Pro tier gates across recruiter dashboard for demo
+- Compare page pulls from shortlist table (not pipeline)
+- "Campaigns" renamed to "Communication Log"
+
+### Known Issues
+- Campus Visits "Schedule Visit" modal uses raw Athlete ID field — needs name/email autocomplete
+- Recruiter staff page not yet created
+- Reports page data may be sparse
+
+### Next Session Should
+- Create recruiter staff page (copy from `/coach/staff`)
+- Replace Athlete ID input on Campus Visits with name/email autocomplete
+- Verify territory + compare pages on production
+- Add seed data for reports (pipeline_status on shortlist entries)
+
+### Linear
+- No new issues filed
