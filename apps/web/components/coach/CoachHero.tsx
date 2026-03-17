@@ -103,17 +103,17 @@ export default function CoachHero({ coachName, school, coachAvatarUrl, activeTab
           </div>
 
           {/* Images row — stretch to fill banner height */}
-          <div className="flex items-center gap-4 flex-1">
+          <div className="flex items-stretch gap-4 flex-1">
             {/* Team Logo */}
-            <div className="w-[88px] h-full min-h-[120px] rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
-              <span className="material-symbols-outlined text-white/25 text-[44px]">shield</span>
+            <div className="w-[140px] rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
+              <span className="material-symbols-outlined text-white/25 text-[56px]">shield</span>
             </div>
             {/* Coach Headshot */}
-            <div className="w-[88px] h-full min-h-[120px] rounded-2xl bg-white/5 border-[3px] border-primary/50 flex items-center justify-center overflow-hidden shadow-lg shadow-primary/10">
+            <div className="w-[140px] rounded-2xl bg-white/5 border-[3px] border-primary/50 flex items-center justify-center overflow-hidden shadow-lg shadow-primary/10">
               {coachAvatarUrl ? (
                 <img src={coachAvatarUrl} alt={coachName} className="size-full object-cover" />
               ) : (
-                <span className="text-2xl font-bold text-primary/70">{initials}</span>
+                <span className="text-3xl font-bold text-primary/70">{initials}</span>
               )}
             </div>
           </div>
