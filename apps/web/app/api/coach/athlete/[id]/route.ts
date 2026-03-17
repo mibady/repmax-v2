@@ -99,6 +99,7 @@ export async function GET(
       state: athlete.state || "",
       bio: athlete.bio || "",
       zone: athlete.zone || "",
+      // Measurables
       height: formatHeight(athlete.height_inches),
       weight: athlete.weight_lbs?.toString() || "",
       fortyYard: athlete.forty_yard_time?.toFixed(2) || "",
@@ -109,18 +110,50 @@ export async function GET(
       wingspan: athlete.wingspan_inches?.toString() || "",
       benchPress: athlete.bench_press_lbs?.toString() || "",
       squat: athlete.squat_lbs?.toString() || "",
+      // Academics
       gpa: athlete.gpa?.toFixed(2) || "",
       weightedGpa: athlete.weighted_gpa?.toFixed(2) || "",
+      coreGpa: athlete.core_gpa?.toFixed(2) || "",
       sat: athlete.sat_score?.toString() || "",
       act: athlete.act_score?.toString() || "",
+      major: athlete.desired_major || "",
+      academicInterest: athlete.academic_interest || "",
+      collegePriority: athlete.college_priority || "",
+      // Film
       hudlLink: athlete.hudl_link || "",
       youtubeLink: athlete.youtube_link || "",
+      // Coach assessment
       coachNotes: athlete.coach_notes || "",
       playerSummary: athlete.player_summary || "",
       ncaaEcId: athlete.ncaa_id || "",
       coachPhone: athlete.coach_phone || "",
       coachEmail: athlete.coach_email || "",
+      // Contact & Social
+      phone: athlete.phone || "",
+      twitter: athlete.twitter || "",
+      instagram: athlete.instagram || "",
+      // Parent/Guardian
+      parent1Name: athlete.parent1_name || "",
+      parent1Phone: athlete.parent1_phone || "",
+      parent1Email: athlete.parent1_email || "",
+      parent2Name: athlete.parent2_name || "",
+      parent2Phone: athlete.parent2_phone || "",
+      parent2Email: athlete.parent2_email || "",
+      siblingsInfo: athlete.siblings_info || "",
+      // Team
       jerseyNumber: athlete.jersey_number || "",
+      organizationName: athlete.organization_name || "",
+      // Recruiting
+      awards: athlete.awards || "",
+      otherSports: athlete.other_sports || "",
+      campsAttended: athlete.camps_attended || "",
+      dreamSchools: athlete.dream_schools || "",
+      // Equipment
+      cleatSize: athlete.cleat_size || "",
+      shirtSize: athlete.shirt_size || "",
+      pantsSize: athlete.pants_size || "",
+      helmetSize: athlete.helmet_size || "",
+      gloveSize: athlete.glove_size || "",
     };
 
     return NextResponse.json(cardData);
@@ -202,6 +235,36 @@ export async function PUT(
     if (body.coachPhone !== undefined) update.coach_phone = body.coachPhone || null;
     if (body.coachEmail !== undefined) update.coach_email = body.coachEmail || null;
     if (body.jerseyNumber !== undefined) update.jersey_number = body.jerseyNumber || null;
+    // Contact & Social
+    if (body.phone !== undefined) update.phone = body.phone || null;
+    if (body.twitter !== undefined) update.twitter = body.twitter || null;
+    if (body.instagram !== undefined) update.instagram = body.instagram || null;
+    // Parent/Guardian
+    if (body.parent1Name !== undefined) update.parent1_name = body.parent1Name || null;
+    if (body.parent1Phone !== undefined) update.parent1_phone = body.parent1Phone || null;
+    if (body.parent1Email !== undefined) update.parent1_email = body.parent1Email || null;
+    if (body.parent2Name !== undefined) update.parent2_name = body.parent2Name || null;
+    if (body.parent2Phone !== undefined) update.parent2_phone = body.parent2Phone || null;
+    if (body.parent2Email !== undefined) update.parent2_email = body.parent2Email || null;
+    if (body.siblingsInfo !== undefined) update.siblings_info = body.siblingsInfo || null;
+    // Team
+    if (body.organizationName !== undefined) update.organization_name = body.organizationName || null;
+    // Additional academics
+    if (body.major !== undefined) update.desired_major = body.major || null;
+    if (body.coreGpa !== undefined) update.core_gpa = body.coreGpa ? parseFloat(body.coreGpa) : null;
+    if (body.academicInterest !== undefined) update.academic_interest = body.academicInterest || null;
+    if (body.collegePriority !== undefined) update.college_priority = body.collegePriority || null;
+    // Recruiting
+    if (body.awards !== undefined) update.awards = body.awards || null;
+    if (body.otherSports !== undefined) update.other_sports = body.otherSports || null;
+    if (body.campsAttended !== undefined) update.camps_attended = body.campsAttended || null;
+    if (body.dreamSchools !== undefined) update.dream_schools = body.dreamSchools || null;
+    // Equipment
+    if (body.cleatSize !== undefined) update.cleat_size = body.cleatSize || null;
+    if (body.shirtSize !== undefined) update.shirt_size = body.shirtSize || null;
+    if (body.pantsSize !== undefined) update.pants_size = body.pantsSize || null;
+    if (body.helmetSize !== undefined) update.helmet_size = body.helmetSize || null;
+    if (body.gloveSize !== undefined) update.glove_size = body.gloveSize || null;
 
     // Auto-derive zone from state
     if (body.state && !body.zone) {

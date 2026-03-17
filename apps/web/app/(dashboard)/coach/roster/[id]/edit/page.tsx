@@ -26,6 +26,7 @@ interface AthleteData {
   state: string;
   bio: string;
   zone: string;
+  // Measurables
   height: string;
   weight: string;
   fortyYard: string;
@@ -36,18 +37,50 @@ interface AthleteData {
   wingspan: string;
   benchPress: string;
   squat: string;
+  // Academics
   gpa: string;
   weightedGpa: string;
+  coreGpa: string;
   sat: string;
   act: string;
+  major: string;
+  academicInterest: string;
+  collegePriority: string;
+  // Film
   hudlLink: string;
   youtubeLink: string;
+  // Coach assessment
   coachNotes: string;
   playerSummary: string;
   ncaaEcId: string;
   coachPhone: string;
   coachEmail: string;
+  // Contact & Social
+  phone: string;
+  twitter: string;
+  instagram: string;
+  // Parent/Guardian
+  parent1Name: string;
+  parent1Phone: string;
+  parent1Email: string;
+  parent2Name: string;
+  parent2Phone: string;
+  parent2Email: string;
+  siblingsInfo: string;
+  // Team
   jerseyNumber: string;
+  organizationName: string;
+  // Recruiting
+  awards: string;
+  otherSports: string;
+  campsAttended: string;
+  dreamSchools: string;
+  // Equipment
+  cleatSize: string;
+  shirtSize: string;
+  pantsSize: string;
+  helmetSize: string;
+  gloveSize: string;
 }
 
 function SectionHeader({ icon, title }: { icon: string; title: string }) {
@@ -307,11 +340,15 @@ export default function CoachRosterEditPage(): React.JSX.Element {
           {/* Academics */}
           <section className="bg-[#1A1A1D] rounded-xl border border-white/10 p-6">
             <SectionHeader icon="school" title="Academics" />
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               <Field label="GPA" value={data.gpa} onChange={v => updateField('gpa', v)} placeholder="3.50" />
               <Field label="Weighted GPA" value={data.weightedGpa} onChange={v => updateField('weightedGpa', v)} placeholder="4.10" />
+              <Field label="Core GPA" value={data.coreGpa} onChange={v => updateField('coreGpa', v)} placeholder="3.40" />
               <Field label="SAT" value={data.sat} onChange={v => updateField('sat', v)} placeholder="1200" />
               <Field label="ACT" value={data.act} onChange={v => updateField('act', v)} placeholder="28" />
+              <Field label="Desired Major" value={data.major} onChange={v => updateField('major', v)} placeholder="Business" />
+              <Field label="Academic Interest" value={data.academicInterest} onChange={v => updateField('academicInterest', v)} placeholder="Engineering, Pre-Med..." />
+              <Field label="College Priority" value={data.collegePriority} onChange={v => updateField('collegePriority', v)} placeholder="Academics, athletics..." />
             </div>
           </section>
 
@@ -383,6 +420,99 @@ export default function CoachRosterEditPage(): React.JSX.Element {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Field label="Coach Phone" value={data.coachPhone} onChange={v => updateField('coachPhone', v)} placeholder="(555) 123-4567" />
               <Field label="Coach Email" value={data.coachEmail} onChange={v => updateField('coachEmail', v)} placeholder="coach@school.edu" />
+            </div>
+          </section>
+
+          {/* Athlete Contact & Social */}
+          <section className="bg-[#1A1A1D] rounded-xl border border-white/10 p-6">
+            <SectionHeader icon="contacts" title="Athlete Contact & Social" />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <Field label="Phone" value={data.phone} onChange={v => updateField('phone', v)} placeholder="(555) 123-4567" />
+              <Field label="Twitter / X" value={data.twitter} onChange={v => updateField('twitter', v)} placeholder="@handle" />
+              <Field label="Instagram" value={data.instagram} onChange={v => updateField('instagram', v)} placeholder="@handle" />
+            </div>
+          </section>
+
+          {/* Parent/Guardian Information */}
+          <section className="bg-[#1A1A1D] rounded-xl border border-white/10 p-6">
+            <SectionHeader icon="family_restroom" title="Parent/Guardian Information" />
+            <div className="flex flex-col gap-5">
+              <div>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Parent/Guardian 1</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <Field label="Name" value={data.parent1Name} onChange={v => updateField('parent1Name', v)} placeholder="Full name" />
+                  <Field label="Phone" value={data.parent1Phone} onChange={v => updateField('parent1Phone', v)} placeholder="(555) 123-4567" />
+                  <Field label="Email" value={data.parent1Email} onChange={v => updateField('parent1Email', v)} placeholder="parent@email.com" />
+                </div>
+              </div>
+              <div>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Parent/Guardian 2</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <Field label="Name" value={data.parent2Name} onChange={v => updateField('parent2Name', v)} placeholder="Full name" />
+                  <Field label="Phone" value={data.parent2Phone} onChange={v => updateField('parent2Phone', v)} placeholder="(555) 123-4567" />
+                  <Field label="Email" value={data.parent2Email} onChange={v => updateField('parent2Email', v)} placeholder="parent@email.com" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Siblings / Family Info</label>
+                <textarea
+                  value={data.siblingsInfo}
+                  onChange={e => updateField('siblingsInfo', e.target.value)}
+                  placeholder="Siblings, family athletic background..."
+                  rows={2}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-white text-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-slate-600 resize-none"
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Team Info */}
+          <section className="bg-[#1A1A1D] rounded-xl border border-white/10 p-6">
+            <SectionHeader icon="groups" title="Team / Organization" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Field label="Organization Name" value={data.organizationName} onChange={v => updateField('organizationName', v)} placeholder="7v7 club, travel team..." />
+              <Field label="Jersey #" value={data.jerseyNumber} onChange={v => updateField('jerseyNumber', v)} placeholder="#" />
+            </div>
+          </section>
+
+          {/* Recruiting */}
+          <section className="bg-[#1A1A1D] rounded-xl border border-white/10 p-6">
+            <SectionHeader icon="emoji_events" title="Recruiting & Awards" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="col-span-full">
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Awards & Honors</label>
+                <textarea
+                  value={data.awards}
+                  onChange={e => updateField('awards', e.target.value)}
+                  placeholder="All-State, Team MVP, Camp awards..."
+                  rows={2}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-white text-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-slate-600 resize-none"
+                />
+              </div>
+              <Field label="Other Sports" value={data.otherSports} onChange={v => updateField('otherSports', v)} placeholder="Track, Basketball..." />
+              <Field label="Camps Attended" value={data.campsAttended} onChange={v => updateField('campsAttended', v)} placeholder="Nike Opening, Under Armour..." />
+              <div className="col-span-full">
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Dream Schools</label>
+                <textarea
+                  value={data.dreamSchools}
+                  onChange={e => updateField('dreamSchools', e.target.value)}
+                  placeholder="Top schools the athlete is interested in..."
+                  rows={2}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-white text-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-slate-600 resize-none"
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Equipment Sizes */}
+          <section className="bg-[#1A1A1D] rounded-xl border border-white/10 p-6">
+            <SectionHeader icon="checkroom" title="Equipment Sizes" />
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+              <Field label="Cleats" value={data.cleatSize} onChange={v => updateField('cleatSize', v)} placeholder="11" />
+              <Field label="Shirt" value={data.shirtSize} onChange={v => updateField('shirtSize', v)} placeholder="L" />
+              <Field label="Pants" value={data.pantsSize} onChange={v => updateField('pantsSize', v)} placeholder="34" />
+              <Field label="Helmet" value={data.helmetSize} onChange={v => updateField('helmetSize', v)} placeholder="L" />
+              <Field label="Gloves" value={data.gloveSize} onChange={v => updateField('gloveSize', v)} placeholder="L" />
             </div>
           </section>
         </div>
