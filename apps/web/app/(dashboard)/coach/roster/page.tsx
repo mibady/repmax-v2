@@ -219,8 +219,12 @@ export default function CoachRosterPage(): React.JSX.Element {
                       </td>
                       <td className="px-4 py-3">
                         <Link href={`/coach/roster/${athlete.id}`} className="flex items-center gap-3 hover:opacity-80">
-                          <div className="size-10 rounded-full bg-[#2A2A2E] flex items-center justify-center text-white font-bold text-sm">
-                            {athlete.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
+                          <div className="size-10 rounded-full bg-[#2A2A2E] flex items-center justify-center text-white font-bold text-sm shrink-0 overflow-hidden">
+                            {athlete.avatarUrl ? (
+                              <img src={athlete.avatarUrl} alt={athlete.name} className="size-full object-cover" />
+                            ) : (
+                              athlete.name.split(' ').map((n) => n[0]).join('').slice(0, 2)
+                            )}
                           </div>
                           <span className="text-sm font-medium text-white">{athlete.name}</span>
                         </Link>

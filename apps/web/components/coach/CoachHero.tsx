@@ -38,39 +38,43 @@ export default function CoachHero({ coachName, school, coachAvatarUrl, activeTab
       <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-primary/5 rounded-full blur-[80px]" />
 
       <div className="relative z-10 px-8 pt-6 pb-0">
-        {/* Top row: greeting + coach/team images + notification */}
+        {/* Top row: greeting + prominent coach/team banner */}
         <div className="flex items-start justify-between mb-4">
-          <div>
+          <div className="flex-1">
             <h1 className="text-2xl font-bold text-white">
               Welcome back, Coach {firstName}
             </h1>
             <p className="text-sm text-white/50 mt-0.5">{school}</p>
           </div>
-          <div className="flex flex-col items-end gap-2">
-            <div className="flex items-center gap-3">
-              {/* Team Logo */}
-              <div className="size-12 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
-                <span className="material-symbols-outlined text-white/30 text-[24px]">shield</span>
-              </div>
-              {/* Coach Headshot */}
-              <div className="size-12 rounded-full bg-white/5 border-2 border-primary/40 flex items-center justify-center overflow-hidden">
-                {coachAvatarUrl ? (
-                  <img src={coachAvatarUrl} alt={coachName} className="size-full object-cover" />
-                ) : (
-                  <span className="text-sm font-bold text-primary/70">{initials}</span>
-                )}
-              </div>
-              <button className="relative p-2 rounded-lg hover:bg-white/5 transition-colors text-white/60 hover:text-white">
-                <span className="material-symbols-outlined text-[22px]">notifications</span>
-                <span className="absolute top-1.5 right-1.5 size-2 rounded-full bg-red-500" />
-              </button>
+
+          {/* Coach & Team Banner */}
+          <div className="flex items-center gap-4">
+            {/* Team Logo */}
+            <div className="size-[72px] rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
+              <span className="material-symbols-outlined text-white/25 text-[36px]">shield</span>
             </div>
-            {/* Contact Period Badge — below images */}
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-500/15 border border-green-500/30 text-green-400 text-xs font-semibold">
-              <span className="size-1.5 rounded-full bg-green-400 animate-pulse" />
-              Contact Period Open
-            </span>
+            {/* Coach Headshot */}
+            <div className="size-[72px] rounded-full bg-white/5 border-[3px] border-primary/50 flex items-center justify-center overflow-hidden shadow-lg shadow-primary/10">
+              {coachAvatarUrl ? (
+                <img src={coachAvatarUrl} alt={coachName} className="size-full object-cover" />
+              ) : (
+                <span className="text-xl font-bold text-primary/70">{initials}</span>
+              )}
+            </div>
+            {/* Notification */}
+            <button className="relative p-2 rounded-lg hover:bg-white/5 transition-colors text-white/60 hover:text-white">
+              <span className="material-symbols-outlined text-[22px]">notifications</span>
+              <span className="absolute top-1.5 right-1.5 size-2 rounded-full bg-red-500" />
+            </button>
           </div>
+        </div>
+
+        {/* Contact Period Badge */}
+        <div className="flex justify-end -mt-2 mb-3">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-500/15 border border-green-500/30 text-green-400 text-xs font-semibold">
+            <span className="size-1.5 rounded-full bg-green-400 animate-pulse" />
+            Contact Period Open
+          </span>
         </div>
 
         {/* Search bar */}

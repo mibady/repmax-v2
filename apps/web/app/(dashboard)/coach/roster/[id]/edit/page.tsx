@@ -116,8 +116,12 @@ export default function CoachRosterEditPage(): React.JSX.Element {
         {/* Read-only Athlete Summary */}
         <div className="bg-[#1F1F22] rounded-xl border border-white/5 p-5 mb-6">
           <div className="flex items-center gap-4">
-            <div className="size-14 rounded-full bg-[#2A2A2E] flex items-center justify-center text-white font-bold text-lg shrink-0">
-              {initials}
+            <div className="size-14 rounded-full bg-[#2A2A2E] flex items-center justify-center text-white font-bold text-lg shrink-0 overflow-hidden">
+              {athlete.profile?.avatar_url ? (
+                <img src={athlete.profile.avatar_url} alt={name} className="size-full object-cover" />
+              ) : (
+                initials
+              )}
             </div>
             <div>
               <h2 className="text-white font-semibold text-lg">{name}</h2>
