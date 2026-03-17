@@ -921,3 +921,67 @@ This project existed before tracking was set up.
 - NGE-260 confirmed Done (completed 2026-03-04)
 - Project summary updated: "38/38 issues done, deployed to repmax-v2.vercel.app"
 - Project description updated with full stats
+
+## Session 21 — 2026-03-16
+
+### Completed
+- **Coach Account Parity:** Verified migration 029 (`coach_dashboard_populate`) already applied to Supabase — all 19 HS coach accounts now have 6 tasks, 8 college tracking entries, 5 notes each
+- **Auto-seed on signup:** Confirmed `POST /api/coach/team` auto-seeds starter data (4 tasks, 6 zone-aware colleges, 3 notes) for new coach signups
+- **Git commit + push:** `30e98029` — `feat(coach): backfill 19 coach accounts + auto-seed on signup` pushed to `main`
+
+### Audit Snapshot
+- Pages: 79
+- API routes: 79
+- Components: 43
+- Hooks: 45
+- Migrations: 29
+- Build: pass (typecheck cached clean)
+
+### Decisions Made
+- None new
+
+### Known Issues
+- `GITHUB_TOKEN` env var is invalid — must unset or use `GITHUB_TOKEN="" git push` workaround
+- turbo.json env var warnings (non-blocking, cosmetic)
+
+### Next Session Should
+- Verify Vercel auto-deploy succeeded for commit `30e98029`
+- Send test webhook from Stripe Dashboard to verify 200 response
+- Consider mobile app (Expo) as next feature track
+
+### Linear
+- No new issues filed
+
+## Session 22 — 2026-03-16
+
+### Completed
+- **Zone coverage:** Added 6 new seed athletes across 3 missing zones (MIDWEST: Malik Johnson LB, Ethan Mueller OL; NORTHEAST: Aiden O'Connor TE, Jordan Banks DB; PLAINS: Cody Hargrove QB, Tre Washington WR)
+- **Plains DB enum:** Created migration 030 adding `Plains` to `recruiting_zone` enum; updated `DB_ZONE_TO_UI` and `UI_ZONE_TO_DB` mappings
+- **CRM pipeline seeding:** Added step 8 to seed-loader — seeds 14 athletes across all 6 zones into TCU recruiter's CRM Kanban pipeline
+- **Shortlist expansion:** Changed shortlist seeding from first 5 athletes to all athletes, enabling Compare page across zones
+- **Coach roster detail page:** Confirmed already has full player card (all sections) — no changes needed
+
+### Audit Snapshot
+- Pages: 80
+- API routes: 80
+- Components: 43
+- Hooks: 45
+- Migrations: 30
+- Build: pass (typecheck clean)
+
+### Decisions Made
+- `REP-EM-2026` repmax_id conflicted with JotForm import → changed to `REP-ETM-2026`
+- "Campaigns" sidebar label in recruiter nav just links to Communications Log — no separate feature
+
+### Known Issues
+- `GITHUB_TOKEN` env var is invalid — must unset for git push
+- turbo.json env var warnings (non-blocking)
+
+### Next Session Should
+- Verify Vercel auto-deploy succeeded for commit `4c95e2ce`
+- Run `npm run seed:reset` if needed to fully repopulate
+- Send test webhook from Stripe Dashboard to verify 200 response
+- Consider mobile app (Expo) as next feature track
+
+### Linear
+- No new issues filed
