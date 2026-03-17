@@ -2,33 +2,123 @@
 
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import { useAthlete } from '@/lib/hooks';
+import { useState, useEffect, useCallback } from 'react';
+import { toast } from 'sonner';
+
+const positions = [
+  'Quarterback', 'Running Back', 'Wide Receiver', 'Tight End',
+  'Offensive Line', 'Defensive Line', 'Linebacker',
+  'Cornerback', 'Safety', 'Kicker', 'Punter',
+];
+
+const currentYear = new Date().getFullYear();
+const classYears = Array.from({ length: 5 }, (_, i) => currentYear + i);
+
+interface AthleteData {
+  athleteId: string;
+  name: string;
+  avatarUrl: string;
+  position: string;
+  secondaryPosition: string;
+  classYear: number;
+  highSchool: string;
+  city: string;
+  state: string;
+  bio: string;
+  zone: string;
+  height: string;
+  weight: string;
+  fortyYard: string;
+  tenYardSplit: string;
+  fiveTenFive: string;
+  broadJump: string;
+  vertical: string;
+  wingspan: string;
+  benchPress: string;
+  squat: string;
+  gpa: string;
+  weightedGpa: string;
+  sat: string;
+  act: string;
+  hudlLink: string;
+  youtubeLink: string;
+  coachNotes: string;
+  playerSummary: string;
+  ncaaEcId: string;
+  coachPhone: string;
+  coachEmail: string;
+  jerseyNumber: string;
+}
+
+function SectionHeader({ icon, title }: { icon: string; title: string }) {
+  return (
+    <div className="flex items-center gap-2 mb-5 px-1">
+      <span className="material-symbols-outlined text-primary text-[20px]">{icon}</span>
+      <h2 className="text-lg font-bold tracking-tight text-white">{title}</h2>
+    </div>
+  );
+}
+
+function Field({ label, value, onChange, placeholder, type = 'text', half = false }: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  type?: string;
+  half?: boolean;
+}) {
+  return (
+    <div className={half ? '' : 'col-span-full sm:col-span-1'}>
+      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">{label}</label>
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-white text-sm focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder:text-slate-600"
+      />
+    </div>
+  );
+}
 
 export default function CoachRosterEditPage(): React.JSX.Element {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
-  const { athlete, isLoading, error } = useAthlete(id);
 
-  const [priority, setPriority] = useState<string>('medium');
-  const [notes, setNotes] = useState<string>('');
+  const [data, setData] = useState<AthleteData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Also load roster entry for priority/notes
+  const [priority, setPriority] = useState('medium');
+  const [notes, setNotes] = useState('');
   const [rosterFound, setRosterFound] = useState(false);
-  const [loadingRoster, setLoadingRoster] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  // Fetch the roster entry for this athlete from the coach dashboard
   useEffect(() => {
-    async function fetchRosterEntry(): Promise<void> {
+    async function load() {
+      try {
+        const res = await fetch(`/api/coach/athlete/${id}`);
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || 'Failed to load athlete');
+        }
+        const athleteData = await res.json();
+        setData(athleteData);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    async function loadRoster() {
       try {
         const res = await fetch('/api/coach/dashboard');
-        if (!res.ok) {
-          setLoadingRoster(false);
-          return;
-        }
-        const data = await res.json();
-        const entry = data.roster?.find(
+        if (!res.ok) return;
+        const dashData = await res.json();
+        const entry = dashData.roster?.find(
           (r: { id: string; priority?: string; notes?: string }) => r.id === id
         );
         if (entry) {
@@ -36,174 +126,290 @@ export default function CoachRosterEditPage(): React.JSX.Element {
           setPriority(entry.priority || 'medium');
           setNotes(entry.notes || '');
         }
-      } catch {
-        // Ignore -- page still works for display
-      } finally {
-        setLoadingRoster(false);
-      }
+      } catch { /* ignore */ }
     }
 
-    if (id) fetchRosterEntry();
+    if (id) {
+      load();
+      loadRoster();
+    }
   }, [id]);
 
-  const handleSave = async (): Promise<void> => {
-    if (!rosterFound) {
-      setSaveMessage({ type: 'error', text: 'No roster entry found for this athlete' });
-      return;
-    }
+  const updateField = useCallback((field: keyof AthleteData, value: string | number) => {
+    setData(prev => prev ? { ...prev, [field]: value } : prev);
+  }, []);
 
-    setSaving(true);
-    setSaveMessage(null);
+  const handleSave = async () => {
+    if (!data) return;
+    setIsSaving(true);
 
     try {
-      const res = await fetch('/api/coach/roster', {
-        method: 'PATCH',
+      // Save athlete data
+      const res = await fetch(`/api/coach/athlete/${id}`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ athlete_id: id, priority, notes }),
+        body: JSON.stringify(data),
       });
 
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Failed to save');
+        const err = await res.json();
+        throw new Error(err.error || 'Failed to save');
       }
 
-      setSaveMessage({ type: 'success', text: 'Changes saved successfully' });
-      setTimeout(() => setSaveMessage(null), 3000);
+      // Save roster entry (priority/notes) if found
+      if (rosterFound) {
+        await fetch('/api/coach/roster', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ athlete_id: id, priority, notes }),
+        });
+      }
+
+      toast.success('Changes saved successfully');
     } catch (err) {
-      setSaveMessage({ type: 'error', text: err instanceof Error ? err.message : 'Save failed' });
+      toast.error(err instanceof Error ? err.message : 'Save failed');
     } finally {
-      setSaving(false);
+      setIsSaving(false);
     }
   };
 
-  if (isLoading || loadingRoster) {
+  if (isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="size-12 rounded-full border-4 border-primary border-t-transparent animate-spin" />
-          <p className="text-slate-400">Loading...</p>
+          <p className="text-slate-400">Loading athlete...</p>
         </div>
       </div>
     );
   }
 
-  if (error || !athlete) {
+  if (error || !data) {
     return (
       <div className="flex-1 flex items-center justify-center">
         <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-6 max-w-md text-center">
           <span className="material-symbols-outlined text-red-400 text-4xl mb-3">error</span>
           <h3 className="text-white font-semibold mb-2">Failed to load athlete</h3>
-          <p className="text-slate-400 text-sm">{error?.message || 'Athlete not found'}</p>
+          <p className="text-slate-400 text-sm">{error || 'Athlete not found'}</p>
         </div>
       </div>
     );
   }
 
-  const name = athlete.profile?.full_name || 'Unknown Athlete';
-  const initials = name.split(' ').map((n: string) => n[0]).join('').slice(0, 2);
+  const initials = data.name ? data.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : '?';
 
   return (
-    <div className="p-8">
-      <div className="max-w-3xl mx-auto">
-        {/* Back Link */}
-        <Link href={`/coach/roster/${id}`} className="flex items-center gap-1 text-slate-400 hover:text-white text-sm mb-6 transition-colors">
-          <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-          Back to Athlete
-        </Link>
+    <div className="h-full overflow-y-auto pb-32">
+      <div className="max-w-4xl mx-auto px-6 py-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <Link href={`/coach/roster/${id}`} className="flex items-center gap-1 text-slate-400 hover:text-white text-sm transition-colors">
+            <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+            Back to Athlete
+          </Link>
+          <Link href={`/card/${id}`} target="_blank" className="flex items-center gap-1.5 text-primary text-sm hover:underline">
+            <span className="material-symbols-outlined text-[16px]">open_in_new</span>
+            View Public Card
+          </Link>
+        </div>
 
-        <h1 className="text-2xl font-bold text-white mb-6">Edit Roster Entry</h1>
-
-        {/* Read-only Athlete Summary */}
-        <div className="bg-[#1F1F22] rounded-xl border border-white/5 p-5 mb-6">
-          <div className="flex items-center gap-4">
-            <div className="size-14 rounded-full bg-[#2A2A2E] flex items-center justify-center text-white font-bold text-lg shrink-0 overflow-hidden">
-              {athlete.profile?.avatar_url ? (
-                <img src={athlete.profile.avatar_url} alt={name} className="size-full object-cover" />
-              ) : (
-                initials
-              )}
-            </div>
-            <div>
-              <h2 className="text-white font-semibold text-lg">{name}</h2>
-              <p className="text-slate-400 text-sm">
-                {athlete.primary_position || 'N/A'} &middot; Class of {athlete.class_year || 'N/A'} &middot; GPA: {athlete.gpa?.toFixed(1) || 'N/A'}
-              </p>
-            </div>
+        {/* Title + Avatar */}
+        <div className="flex items-center gap-5 mb-8">
+          <div className="size-16 rounded-full bg-[#2A2A2E] border-2 border-primary/30 flex items-center justify-center overflow-hidden shrink-0">
+            {data.avatarUrl ? (
+              <img src={data.avatarUrl} alt={data.name} className="size-full object-cover" />
+            ) : (
+              <span className="text-xl font-bold text-white/40">{initials}</span>
+            )}
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-white">Edit Player Card</h1>
+            <p className="text-slate-400 text-sm">{data.name} &middot; {data.position || 'No position'} &middot; Class of {data.classYear}</p>
           </div>
         </div>
 
-        {/* Edit Form */}
-        <div className="bg-[#1F1F22] rounded-xl border border-white/5 p-5">
-          <div className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium text-slate-400 mb-2">Priority</label>
-              <select
-                value={priority}
-                onChange={(e) => setPriority(e.target.value)}
-                className="w-full bg-[#2A2A2E] text-white text-sm rounded-lg px-3 py-2.5 border border-white/10 focus:border-primary focus:ring-1 focus:ring-primary"
-              >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-                <option value="top">Top</option>
-              </select>
+        <div className="flex flex-col gap-8">
+          {/* Basic Information */}
+          <section className="bg-[#1A1A1D] rounded-xl border border-white/10 p-6">
+            <SectionHeader icon="person" title="Basic Information" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Field label="Full Name" value={data.name} onChange={v => updateField('name', v)} placeholder="Athlete name" />
+              <Field label="Jersey #" value={data.jerseyNumber} onChange={v => updateField('jerseyNumber', v)} placeholder="#" />
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Primary Position</label>
+                <select
+                  value={data.position}
+                  onChange={e => updateField('position', e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-white text-sm focus:border-primary focus:ring-1 focus:ring-primary"
+                >
+                  <option value="">Select position</option>
+                  {positions.map(p => <option key={p} value={p}>{p}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Secondary Position</label>
+                <select
+                  value={data.secondaryPosition}
+                  onChange={e => updateField('secondaryPosition', e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-white text-sm focus:border-primary focus:ring-1 focus:ring-primary"
+                >
+                  <option value="">None</option>
+                  {positions.map(p => <option key={p} value={p}>{p}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Class Year</label>
+                <select
+                  value={data.classYear}
+                  onChange={e => updateField('classYear', parseInt(e.target.value))}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-white text-sm focus:border-primary focus:ring-1 focus:ring-primary"
+                >
+                  {classYears.map(y => <option key={y} value={y}>{y}</option>)}
+                </select>
+              </div>
+              <Field label="High School" value={data.highSchool} onChange={v => updateField('highSchool', v)} placeholder="School name" />
+              <Field label="City" value={data.city} onChange={v => updateField('city', v)} placeholder="City" />
+              <Field label="State" value={data.state} onChange={v => updateField('state', v)} placeholder="CA" />
+              <div className="col-span-full">
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Bio</label>
+                <textarea
+                  value={data.bio}
+                  onChange={e => updateField('bio', e.target.value)}
+                  placeholder="Brief bio about the athlete..."
+                  rows={3}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-white text-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-slate-600 resize-none"
+                />
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-400 mb-2">Notes</label>
-              <textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                placeholder="Add notes about this athlete..."
-                rows={4}
-                className="w-full bg-[#2A2A2E] text-white text-sm rounded-lg px-3 py-2.5 border border-white/10 focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-slate-500 resize-none"
-              />
-            </div>
-          </div>
+          </section>
 
-          {/* Save Feedback */}
-          {saveMessage && (
-            <div className={`mt-4 p-3 rounded-lg text-sm ${
-              saveMessage.type === 'success'
-                ? 'bg-green-500/10 text-green-400 border border-green-500/20'
-                : 'bg-red-500/10 text-red-400 border border-red-500/20'
-            }`}>
-              {saveMessage.text}
+          {/* Measurables */}
+          <section className="bg-[#1A1A1D] rounded-xl border border-white/10 p-6">
+            <SectionHeader icon="straighten" title="Measurables" />
+            <p className="text-xs text-yellow-500/80 mb-4 flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-[14px]">verified</span>
+              Coach-verified data takes priority over athlete-entered values
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+              <Field label="Height" value={data.height} onChange={v => updateField('height', v)} placeholder={`6'1"`} />
+              <Field label="Weight (lbs)" value={data.weight} onChange={v => updateField('weight', v)} placeholder="185" />
+              <Field label="40-Yard (s)" value={data.fortyYard} onChange={v => updateField('fortyYard', v)} placeholder="4.60" />
+              <Field label="10Y Split (s)" value={data.tenYardSplit} onChange={v => updateField('tenYardSplit', v)} placeholder="1.55" />
+              <Field label="5-10-5 (s)" value={data.fiveTenFive} onChange={v => updateField('fiveTenFive', v)} placeholder="4.30" />
+              <Field label="Broad Jump (in)" value={data.broadJump} onChange={v => updateField('broadJump', v)} placeholder="120" />
+              <Field label="Vertical (in)" value={data.vertical} onChange={v => updateField('vertical', v)} placeholder="36" />
+              <Field label="Wingspan (in)" value={data.wingspan} onChange={v => updateField('wingspan', v)} placeholder="74" />
+              <Field label="Bench (lbs)" value={data.benchPress} onChange={v => updateField('benchPress', v)} placeholder="225" />
+              <Field label="Squat (lbs)" value={data.squat} onChange={v => updateField('squat', v)} placeholder="405" />
             </div>
-          )}
+          </section>
 
-          {/* Actions */}
-          <div className="flex items-center gap-3 mt-6">
-            <button
-              onClick={handleSave}
-              disabled={saving || !rosterFound}
-              className="flex items-center gap-2 bg-primary text-black font-bold px-5 py-2.5 rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
-            >
-              {saving ? (
-                <>
-                  <div className="size-4 rounded-full border-2 border-black border-t-transparent animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <span className="material-symbols-outlined text-[20px]">save</span>
-                  Save Changes
-                </>
-              )}
-            </button>
+          {/* Academics */}
+          <section className="bg-[#1A1A1D] rounded-xl border border-white/10 p-6">
+            <SectionHeader icon="school" title="Academics" />
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <Field label="GPA" value={data.gpa} onChange={v => updateField('gpa', v)} placeholder="3.50" />
+              <Field label="Weighted GPA" value={data.weightedGpa} onChange={v => updateField('weightedGpa', v)} placeholder="4.10" />
+              <Field label="SAT" value={data.sat} onChange={v => updateField('sat', v)} placeholder="1200" />
+              <Field label="ACT" value={data.act} onChange={v => updateField('act', v)} placeholder="28" />
+            </div>
+          </section>
+
+          {/* Film */}
+          <section className="bg-[#1A1A1D] rounded-xl border border-white/10 p-6">
+            <SectionHeader icon="smart_display" title="Film & Highlights" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Field label="Hudl Link" value={data.hudlLink} onChange={v => updateField('hudlLink', v)} placeholder="https://www.hudl.com/..." />
+              <Field label="YouTube Link" value={data.youtubeLink} onChange={v => updateField('youtubeLink', v)} placeholder="https://youtube.com/..." />
+            </div>
+          </section>
+
+          {/* Coach Assessment */}
+          <section className="bg-[#1A1A1D] rounded-xl border border-white/10 p-6">
+            <SectionHeader icon="sports" title="Coach Assessment" />
+            <div className="flex flex-col gap-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Coach Notes</label>
+                <textarea
+                  value={data.coachNotes}
+                  onChange={e => updateField('coachNotes', e.target.value)}
+                  placeholder="Your observations, strengths, areas for improvement..."
+                  rows={4}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-white text-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-slate-600 resize-none"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Player Summary</label>
+                <textarea
+                  value={data.playerSummary}
+                  onChange={e => updateField('playerSummary', e.target.value)}
+                  placeholder="Recruiting summary visible on the player card..."
+                  rows={4}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-white text-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-slate-600 resize-none"
+                />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Field label="NCAA ID" value={data.ncaaEcId} onChange={v => updateField('ncaaEcId', v)} placeholder="NCAA eligibility center ID" />
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Roster Priority</label>
+                  <select
+                    value={priority}
+                    onChange={e => setPriority(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-white text-sm focus:border-primary focus:ring-1 focus:ring-primary"
+                  >
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                    <option value="top">Top</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Roster Notes</label>
+                <textarea
+                  value={notes}
+                  onChange={e => setNotes(e.target.value)}
+                  placeholder="Internal notes about this roster entry..."
+                  rows={3}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-white text-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-slate-600 resize-none"
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Coach Contact */}
+          <section className="bg-[#1A1A1D] rounded-xl border border-white/10 p-6">
+            <SectionHeader icon="call" title="Coach Contact (shown on card)" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Field label="Coach Phone" value={data.coachPhone} onChange={v => updateField('coachPhone', v)} placeholder="(555) 123-4567" />
+              <Field label="Coach Email" value={data.coachEmail} onChange={v => updateField('coachEmail', v)} placeholder="coach@school.edu" />
+            </div>
+          </section>
+        </div>
+      </div>
+
+      {/* Fixed Bottom Action Bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#0a0a0a]/90 backdrop-blur-xl border-t border-white/10 p-4 md:pl-72 flex justify-center">
+        <div className="max-w-4xl w-full flex items-center justify-between px-6">
+          <p className="text-sm text-slate-500 hidden md:block">
+            Editing {data.name}&apos;s player card
+          </p>
+          <div className="flex items-center gap-4 w-full md:w-auto">
             <button
               onClick={() => router.back()}
-              className="flex items-center gap-2 bg-[#2A2A2E] text-slate-300 font-medium px-5 py-2.5 rounded-lg hover:bg-white/10 transition-colors"
+              className="flex-1 md:flex-none px-6 py-2.5 rounded-lg text-sm font-bold border border-white/10 text-white hover:bg-white/5 transition-colors"
             >
               Cancel
             </button>
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="flex-1 md:flex-none px-8 py-2.5 rounded-lg text-sm font-black bg-primary text-black hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 uppercase tracking-widest disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {isSaving && <div className="size-4 rounded-full border-2 border-black border-t-transparent animate-spin" />}
+              {isSaving ? 'Saving...' : 'Save Changes'}
+            </button>
           </div>
-
-          {!rosterFound && (
-            <p className="text-yellow-400 text-xs mt-3">
-              <span className="material-symbols-outlined text-[14px] align-middle mr-1">warning</span>
-              No roster entry found for this athlete. Save is disabled.
-            </p>
-          )}
         </div>
       </div>
     </div>
