@@ -79,7 +79,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     for (const assignment of assignments || []) {
       const recruiter = assignment.recruiter as unknown as {
         id: string;
-        user_id: string;
         school_name: string | null;
         title: string | null;
         profile: { full_name: string | null; email: string | null; avatar_url: string | null } | null;
@@ -109,7 +108,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         id,
         school_name,
         title,
-        profile:profiles!user_id(id, full_name, avatar_url)
+        profile:profiles!profile_id(id, full_name, avatar_url)
       `)
       .order("created_at", { ascending: true })
       .limit(50);
@@ -226,7 +225,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           zone: parsed.data.zone,
           recruiter_id: parsed.data.recruiter_id,
           assigned_by: profile.id,
-          assigned_at: new Date().toISOString(),
+          created_at: new Date().toISOString(),
         },
         { onConflict: "zone,recruiter_id" }
       )
