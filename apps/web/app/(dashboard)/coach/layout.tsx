@@ -25,6 +25,7 @@ export default function CoachLayout({ children }: { children: React.ReactNode })
       <CoachHero
         coachName={coach?.name || ''}
         school={coach?.school || team?.school || ''}
+        coachAvatarUrl={coach?.avatarUrl}
         activeTab={activeTab}
         metrics={{
           activeRecruits: metrics?.totalAthletes ?? roster.length,

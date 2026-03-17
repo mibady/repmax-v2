@@ -5,6 +5,7 @@ import Link from 'next/link';
 interface CoachHeroProps {
   coachName: string;
   school: string;
+  coachAvatarUrl?: string | null;
   activeTab: 'dashboard' | 'pipeline' | 'messages' | 'analytics';
   metrics: {
     activeRecruits: number;
@@ -23,8 +24,11 @@ const tabs = [
   { key: 'analytics', label: 'Analytics', href: '/coach/analytics' },
 ] as const;
 
-export default function CoachHero({ coachName, school, activeTab, metrics, isLoading }: CoachHeroProps) {
+export default function CoachHero({ coachName, school, coachAvatarUrl, activeTab, metrics, isLoading }: CoachHeroProps) {
   const firstName = coachName?.split(' ')[0] || 'Coach';
+  const initials = coachName
+    ? coachName.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()
+    : 'HC';
 
   return (
     <div className="relative overflow-hidden">
@@ -34,7 +38,7 @@ export default function CoachHero({ coachName, school, activeTab, metrics, isLoa
       <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-primary/5 rounded-full blur-[80px]" />
 
       <div className="relative z-10 px-8 pt-6 pb-0">
-        {/* Top row: greeting + contact period badge + notification */}
+        {/* Top row: greeting + coach/team images + notification */}
         <div className="flex items-start justify-between mb-4">
           <div>
             <h1 className="text-2xl font-bold text-white">
@@ -42,15 +46,30 @@ export default function CoachHero({ coachName, school, activeTab, metrics, isLoa
             </h1>
             <p className="text-sm text-white/50 mt-0.5">{school}</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col items-end gap-2">
+            <div className="flex items-center gap-3">
+              {/* Team Logo */}
+              <div className="size-12 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
+                <span className="material-symbols-outlined text-white/30 text-[24px]">shield</span>
+              </div>
+              {/* Coach Headshot */}
+              <div className="size-12 rounded-full bg-white/5 border-2 border-primary/40 flex items-center justify-center overflow-hidden">
+                {coachAvatarUrl ? (
+                  <img src={coachAvatarUrl} alt={coachName} className="size-full object-cover" />
+                ) : (
+                  <span className="text-sm font-bold text-primary/70">{initials}</span>
+                )}
+              </div>
+              <button className="relative p-2 rounded-lg hover:bg-white/5 transition-colors text-white/60 hover:text-white">
+                <span className="material-symbols-outlined text-[22px]">notifications</span>
+                <span className="absolute top-1.5 right-1.5 size-2 rounded-full bg-red-500" />
+              </button>
+            </div>
+            {/* Contact Period Badge — below images */}
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-500/15 border border-green-500/30 text-green-400 text-xs font-semibold">
               <span className="size-1.5 rounded-full bg-green-400 animate-pulse" />
               Contact Period Open
             </span>
-            <button className="relative p-2 rounded-lg hover:bg-white/5 transition-colors text-white/60 hover:text-white">
-              <span className="material-symbols-outlined text-[22px]">notifications</span>
-              <span className="absolute top-1.5 right-1.5 size-2 rounded-full bg-red-500" />
-            </button>
           </div>
         </div>
 
