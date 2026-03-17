@@ -6,6 +6,7 @@ import type { Tables } from "@/types/database";
 
 type Athlete = Tables<"athletes"> & {
   profile: Tables<"profiles"> | null;
+  highlights?: Tables<"highlights">[];
 };
 
 interface UseAthletesOptions {
@@ -70,7 +71,7 @@ export function useAthlete(id: string) {
 
       const { data, error: err } = await supabase
         .from("athletes")
-        .select(`*, profile:profiles(*)`)
+        .select(`*, profile:profiles(*), highlights(*)`)
         .eq("id", id)
         .single();
 
