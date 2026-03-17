@@ -61,6 +61,7 @@ export const DB_ZONE_TO_UI: Record<string, ZoneCode> = {
   'Southeast': 'SOUTHEAST',
   'Northeast': 'NORTHEAST',
   'Mid-Atlantic': 'NORTHEAST',
+  'Plains': 'PLAINS',
 };
 
 export const UI_ZONE_TO_DB: Record<ZoneCode, string[]> = {
@@ -69,7 +70,7 @@ export const UI_ZONE_TO_DB: Record<ZoneCode, string[]> = {
   MIDWEST: ['Midwest'],
   SOUTHEAST: ['Southeast'],
   NORTHEAST: ['Northeast', 'Mid-Atlantic'],
-  PLAINS: [], // no DB equivalent
+  PLAINS: ['Plains'],
 };
 
 // Static zone metadata (states, metro areas, descriptions)

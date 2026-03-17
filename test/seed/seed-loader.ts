@@ -49,6 +49,7 @@ function toDbZone(uiZone: string | undefined): string | null {
     'MIDWEST': 'Midwest',
     'SOUTHEAST': 'Southeast',
     'NORTHEAST': 'Northeast',
+    'PLAINS': 'Plains',
     'MID-ATLANTIC': 'Mid-Atlantic',
   };
   return map[uiZone.toUpperCase()] || null;
@@ -570,7 +571,7 @@ export async function seedTestData(): Promise<void> {
 
     const priorities = ['high', 'medium', 'low'] as const;
 
-    for (let i = 0; i < Math.min(5, athletes.length); i++) {
+    for (let i = 0; i < athletes.length; i++) {
       const athlete = athletes[i];
       const athleteId = athleteIdMap.get(athlete.email);
       if (!athleteId) continue;
@@ -578,7 +579,7 @@ export async function seedTestData(): Promise<void> {
       const { error } = await supabase.from('shortlists').insert({
         coach_id: coachId,
         athlete_id: athleteId,
-        notes: `Priority prospect - ${athlete.athleteProfile?.position || 'ATH'}`,
+        notes: `Priority prospect - ${athlete.athleteProfile?.position || 'ATH'} (${athlete.zone || 'Unknown'} Zone)`,
         priority: priorities[i % 3],
       });
 
@@ -586,7 +587,7 @@ export async function seedTestData(): Promise<void> {
         console.log(`  ✗ shortlist ${recruiter.email}→${athlete.email}: ${error.message}`);
       }
     }
-    console.log(`  ✓ Created shortlist entries for ${recruiter.email}`);
+    console.log(`  ✓ Created shortlist entries for ${recruiter.email} (${athletes.length} athletes)`);
   }
 
   console.log('\n✓ Test data seeded');
@@ -968,6 +969,70 @@ export async function seedRelationships(): Promise<SeedResult> {
   } else {
     created.push(`Class rankings: ${rankingRows.length}`);
     console.log(`  ✓ Class rankings: ${rankingRows.length}`);
+  }
+
+  // 8. Seed CRM pipeline entries for recruiters (all zones represented)
+  // Map zone athletes to pipeline stages for recruiter Brian Williams (TCU)
+  const pipelineAthletes: { email: string; stage: string; priority: string }[] = [
+    // SOUTHWEST (already heavy)
+    { email: 'marcus.thompson@test.repmax.io', stage: 'evaluating', priority: 'high' },
+    { email: 'andre.mitchell@test.repmax.io', stage: 'visit_scheduled', priority: 'top' },
+    { email: 'devon.brooks@test.repmax.io', stage: 'contacted', priority: 'medium' },
+    { email: 'carlos.mendez@test.repmax.io', stage: 'identified', priority: 'medium' },
+    { email: 'jamal.carter@test.repmax.io', stage: 'offered', priority: 'top' },
+    // WEST
+    { email: 'jaylen.washington@test.repmax.io', stage: 'visit_scheduled', priority: 'top' },
+    // SOUTHEAST
+    { email: 'deshawn.harris@test.repmax.io', stage: 'evaluating', priority: 'high' },
+    { email: 'sofia.rodriguez@test.repmax.io', stage: 'contacted', priority: 'medium' },
+    // MIDWEST
+    { email: 'malik.johnson@test.repmax.io', stage: 'evaluating', priority: 'high' },
+    { email: 'ethan.mueller@test.repmax.io', stage: 'identified', priority: 'medium' },
+    // NORTHEAST
+    { email: 'aiden.oconnor@test.repmax.io', stage: 'contacted', priority: 'high' },
+    { email: 'jordan.banks@test.repmax.io', stage: 'identified', priority: 'medium' },
+    // PLAINS
+    { email: 'cody.hargrove@test.repmax.io', stage: 'evaluating', priority: 'high' },
+    { email: 'tre.washington@test.repmax.io', stage: 'identified', priority: 'medium' },
+  ];
+
+  // Get TCU recruiter's coaches.id
+  const tcuPipelineProfileId = profileIdMap.get('coach.williams@test.repmax.io');
+  if (tcuPipelineProfileId) {
+    const { data: tcuCoach } = await supabase
+      .from('coaches')
+      .select('id')
+      .eq('profile_id', tcuPipelineProfileId)
+      .single();
+
+    if (tcuCoach) {
+      let pipelineCount = 0;
+      for (const entry of pipelineAthletes) {
+        const athleteProfileId = profileIdMap.get(entry.email);
+        if (!athleteProfileId) continue;
+
+        const { data: athleteRow } = await supabase
+          .from('athletes')
+          .select('id')
+          .eq('profile_id', athleteProfileId)
+          .single();
+
+        if (!athleteRow) continue;
+
+        const { error: pipeErr } = await supabase.from('crm_pipeline').upsert({
+          recruiter_id: tcuCoach.id,
+          athlete_id: athleteRow.id,
+          stage: entry.stage,
+          priority: entry.priority,
+          notes: null,
+          tags: [],
+        }, { onConflict: 'recruiter_id,athlete_id' });
+
+        if (!pipeErr) pipelineCount++;
+      }
+      created.push(`CRM pipeline: ${pipelineCount} entries`);
+      console.log(`  ✓ CRM pipeline: ${pipelineCount} entries`);
+    }
   }
 
   const duration = Date.now() - startTime;
