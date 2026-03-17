@@ -3,6 +3,7 @@ export { useUser } from "./use-user";
 
 // Athletes
 export { useAthletes, useAthlete } from "./use-athletes";
+export { useAthleteFullProfile } from "./use-athlete-full-profile";
 
 // Shortlist
 export { useShortlist, type PipelineStatus } from "./use-shortlist";
