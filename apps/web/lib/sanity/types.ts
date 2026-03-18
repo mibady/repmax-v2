@@ -2,7 +2,7 @@ export interface SanityResource {
   _id: string
   title: string
   slug: { current: string }
-  audience: 'parents' | 'athletes'
+  audience: 'parent' | 'athlete'
   category: string
   description: string
   icon?: string
