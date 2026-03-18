@@ -31,6 +31,8 @@ export default function Page() {
 <Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="#features">Features</Link>
 <Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="#how-it-works">How it Works</Link>
 <Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="/pricing">Pricing</Link>
+<Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="/resources">Resources</Link>
+<Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="/blog">Blog</Link>
 <Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="/login">Login</Link>
 </nav>
 <Link href="/signup" className="hidden md:flex items-center justify-center rounded-md bg-primary px-5 py-2.5 text-sm font-bold text-[#050505] transition-all hover:bg-primary-hover hover:scale-105">
@@ -58,6 +60,8 @@ export default function Page() {
       <Link className="text-lg font-medium text-white" href="#features" onClick={() => setMobileMenuOpen(false)}>Features</Link>
       <Link className="text-lg font-medium text-white" href="#how-it-works" onClick={() => setMobileMenuOpen(false)}>How it Works</Link>
       <Link className="text-lg font-medium text-white" href="/pricing" onClick={() => setMobileMenuOpen(false)}>Pricing</Link>
+      <Link className="text-lg font-medium text-white" href="/resources" onClick={() => setMobileMenuOpen(false)}>Resources</Link>
+      <Link className="text-lg font-medium text-white" href="/blog" onClick={() => setMobileMenuOpen(false)}>Blog</Link>
       <Link className="text-lg font-medium text-white" href="/login" onClick={() => setMobileMenuOpen(false)}>Login</Link>
       <Link href="/signup" className="mt-4 rounded-md bg-primary px-8 py-3 text-base font-bold text-[#050505]" onClick={() => setMobileMenuOpen(false)}>Get Your Free RepMax ID</Link>
     </nav>
@@ -401,7 +405,8 @@ export default function Page() {
 <h3 className="text-sm font-bold text-white uppercase tracking-wider">Company</h3>
 <span className="text-sm text-text-grey">About</span>
 <span className="text-sm text-text-grey">Careers</span>
-<span className="text-sm text-text-grey">Blog</span>
+<Link href="/blog" className="text-sm text-text-grey hover:text-primary transition-colors">Blog</Link>
+<Link href="/resources" className="text-sm text-text-grey hover:text-primary transition-colors">Resources</Link>
 <Link href="/support" className="text-sm text-text-grey hover:text-primary transition-colors">Contact</Link>
 </div>
 <div className="flex flex-col gap-4">

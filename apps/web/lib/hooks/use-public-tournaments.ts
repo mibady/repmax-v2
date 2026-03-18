@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-export type OffSeasonEventType = "tournament" | "showcase" | "camp" | "combine";
+export type OffSeasonEventType = "tournament" | "showcase" | "camp" | "combine" | "clinic";
 
 export type ZoneCode = "south" | "southeast" | "midwest" | "northeast" | "west" | "northwest";
 

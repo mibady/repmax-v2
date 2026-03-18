@@ -10,6 +10,7 @@ const EVENT_TYPES: { value: OffSeasonEventType; label: string; icon: string }[] 
   { value: 'showcase', label: 'Showcases', icon: 'star' },
   { value: 'camp', label: 'Camps', icon: 'camping' },
   { value: 'combine', label: 'Combines', icon: 'speed' },
+  { value: 'clinic', label: 'Clinics', icon: 'school' },
 ];
 
 const ZONES: { value: ZoneCode; label: string }[] = [
@@ -32,6 +33,7 @@ const EVENT_TYPE_COLORS: Record<string, string> = {
   showcase: 'bg-purple-500/15 text-purple-400',
   camp: 'bg-green-500/15 text-green-400',
   combine: 'bg-orange-500/15 text-orange-400',
+  clinic: 'bg-cyan-500/15 text-cyan-400',
 };
 
 export default function PublicTournamentsPage() {

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useParentDashboard } from '@/lib/hooks';
+import { RecommendedResources } from '@/components/content/RecommendedResources';
 
 // Fallback mock data for when API returns empty
 const fallbackProfile = {
@@ -195,6 +196,11 @@ export default function ParentDashboardPage() {
               )}
             </div>
           </div>
+        </div>
+
+        {/* Recommended Resources */}
+        <div className="mt-6">
+          <RecommendedResources />
         </div>
 
         {/* Calendar Section */}

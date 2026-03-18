@@ -8,6 +8,7 @@ import { useAthleteDashboard } from '@/lib/hooks';
 import { calculateProfileCompletion, type ProfileCompletionResult } from '@/lib/utils/profile-completion';
 import { WelcomeModal } from '@/components/athlete/WelcomeModal';
 import { checkMilestones } from '@/lib/utils/milestone-toasts';
+import { RecruitingTipsWidget } from '@/components/content/RecruitingTipsWidget';
 
 function formatHeight(inches: number | null): string {
   if (!inches) return "N/A";
@@ -383,6 +384,9 @@ export default function AthleteDashboardPage() {
                 </button>
               </div>
             </div>
+
+            {/* Recruiting Tips */}
+            <RecruitingTipsWidget />
 
             {/* Quick Actions */}
             <div className="bg-surface-dark rounded-xl border border-[#333] p-5">
