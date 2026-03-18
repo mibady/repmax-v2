@@ -89,7 +89,7 @@ export async function PATCH(
 
     // Verify the user is the tournament organizer
     const { data: tournament } = await supabase
-      .from("tournaments")
+      .from("off_season_events")
       .select("id, organizer_id")
       .eq("id", tournamentId)
       .single();

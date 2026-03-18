@@ -42,7 +42,7 @@ export async function POST(
 
     // Verify tournament exists and is public
     const { data: tournament, error: tError } = await supabase
-      .from("tournaments")
+      .from("off_season_events")
       .select(
         "id, is_public, registration_deadline, teams_capacity, teams_registered, entry_fee_cents, platform_fee_rate"
       )

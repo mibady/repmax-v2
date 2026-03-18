@@ -32,7 +32,9 @@ export default function PublicTournamentDetailPage() {
   }
 
   const entryFee = tournament.entry_fee_cents ? `$${(tournament.entry_fee_cents / 100).toFixed(2)}` : 'Free';
-  const spotsLeft = tournament.teams_capacity - registrationCount;
+  const hasCapacity = tournament.teams_capacity != null && tournament.teams_capacity > 0;
+  const spotsLeft = hasCapacity ? tournament.teams_capacity - registrationCount : null;
+  const isSoldOut = hasCapacity && spotsLeft !== null && spotsLeft <= 0;
 
   return (
     <div className="min-h-screen bg-black pt-24 pb-24 px-4 md:px-8">
@@ -83,7 +85,7 @@ export default function PublicTournamentDetailPage() {
                 </div>
                 <div>
                   <p className="text-gray-500 text-[10px] font-black uppercase tracking-widest">Capacity</p>
-                  <p className="text-white font-bold text-sm">{registrationCount} / {tournament.teams_capacity} Teams</p>
+                  <p className="text-white font-bold text-sm">{hasCapacity ? `${registrationCount} / ${tournament.teams_capacity} Teams` : 'Open'}</p>
                 </div>
               </div>
             </div>
@@ -104,21 +106,30 @@ export default function PublicTournamentDetailPage() {
               </div>
               <div className="flex justify-between items-center py-3">
                 <span className="text-gray-400 text-sm">Status</span>
-                <span className={spotsLeft > 0 ? 'text-green-500 font-bold text-sm' : 'text-red-500 font-bold text-sm'}>
-                  {spotsLeft > 0 ? `${spotsLeft} Spots Left` : 'Sold Out'}
+                <span className={isSoldOut ? 'text-red-500 font-bold text-sm' : 'text-green-500 font-bold text-sm'}>
+                  {isSoldOut ? 'Sold Out' : hasCapacity ? `${spotsLeft} Spots Left` : 'Open'}
                 </span>
               </div>
             </div>
-            <Link 
-              href={`/school/events/${id}/register`}
-              className="w-full bg-primary hover:bg-primary/90 text-black font-black py-4 rounded-2xl transition-all shadow-[0_0_30px_-5px_rgba(212,175,55,0.4)] flex items-center justify-center gap-2"
-            >
-              Register Team
-              <ChevronRight className="size-5" />
-            </Link>
-            <p className="text-center text-gray-500 text-[10px] mt-4 uppercase font-bold tracking-widest">
-              Verified Schools & Clubs Only
-            </p>
+            {isSoldOut ? (
+              <div className="w-full bg-white/10 text-gray-500 font-black py-4 rounded-2xl flex items-center justify-center gap-2 cursor-not-allowed">
+                Sold Out
+              </div>
+            ) : tournament.registration_url ? (
+              <a
+                href={tournament.registration_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-primary hover:bg-primary/90 text-black font-black py-4 rounded-2xl transition-all shadow-[0_0_30px_-5px_rgba(212,175,55,0.4)] flex items-center justify-center gap-2"
+              >
+                Register
+                <ChevronRight className="size-5" />
+              </a>
+            ) : (
+              <div className="w-full bg-white/10 text-gray-500 font-black py-4 rounded-2xl flex items-center justify-center gap-2 cursor-not-allowed">
+                Registration Unavailable
+              </div>
+            )}
           </div>
         </div>
 

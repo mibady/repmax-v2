@@ -29,6 +29,8 @@ export interface PublicTournament {
   registration_count: number;
   event_type: OffSeasonEventType | null;
   zone: string | null;
+  registration_url: string | null;
+  organizer_name: string | null;
   prospects: TournamentProspect[];
 }
 

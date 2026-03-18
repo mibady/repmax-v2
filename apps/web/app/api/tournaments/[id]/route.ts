@@ -20,7 +20,7 @@ export async function GET(
 
     // Fetch tournament
     const { data: tournament, error } = await supabase
-      .from("tournaments")
+      .from("off_season_events")
       .select("*")
       .eq("id", id)
       .single();

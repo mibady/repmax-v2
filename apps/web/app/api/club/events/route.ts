@@ -59,7 +59,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Insert tournament
     const { data, error } = await supabase
-      .from("tournaments")
+      .from("off_season_events")
       .insert({
         name: parsed.data.name,
         start_date: parsed.data.start_date,

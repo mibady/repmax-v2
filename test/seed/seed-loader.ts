@@ -1301,7 +1301,7 @@ export async function seedClubData(): Promise<SeedResult> {
   for (const t of tournamentData) {
     try {
       const { data, error } = await supabase
-        .from('tournaments')
+        .from('off_season_events')
         .insert({
           organizer_id: mikeTorresUserId,
           ...t,

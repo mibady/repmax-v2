@@ -12,9 +12,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const zone = searchParams.get("zone");
 
     let query = supabase
-      .from("tournaments")
+      .from("off_season_events")
       .select(
-        "id, name, description, start_date, end_date, location, teams_capacity, teams_registered, entry_fee_cents, registration_deadline, is_public, event_tier, status, event_type, zone"
+        "id, name, description, start_date, end_date, location, teams_capacity, teams_registered, entry_fee_cents, registration_deadline, is_public, event_tier, status, event_type, zone, registration_url, organizer_name"
       )
       .eq("is_public", true)
       .order("start_date", { ascending: true });

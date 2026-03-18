@@ -18,6 +18,8 @@ export interface TournamentDetail {
   platform_fee_rate: number;
   status: "upcoming" | "active" | "completed";
   organizer_id: string;
+  registration_url: string | null;
+  organizer_name: string | null;
   created_at: string;
 }
 

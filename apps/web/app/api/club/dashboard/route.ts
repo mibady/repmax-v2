@@ -17,7 +17,7 @@ export async function GET() {
 
     // Get tournaments for this club organizer
     const { data: tournamentsData } = await supabase
-      .from("tournaments")
+      .from("off_season_events")
       .select("*")
       .eq("organizer_id", user.id)
       .order("start_date", { ascending: false });

@@ -337,7 +337,7 @@ export async function createRegistrationPayment(
 
   // Get tournament entry fee
   const { data: tournament } = await supabase
-    .from("tournaments")
+    .from("off_season_events")
     .select("id, entry_fee_cents, platform_fee_rate")
     .eq("id", tournamentId)
     .single();
