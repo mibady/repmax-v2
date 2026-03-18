@@ -217,6 +217,8 @@ export {
   type SchoolInterest,
   type ActivityItem,
   type CalendarEvent as ParentCalendarEvent,
+  type AcademicHealth,
+  type Alert,
 } from "./use-parent-dashboard";
 
 // Coach Dashboard
@@ -304,3 +306,6 @@ export {
 
 // Resource Recommendations (Sanity CMS)
 export { useResourceRecommendations } from "./use-resource-recommendations";
+
+// Checklist Progress (localStorage-backed)
+export { useChecklistProgress } from "./use-checklist-progress";

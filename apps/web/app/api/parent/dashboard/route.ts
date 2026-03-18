@@ -66,11 +66,25 @@ export async function GET() {
       title: string;
       type: string;
     }> = [];
+    let academic = {
+      gpa: null as number | null,
+      satScore: null as number | null,
+      actScore: null as number | null,
+      coreCourses: { completed: 0, required: 16 },
+      clearinghouseStatus: "not_started" as string,
+    };
+    const alerts: Array<{
+      id: string;
+      type: "urgent" | "warning" | "info";
+      message: string;
+      action?: string;
+      actionUrl?: string;
+    }> = [];
 
     if (links && links.length > 0) {
       const athleteProfileId = links[0].athlete_profile_id;
 
-      // Get athlete data with profile info
+      // Get athlete data with profile info — include sat_score and act_score
       const { data: athlete } = await supabase
         .from("athletes")
         .select(
@@ -79,6 +93,8 @@ export async function GET() {
           primary_position,
           class_year,
           gpa,
+          sat_score,
+          act_score,
           high_school,
           profile:profiles!inner(
             full_name,
@@ -98,12 +114,51 @@ export async function GET() {
           name:
             (p as { full_name?: string })?.full_name?.split(" ")[0] ||
             "Athlete",
+          fullName: (p as { full_name?: string })?.full_name || "Athlete",
           position: athlete.primary_position || "ATH",
           classYear: athlete.class_year || 2026,
           gpa: athlete.gpa ? Number(athlete.gpa) : null,
           school: athlete.high_school || "High School",
           avatarUrl: (p as { avatar_url?: string })?.avatar_url || null,
         };
+
+        // Academic health
+        academic = {
+          gpa: athlete.gpa ? Number(athlete.gpa) : null,
+          satScore: athlete.sat_score ? Number(athlete.sat_score) : null,
+          actScore: athlete.act_score ? Number(athlete.act_score) : null,
+          coreCourses: { completed: 0, required: 16 },
+          clearinghouseStatus: "not_started",
+        };
+
+        // Generate alerts based on profile gaps
+        if (!athlete.gpa) {
+          alerts.push({
+            id: "alert-gpa",
+            type: "urgent",
+            message: "GPA not set — NCAA eligibility requires a minimum core GPA",
+            action: "Update Profile",
+            actionUrl: "/athlete/profile",
+          });
+        }
+        if (!athlete.sat_score && !athlete.act_score) {
+          alerts.push({
+            id: "alert-test",
+            type: "warning",
+            message: "No SAT/ACT score on file — required for D1/D2 official visits",
+            action: "Add Score",
+            actionUrl: "/athlete/profile",
+          });
+        }
+        if (!athlete.primary_position || athlete.primary_position === "ATH") {
+          alerts.push({
+            id: "alert-position",
+            type: "info",
+            message: "Primary position not specified — coaches filter by position",
+            action: "Update Profile",
+            actionUrl: "/athlete/profile",
+          });
+        }
 
         // Get profile views count
         const { count: viewsCount } = await supabase
@@ -132,28 +187,68 @@ export async function GET() {
           upcomingDeadlines: 0,
         };
 
-        // Get schools showing interest (from shortlists via coaches)
+        // Get schools showing interest with status from crm_pipeline
         const { data: shortlistData } = await supabase
           .from("shortlists")
           .select(
             `
             id,
             coach:coaches!inner(
+              id,
               school_name
             )
           `
           )
           .eq("athlete_id", athlete.id)
-          .limit(5);
+          .limit(8);
 
         if (shortlistData) {
+          // Check crm_pipeline for status on each school's coach
+          const coachIds = shortlistData
+            .map((s) => {
+              const coach = s.coach as { id?: string } | null;
+              return coach?.id;
+            })
+            .filter(Boolean) as string[];
+
+          let pipelineMap: Record<string, string> = {};
+          if (coachIds.length > 0) {
+            const { data: pipelineData } = await supabase
+              .from("crm_pipeline")
+              .select("recruiter_profile_id, stage")
+              .eq("athlete_id", athlete.id)
+              .in("recruiter_profile_id", coachIds);
+
+            if (pipelineData) {
+              pipelineMap = Object.fromEntries(
+                pipelineData.map((p) => [p.recruiter_profile_id, p.stage])
+              );
+            }
+          }
+
           schools = shortlistData.map((s, index) => {
-            const coach = s.coach as { school_name?: string } | null;
+            const coach = s.coach as { id?: string; school_name?: string } | null;
+            const stage = coach?.id ? pipelineMap[coach.id] : undefined;
+
+            let status = "Evaluating";
+            let statusColor = "text-slate-400 bg-slate-400/10";
+
+            if (stage === "offer" || stage === "committed") {
+              status = "Offered";
+              statusColor = "text-green-400 bg-green-400/10";
+            } else if (stage === "contact" || stage === "visited") {
+              status = "In Contact";
+              statusColor = "text-blue-400 bg-blue-400/10";
+            } else if (stage === "evaluation" || stage === "prospect") {
+              status = "Evaluating";
+              statusColor = "text-yellow-400 bg-yellow-400/10";
+            }
+
             return {
               id: String(index),
               name: coach?.school_name || "Unknown School",
-              status: "Following",
-              statusColor: "text-blue-400 bg-blue-400/10",
+              status,
+              statusColor,
             };
           });
         }
@@ -187,7 +282,24 @@ export async function GET() {
             };
           });
         }
+
+        // Add alerts for low activity
+        if ((viewsCount || 0) === 0) {
+          alerts.push({
+            id: "alert-views",
+            type: "info",
+            message: "No profile views yet — make sure the profile is complete and shared with coaches",
+          });
+        }
       }
+    } else {
+      alerts.push({
+        id: "alert-no-link",
+        type: "urgent",
+        message: "No athlete linked to your account — link your child's profile to see their recruiting data",
+        action: "Link Athlete",
+        actionUrl: "/parent/link",
+      });
     }
 
     return NextResponse.json({
@@ -196,6 +308,8 @@ export async function GET() {
       schools,
       activity,
       calendarEvents,
+      academic,
+      alerts,
     });
   } catch (error) {
     console.error("Parent dashboard error:", error);

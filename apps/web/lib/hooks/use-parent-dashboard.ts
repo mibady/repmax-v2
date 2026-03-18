@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 export interface ChildProfile {
   id: string;
   name: string;
+  fullName?: string;
   position: string;
   classYear: number;
   gpa: number | null;
@@ -23,7 +24,7 @@ export interface ParentMetrics {
 export interface SchoolInterest {
   id: string;
   name: string;
-  status: "High Interest" | "Following" | "Offered" | "Contacted";
+  status: "High Interest" | "Following" | "Offered" | "Contacted" | "In Contact" | "Evaluating";
   statusColor: string;
 }
 
@@ -42,12 +43,30 @@ export interface CalendarEvent {
   type: "visit" | "deadline" | "camp";
 }
 
+export interface AcademicHealth {
+  gpa: number | null;
+  satScore: number | null;
+  actScore: number | null;
+  coreCourses: { completed: number; required: number };
+  clearinghouseStatus: string;
+}
+
+export interface Alert {
+  id: string;
+  type: "urgent" | "warning" | "info";
+  message: string;
+  action?: string;
+  actionUrl?: string;
+}
+
 interface UseParentDashboardReturn {
   childProfile: ChildProfile | null;
   metrics: ParentMetrics | null;
   schools: SchoolInterest[];
   activity: ActivityItem[];
   calendarEvents: CalendarEvent[];
+  academic: AcademicHealth | null;
+  alerts: Alert[];
   isLoading: boolean;
   error: Error | null;
   refresh: () => void;
@@ -59,6 +78,8 @@ export function useParentDashboard(): UseParentDashboardReturn {
   const [schools, setSchools] = useState<SchoolInterest[]>([]);
   const [activity, setActivity] = useState<ActivityItem[]>([]);
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
+  const [academic, setAcademic] = useState<AcademicHealth | null>(null);
+  const [alerts, setAlerts] = useState<Alert[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -80,6 +101,8 @@ export function useParentDashboard(): UseParentDashboardReturn {
       setSchools(data.schools || []);
       setActivity(data.activity || []);
       setCalendarEvents(data.calendarEvents || []);
+      setAcademic(data.academic || null);
+      setAlerts(data.alerts || []);
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Unknown error"));
     } finally {
@@ -97,6 +120,8 @@ export function useParentDashboard(): UseParentDashboardReturn {
     schools,
     activity,
     calendarEvents,
+    academic,
+    alerts,
     isLoading,
     error,
     refresh: fetchDashboard,
