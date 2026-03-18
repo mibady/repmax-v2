@@ -131,7 +131,7 @@ export default function DashboardLayout({
           availableRoles={availableRoles}
           userId={user.id}
         />
-        <div className="flex-1 overflow-y-auto">
+        <div className={`flex-1 ${pathname.startsWith('/messages') ? 'overflow-hidden' : 'overflow-y-auto'}`}>
           {children}
         </div>
       </main>

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { FBS_PERIODS } from "@/lib/data/ncaa-calendar";
 
 export async function GET() {
   try {
@@ -166,6 +167,34 @@ export async function GET() {
           .select("*", { count: "exact", head: true })
           .eq("athlete_id", athlete.id);
 
+        // Profile views trend (last 30d vs prev 30d)
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        const sixtyDaysAgo = new Date();
+        sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
+
+        const { count: recentViewCount } = await supabase
+          .from("profile_views")
+          .select("*", { count: "exact", head: true })
+          .eq("athlete_id", athlete.id)
+          .gte("created_at", thirtyDaysAgo.toISOString());
+
+        const { count: prevViewCount } = await supabase
+          .from("profile_views")
+          .select("*", { count: "exact", head: true })
+          .eq("athlete_id", athlete.id)
+          .gte("created_at", sixtyDaysAgo.toISOString())
+          .lt("created_at", thirtyDaysAgo.toISOString());
+
+        const profileViewsChange =
+          prevViewCount && prevViewCount > 0
+            ? Math.round(
+                (((recentViewCount || 0) - prevViewCount) / prevViewCount) * 100
+              )
+            : (recentViewCount || 0) > 0
+              ? 100
+              : 0;
+
         // Get shortlists (schools tracking this athlete)
         const { count: shortlistCount } = await supabase
           .from("shortlists")
@@ -179,12 +208,24 @@ export async function GET() {
           .eq("recipient_id", athleteProfileId)
           .eq("read", false);
 
+        // Upcoming NCAA deadlines (dead periods starting in next 90 days)
+        const todayStr = new Date().toISOString().split("T")[0];
+        const ninetyDaysOut = new Date();
+        ninetyDaysOut.setDate(ninetyDaysOut.getDate() + 90);
+        const ninetyStr = ninetyDaysOut.toISOString().split("T")[0];
+        const upcomingDeadlineCount = FBS_PERIODS.filter(
+          (p) =>
+            p.type === "dead" &&
+            p.start >= todayStr &&
+            p.start <= ninetyStr
+        ).length;
+
         metrics = {
           profileViews: viewsCount || 0,
-          profileViewsChange: 0,
+          profileViewsChange,
           coachMessages: messagesCount || 0,
           schoolsTracking: shortlistCount || 0,
-          upcomingDeadlines: 0,
+          upcomingDeadlines: upcomingDeadlineCount,
         };
 
         // Get schools showing interest with status from crm_pipeline
@@ -253,35 +294,126 @@ export async function GET() {
           });
         }
 
-        // Get recent activity (profile views)
-        const { data: recentViews } = await supabase
-          .from("profile_views")
-          .select("id, viewer_school, created_at, section_viewed")
-          .eq("athlete_id", athlete.id)
-          .order("created_at", { ascending: false })
-          .limit(4);
+        // Helper: relative time display
+        function relativeTime(dateStr: string): string {
+          const d = new Date(dateStr);
+          const diffMs = Date.now() - d.getTime();
+          const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+          if (diffHours < 1) return "just now";
+          if (diffHours < 24) return `${diffHours} hours ago`;
+          const diffDays = Math.floor(diffHours / 24);
+          if (diffDays === 1) return "yesterday";
+          if (diffDays < 7) return `${diffDays} days ago`;
+          return `${Math.floor(diffDays / 7)} weeks ago`;
+        }
+
+        // Get recent activity — profile views, shortlist adds, messages
+        const [
+          { data: recentViews },
+          { data: recentShortlists },
+          { data: recentMessages },
+        ] = await Promise.all([
+          supabase
+            .from("profile_views")
+            .select("id, viewer_school, created_at, section_viewed")
+            .eq("athlete_id", athlete.id)
+            .order("created_at", { ascending: false })
+            .limit(5),
+          supabase
+            .from("shortlists")
+            .select("id, created_at, coach:coaches!inner(school_name)")
+            .eq("athlete_id", athlete.id)
+            .order("created_at", { ascending: false })
+            .limit(5),
+          supabase
+            .from("messages")
+            .select("id, created_at, content")
+            .eq("recipient_id", athleteProfileId)
+            .order("created_at", { ascending: false })
+            .limit(5),
+        ]);
+
+        // Merge all activity types
+        const allActivity: typeof activity = [];
 
         if (recentViews) {
-          activity = recentViews.map((v) => {
-            const viewedAt = new Date(v.created_at);
-            const now = new Date();
-            const diffHours = Math.floor(
-              (now.getTime() - viewedAt.getTime()) / (1000 * 60 * 60)
-            );
-            const time =
-              diffHours < 24
-                ? `${diffHours} hours ago`
-                : `${Math.floor(diffHours / 24)} days ago`;
-
-            return {
+          for (const v of recentViews) {
+            allActivity.push({
               id: v.id,
-              type: "view" as const,
+              type: "view",
               message: `${v.viewer_school || "A coach"} viewed ${v.section_viewed || "profile"}`,
-              time,
+              time: relativeTime(v.created_at),
               timestamp: v.created_at,
-            };
-          });
+            });
+          }
         }
+
+        if (recentShortlists) {
+          for (const s of recentShortlists) {
+            const coach = s.coach as { school_name?: string } | null;
+            allActivity.push({
+              id: s.id,
+              type: "shortlist",
+              message: `${coach?.school_name || "A program"} added to shortlist`,
+              time: relativeTime(s.created_at),
+              timestamp: s.created_at,
+            });
+          }
+        }
+
+        if (recentMessages) {
+          for (const m of recentMessages) {
+            const preview = m.content
+              ? String(m.content).slice(0, 50) +
+                (String(m.content).length > 50 ? "…" : "")
+              : "New message";
+            allActivity.push({
+              id: m.id,
+              type: "message",
+              message: preview,
+              time: relativeTime(m.created_at),
+              timestamp: m.created_at,
+            });
+          }
+        }
+
+        // Sort by most recent, take top 10
+        activity = allActivity
+          .sort((a, b) => b.timestamp.localeCompare(a.timestamp))
+          .slice(0, 10);
+
+        // Populate calendar events from NCAA periods
+        const calClassYear = athlete.class_year || 2026;
+        for (const period of FBS_PERIODS) {
+          if (period.end >= todayStr) {
+            calendarEvents.push({
+              id: `ncaa-${period.start}`,
+              date: period.start,
+              title: period.label,
+              type:
+                period.type === "dead"
+                  ? "deadline"
+                  : period.type === "contact"
+                    ? "visit"
+                    : "camp",
+            });
+          }
+        }
+        calendarEvents.push(
+          {
+            id: "signing-early",
+            date: `${calClassYear - 1}-12-18`,
+            title: "Early Signing Period Opens",
+            type: "deadline",
+          },
+          {
+            id: "signing-regular",
+            date: `${calClassYear}-02-04`,
+            title: "National Signing Day",
+            type: "deadline",
+          }
+        );
+        calendarEvents.sort((a, b) => a.date.localeCompare(b.date));
 
         // Add alerts for low activity
         if ((viewsCount || 0) === 0) {

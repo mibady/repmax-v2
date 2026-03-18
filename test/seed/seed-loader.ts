@@ -590,6 +590,43 @@ export async function seedTestData(): Promise<void> {
     console.log(`  ✓ Created shortlist entries for ${recruiter.email} (${athletes.length} athletes)`);
   }
 
+  // Seed messages from recruiters → core test athletes (so parent dashboard shows coach contact)
+  const messageTemplates = [
+    { subject: 'Interest in Your Athletic Profile', body: 'We have been following your progress this season and are very impressed. Would love to discuss our program with you.' },
+    { subject: 'Upcoming Campus Visit Invitation', body: 'We would like to invite you for an unofficial visit to tour our facilities and meet the coaching staff.' },
+    { subject: 'Film Review Follow-Up', body: 'Our staff reviewed your junior season highlights and we see a lot of potential. Let us know if you have any questions about our program.' },
+  ];
+
+  const coreAthletes = athletes.slice(0, 5);
+  let msgCount = 0;
+
+  for (let ri = 0; ri < Math.min(3, recruiters.length); ri++) {
+    const recruiter = recruiters[ri];
+    const recruiterProfileId = profileIdMap.get(recruiter.email);
+    if (!recruiterProfileId) continue;
+
+    for (let ai = 0; ai < coreAthletes.length; ai++) {
+      const athlete = coreAthletes[ai];
+      const athleteProfileId = profileIdMap.get(athlete.email);
+      if (!athleteProfileId) continue;
+
+      const template = messageTemplates[(ri + ai) % messageTemplates.length];
+      const daysAgo = ri * 3 + ai;
+
+      const { error } = await supabase.from('messages').insert({
+        sender_id: recruiterProfileId,
+        recipient_id: athleteProfileId,
+        subject: `${recruiter.recruiterProfile?.school || 'University'} - ${template.subject}`,
+        body: template.body,
+        read: daysAgo > 3, // Recent ones unread
+        created_at: new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000).toISOString(),
+      });
+
+      if (!error) msgCount++;
+    }
+  }
+  console.log(`  ✓ Created ${msgCount} messages for core test athletes`);
+
   console.log('\n✓ Test data seeded');
 }
 
@@ -1129,47 +1166,134 @@ export async function seedClubData(): Promise<SeedResult> {
     await buildEntityMaps(supabase);
   }
 
-  const mikeTorresCoachId = coachIdMap.get('mike.torres@test.repmax.io');
+  const mikeTorresUserId = userIdMap.get('mike.torres@test.repmax.io');
 
-  if (!mikeTorresCoachId) {
-    console.log('  Mike Torres coach record not found. Skipping club seeding.');
+  if (!mikeTorresUserId) {
+    console.log('  Mike Torres user record not found. Skipping club seeding.');
     return { success: true, created, errors, duration: Date.now() - startTime };
   }
 
-  // 1. Create tournaments (club_id = Mike Torres' coaches.id)
+  // 1. Create tournaments (organizer_id = Mike Torres' auth user UUID)
   const tournamentData = [
     {
       name: 'Winter Classic 2026',
       start_date: '2026-02-15',
       end_date: '2026-02-16',
       location: 'Austin, TX',
-      division: '7v7',
-      format: 'pool_play',
-      registration_fee_cents: 37500,
-      max_teams: 16,
+      entry_fee_cents: 37500,
+      teams_capacity: 16,
       status: 'registration_open' as const,
+      is_public: true,
+      event_type: 'tournament',
+      zone: 'south',
+      registration_deadline: '2026-02-10',
+      event_tier: 'premier',
+      description: 'Annual winter 7v7 tournament featuring top Texas club teams.',
     },
     {
       name: 'Spring Showcase 2026',
       start_date: '2026-04-10',
       end_date: '2026-04-12',
       location: 'San Antonio, TX',
-      division: '7v7',
-      format: 'bracket',
-      registration_fee_cents: 37500,
-      max_teams: 32,
+      entry_fee_cents: 37500,
+      teams_capacity: 32,
       status: 'registration_open' as const,
+      is_public: true,
+      event_type: 'showcase',
+      zone: 'south',
+      registration_deadline: '2026-04-01',
+      event_tier: 'elite',
+      description: 'Individual prospect showcase with position drills and 1-on-1 matchups.',
     },
     {
       name: 'Fall Championship 2025',
       start_date: '2025-11-01',
       end_date: '2025-11-02',
       location: 'Dallas, TX',
-      division: '7v7',
-      format: 'pool_play',
-      registration_fee_cents: 40000,
-      max_teams: 24,
+      entry_fee_cents: 40000,
+      teams_capacity: 24,
       status: 'completed' as const,
+      is_public: true,
+      event_type: 'tournament',
+      zone: 'south',
+      registration_deadline: '2025-10-25',
+      event_tier: 'elite',
+      description: 'Season-ending championship bracket for qualified 7v7 teams.',
+    },
+    {
+      name: 'Southeast Speed Camp',
+      start_date: '2026-05-20',
+      end_date: '2026-05-22',
+      location: 'Atlanta, GA',
+      entry_fee_cents: 25000,
+      teams_capacity: 100,
+      status: 'registration_open' as const,
+      is_public: true,
+      event_type: 'camp',
+      zone: 'southeast',
+      registration_deadline: '2026-05-15',
+      event_tier: 'premier',
+      description: 'Three-day speed and agility camp with Dashr-timed testing and film review.',
+    },
+    {
+      name: 'Midwest Mega Combine',
+      start_date: '2026-06-01',
+      end_date: '2026-06-01',
+      location: 'Chicago, IL',
+      entry_fee_cents: 7500,
+      teams_capacity: 250,
+      status: 'registration_open' as const,
+      is_public: true,
+      event_type: 'combine',
+      zone: 'midwest',
+      registration_deadline: '2026-05-25',
+      event_tier: 'standard',
+      description: 'Full athletic testing combine — 40-yard dash, shuttle, vertical, bench press.',
+    },
+    {
+      name: 'West Coast Prospect Showcase',
+      start_date: '2026-06-15',
+      end_date: '2026-06-15',
+      location: 'Los Angeles, CA',
+      entry_fee_cents: 15000,
+      teams_capacity: 180,
+      status: 'registration_open' as const,
+      is_public: true,
+      event_type: 'showcase',
+      zone: 'west',
+      registration_deadline: '2026-06-08',
+      event_tier: 'elite',
+      description: 'West Coast talent showcase with Pac-12 and Big 12 scouts in attendance.',
+    },
+    {
+      name: 'Northeast Elite Camp',
+      start_date: '2026-07-10',
+      end_date: '2026-07-12',
+      location: 'Boston, MA',
+      entry_fee_cents: 22500,
+      teams_capacity: 120,
+      status: 'registration_open' as const,
+      is_public: true,
+      event_type: 'camp',
+      zone: 'northeast',
+      registration_deadline: '2026-07-03',
+      event_tier: 'premier',
+      description: 'Position-specific camp with NFL and college coaching staffs.',
+    },
+    {
+      name: 'Northwest Combine Classic',
+      start_date: '2026-07-20',
+      end_date: '2026-07-20',
+      location: 'Seattle, WA',
+      entry_fee_cents: 8500,
+      teams_capacity: 200,
+      status: 'registration_open' as const,
+      is_public: true,
+      event_type: 'combine',
+      zone: 'northwest',
+      registration_deadline: '2026-07-13',
+      event_tier: 'standard',
+      description: 'Pacific Northwest combine with verified testing and college scout evaluations.',
     },
   ];
 
@@ -1180,7 +1304,7 @@ export async function seedClubData(): Promise<SeedResult> {
       const { data, error } = await supabase
         .from('tournaments')
         .insert({
-          club_id: mikeTorresCoachId,
+          organizer_id: mikeTorresUserId,
           ...t,
         })
         .select('id')
