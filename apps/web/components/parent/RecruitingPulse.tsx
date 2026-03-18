@@ -16,7 +16,8 @@ export function RecruitingPulse({ metrics, classYear }: RecruitingPulseProps) {
 
   let signingTarget = earlySigningDay;
   if (now > earlySigningDay) signingTarget = regularSigningDay;
-  if (now > regularSigningDay) signingTarget = new Date(year, 1, 4); // next cycle
+  if (now > regularSigningDay) signingTarget = new Date(year, 11, 18); // next cycle early signing (Dec of grad year)
+  if (now > signingTarget) signingTarget = new Date(year + 1, 1, 4); // next cycle regular signing
 
   const daysToSigning = Math.max(0, Math.ceil((signingTarget.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
   const signingLabel = signingTarget.getMonth() === 11 ? 'Early Signing Day' : 'Regular Signing Day';

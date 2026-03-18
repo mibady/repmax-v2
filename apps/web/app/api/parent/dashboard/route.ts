@@ -456,15 +456,23 @@ export async function GET() {
         );
         calendarEvents.sort((a, b) => a.date.localeCompare(b.date));
 
-        // Map offers
-        offers = (offersData || []).map((o: Record<string, unknown>) => ({
-          id: o.id as string,
-          schoolName: o.school_name as string,
-          division: o.division as string,
-          scholarshipType: o.scholarship_type as string,
-          offerDate: o.offer_date as string,
-          committed: o.committed as boolean,
-        }));
+        // Map offers — deduplicate by school_name (keep most recent per school)
+        const offersBySchool = new Map<string, typeof offers[0]>();
+        for (const o of offersData || []) {
+          const rec = o as Record<string, unknown>;
+          const schoolName = rec.school_name as string;
+          if (!offersBySchool.has(schoolName)) {
+            offersBySchool.set(schoolName, {
+              id: rec.id as string,
+              schoolName,
+              division: rec.division as string,
+              scholarshipType: rec.scholarship_type as string,
+              offerDate: rec.offer_date as string,
+              committed: rec.committed as boolean,
+            });
+          }
+        }
+        offers = Array.from(offersBySchool.values());
 
         // Map athlete events
         athleteEvents = (athleteEventsData || []).map((e: Record<string, unknown>) => ({
