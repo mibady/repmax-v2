@@ -301,6 +301,30 @@ export default function CampSeriesPage() {
         </div>
       </section>
 
+      {/* Video Showcase */}
+      <section className="mx-auto max-w-7xl px-6 lg:px-8 pb-20">
+        <div className="text-center mb-10">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white">
+            See the <span className="text-primary">Blueprint</span> in Action
+          </h2>
+          <p className="mt-4 text-text-grey max-w-2xl mx-auto">
+            Watch what a Combine Blueprint session looks like — real athletes, real coaching, real results.
+          </p>
+        </div>
+        <div className="relative mx-auto max-w-3xl rounded-2xl border border-white/10 overflow-hidden bg-black">
+          <video
+            controls
+            playsInline
+            preload="metadata"
+            poster={`${IMG}/header.png`}
+            className="w-full aspect-[9/16] sm:aspect-video object-contain bg-black"
+          >
+            <source src={`${IMG}/Combine-1080-Vertical-V1-1920.mp4`} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </section>
+
       {/* Training Stations */}
       <section id="training-stations" className="bg-white/[0.02] border-y border-white/5">
         <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
