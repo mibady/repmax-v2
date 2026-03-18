@@ -37,13 +37,32 @@ interface WPPost {
 }
 
 async function fetchWordPressPosts(): Promise<WPPost[]> {
-  const url = 'https://repmax.io/wp-json/wp/v2/posts?per_page=20&_embed'
-  console.log(`Fetching posts from ${url}`)
-  const res = await fetch(url)
-  if (!res.ok) throw new Error(`WordPress API error: ${res.status} ${res.statusText}`)
-  const posts: WPPost[] = await res.json()
-  console.log(`Fetched ${posts.length} posts`)
-  return posts
+  const allPosts: WPPost[] = []
+  let page = 1
+
+  while (true) {
+    const url = `https://repmax.io/wp-json/wp/v2/posts?per_page=100&page=${page}&_embed`
+    console.log(`Fetching page ${page} from WordPress API...`)
+    const res = await fetch(url)
+
+    // WP REST API returns 400 when page is beyond total pages
+    if (res.status === 400) break
+    if (!res.ok) throw new Error(`WordPress API error: ${res.status} ${res.statusText}`)
+
+    const posts: WPPost[] = await res.json()
+    if (posts.length === 0) break
+
+    allPosts.push(...posts)
+    console.log(`  Page ${page}: ${posts.length} posts (${allPosts.length} total)`)
+
+    // Check if there are more pages
+    const totalPages = parseInt(res.headers.get('x-wp-totalpages') || '1', 10)
+    if (page >= totalPages) break
+    page++
+  }
+
+  console.log(`Fetched ${allPosts.length} posts total`)
+  return allPosts
 }
 
 // ── HTML → Portable Text conversion ────────────────────────────────
