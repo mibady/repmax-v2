@@ -33,6 +33,7 @@ interface WPPost {
   excerpt: { rendered: string }
   _embedded?: {
     author?: Array<{ name: string; slug: string }>
+    'wp:featuredmedia'?: Array<{ source_url: string; alt_text?: string }>
   }
 }
 
@@ -311,6 +312,34 @@ function randomKey(): string {
   return Math.random().toString(36).slice(2, 10)
 }
 
+// ── Image upload ──────────────────────────────────────────────────
+
+async function uploadImageFromUrl(
+  imageUrl: string,
+  filename?: string
+): Promise<{ _type: 'image'; asset: { _type: 'reference'; _ref: string } } | null> {
+  try {
+    const res = await fetch(imageUrl)
+    if (!res.ok) return null
+
+    const contentType = res.headers.get('content-type') || 'image/jpeg'
+    const buffer = Buffer.from(await res.arrayBuffer())
+
+    const asset = await sanity.assets.upload('image', buffer, {
+      filename: filename || imageUrl.split('/').pop()?.split('?')[0] || 'cover.jpg',
+      contentType,
+    })
+
+    return {
+      _type: 'image',
+      asset: { _type: 'reference', _ref: asset._id },
+    }
+  } catch (err) {
+    console.warn(`    ⚠ Failed to upload image: ${imageUrl}`)
+    return null
+  }
+}
+
 // ── Category mapping ───────────────────────────────────────────────
 
 function mapCategory(post: WPPost): string {
@@ -377,13 +406,27 @@ async function main() {
     const title = decodeHtmlEntities(stripHtml(post.title.rendered))
     const slug = post.slug
 
+    // Upload featured image if available
+    const featuredMedia = post._embedded?.['wp:featuredmedia']?.[0]
+    let coverImage: { _type: 'image'; asset: { _type: 'reference'; _ref: string } } | null = null
+    if (featuredMedia?.source_url) {
+      console.log(`    Uploading cover image...`)
+      coverImage = await uploadImageFromUrl(featuredMedia.source_url, `${slug}-cover`)
+    }
+
     // Check if already imported
     const existing = await sanity.fetch(
-      `*[_type == "blogPost" && slug.current == $slug][0]._id`,
+      `*[_type == "blogPost" && slug.current == $slug][0]{_id, "hasCover": defined(coverImage)}`,
       { slug }
     )
     if (existing) {
-      console.log(`  Skipping "${title}" (already exists)`)
+      // Patch cover image onto existing posts that are missing one
+      if (coverImage && !existing.hasCover) {
+        await sanity.patch(existing._id).set({ coverImage }).commit()
+        console.log(`  Patched cover image on "${title}"`)
+      } else {
+        console.log(`  Skipping "${title}" (already exists${existing.hasCover ? ', has cover' : ''})`)
+      }
       continue
     }
 
@@ -394,7 +437,7 @@ async function main() {
     const body = htmlToPortableText(post.content.rendered)
     const excerpt = stripHtml(post.excerpt.rendered).slice(0, 250)
 
-    const doc = {
+    const doc: Record<string, unknown> = {
       _type: 'blogPost',
       title,
       slug: { _type: 'slug', current: slug },
@@ -404,6 +447,10 @@ async function main() {
       body,
       publishedAt: post.date,
       author: authorId ? { _type: 'reference', _ref: authorId } : undefined,
+    }
+
+    if (coverImage) {
+      doc.coverImage = coverImage
     }
 
     const created = await sanity.create(doc)
