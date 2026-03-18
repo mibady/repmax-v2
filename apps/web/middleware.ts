@@ -49,11 +49,6 @@ export async function middleware(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
 
-  // Sanity Studio — skip all auth logic
-  if (pathname.startsWith('/studio')) {
-    return response;
-  }
-
   // Public API routes (no auth required)
   const publicApiRoutes = [
     "/api/tournaments/public",

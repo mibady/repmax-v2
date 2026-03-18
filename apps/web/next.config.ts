@@ -2,9 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
-  // Sanity Studio uses React APIs (useEffectEvent) not in stable React 19.
-  // Exclude sanity packages from server-side webpack compilation.
-  serverExternalPackages: ['sanity', '@sanity/vision', '@sanity/ui'],
   images: {
     remotePatterns: [
       {
