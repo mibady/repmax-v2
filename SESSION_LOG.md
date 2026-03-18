@@ -1026,3 +1026,42 @@ This project existed before tracking was set up.
 
 ### Linear
 - No new issues filed
+
+## Session 24 — 2026-03-18
+
+### Completed
+- **Parent dashboard redesign:** Full rewrite with 6 section components — RecruitingPulse (3 metric cards + signing day countdown), SchoolInterestTracker (CRM-based status levels), AlertsActionItems (priority-sorted from profile gaps), AcademicHealth (progress bars for GPA, SAT/ACT, core courses, clearinghouse), UpcomingKeyDates (NCAA period timeline from ncaa-calendar.ts), ParentResourceHub (3 guide cards)
+- **NCAA Compliance Guide:** 4 sections, 13 expandable rule cards organized by risk level, quick reference grid (Never Do / Always Do)
+- **Official Visit Question Playbook:** 45 questions across 7 categories with localStorage-backed progress tracking
+- **Scholarship & Financial Aid Guide:** Cost calculator (4 inputs → annual gap + 4-year total) + 48-question checklist across 6 categories
+- **API enhancements:** Added sat_score/act_score to athlete query, computed alerts from profile gaps, school interest status from crm_pipeline join
+- **Resources hub:** Redesigned with 3 RepMax guide cards + 3 external resource cards
+- **Shared infrastructure:** useChecklistProgress hook, 4 shared components (ExpandableRuleCard, ChecklistCategory, CostCalculator, QuickReferenceGrid)
+
+### Audit Snapshot
+- Pages: 91 (+10 from session 23)
+- API routes: 84 (+4)
+- Components: 64 (+19, including 10 new parent components)
+- Hooks: 48 (+2)
+- Migrations: 32 (unchanged)
+- Build: pass (typecheck clean, lint clean)
+
+### Decisions Made
+- Checklist progress stored in localStorage (keys: repmax-visit-playbook, repmax-scholarship-guide)
+- Core courses and clearinghouse status are placeholders — no DB columns yet
+- School interest status derived from crm_pipeline stages mapped to Offered/In Contact/Evaluating
+- Cost calculator is client-side only, no persistence
+
+### Known Issues
+- Core courses count (0/16) is placeholder — needs DB column on athletes table
+- Clearinghouse status is hardcoded "not_started" — needs DB column
+- Campus Visits "Schedule Visit" modal still needs name/email autocomplete (from session 23)
+
+### Next Session Should
+- Add core_courses_completed and clearinghouse_status columns to athletes table (migration)
+- Wire academic health section to real data once columns exist
+- Verify parent dashboard renders correctly on production after deploy
+- Consider adding activity feed back to dashboard (removed in redesign for cleaner layout)
+
+### Linear
+- No new issues filed
