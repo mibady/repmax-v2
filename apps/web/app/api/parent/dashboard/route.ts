@@ -327,7 +327,7 @@ export async function GET() {
             .limit(5),
           supabase
             .from("messages")
-            .select("id, created_at, content")
+            .select("id, created_at, subject, body")
             .eq("recipient_id", athleteProfileId)
             .order("created_at", { ascending: false })
             .limit(5),
@@ -363,9 +363,10 @@ export async function GET() {
 
         if (recentMessages) {
           for (const m of recentMessages) {
-            const preview = m.content
-              ? String(m.content).slice(0, 50) +
-                (String(m.content).length > 50 ? "…" : "")
+            const text = m.subject || m.body || "";
+            const preview = text
+              ? String(text).slice(0, 50) +
+                (String(text).length > 50 ? "…" : "")
               : "New message";
             allActivity.push({
               id: m.id,
