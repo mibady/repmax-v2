@@ -1,10 +1,10 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { createCheckoutSession, createOneTimeCheckout } from '@/lib/actions/subscription-actions';
 import PricingTabs from './_components/PricingTabs';
+import PublicNav from '@/components/layout/public-nav';
 
 export default function Page() {
   const router = useRouter();
@@ -81,34 +81,9 @@ export default function Page() {
 
   return (
     <>
-      {/*  Navbar  */}
-<nav className="sticky top-0 z-50 w-full border-b border-white/5 bg-background-dark/80 backdrop-blur-md">
-<div className="px-4 md:px-10 lg:px-20 py-4 max-w-7xl mx-auto flex items-center justify-between">
-{/*  Logo  */}
-<div className="flex items-center gap-3">
-<div className="text-primary">
-<span className="material-symbols-outlined !text-[32px]">sports_football</span>
-</div>
-<h2 className="text-white text-xl font-bold tracking-tight">RepMax</h2>
-</div>
-{/*  Desktop Links  */}
-<div className="hidden md:flex items-center gap-8">
-<Link className="text-sm font-medium text-gray-300 hover:text-primary transition-colors" href="/#features">Features</Link>
-<Link className="text-sm font-medium text-gray-300 hover:text-primary transition-colors" href="/">About</Link>
-<Link className="text-sm font-medium text-primary transition-colors" href="/pricing">Pricing</Link>
-<Link className="text-sm font-medium text-gray-300 hover:text-primary transition-colors" href="/login">Login</Link>
-<Link href="/signup" className="bg-primary hover:bg-primary-hover text-background-dark text-sm font-bold py-2.5 px-6 rounded-full transition-all">
-                    Get Started
-                </Link>
-</div>
-{/*  Mobile Menu Icon  */}
-<div className="md:hidden text-white">
-<span className="material-symbols-outlined">menu</span>
-</div>
-</div>
-</nav>
+<PublicNav />
 {/*  Main Content  */}
-<main className="flex flex-col items-center justify-center min-h-screen pt-12 pb-24 px-4 md:px-8">
+<main className="flex flex-col items-center justify-center min-h-screen pt-28 pb-24 px-4 md:px-8">
 {/*  Header Section  */}
 <div className="max-w-4xl w-full text-center mb-16 space-y-4">
 <p className="text-primary text-sm font-bold tracking-widest uppercase">Pricing</p>

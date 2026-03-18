@@ -44,8 +44,9 @@ const athleteNavItems: NavItem[] = [
 ];
 
 const athleteSettingsItems: NavItem[] = [
-  { icon: 'account_circle', label: 'Profile', href: '/settings/profile' },
-  { icon: 'notifications', label: 'Notifications', href: '/settings/notifications' },
+  { icon: 'person', label: 'Profile', href: '/settings/profile' },
+  { icon: 'settings', label: 'Settings', href: '/settings/notifications' },
+  { icon: 'help', label: 'Help', href: '/help' },
 ];
 
 const recruiterNavItems: NavItem[] = [
@@ -61,8 +62,9 @@ const recruiterNavItems: NavItem[] = [
 ];
 
 const recruiterSettingsItems: NavItem[] = [
-  { icon: 'account_circle', label: 'Profile', href: '/settings/profile' },
-  { icon: 'settings', label: 'Settings', href: '/settings' },
+  { icon: 'person', label: 'Profile', href: '/settings/profile' },
+  { icon: 'settings', label: 'Settings', href: '/settings/notifications' },
+  { icon: 'help', label: 'Help', href: '/help' },
 ];
 
 const parentNavItems: NavItem[] = [
@@ -76,9 +78,9 @@ const parentNavItems: NavItem[] = [
 ];
 
 const parentSettingsItems: NavItem[] = [
-  { icon: 'account_circle', label: 'Profile', href: '/settings/profile' },
-  { icon: 'settings', label: 'Settings', href: '/settings' },
-  { icon: 'help', label: 'Help Center', href: '/help' },
+  { icon: 'person', label: 'Profile', href: '/settings/profile' },
+  { icon: 'settings', label: 'Settings', href: '/settings/notifications' },
+  { icon: 'help', label: 'Help', href: '/help' },
 ];
 
 const coachNavItems: NavItem[] = [
@@ -95,8 +97,9 @@ const coachNavItems: NavItem[] = [
 ];
 
 const coachSettingsItems: NavItem[] = [
-  { icon: 'account_circle', label: 'Profile', href: '/settings/profile' },
-  { icon: 'settings', label: 'Settings', href: '/settings' },
+  { icon: 'person', label: 'Profile', href: '/settings/profile' },
+  { icon: 'settings', label: 'Settings', href: '/settings/notifications' },
+  { icon: 'help', label: 'Help', href: '/help' },
 ];
 
 const clubNavItems: NavItem[] = [
@@ -109,8 +112,9 @@ const clubNavItems: NavItem[] = [
 ];
 
 const clubSettingsItems: NavItem[] = [
-  { icon: 'account_circle', label: 'Profile', href: '/settings/profile' },
-  { icon: 'settings', label: 'Settings', href: '/settings' },
+  { icon: 'person', label: 'Profile', href: '/settings/profile' },
+  { icon: 'settings', label: 'Settings', href: '/settings/notifications' },
+  { icon: 'help', label: 'Help', href: '/help' },
 ];
 
 const adminNavItems: NavItem[] = [
@@ -122,8 +126,9 @@ const adminNavItems: NavItem[] = [
 ];
 
 const adminSettingsItems: NavItem[] = [
-  { icon: 'account_circle', label: 'Profile', href: '/settings/profile' },
-  { icon: 'settings', label: 'Settings', href: '/settings' },
+  { icon: 'person', label: 'Profile', href: '/settings/profile' },
+  { icon: 'settings', label: 'Settings', href: '/settings/notifications' },
+  { icon: 'help', label: 'Help', href: '/help' },
 ];
 
 function NavLink({ item, isActive }: { item: NavItem; isActive: boolean }) {
