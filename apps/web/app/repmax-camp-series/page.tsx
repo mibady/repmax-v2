@@ -249,17 +249,18 @@ export default function CampSeriesPage() {
               ))}
             </ul>
           </div>
-          <div className="relative">
-            <div className="overflow-hidden rounded-2xl border border-white/10">
+          <div className="relative flex justify-center">
+            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] max-w-xs">
               <Image
                 src={`${IMG}/Demo-by-Coach-200x300.jpg`}
                 alt="Coach demonstrating combine technique"
-                width={400}
-                height={600}
-                className="w-full h-auto object-cover"
+                width={200}
+                height={300}
+                className="w-full h-auto"
+                unoptimized
               />
             </div>
-            <div className="absolute -bottom-4 -right-4 rounded-xl border border-primary/30 bg-background-dark/90 backdrop-blur-sm p-4">
+            <div className="absolute -bottom-4 -right-4 lg:right-12 rounded-xl border border-primary/30 bg-background-dark/90 backdrop-blur-sm p-4">
               <p className="text-xs text-text-grey">Expert-led</p>
               <p className="text-sm font-bold text-primary">1-on-1 Coaching</p>
             </div>
@@ -269,32 +270,33 @@ export default function CampSeriesPage() {
 
       {/* Promo Banner */}
       <section className="mx-auto max-w-7xl px-6 lg:px-8 pb-12">
-        <div className="relative overflow-hidden rounded-2xl border border-primary/20">
-          <Image
-            src={`${IMG}/Black-and-Orange-Modern-Robotic-Showcase-Linkedin-Post-3-600x600.png`}
-            alt="RepMax Combine Blueprint promotional graphic"
-            width={1200}
-            height={400}
-            className="w-full h-64 sm:h-80 object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-background-dark/90 via-background-dark/60 to-transparent flex items-center">
-            <div className="px-8 sm:px-12 max-w-lg">
-              <h3 className="text-2xl sm:text-3xl font-bold text-white">
-                Don&apos;t Leave Your <span className="text-primary">Performance</span> to Chance
-              </h3>
-              <p className="mt-3 text-sm text-text-grey">
-                Every rep, every drill, every technique — designed to prepare you for the moment that matters most.
-              </p>
-              <a
-                href={STRIPE_CHECKOUT_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-6 inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-bold text-[#050505] transition-all hover:bg-primary-hover hover:scale-105"
-              >
-                <span className="material-symbols-outlined text-base">confirmation_number</span>
-                Secure Your Spot
-              </a>
-            </div>
+        <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-white/[0.03]">
+          <div className="absolute right-0 top-0 bottom-0 w-1/2 sm:w-2/5">
+            <Image
+              src={`${IMG}/Black-and-Orange-Modern-Robotic-Showcase-Linkedin-Post-3-600x600.png`}
+              alt="RepMax Combine Blueprint promotional graphic"
+              width={600}
+              height={600}
+              className="h-full w-full object-contain object-right"
+              unoptimized
+            />
+          </div>
+          <div className="relative z-10 px-8 sm:px-12 py-12 sm:py-16 max-w-lg">
+            <h3 className="text-2xl sm:text-3xl font-bold text-white">
+              Don&apos;t Leave Your <span className="text-primary">Performance</span> to Chance
+            </h3>
+            <p className="mt-3 text-sm text-text-grey">
+              Every rep, every drill, every technique — designed to prepare you for the moment that matters most.
+            </p>
+            <a
+              href={STRIPE_CHECKOUT_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-6 inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-bold text-[#050505] transition-all hover:bg-primary-hover hover:scale-105"
+            >
+              <span className="material-symbols-outlined text-base">confirmation_number</span>
+              Secure Your Spot
+            </a>
           </div>
         </div>
       </section>
@@ -317,20 +319,21 @@ export default function CampSeriesPage() {
                 className="group rounded-xl border border-white/10 bg-white/[0.03] overflow-hidden transition-all hover:border-primary/30 hover:bg-primary/5"
               >
                 {station.image ? (
-                  <div className="relative h-48 overflow-hidden">
+                  <div className="relative h-44 overflow-hidden bg-black/40 flex items-center justify-center">
                     <Image
                       src={station.image}
                       alt={station.title}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      width={300}
+                      height={250}
+                      className="max-h-full w-auto object-contain transition-transform duration-500 group-hover:scale-105"
+                      unoptimized
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/20 to-transparent" />
                     <div className="absolute bottom-3 left-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/20 backdrop-blur-sm text-primary">
                       <span className="material-symbols-outlined text-xl">{station.icon}</span>
                     </div>
                   </div>
                 ) : (
-                  <div className="relative h-48 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent flex items-center justify-center">
+                  <div className="relative h-44 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent flex items-center justify-center">
                     <span className="material-symbols-outlined text-primary text-6xl opacity-30">{station.icon}</span>
                     <div className="absolute bottom-3 left-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/20 text-primary">
                       <span className="material-symbols-outlined text-xl">{station.icon}</span>
