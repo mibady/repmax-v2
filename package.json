@@ -39,8 +39,7 @@
     "vitest": "^2.1.0"
   },
   "overrides": {
-    "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "@types/react": "18.3.3"
   },
   "packageManager": "npm@10.2.4",
   "engines": {
