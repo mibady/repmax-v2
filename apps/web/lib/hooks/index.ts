@@ -301,3 +301,6 @@ export {
   type CrmStage,
   type PipelineEntry,
 } from "./use-recruiter-pipeline";
+
+// Resource Recommendations (Sanity CMS)
+export { useResourceRecommendations } from "./use-resource-recommendations";
