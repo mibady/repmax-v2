@@ -1,11 +1,9 @@
-import Link from 'next/link';
+import PublicNav from '@/components/layout/public-nav';
 
 export default function PrivacyPage(): React.JSX.Element {
   return (
-    <div className="max-w-3xl mx-auto px-6 py-12">
-      <Link href="/" className="text-sm text-gray-400 hover:text-white transition-colors">
-        &larr; Back to RepMax
-      </Link>
+    <div className="max-w-3xl mx-auto px-6 py-12 pt-28">
+      <PublicNav />
 
       <h1 className="text-2xl font-bold text-white mb-2 mt-6">Privacy Policy</h1>
       <p className="text-gray-400 text-sm mb-8">Last updated: February 2026</p>

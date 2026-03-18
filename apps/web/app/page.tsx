@@ -4,10 +4,10 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import PublicNav from '@/components/layout/public-nav';
 
 export default function Page() {
   const router = useRouter();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeAccordion, setActiveAccordion] = useState(0);
 
   const accordionItems = [
@@ -18,57 +18,7 @@ export default function Page() {
 
   return (
     <>
-      {/*  Sticky Navigation  */}
-<header className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-background-dark/90 backdrop-blur-md">
-<div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-8">
-<div className="flex items-center gap-4">
-<div className="flex h-8 w-8 items-center justify-center rounded bg-primary/20 text-primary">
-<span className="material-symbols-outlined">sports_football</span>
-</div>
-<h2 className="text-xl font-black tracking-tight text-white">REPMAX</h2>
-</div>
-<nav className="hidden md:flex items-center gap-8">
-<Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="#features">Features</Link>
-<Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="#how-it-works">How it Works</Link>
-<Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="/pricing">Pricing</Link>
-<Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="/resources">Resources</Link>
-<Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="/blog">Blog</Link>
-<Link className="text-sm font-medium text-primary hover:text-primary-hover transition-colors" href="/repmax-camp-series">Camp Series</Link>
-<Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="/login">Login</Link>
-</nav>
-<Link href="/signup" className="hidden md:flex items-center justify-center rounded-md bg-primary px-5 py-2.5 text-sm font-bold text-[#050505] transition-all hover:bg-primary-hover hover:scale-105">
-                Get Your Free RepMax ID
-            </Link>
-<button className="flex md:hidden text-white" onClick={() => setMobileMenuOpen(true)}>
-<span className="material-symbols-outlined">menu</span>
-</button>
-</div>
-</header>
-{mobileMenuOpen && (
-  <div className="fixed inset-0 z-[60] bg-background-dark/95 backdrop-blur-md md:hidden">
-    <div className="flex items-center justify-between px-6 h-20">
-      <div className="flex items-center gap-4">
-        <div className="flex h-8 w-8 items-center justify-center rounded bg-primary/20 text-primary">
-          <span className="material-symbols-outlined">sports_football</span>
-        </div>
-        <h2 className="text-xl font-black tracking-tight text-white">REPMAX</h2>
-      </div>
-      <button onClick={() => setMobileMenuOpen(false)} className="text-white">
-        <span className="material-symbols-outlined">close</span>
-      </button>
-    </div>
-    <nav className="flex flex-col items-center gap-8 pt-12">
-      <Link className="text-lg font-medium text-white" href="#features" onClick={() => setMobileMenuOpen(false)}>Features</Link>
-      <Link className="text-lg font-medium text-white" href="#how-it-works" onClick={() => setMobileMenuOpen(false)}>How it Works</Link>
-      <Link className="text-lg font-medium text-white" href="/pricing" onClick={() => setMobileMenuOpen(false)}>Pricing</Link>
-      <Link className="text-lg font-medium text-white" href="/resources" onClick={() => setMobileMenuOpen(false)}>Resources</Link>
-      <Link className="text-lg font-medium text-white" href="/blog" onClick={() => setMobileMenuOpen(false)}>Blog</Link>
-      <Link className="text-lg font-medium text-primary" href="/repmax-camp-series" onClick={() => setMobileMenuOpen(false)}>Camp Series</Link>
-      <Link className="text-lg font-medium text-white" href="/login" onClick={() => setMobileMenuOpen(false)}>Login</Link>
-      <Link href="/signup" className="mt-4 rounded-md bg-primary px-8 py-3 text-base font-bold text-[#050505]" onClick={() => setMobileMenuOpen(false)}>Get Your Free RepMax ID</Link>
-    </nav>
-  </div>
-)}
+<PublicNav showBack={false} />
 {/*  Hero Section  */}
 <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
 {/*  Background decorative elements  */}

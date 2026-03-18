@@ -4,6 +4,7 @@ import type { Tables } from "@/types/database";
 import type { PlayerCardData } from "@/components/player-card/types";
 import { PlayerCardContent } from "@/components/player-card";
 import CardActions from "./CardActions";
+import PublicNav from "@/components/layout/public-nav";
 
 type AthleteWithProfile = Tables<"athletes"> & {
   profile: Tables<"profiles"> | null;
@@ -121,7 +122,8 @@ export default async function AthleteCardPage({
   };
 
   return (
-    <div className="bg-background-dark text-white min-h-screen flex justify-center py-8 px-4 relative overflow-x-hidden">
+    <div className="bg-background-dark text-white min-h-screen flex justify-center py-8 pt-28 px-4 relative overflow-x-hidden">
+      <PublicNav />
       {/* Ambient Background Effects */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px]" />

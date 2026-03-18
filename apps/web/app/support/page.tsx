@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import PublicNav from '@/components/layout/public-nav';
 
 const topics = [
   { icon: 'person', title: 'Account', description: 'Profile setup, login issues, account recovery' },
@@ -9,10 +10,8 @@ const topics = [
 
 export default function SupportPage(): React.JSX.Element {
   return (
-    <div className="max-w-3xl mx-auto px-6 py-12">
-      <Link href="/" className="text-sm text-gray-400 hover:text-white transition-colors">
-        &larr; Back to RepMax
-      </Link>
+    <div className="max-w-3xl mx-auto px-6 py-12 pt-28">
+      <PublicNav />
 
       <h1 className="text-2xl font-bold text-white mb-2 mt-6">Support</h1>
       <p className="text-gray-400 text-sm mb-8">
