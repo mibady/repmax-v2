@@ -538,7 +538,6 @@ export async function seedTestData(): Promise<void> {
     if (!athleteId) continue;
 
     const views = [];
-    const sources = ['search', 'shortlist', 'direct'] as const;
 
     for (let i = 0; i < 10; i++) {
       const recruiter = recruiters[i % recruiters.length];
@@ -547,11 +546,11 @@ export async function seedTestData(): Promise<void> {
 
       views.push({
         athlete_id: athleteId,
-        viewer_id: viewerId,
+        viewer_profile_id: viewerId,
         viewer_role: 'recruiter',
         viewer_zone: toDbZone(recruiter.zone) || 'Southwest',
         viewer_school: recruiter.recruiterProfile?.school || null,
-        source: (['search', 'shortlist', 'direct', 'search'] as const)[i % 4],
+        section_viewed: (['profile', 'film', 'stats', 'profile'] as const)[i % 4],
         created_at: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString(),
       });
     }
