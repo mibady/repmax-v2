@@ -7,6 +7,8 @@ import { AlertsActionItems } from '@/components/parent/AlertsActionItems';
 import { AcademicHealth } from '@/components/parent/AcademicHealth';
 import { UpcomingKeyDates } from '@/components/parent/UpcomingKeyDates';
 import { ParentResourceHub } from '@/components/parent/ParentResourceHub';
+import { RecentActivity } from '@/components/parent/RecentActivity';
+import { OffersOverview } from '@/components/parent/OffersOverview';
 
 const fallbackMetrics = {
   profileViews: 0,
@@ -14,6 +16,7 @@ const fallbackMetrics = {
   coachMessages: 0,
   schoolsTracking: 0,
   upcomingDeadlines: 0,
+  offersCount: 0,
 };
 
 export default function ParentDashboardPage() {
@@ -23,6 +26,9 @@ export default function ParentDashboardPage() {
     schools,
     academic,
     alerts,
+    activity,
+    offers,
+    athleteEvents,
     isLoading,
     error,
   } = useParentDashboard();
@@ -56,7 +62,7 @@ export default function ParentDashboardPage() {
   const classYear = childProfile?.classYear || 2026;
 
   return (
-    <div className="flex-1 overflow-auto">
+    <div className="flex-1">
       <div className="p-8 max-w-7xl mx-auto">
         {/* Welcome */}
         <div className="mb-6">
@@ -83,12 +89,14 @@ export default function ParentDashboardPage() {
           {/* Left column - 2/3 */}
           <div className="lg:col-span-2 space-y-6">
             <SchoolInterestTracker schools={schools} />
+            <OffersOverview offers={offers} />
             {academic && <AcademicHealth academic={academic} />}
           </div>
 
           {/* Right column - 1/3 */}
           <div className="space-y-6">
-            <UpcomingKeyDates classYear={classYear} />
+            <RecentActivity activity={activity} />
+            <UpcomingKeyDates classYear={classYear} athleteEvents={athleteEvents} />
           </div>
         </div>
 

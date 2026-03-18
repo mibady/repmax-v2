@@ -219,6 +219,8 @@ export {
   type CalendarEvent as ParentCalendarEvent,
   type AcademicHealth,
   type Alert,
+  type Offer,
+  type AthleteEvent,
 } from "./use-parent-dashboard";
 
 // Coach Dashboard

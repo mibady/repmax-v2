@@ -39,6 +39,14 @@ export function RecruitingPulse({ metrics, classYear }: RecruitingPulseProps) {
       bg: 'bg-green-500/10',
     },
     {
+      icon: 'emoji_events',
+      label: 'Offers',
+      value: metrics.offersCount,
+      sub: 'Scholarship offers',
+      color: 'text-amber-400',
+      bg: 'bg-amber-500/10',
+    },
+    {
       icon: 'calendar_month',
       label: `Days to ${signingLabel}`,
       value: daysToSigning,
@@ -49,7 +57,7 @@ export function RecruitingPulse({ metrics, classYear }: RecruitingPulseProps) {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {cards.map((card) => (
         <div key={card.label} className="bg-[#1F1F22] rounded-xl p-5 border border-white/5">
           <div className="flex items-center gap-2 text-slate-400 text-sm mb-2">

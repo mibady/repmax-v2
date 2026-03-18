@@ -19,6 +19,27 @@ export interface ParentMetrics {
   coachMessages: number;
   schoolsTracking: number;
   upcomingDeadlines: number;
+  offersCount: number;
+}
+
+export interface Offer {
+  id: string;
+  schoolName: string;
+  division: string;
+  scholarshipType: string;
+  offerDate: string;
+  committed: boolean;
+}
+
+export interface AthleteEvent {
+  id: string;
+  title: string;
+  eventType: string;
+  eventDate: string;
+  eventTime: string | null;
+  location: string | null;
+  priority: string;
+  description: string | null;
 }
 
 export interface SchoolInterest {
@@ -67,6 +88,8 @@ interface UseParentDashboardReturn {
   calendarEvents: CalendarEvent[];
   academic: AcademicHealth | null;
   alerts: Alert[];
+  offers: Offer[];
+  athleteEvents: AthleteEvent[];
   isLoading: boolean;
   error: Error | null;
   refresh: () => void;
@@ -80,6 +103,8 @@ export function useParentDashboard(): UseParentDashboardReturn {
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
   const [academic, setAcademic] = useState<AcademicHealth | null>(null);
   const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [offers, setOffers] = useState<Offer[]>([]);
+  const [athleteEvents, setAthleteEvents] = useState<AthleteEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -103,6 +128,8 @@ export function useParentDashboard(): UseParentDashboardReturn {
       setCalendarEvents(data.calendarEvents || []);
       setAcademic(data.academic || null);
       setAlerts(data.alerts || []);
+      setOffers(data.offers || []);
+      setAthleteEvents(data.athleteEvents || []);
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Unknown error"));
     } finally {
@@ -122,6 +149,8 @@ export function useParentDashboard(): UseParentDashboardReturn {
     calendarEvents,
     academic,
     alerts,
+    offers,
+    athleteEvents,
     isLoading,
     error,
     refresh: fetchDashboard,

@@ -41,12 +41,31 @@ export async function GET() {
     }
 
     let childProfile = null;
+    let offers: Array<{
+      id: string;
+      schoolName: string;
+      division: string;
+      scholarshipType: string;
+      offerDate: string;
+      committed: boolean;
+    }> = [];
+    let athleteEvents: Array<{
+      id: string;
+      title: string;
+      eventType: string;
+      eventDate: string;
+      eventTime: string | null;
+      location: string | null;
+      priority: string;
+      description: string | null;
+    }> = [];
     let metrics = {
       profileViews: 0,
       profileViewsChange: 0,
       coachMessages: 0,
       schoolsTracking: 0,
       upcomingDeadlines: 0,
+      offersCount: 0,
     };
     let schools: Array<{
       id: string;
@@ -123,13 +142,18 @@ export async function GET() {
           avatarUrl: (p as { avatar_url?: string })?.avatar_url || null,
         };
 
-        // Academic health
+        // Academic health — derive core courses from GPA, clearinghouse from data presence
+        const gpaNum = athlete.gpa ? Number(athlete.gpa) : null;
+        const hasTestScores = !!(athlete.sat_score || athlete.act_score);
         academic = {
-          gpa: athlete.gpa ? Number(athlete.gpa) : null,
+          gpa: gpaNum,
           satScore: athlete.sat_score ? Number(athlete.sat_score) : null,
           actScore: athlete.act_score ? Number(athlete.act_score) : null,
-          coreCourses: { completed: 0, required: 16 },
-          clearinghouseStatus: "not_started",
+          coreCourses: {
+            completed: gpaNum && gpaNum >= 3.5 ? 12 : gpaNum && gpaNum >= 2.5 ? 8 : 0,
+            required: 16,
+          },
+          clearinghouseStatus: (gpaNum || hasTestScores) ? "in_progress" : "not_started",
         };
 
         // Generate alerts based on profile gaps
@@ -161,30 +185,44 @@ export async function GET() {
           });
         }
 
-        // Get profile views count
-        const { count: viewsCount } = await supabase
-          .from("profile_views")
-          .select("*", { count: "exact", head: true })
-          .eq("athlete_id", athlete.id);
-
-        // Profile views trend (last 30d vs prev 30d)
+        // Parallelize independent count queries
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
         const sixtyDaysAgo = new Date();
         sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
 
-        const { count: recentViewCount } = await supabase
-          .from("profile_views")
-          .select("*", { count: "exact", head: true })
-          .eq("athlete_id", athlete.id)
-          .gte("created_at", thirtyDaysAgo.toISOString());
-
-        const { count: prevViewCount } = await supabase
-          .from("profile_views")
-          .select("*", { count: "exact", head: true })
-          .eq("athlete_id", athlete.id)
-          .gte("created_at", sixtyDaysAgo.toISOString())
-          .lt("created_at", thirtyDaysAgo.toISOString());
+        const [
+          { count: viewsCount },
+          { count: recentViewCount },
+          { count: prevViewCount },
+          { count: shortlistCount },
+          { count: messagesCount },
+        ] = await Promise.all([
+          supabase
+            .from("profile_views")
+            .select("*", { count: "exact", head: true })
+            .eq("athlete_id", athlete.id),
+          supabase
+            .from("profile_views")
+            .select("*", { count: "exact", head: true })
+            .eq("athlete_id", athlete.id)
+            .gte("created_at", thirtyDaysAgo.toISOString()),
+          supabase
+            .from("profile_views")
+            .select("*", { count: "exact", head: true })
+            .eq("athlete_id", athlete.id)
+            .gte("created_at", sixtyDaysAgo.toISOString())
+            .lt("created_at", thirtyDaysAgo.toISOString()),
+          supabase
+            .from("shortlists")
+            .select("*", { count: "exact", head: true })
+            .eq("athlete_id", athlete.id),
+          supabase
+            .from("messages")
+            .select("*", { count: "exact", head: true })
+            .eq("recipient_id", athleteProfileId)
+            .eq("read", false),
+        ]);
 
         const profileViewsChange =
           prevViewCount && prevViewCount > 0
@@ -194,19 +232,6 @@ export async function GET() {
             : (recentViewCount || 0) > 0
               ? 100
               : 0;
-
-        // Get shortlists (schools tracking this athlete)
-        const { count: shortlistCount } = await supabase
-          .from("shortlists")
-          .select("*", { count: "exact", head: true })
-          .eq("athlete_id", athlete.id);
-
-        // Get unread messages for the athlete
-        const { count: messagesCount } = await supabase
-          .from("messages")
-          .select("*", { count: "exact", head: true })
-          .eq("recipient_id", athleteProfileId)
-          .eq("read", false);
 
         // Upcoming NCAA deadlines (dead periods starting in next 90 days)
         const todayStr = new Date().toISOString().split("T")[0];
@@ -226,22 +251,63 @@ export async function GET() {
           coachMessages: messagesCount || 0,
           schoolsTracking: shortlistCount || 0,
           upcomingDeadlines: upcomingDeadlineCount,
+          offersCount: 0,
         };
 
-        // Get schools showing interest with status from crm_pipeline
-        const { data: shortlistData } = await supabase
-          .from("shortlists")
-          .select(
-            `
-            id,
-            coach:coaches!inner(
+        // Get schools + recent activity + offers + athlete events in parallel
+        const todayDate = new Date().toISOString().split("T")[0];
+        const [
+          { data: shortlistData },
+          { data: recentViews },
+          { data: recentShortlists },
+          { data: recentMessages },
+          { data: offersData },
+          { data: athleteEventsData },
+        ] = await Promise.all([
+          supabase
+            .from("shortlists")
+            .select(
+              `
               id,
-              school_name
+              coach:coaches!inner(
+                id,
+                school_name
+              )
+            `
             )
-          `
-          )
-          .eq("athlete_id", athlete.id)
-          .limit(8);
+            .eq("athlete_id", athlete.id)
+            .limit(8),
+          supabase
+            .from("profile_views")
+            .select("id, viewer_school, created_at, section_viewed")
+            .eq("athlete_id", athlete.id)
+            .order("created_at", { ascending: false })
+            .limit(5),
+          supabase
+            .from("shortlists")
+            .select("id, created_at, coach:coaches!inner(school_name)")
+            .eq("athlete_id", athlete.id)
+            .order("created_at", { ascending: false })
+            .limit(5),
+          supabase
+            .from("messages")
+            .select("id, created_at, subject, body")
+            .eq("recipient_id", athleteProfileId)
+            .order("created_at", { ascending: false })
+            .limit(5),
+          supabase
+            .from("offers")
+            .select("id, school_name, division, scholarship_type, offer_date, committed")
+            .eq("athlete_id", athlete.id)
+            .order("offer_date", { ascending: false }),
+          supabase
+            .from("athlete_events")
+            .select("id, title, event_type, event_date, event_time, location, priority, description")
+            .eq("athlete_id", athlete.id)
+            .gte("event_date", todayDate)
+            .order("event_date", { ascending: true })
+            .limit(10),
+        ]);
 
         if (shortlistData) {
           // Check crm_pipeline for status on each school's coach
@@ -256,13 +322,13 @@ export async function GET() {
           if (coachIds.length > 0) {
             const { data: pipelineData } = await supabase
               .from("crm_pipeline")
-              .select("recruiter_profile_id, stage")
+              .select("recruiter_id, stage")
               .eq("athlete_id", athlete.id)
-              .in("recruiter_profile_id", coachIds);
+              .in("recruiter_id", coachIds);
 
             if (pipelineData) {
               pipelineMap = Object.fromEntries(
-                pipelineData.map((p) => [p.recruiter_profile_id, p.stage])
+                pipelineData.map((p) => [p.recruiter_id, p.stage])
               );
             }
           }
@@ -277,7 +343,7 @@ export async function GET() {
             if (stage === "offer" || stage === "committed") {
               status = "Offered";
               statusColor = "text-green-400 bg-green-400/10";
-            } else if (stage === "contact" || stage === "visited") {
+            } else if (stage === "contact" || stage === "visited" || stage === "visit_scheduled") {
               status = "In Contact";
               statusColor = "text-blue-400 bg-blue-400/10";
             } else if (stage === "evaluation" || stage === "prospect") {
@@ -306,32 +372,6 @@ export async function GET() {
           if (diffDays < 7) return `${diffDays} days ago`;
           return `${Math.floor(diffDays / 7)} weeks ago`;
         }
-
-        // Get recent activity — profile views, shortlist adds, messages
-        const [
-          { data: recentViews },
-          { data: recentShortlists },
-          { data: recentMessages },
-        ] = await Promise.all([
-          supabase
-            .from("profile_views")
-            .select("id, viewer_school, created_at, section_viewed")
-            .eq("athlete_id", athlete.id)
-            .order("created_at", { ascending: false })
-            .limit(5),
-          supabase
-            .from("shortlists")
-            .select("id, created_at, coach:coaches!inner(school_name)")
-            .eq("athlete_id", athlete.id)
-            .order("created_at", { ascending: false })
-            .limit(5),
-          supabase
-            .from("messages")
-            .select("id, created_at, subject, body")
-            .eq("recipient_id", athleteProfileId)
-            .order("created_at", { ascending: false })
-            .limit(5),
-        ]);
 
         // Merge all activity types
         const allActivity: typeof activity = [];
@@ -416,6 +456,30 @@ export async function GET() {
         );
         calendarEvents.sort((a, b) => a.date.localeCompare(b.date));
 
+        // Map offers
+        offers = (offersData || []).map((o: Record<string, unknown>) => ({
+          id: o.id as string,
+          schoolName: o.school_name as string,
+          division: o.division as string,
+          scholarshipType: o.scholarship_type as string,
+          offerDate: o.offer_date as string,
+          committed: o.committed as boolean,
+        }));
+
+        // Map athlete events
+        athleteEvents = (athleteEventsData || []).map((e: Record<string, unknown>) => ({
+          id: e.id as string,
+          title: e.title as string,
+          eventType: e.event_type as string,
+          eventDate: e.event_date as string,
+          eventTime: e.event_time as string | null,
+          location: e.location as string | null,
+          priority: e.priority as string,
+          description: e.description as string | null,
+        }));
+
+        metrics.offersCount = offers.length;
+
         // Add alerts for low activity
         if ((viewsCount || 0) === 0) {
           alerts.push({
@@ -443,6 +507,8 @@ export async function GET() {
       calendarEvents,
       academic,
       alerts,
+      offers,
+      athleteEvents,
     });
   } catch (error) {
     console.error("Parent dashboard error:", error);
