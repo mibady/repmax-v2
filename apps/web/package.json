@@ -16,8 +16,12 @@
     "test:e2e:ui": "../../node_modules/.bin/playwright test --ui"
   },
   "dependencies": {
+    "@portabletext/react": "^6.0.3",
     "@react-email/components": "^1.0.6",
     "@repmax/shared": "*",
+    "@sanity/client": "^7.17.0",
+    "@sanity/image-url": "^2.0.3",
+    "@sanity/vision": "^5.17.1",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.47.10",
     "@upstash/ratelimit": "^2.0.8",
@@ -25,10 +29,12 @@
     "date-fns": "^4.1.0",
     "lucide-react": "^0.563.0",
     "next": "15.3.6",
+    "next-sanity": "^12.1.2",
     "qrcode.react": "^4.2.0",
     "react": "^19.0.0",
     "react-day-picker": "^9.14.0",
     "react-dom": "^19.0.0",
+    "sanity": "^5.17.1",
     "sonner": "^2.0.7",
     "stripe": "^17.4.0",
     "zod": "^3.24.1"
