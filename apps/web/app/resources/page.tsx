@@ -12,8 +12,8 @@ export default async function ResourcesHubPage() {
     tags: ['resource'],
   }) as SanityResource[]
 
-  const parentResources = resources.filter(r => r.audience === 'parents').slice(0, 4)
-  const athleteResources = resources.filter(r => r.audience === 'athletes').slice(0, 4)
+  const parentResources = resources.filter(r => r.audience === 'parent').slice(0, 4)
+  const athleteResources = resources.filter(r => r.audience === 'athlete').slice(0, 4)
 
   return (
     <main className="max-w-6xl mx-auto px-6 py-12">
