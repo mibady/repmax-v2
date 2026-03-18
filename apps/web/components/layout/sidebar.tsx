@@ -331,15 +331,18 @@ function ParentSidebar({ user, onSignOut }: { user: SidebarUser; onSignOut?: () 
   const childName = user.childName || 'Your Athlete';
 
   return (
-    <aside className="w-64 fixed h-full bg-[#050505] border-r border-white/10 flex flex-col z-50">
-      <div className="p-6">
-        <div className="flex items-center gap-3 mb-10">
+    <aside className="w-64 flex-shrink-0 bg-[#050505] border-r border-white/10 flex flex-col justify-between p-4 h-full">
+      <div className="flex flex-col gap-6">
+        {/* Brand */}
+        <div className="flex items-center gap-3 px-2">
           <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
             <span className="material-symbols-outlined text-black font-bold">bolt</span>
           </div>
           <h1 className="text-xl font-bold tracking-tight text-primary uppercase">RepMax</h1>
         </div>
-        <div className="flex items-center gap-3 px-3 py-4 mb-8 bg-[#1F1F22] rounded-xl">
+
+        {/* User Card */}
+        <div className="flex items-center gap-3 px-3 py-4 bg-[#1F1F22] rounded-xl">
           {user.avatarUrl ? (
             <div className="size-10 rounded-full border-2 border-primary/30 overflow-hidden">
               <Image
@@ -360,42 +363,45 @@ function ParentSidebar({ user, onSignOut }: { user: SidebarUser; onSignOut?: () 
             <p className="text-[10px] text-slate-400 uppercase tracking-widest">Parent of {childName}</p>
           </div>
         </div>
-        <nav className="space-y-1">
+
+        {/* Navigation */}
+        <nav className="flex flex-col gap-1">
           {parentNavItems.map((item) => {
             const isActive = pathname === item.href || (item.href !== '/parent' && pathname.startsWith(item.href));
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
                   isActive
-                    ? 'bg-[#1F1F22] border-l-4 border-primary text-primary'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-primary text-black'
+                    : 'text-gray-400 hover:text-white hover:bg-white/5'
                 }`}
               >
-                <span className="material-symbols-outlined">{item.icon}</span>
+                <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
                 <span className="text-sm font-medium">{item.label}</span>
               </Link>
             );
           })}
         </nav>
       </div>
-      <div className="mt-auto p-6 border-t border-white/5 space-y-1">
+
+      <div className="flex flex-col gap-2">
         {parentSettingsItems.map((item) => (
           <Link
             key={item.href}
             href={item.href}
-            className="flex items-center gap-3 px-4 py-2 text-slate-400 hover:text-white transition-colors"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all"
           >
-            <span className="material-symbols-outlined text-sm">{item.icon}</span>
+            <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
             <span className="text-sm font-medium">{item.label}</span>
           </Link>
         ))}
         <button
           onClick={onSignOut}
-          className="w-full flex items-center gap-3 px-4 py-2 text-slate-400 hover:text-white transition-colors"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all"
         >
-          <span className="material-symbols-outlined text-sm">logout</span>
+          <span className="material-symbols-outlined text-[20px]">logout</span>
           <span className="text-sm font-medium">Sign Out</span>
         </button>
       </div>
