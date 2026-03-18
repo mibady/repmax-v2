@@ -37,6 +37,20 @@ export async function GET(
       return NextResponse.json({ error: "Profile not found" }, { status: 404 });
     }
 
+    // For parents, also include linked athlete's profile IDs
+    const myProfileIds = [profile.id];
+    if (profile.role === "parent") {
+      const { data: links } = await supabase
+        .from("parent_links")
+        .select("athlete_profile_id")
+        .eq("parent_profile_id", profile.id);
+      if (links) {
+        for (const link of links) {
+          myProfileIds.push(link.athlete_profile_id);
+        }
+      }
+    }
+
     // Get contact's profile
     const { data: contact } = await supabase
       .from("profiles")
@@ -59,7 +73,11 @@ export async function GET(
       contactOrg = coach;
     }
 
-    // Fetch all messages between current user and contact (both directions)
+    // Fetch all messages between current user (or linked athlete) and contact
+    const orClauses = myProfileIds
+      .map((pid) => `and(sender_id.eq.${pid},recipient_id.eq.${contactId}),and(sender_id.eq.${contactId},recipient_id.eq.${pid})`)
+      .join(",");
+
     const { data: messages, error } = await supabase
       .from("messages")
       .select(`
@@ -71,9 +89,7 @@ export async function GET(
         read,
         created_at
       `)
-      .or(
-        `and(sender_id.eq.${profile.id},recipient_id.eq.${contactId}),and(sender_id.eq.${contactId},recipient_id.eq.${profile.id})`
-      )
+      .or(orClauses)
       .order("created_at", { ascending: true });
 
     if (error) {
@@ -81,9 +97,9 @@ export async function GET(
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    // Mark received messages as read
+    // Mark received messages as read (for parent or linked athlete)
     const unreadMessageIds = messages
-      ?.filter((m) => m.recipient_id === profile.id && !m.read)
+      ?.filter((m) => myProfileIds.includes(m.recipient_id) && !m.read)
       .map((m) => m.id);
 
     if (unreadMessageIds && unreadMessageIds.length > 0) {
@@ -94,11 +110,12 @@ export async function GET(
     }
 
     // Transform messages to include sender info
+    const myIdSet = new Set(myProfileIds);
     const transformedMessages = messages?.map((msg) => ({
       id: msg.id,
-      senderId: msg.sender_id === profile.id ? "me" : "other",
+      senderId: myIdSet.has(msg.sender_id) ? "me" : "other",
       senderName:
-        msg.sender_id === profile.id ? profile.full_name : contact.full_name,
+        myIdSet.has(msg.sender_id) ? profile.full_name : contact.full_name,
       content: msg.body,
       timestamp: new Date(msg.created_at).toLocaleTimeString([], {
         hour: "numeric",

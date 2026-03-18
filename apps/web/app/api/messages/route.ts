@@ -30,15 +30,29 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
 
-    // Get profile
+    // Get profile with role
     const { data: profile } = await supabase
       .from("profiles")
-      .select("id")
+      .select("id, role")
       .eq("user_id", user.id)
       .single();
 
     if (!profile) {
       return NextResponse.json({ error: "Profile not found" }, { status: 404 });
+    }
+
+    // For parents, also include linked athlete's messages
+    const profileIds = [profile.id];
+    if (profile.role === "parent") {
+      const { data: links } = await supabase
+        .from("parent_links")
+        .select("athlete_profile_id")
+        .eq("parent_profile_id", profile.id);
+      if (links) {
+        for (const link of links) {
+          profileIds.push(link.athlete_profile_id);
+        }
+      }
     }
 
     // Build query based on folder
@@ -49,9 +63,9 @@ export async function GET(request: Request) {
     `);
 
     if (folder === "inbox") {
-      query = query.eq("recipient_id", profile.id);
+      query = query.in("recipient_id", profileIds);
     } else {
-      query = query.eq("sender_id", profile.id);
+      query = query.in("sender_id", profileIds);
     }
 
     const { data, error } = await query.order("created_at", {
@@ -63,11 +77,11 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Failed to fetch messages" }, { status: 500 });
     }
 
-    // Count unread
+    // Count unread across all profile IDs
     const { count: unreadCount } = await supabase
       .from("messages")
       .select("*", { count: "exact", head: true })
-      .eq("recipient_id", profile.id)
+      .in("recipient_id", profileIds)
       .eq("read", false);
 
     return NextResponse.json({

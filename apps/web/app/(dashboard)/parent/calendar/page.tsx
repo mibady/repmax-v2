@@ -8,8 +8,20 @@ import {
   formatPeriodRange,
   type PeriodType,
 } from '@/lib/data/ncaa-calendar';
+import { useParentDashboard } from '@/lib/hooks';
+
+const EVENT_TYPE_CONFIG: Record<string, { icon: string; color: string }> = {
+  visit: { icon: 'flight', color: 'text-blue-400' },
+  camp: { icon: 'fitness_center', color: 'text-green-400' },
+  combine: { icon: 'speed', color: 'text-purple-400' },
+  game: { icon: 'sports_football', color: 'text-amber-400' },
+  deadline: { icon: 'event_busy', color: 'text-red-400' },
+  signing: { icon: 'draw', color: 'text-primary' },
+  other: { icon: 'event', color: 'text-slate-400' },
+};
 
 export default function ParentCalendarPage() {
+  const { childProfile, athleteEvents, isLoading } = useParentDashboard();
   const todayStr = new Date().toISOString().split('T')[0];
 
   // Find current period
@@ -20,8 +32,7 @@ export default function ParentCalendarPage() {
   // Get upcoming periods (current + future, max 8)
   const upcoming = FBS_PERIODS.filter((p) => p.end >= todayStr).slice(0, 8);
 
-  // Key signing dates for Class of 2026
-  const classYear = 2026;
+  const classYear = childProfile?.classYear || 2026;
   const signingDates = [
     {
       date: `Dec 18, ${classYear - 1}`,
@@ -134,6 +145,53 @@ export default function ParentCalendarPage() {
                   ))}
                 </ul>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Athlete Events */}
+        {!isLoading && athleteEvents.length > 0 && (
+          <div className="bg-[#1F1F22] rounded-xl border border-white/5 mb-8">
+            <div className="p-5 border-b border-white/5">
+              <h3 className="font-bold text-white flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">directions_run</span>
+                {childProfile?.name || 'Athlete'}&apos;s Upcoming Events
+                <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                  {athleteEvents.length}
+                </span>
+              </h3>
+              <p className="text-xs text-slate-500 mt-1">Visits, camps, games, and deadlines</p>
+            </div>
+            <div className="divide-y divide-white/5">
+              {athleteEvents.map((evt) => {
+                const config = EVENT_TYPE_CONFIG[evt.eventType] || EVENT_TYPE_CONFIG.other;
+                const date = new Date(evt.eventDate + 'T00:00:00');
+                const dateStr = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                return (
+                  <div key={evt.id} className={`p-4 flex items-center gap-4 ${evt.priority === 'high' ? 'bg-amber-500/[0.03]' : ''}`}>
+                    <div className={`size-10 rounded-lg bg-white/5 flex items-center justify-center`}>
+                      <span className={`material-symbols-outlined text-[20px] ${config.color}`}>{config.icon}</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold text-white">{evt.title}</span>
+                        {evt.priority === 'high' && (
+                          <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-amber-400/10 text-amber-400">Priority</span>
+                        )}
+                        <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-white/5 text-slate-400 capitalize`}>
+                          {evt.eventType}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        {dateStr}{evt.eventTime ? ` · ${evt.eventTime}` : ''}{evt.location ? ` · ${evt.location}` : ''}
+                      </p>
+                      {evt.description && (
+                        <p className="text-xs text-slate-600 mt-0.5 truncate">{evt.description}</p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}

@@ -3,16 +3,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useParentDashboard } from '@/lib/hooks';
-
-const fallbackProfile = {
-  id: '',
-  name: 'Athlete',
-  position: 'ATH',
-  classYear: 2026,
-  gpa: null as number | null,
-  school: 'High School',
-  avatarUrl: null as string | null,
-};
+import { AcademicHealth } from '@/components/parent/AcademicHealth';
+import { OffersOverview } from '@/components/parent/OffersOverview';
 
 const fallbackMetrics = {
   profileViews: 0,
@@ -20,10 +12,11 @@ const fallbackMetrics = {
   coachMessages: 0,
   schoolsTracking: 0,
   upcomingDeadlines: 0,
+  offersCount: 0,
 };
 
 export default function ParentProfilePage() {
-  const { childProfile, metrics, isLoading, error } = useParentDashboard();
+  const { childProfile, metrics, academic, offers, isLoading, error } = useParentDashboard();
 
   if (isLoading) {
     return (
@@ -48,9 +41,9 @@ export default function ParentProfilePage() {
     );
   }
 
-  const profile = childProfile || fallbackProfile;
   const stats = metrics || fallbackMetrics;
-  const initials = profile.name
+  const fullName = childProfile?.fullName || childProfile?.name || 'Athlete';
+  const initials = fullName
     .split(' ')
     .map((n) => n[0])
     .join('')
@@ -70,10 +63,10 @@ export default function ParentProfilePage() {
         <div className="bg-[#1F1F22] rounded-xl border border-white/5 p-8 mb-8">
           <div className="flex flex-col sm:flex-row items-center gap-6">
             {/* Avatar */}
-            {profile.avatarUrl ? (
+            {childProfile?.avatarUrl ? (
               <Image
-                src={profile.avatarUrl}
-                alt={profile.name}
+                src={childProfile.avatarUrl}
+                alt={fullName}
                 className="size-24 rounded-full object-cover border-2 border-white/10"
                 width={96}
                 height={96}
@@ -85,37 +78,48 @@ export default function ParentProfilePage() {
             )}
 
             {/* Info */}
-            <div className="text-center sm:text-left">
-              <h1 className="text-2xl font-bold text-white mb-1">{profile.name}</h1>
+            <div className="text-center sm:text-left flex-1">
+              <h1 className="text-2xl font-bold text-white mb-1">{fullName}</h1>
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-slate-400 text-sm">
                 <span className="flex items-center gap-1">
                   <span className="material-symbols-outlined text-[18px]">sports_football</span>
-                  {profile.position}
+                  {childProfile?.position || 'ATH'}
                 </span>
                 <span className="flex items-center gap-1">
                   <span className="material-symbols-outlined text-[18px]">school</span>
-                  Class of {profile.classYear}
+                  Class of {childProfile?.classYear || 2026}
                 </span>
                 <span className="flex items-center gap-1">
                   <span className="material-symbols-outlined text-[18px]">location_on</span>
-                  {profile.school}
+                  {childProfile?.school || 'High School'}
                 </span>
-                {profile.gpa !== null && (
+                {childProfile?.gpa !== null && childProfile?.gpa !== undefined && (
                   <span className="flex items-center gap-1">
                     <span className="material-symbols-outlined text-[18px]">grade</span>
-                    {profile.gpa.toFixed(2)} GPA
+                    {childProfile.gpa.toFixed(2)} GPA
                   </span>
                 )}
               </div>
             </div>
+
+            {/* View Public Card */}
+            {childProfile?.id && (
+              <Link
+                href={`/card/${childProfile.id}`}
+                className="inline-flex items-center gap-2 bg-primary text-[#201d12] px-5 py-2.5 rounded-lg font-semibold hover:bg-primary/90 transition-colors text-sm shrink-0"
+              >
+                <span className="material-symbols-outlined text-[18px]">open_in_new</span>
+                View Public Card
+              </Link>
+            )}
           </div>
         </div>
 
-        {/* Metrics Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        {/* Metrics Row — 4 cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div className="bg-[#1F1F22] rounded-xl p-5 border border-white/5">
             <div className="flex items-center gap-2 text-slate-400 text-sm mb-2">
-              <span className="material-symbols-outlined text-[20px]">visibility</span>
+              <span className="material-symbols-outlined text-[20px] text-blue-400">visibility</span>
               Profile Views
             </div>
             <div className="flex items-end justify-between">
@@ -126,20 +130,18 @@ export default function ParentProfilePage() {
                 </span>
               )}
             </div>
-            <p className="text-xs text-slate-500 mt-1">This month</p>
+            <p className="text-xs text-slate-500 mt-1">All time</p>
           </div>
 
           <div className="bg-[#1F1F22] rounded-xl p-5 border border-white/5">
             <div className="flex items-center gap-2 text-slate-400 text-sm mb-2">
-              <span className="material-symbols-outlined text-[20px]">chat_bubble</span>
+              <span className="material-symbols-outlined text-[20px] text-green-400">chat_bubble</span>
               Coach Messages
             </div>
             <div className="flex items-end justify-between">
               <span className="text-3xl font-bold text-white">{stats.coachMessages}</span>
               {stats.coachMessages > 0 && (
-                <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded">
-                  New
-                </span>
+                <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded">New</span>
               )}
             </div>
             <p className="text-xs text-slate-500 mt-1">Unread messages</p>
@@ -147,24 +149,28 @@ export default function ParentProfilePage() {
 
           <div className="bg-[#1F1F22] rounded-xl p-5 border border-white/5">
             <div className="flex items-center gap-2 text-slate-400 text-sm mb-2">
-              <span className="material-symbols-outlined text-[20px]">school</span>
+              <span className="material-symbols-outlined text-[20px] text-amber-400">emoji_events</span>
+              Offers
+            </div>
+            <span className="text-3xl font-bold text-white">{stats.offersCount}</span>
+            <p className="text-xs text-slate-500 mt-1">Scholarship offers</p>
+          </div>
+
+          <div className="bg-[#1F1F22] rounded-xl p-5 border border-white/5">
+            <div className="flex items-center gap-2 text-slate-400 text-sm mb-2">
+              <span className="material-symbols-outlined text-[20px] text-blue-400">school</span>
               Schools Tracking
             </div>
             <span className="text-3xl font-bold text-white">{stats.schoolsTracking}</span>
-            <p className="text-xs text-slate-500 mt-1">Showing interest</p>
+            <p className="text-xs text-slate-500 mt-1">On shortlists</p>
           </div>
         </div>
 
-        {/* View Public Card */}
-        {profile.id && (
-          <Link
-            href={`/card/${profile.id}`}
-            className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors"
-          >
-            <span className="material-symbols-outlined text-[20px]">open_in_new</span>
-            View Public Card
-          </Link>
-        )}
+        {/* Two-column: Offers + Academic */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <OffersOverview offers={offers} />
+          {academic && <AcademicHealth academic={academic} />}
+        </div>
       </div>
     </div>
   );
