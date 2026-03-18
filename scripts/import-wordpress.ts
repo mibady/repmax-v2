@@ -37,32 +37,43 @@ interface WPPost {
   }
 }
 
+const WP_SOURCES = [
+  'https://repmax.io',
+  'https://repmaxmedia.com',
+]
+
 async function fetchWordPressPosts(): Promise<WPPost[]> {
   const allPosts: WPPost[] = []
-  let page = 1
 
-  while (true) {
-    const url = `https://repmax.io/wp-json/wp/v2/posts?per_page=100&page=${page}&_embed`
-    console.log(`Fetching page ${page} from WordPress API...`)
-    const res = await fetch(url)
+  for (const site of WP_SOURCES) {
+    let page = 1
+    const sitePosts: WPPost[] = []
 
-    // WP REST API returns 400 when page is beyond total pages
-    if (res.status === 400) break
-    if (!res.ok) throw new Error(`WordPress API error: ${res.status} ${res.statusText}`)
+    while (true) {
+      const url = `${site}/wp-json/wp/v2/posts?per_page=100&page=${page}&_embed`
+      console.log(`Fetching ${site} page ${page}...`)
+      const res = await fetch(url)
 
-    const posts: WPPost[] = await res.json()
-    if (posts.length === 0) break
+      // WP REST API returns 400 when page is beyond total pages
+      if (res.status === 400) break
+      if (!res.ok) throw new Error(`WordPress API error (${site}): ${res.status} ${res.statusText}`)
 
-    allPosts.push(...posts)
-    console.log(`  Page ${page}: ${posts.length} posts (${allPosts.length} total)`)
+      const posts: WPPost[] = await res.json()
+      if (posts.length === 0) break
 
-    // Check if there are more pages
-    const totalPages = parseInt(res.headers.get('x-wp-totalpages') || '1', 10)
-    if (page >= totalPages) break
-    page++
+      sitePosts.push(...posts)
+      console.log(`  Page ${page}: ${posts.length} posts (${sitePosts.length} from ${site})`)
+
+      const totalPages = parseInt(res.headers.get('x-wp-totalpages') || '1', 10)
+      if (page >= totalPages) break
+      page++
+    }
+
+    console.log(`Fetched ${sitePosts.length} posts from ${site}`)
+    allPosts.push(...sitePosts)
   }
 
-  console.log(`Fetched ${allPosts.length} posts total`)
+  console.log(`\nTotal: ${allPosts.length} posts from ${WP_SOURCES.length} sources`)
   return allPosts
 }
 
