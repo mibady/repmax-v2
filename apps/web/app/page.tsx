@@ -33,6 +33,7 @@ export default function Page() {
 <Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="/pricing">Pricing</Link>
 <Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="/resources">Resources</Link>
 <Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="/blog">Blog</Link>
+<Link className="text-sm font-medium text-primary hover:text-primary-hover transition-colors" href="/repmax-camp-series">Camp Series</Link>
 <Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="/login">Login</Link>
 </nav>
 <Link href="/signup" className="hidden md:flex items-center justify-center rounded-md bg-primary px-5 py-2.5 text-sm font-bold text-[#050505] transition-all hover:bg-primary-hover hover:scale-105">
@@ -62,6 +63,7 @@ export default function Page() {
       <Link className="text-lg font-medium text-white" href="/pricing" onClick={() => setMobileMenuOpen(false)}>Pricing</Link>
       <Link className="text-lg font-medium text-white" href="/resources" onClick={() => setMobileMenuOpen(false)}>Resources</Link>
       <Link className="text-lg font-medium text-white" href="/blog" onClick={() => setMobileMenuOpen(false)}>Blog</Link>
+      <Link className="text-lg font-medium text-primary" href="/repmax-camp-series" onClick={() => setMobileMenuOpen(false)}>Camp Series</Link>
       <Link className="text-lg font-medium text-white" href="/login" onClick={() => setMobileMenuOpen(false)}>Login</Link>
       <Link href="/signup" className="mt-4 rounded-md bg-primary px-8 py-3 text-base font-bold text-[#050505]" onClick={() => setMobileMenuOpen(false)}>Get Your Free RepMax ID</Link>
     </nav>

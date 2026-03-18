@@ -1,44 +1,52 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 
 const STRIPE_CHECKOUT_URL = 'https://buy.stripe.com/3cs5mN6KrgV66rK28j';
+const IMG = '/images/combine-blueprint';
 
 const trainingStations = [
   {
     icon: 'sprint',
     title: '40-Yard Dash',
+    image: `${IMG}/40-dash.jpg`,
     description:
       'Master your stance, explode off the line, and maintain top-end speed. Focus on pushing off horizontally, keeping your chin tucked, and increasing stride frequency for faster ground coverage.',
   },
   {
     icon: 'jump',
     title: 'Vertical Jump',
+    image: `${IMG}/vertical-jump.png`,
     description:
       'Measure your explosiveness and lower-body power. Learn proper loading mechanics, arm swing timing, and how to reach your maximum height on the Vertec device.',
   },
   {
     icon: 'fitness_center',
     title: 'Broad Jump',
+    image: `${IMG}/broad-jump.jpg`,
     description:
       'Develop explosive horizontal power from a standstill. Master the arm swing, knee bend timing, and staggered landing technique that scouts look for.',
   },
   {
     icon: 'swap_horiz',
     title: '5-10-5 Shuttle',
+    image: `${IMG}/5-10-5.jpg`,
     description:
       'The Pro Agility Test measures lateral quickness, explosiveness, and body control. Sprint 5 yards, touch, sprint 10 back, touch, and finish through — all about sharp cuts and direction changes.',
   },
   {
     icon: 'turn_right',
     title: 'L-Drill (3-Cone)',
+    image: `${IMG}/l-drill.jpg`,
     description:
       'Assess your ability to accelerate, decelerate, and change direction at speed. Navigate the L-shaped cone pattern with sharp turns while maintaining balance and control.',
   },
   {
     icon: 'psychology',
     title: 'Mental Preparation',
+    image: null,
     description:
       'Learn the mental aspects of combine performance — how to manage pressure, visualize success, and maintain focus when scouts and coaches are evaluating you.',
   },
@@ -50,6 +58,15 @@ const benefits = [
   { icon: 'person', text: 'Individual technique coaching' },
   { icon: 'assignment', text: 'Pre-camp preparation player profile' },
   { icon: 'rate_review', text: 'Post-camp performance review' },
+];
+
+const navLinks = [
+  { label: 'Home', href: '/' },
+  { label: 'Features', href: '/#features' },
+  { label: 'Pricing', href: '/pricing' },
+  { label: 'Resources', href: '/resources' },
+  { label: 'Blog', href: '/blog' },
+  { label: 'Login', href: '/login' },
 ];
 
 export default function CampSeriesPage() {
@@ -67,11 +84,15 @@ export default function CampSeriesPage() {
             <h2 className="text-xl font-black tracking-tight text-white">REPMAX</h2>
           </Link>
           <nav className="hidden md:flex items-center gap-8">
-            <Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="/#features">Features</Link>
-            <Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="/pricing">Pricing</Link>
-            <Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="/resources">Resources</Link>
-            <Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="/blog">Blog</Link>
-            <Link className="text-sm font-medium text-text-grey hover:text-white transition-colors" href="/login">Login</Link>
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                className="text-sm font-medium text-text-grey hover:text-white transition-colors"
+                href={link.href}
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
           <a
             href={STRIPE_CHECKOUT_URL}
@@ -102,11 +123,16 @@ export default function CampSeriesPage() {
             </button>
           </div>
           <nav className="flex flex-col gap-6 px-6 pt-8">
-            <Link className="text-lg font-medium text-text-grey hover:text-white" href="/#features" onClick={() => setMobileMenuOpen(false)}>Features</Link>
-            <Link className="text-lg font-medium text-text-grey hover:text-white" href="/pricing" onClick={() => setMobileMenuOpen(false)}>Pricing</Link>
-            <Link className="text-lg font-medium text-text-grey hover:text-white" href="/resources" onClick={() => setMobileMenuOpen(false)}>Resources</Link>
-            <Link className="text-lg font-medium text-text-grey hover:text-white" href="/blog" onClick={() => setMobileMenuOpen(false)}>Blog</Link>
-            <Link className="text-lg font-medium text-text-grey hover:text-white" href="/login" onClick={() => setMobileMenuOpen(false)}>Login</Link>
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                className="text-lg font-medium text-text-grey hover:text-white"
+                href={link.href}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {link.label}
+              </Link>
+            ))}
             <a
               href={STRIPE_CHECKOUT_URL}
               target="_blank"
@@ -119,10 +145,23 @@ export default function CampSeriesPage() {
         </div>
       )}
 
-      {/* Hero Section */}
+      {/* Hero Section with Video Background */}
       <section className="relative pt-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" />
-        <div className="relative mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8 text-center">
+        {/* Video background */}
+        <div className="absolute inset-0 z-0">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="h-full w-full object-cover opacity-20"
+          >
+            <source src={`${IMG}/Combine-1080-Vertical-V1-1920.mp4`} type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-gradient-to-b from-background-dark/60 via-background-dark/80 to-background-dark" />
+        </div>
+
+        <div className="relative z-10 mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8 text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 mb-8">
             <span className="material-symbols-outlined text-primary text-base">event</span>
             <span className="text-xs font-semibold uppercase tracking-wider text-primary">RepMax Camp Series</span>
@@ -155,7 +194,7 @@ export default function CampSeriesPage() {
 
           {/* Camp Details Bar */}
           <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
-            <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+            <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4">
               <span className="material-symbols-outlined text-primary text-2xl">location_on</span>
               <div className="text-left">
                 <p className="text-xs text-text-grey">Location</p>
@@ -163,7 +202,7 @@ export default function CampSeriesPage() {
                 <p className="text-xs text-text-grey">Anaheim, CA</p>
               </div>
             </div>
-            <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+            <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4">
               <span className="material-symbols-outlined text-primary text-2xl">schedule</span>
               <div className="text-left">
                 <p className="text-xs text-text-grey">Duration</p>
@@ -171,7 +210,7 @@ export default function CampSeriesPage() {
                 <p className="text-xs text-text-grey">Intensive training</p>
               </div>
             </div>
-            <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+            <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4">
               <span className="material-symbols-outlined text-primary text-2xl">groups</span>
               <div className="text-left">
                 <p className="text-xs text-text-grey">Availability</p>
@@ -211,13 +250,50 @@ export default function CampSeriesPage() {
             </ul>
           </div>
           <div className="relative">
-            <div className="aspect-[4/5] rounded-2xl bg-gradient-to-br from-primary/20 via-primary/5 to-transparent border border-white/10 flex items-center justify-center">
-              <div className="text-center px-8">
-                <span className="material-symbols-outlined text-primary text-7xl">emoji_events</span>
-                <p className="mt-4 text-2xl font-bold text-white">Your Journey to</p>
-                <p className="text-2xl font-bold text-primary">Excellence</p>
-                <p className="mt-3 text-sm text-text-grey">One chance. Be prepared.</p>
-              </div>
+            <div className="overflow-hidden rounded-2xl border border-white/10">
+              <Image
+                src={`${IMG}/Demo-by-Coach-200x300.jpg`}
+                alt="Coach demonstrating combine technique"
+                width={400}
+                height={600}
+                className="w-full h-auto object-cover"
+              />
+            </div>
+            <div className="absolute -bottom-4 -right-4 rounded-xl border border-primary/30 bg-background-dark/90 backdrop-blur-sm p-4">
+              <p className="text-xs text-text-grey">Expert-led</p>
+              <p className="text-sm font-bold text-primary">1-on-1 Coaching</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Promo Banner */}
+      <section className="mx-auto max-w-7xl px-6 lg:px-8 pb-12">
+        <div className="relative overflow-hidden rounded-2xl border border-primary/20">
+          <Image
+            src={`${IMG}/Black-and-Orange-Modern-Robotic-Showcase-Linkedin-Post-3-600x600.png`}
+            alt="RepMax Combine Blueprint promotional graphic"
+            width={1200}
+            height={400}
+            className="w-full h-64 sm:h-80 object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-background-dark/90 via-background-dark/60 to-transparent flex items-center">
+            <div className="px-8 sm:px-12 max-w-lg">
+              <h3 className="text-2xl sm:text-3xl font-bold text-white">
+                Don&apos;t Leave Your <span className="text-primary">Performance</span> to Chance
+              </h3>
+              <p className="mt-3 text-sm text-text-grey">
+                Every rep, every drill, every technique — designed to prepare you for the moment that matters most.
+              </p>
+              <a
+                href={STRIPE_CHECKOUT_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-bold text-[#050505] transition-all hover:bg-primary-hover hover:scale-105"
+              >
+                <span className="material-symbols-outlined text-base">confirmation_number</span>
+                Secure Your Spot
+              </a>
             </div>
           </div>
         </div>
@@ -238,13 +314,33 @@ export default function CampSeriesPage() {
             {trainingStations.map((station) => (
               <div
                 key={station.title}
-                className="group rounded-xl border border-white/10 bg-white/[0.03] p-6 transition-all hover:border-primary/30 hover:bg-primary/5"
+                className="group rounded-xl border border-white/10 bg-white/[0.03] overflow-hidden transition-all hover:border-primary/30 hover:bg-primary/5"
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary mb-4 transition-colors group-hover:bg-primary/20">
-                  <span className="material-symbols-outlined text-2xl">{station.icon}</span>
+                {station.image ? (
+                  <div className="relative h-48 overflow-hidden">
+                    <Image
+                      src={station.image}
+                      alt={station.title}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/20 to-transparent" />
+                    <div className="absolute bottom-3 left-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/20 backdrop-blur-sm text-primary">
+                      <span className="material-symbols-outlined text-xl">{station.icon}</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="relative h-48 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent flex items-center justify-center">
+                    <span className="material-symbols-outlined text-primary text-6xl opacity-30">{station.icon}</span>
+                    <div className="absolute bottom-3 left-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/20 text-primary">
+                      <span className="material-symbols-outlined text-xl">{station.icon}</span>
+                    </div>
+                  </div>
+                )}
+                <div className="p-6">
+                  <h3 className="text-lg font-semibold text-white mb-2">{station.title}</h3>
+                  <p className="text-sm text-text-grey leading-relaxed">{station.description}</p>
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-2">{station.title}</h3>
-                <p className="text-sm text-text-grey leading-relaxed">{station.description}</p>
               </div>
             ))}
           </div>
@@ -311,12 +407,12 @@ export default function CampSeriesPage() {
       <footer className="border-t border-white/5 bg-background-dark">
         <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
+            <Link href="/" className="flex items-center gap-4">
               <div className="flex h-8 w-8 items-center justify-center rounded bg-primary/20 text-primary">
                 <span className="material-symbols-outlined">sports_football</span>
               </div>
               <span className="text-sm font-bold text-white">REPMAX</span>
-            </div>
+            </Link>
             <nav className="flex flex-wrap items-center justify-center gap-6">
               <Link className="text-xs text-text-grey hover:text-white transition-colors" href="/">Home</Link>
               <Link className="text-xs text-text-grey hover:text-white transition-colors" href="/pricing">Pricing</Link>
@@ -324,6 +420,7 @@ export default function CampSeriesPage() {
               <Link className="text-xs text-text-grey hover:text-white transition-colors" href="/blog">Blog</Link>
               <Link className="text-xs text-text-grey hover:text-white transition-colors" href="/privacy">Privacy</Link>
               <Link className="text-xs text-text-grey hover:text-white transition-colors" href="/terms">Terms</Link>
+              <Link className="text-xs text-text-grey hover:text-white transition-colors" href="/support">Support</Link>
             </nav>
             <p className="text-xs text-text-grey">&copy; {new Date().getFullYear()} RepMax. All rights reserved.</p>
           </div>
