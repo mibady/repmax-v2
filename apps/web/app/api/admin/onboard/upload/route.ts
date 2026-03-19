@@ -33,7 +33,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!file.name.endsWith(".csv")) {
+    const fileName = file.name.toLowerCase();
+    if (fileName.endsWith(".xlsx") || fileName.endsWith(".xls")) {
+      return NextResponse.json(
+        { error: "XLSX support coming soon. Please convert to CSV." },
+        { status: 400 }
+      );
+    }
+    if (!fileName.endsWith(".csv")) {
       return NextResponse.json(
         { error: "Only CSV files are accepted" },
         { status: 400 }
@@ -45,7 +52,7 @@ export async function POST(request: NextRequest) {
 
     if (lines.length < 2) {
       return NextResponse.json(
-        { error: "CSV must have at least a header row and one data row" },
+        { error: "File must have at least a header row and one data row" },
         { status: 400 }
       );
     }
@@ -73,12 +80,15 @@ export async function POST(request: NextRequest) {
 
     const headers = parseLine(lines[0]);
     const rows = lines.slice(1).map((line) => parseLine(line));
+    const previewRows = rows.slice(0, 3);
 
     return NextResponse.json({
       headers,
       rows,
       totalRows: rows.length,
       fileName: file.name,
+      fileSize: file.size,
+      previewRows,
     });
   } catch {
     return NextResponse.json(
