@@ -1,219 +1,45 @@
 "use client";
 
-import { useRef, useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Loader2 } from "lucide-react";
-import { useImageUpload, useDropzone } from "@/hooks/useImageUpload";
 import { useAthleteCardEditor } from "@/lib/hooks";
-
-// Form sections
-const positions = [
-  "Quarterback",
-  "Running Back",
-  "Wide Receiver",
-  "Tight End",
-  "Offensive Line",
-  "Defensive Line",
-  "Linebacker",
-  "Cornerback",
-  "Safety",
-  "Kicker",
-  "Punter",
-];
-
-const currentYear = new Date().getFullYear();
-const classYears = Array.from({ length: 5 }, (_, i) => currentYear + i);
 
 const DEFAULT_AVATAR =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuCpFOEUz_rfWWSVZf8V8mFWpvSX0XbEvnGhfEPVxD3mYrqKA6J94E78iBa_bR1caG28xt4BCjjnmdpZ8gfWL2lqcqVjfRncL7V0MxJBJxQQLl315vZyu2h6k9L5D4eNTwqVSBKB6cji7NJkO3WIoWyV4PeQrLPwNIgFa36RdDTOOR035pkGUVlwoADx0noxixr0W7lVDf9paHXe5l3fXR4SoKoRwegF0Uejyfdrq-vkbtjy7k-3snSTmQeCc6x5BHmksTTT1Aer9Qo";
 
-function CameraModal({
-  isOpen,
-  onClose,
-  onCapture,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  onCapture: (file: File) => void;
-}) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [stream, setStream] = useState<MediaStream | null>(null);
-  const [cameraError, setCameraError] = useState<string | null>(null);
-
-  const stopStream = useCallback(() => {
-    if (stream) {
-      stream.getTracks().forEach((t) => t.stop());
-      setStream(null);
-    }
-  }, [stream]);
-
-  useEffect(() => {
-    if (!isOpen) return;
-    let cancelled = false;
-
-    if (!navigator.mediaDevices?.getUserMedia) {
-      setCameraError("Camera not available in this browser");
-      return;
-    }
-
-    navigator.mediaDevices
-      .getUserMedia({ video: { facingMode: "user" } })
-      .then((s) => {
-        if (cancelled) {
-          s.getTracks().forEach((t) => t.stop());
-          return;
-        }
-        setStream(s);
-        setCameraError(null);
-        if (videoRef.current) {
-          videoRef.current.srcObject = s;
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setCameraError("Could not access camera. Please allow camera permissions.");
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (!isOpen) stopStream();
-  }, [isOpen, stopStream]);
-
-  const handleCapture = () => {
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    if (!video || !canvas) return;
-
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    ctx.drawImage(video, 0, 0);
-
-    canvas.toBlob(
-      (blob) => {
-        if (blob) {
-          const file = new File([blob], "camera-capture.jpg", { type: "image/jpeg" });
-          stopStream();
-          onCapture(file);
-          onClose();
-        }
-      },
-      "image/jpeg",
-      0.92
-    );
-  };
-
-  const handleClose = () => {
-    stopStream();
-    onClose();
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
-      <div className="bg-surface-dark border border-white/10 rounded-2xl w-full max-w-lg mx-4 overflow-hidden shadow-2xl">
-        <div className="flex items-center justify-between p-4 border-b border-white/10">
-          <h3 className="text-white font-bold text-lg">Take Photo</h3>
-          <button onClick={handleClose} className="text-gray-400 hover:text-white transition-colors">
-            <span className="material-symbols-outlined">close</span>
-          </button>
-        </div>
-        <div className="relative aspect-square bg-black flex items-center justify-center">
-          {cameraError ? (
-            <div className="text-center p-6">
-              <span className="material-symbols-outlined text-4xl text-red-400 mb-2 block">videocam_off</span>
-              <p className="text-red-400 text-sm">{cameraError}</p>
-            </div>
-          ) : (
-            <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
-          )}
-        </div>
-        <canvas ref={canvasRef} className="hidden" />
-        <div className="p-4 flex gap-3">
-          <button
-            onClick={handleClose}
-            className="flex-1 px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-sm font-medium hover:bg-white/10 transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleCapture}
-            disabled={!!cameraError || !stream}
-            className="flex-1 px-4 py-3 rounded-lg bg-primary text-black font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-          >
-            <span className="material-symbols-outlined text-[18px]">photo_camera</span>
-            Capture
-          </button>
-        </div>
-      </div>
+const cardClass = "bg-[#1F1F22] border border-[rgba(255,255,255,0.08)] rounded-[15px] p-5";
+const sectionTitle = (emoji: string, label: string) => (
+  <div className="mb-4">
+    <div className="flex items-center gap-2 mb-2">
+      <span className="text-base">{emoji}</span>
+      <span className="text-xs font-bold uppercase tracking-wider text-white">{label}</span>
     </div>
-  );
+    <div className="h-[2px] rounded-full bg-gradient-to-r from-[#d4af35] to-transparent" />
+  </div>
+);
+
+const statBox = (label: string, value: string, highlight = false) => (
+  <div className="bg-[#1a1a1a] border border-[rgba(255,255,255,0.08)] rounded-[10px] p-3 text-center">
+    <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{label}</p>
+    <p className={`text-base font-bold font-mono ${highlight ? "text-[#10B981]" : "text-white"}`}>
+      {value || "—"}
+    </p>
+  </div>
+);
+
+function getYouTubeId(url: string): string | null {
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/))([^&?\s]+)/);
+  return match ? match[1] : null;
 }
 
-export default function EditCardPage() {
+export default function AthleticProfilePage() {
   const {
-    data: formData,
+    data,
     isLoading,
-    isSaving,
     error,
-    saveError,
-    updateField,
-    save,
     profileCompletion,
   } = useAthleteCardEditor();
-
-  const [saveSuccess, setSaveSuccess] = useState(false);
-  const [showCamera, setShowCamera] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const { isUploading, progress, error: uploadError, upload } = useImageUpload({
-    type: "profile",
-    onSuccess: (url) => {
-      updateField("avatarUrl", url);
-    },
-  });
-
-  const handleFileSelect = async (file: File) => {
-    try {
-      await upload(file);
-    } catch {
-      // Error is already handled in the hook
-    }
-  };
-
-  const { isDragging, dropzoneProps } = useDropzone(handleFileSelect);
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    if (formData) {
-      updateField(name as keyof typeof formData, value);
-    }
-  };
-
-  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      handleFileSelect(file);
-    }
-  };
-
-  const handleSave = async () => {
-    setSaveSuccess(false);
-    const success = await save();
-    if (success) {
-      setSaveSuccess(true);
-      setTimeout(() => setSaveSuccess(false), 3000);
-    }
-  };
 
   if (isLoading) {
     return (
@@ -223,7 +49,7 @@ export default function EditCardPage() {
     );
   }
 
-  if (error && !formData) {
+  if (error && !data) {
     return (
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="text-center">
@@ -236,1053 +62,496 @@ export default function EditCardPage() {
     );
   }
 
-  if (!formData) {
-    return null;
-  }
+  if (!data) return null;
 
-  const profileImage = formData.avatarUrl || DEFAULT_AVATAR;
+  const profileImage = data.avatarUrl || DEFAULT_AVATAR;
+  const youtubeId = data.youtubeLink ? getYouTubeId(data.youtubeLink) : null;
 
   return (
-    <div className="p-8">
-      {/* Hidden file input */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/jpeg,image/png,image/webp,image/gif"
-        className="hidden"
-        onChange={handleFileInputChange}
-      />
-
-      {/* Page Header */}
-      <div className="max-w-7xl mx-auto mb-8">
+    <div className="p-6 md:p-8 overflow-y-auto">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <Link
               href="/athlete"
-              className="flex items-center gap-2 text-text-grey hover:text-white transition-colors"
+              className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
             >
               <span className="material-symbols-outlined">arrow_back</span>
             </Link>
-            <h1 className="text-2xl font-bold text-white">Edit My Player Card</h1>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <div className="h-2 w-24 rounded-full bg-white/10 overflow-hidden">
-                <div
-                  className="h-full bg-primary rounded-full transition-all duration-300"
-                  style={{ width: `${profileCompletion}%` }}
-                />
+            <div>
+              <h1 className="text-2xl font-bold text-white">Athletic Profile</h1>
+              <div className="flex items-center gap-3 mt-1">
+                <div className="h-2 w-32 rounded-full bg-white/10 overflow-hidden">
+                  <div
+                    className="h-full bg-[#d4af35] rounded-full transition-all duration-300"
+                    style={{ width: `${profileCompletion}%` }}
+                  />
+                </div>
+                <span className="text-sm text-gray-400">{profileCompletion}% Complete</span>
               </div>
-              <span className="text-sm text-text-grey">{profileCompletion}% Complete</span>
             </div>
-            {saveSuccess && (
-              <span className="text-sm text-green-500 flex items-center gap-1">
-                <span className="material-symbols-outlined text-[16px]">check_circle</span>
-                Saved!
-              </span>
-            )}
-            {saveError && (
-              <span className="text-sm text-red-500">{saveError.message}</span>
-            )}
-            <button
-              onClick={handleSave}
-              disabled={isSaving}
-              className="px-4 py-2 rounded-lg bg-primary text-black font-bold text-sm hover:bg-primary-hover transition-colors disabled:opacity-50 flex items-center gap-2"
+          </div>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/settings/profile"
+              className="px-5 py-2.5 rounded-lg bg-[#d4af35] text-black font-bold text-sm hover:bg-[#c4a030] transition-colors flex items-center gap-2"
             >
-              {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
-              {isSaving ? "Saving..." : "Save Changes"}
-            </button>
-            {formData.repmaxId && (
+              <span className="material-symbols-outlined text-[18px]">edit</span>
+              Edit Profile
+            </Link>
+            {data.repmaxId && (
               <Link
-                href={`/card/${formData.repmaxId}`}
+                href={`/card/${data.repmaxId}`}
                 target="_blank"
-                className="px-4 py-2 rounded-lg bg-white/10 text-white font-bold text-sm hover:bg-white/20 transition-colors flex items-center gap-2"
+                className="px-5 py-2.5 rounded-lg bg-white/10 text-white font-bold text-sm hover:bg-white/20 transition-colors flex items-center gap-2"
               >
-                <span className="material-symbols-outlined text-[16px]">open_in_new</span>
-                View Card
+                <span className="material-symbols-outlined text-[18px]">open_in_new</span>
+                View Public Card
               </Link>
             )}
           </div>
-          {formData.repmaxId && (
-            <div className="mt-2 text-right">
-              <span className="text-xs font-mono text-primary/70 bg-primary/10 px-2 py-1 rounded border border-primary/20">
-                {formData.repmaxId}
-              </span>
-            </div>
-          )}
         </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Form Sections */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Profile Photo */}
-            <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
-              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary">photo_camera</span>
-                Profile Photo
-              </h2>
-              <div className="flex items-start gap-6">
-                <div className="relative">
-                  <div
-                    {...dropzoneProps}
-                    className={`h-32 w-32 rounded-xl border-2 border-dashed flex items-center justify-center overflow-hidden transition-colors ${
-                      isDragging
-                        ? "border-primary bg-primary/10"
-                        : "border-white/20 bg-white/5"
-                    } ${isUploading ? "opacity-50" : ""}`}
-                  >
-                    {isUploading ? (
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="h-8 w-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                        <span className="text-xs text-text-grey">{progress}%</span>
-                      </div>
-                    ) : (
-                      <Image
-                        src={profileImage}
-                        alt="Profile"
-                        width={128}
-                        height={128}
-                        className="object-cover w-full h-full"
-                      />
+        {/* Hero Card */}
+        <div className="bg-[#1F1F22] border border-[rgba(255,255,255,0.08)] rounded-[15px] overflow-hidden border-t-[3px] border-t-[#d4af35]">
+          <div className="flex flex-col md:flex-row">
+            {/* Photo */}
+            <div className="w-full md:w-64 h-64 md:h-auto relative shrink-0 bg-black/40">
+              <Image
+                src={profileImage}
+                alt={data.name || "Athlete"}
+                fill
+                className="object-cover"
+              />
+              {data.jerseyNumber && (
+                <div className="absolute bottom-3 left-3 bg-black/70 border border-white/20 rounded-lg px-3 py-1">
+                  <span className="text-2xl font-black text-white font-mono">#{data.jerseyNumber}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Info */}
+            <div className="flex-1 p-6">
+              <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                <div>
+                  <h2 className="text-2xl font-black text-white">{data.name || "Unnamed Athlete"}</h2>
+                  <p className="text-sm text-gray-400 mt-1">
+                    {data.position || "No Position"}{data.secondaryPosition ? ` / ${data.secondaryPosition}` : ""} · Class of {data.classYear}
+                  </p>
+                  <p className="text-sm text-gray-500 mt-0.5">
+                    {data.highSchool || "No School"}{data.city ? `, ${data.city}` : ""}{data.state ? `, ${data.state}` : ""}
+                  </p>
+                  {data.bio && (
+                    <p className="text-sm text-gray-300 mt-3 max-w-lg leading-relaxed">{data.bio}</p>
+                  )}
+                  <div className="flex items-center gap-4 mt-3">
+                    {data.height && (
+                      <span className="text-sm text-white font-mono font-bold">{data.height}</span>
+                    )}
+                    {data.weight && (
+                      <span className="text-sm text-white font-mono font-bold">{data.weight} lbs</span>
                     )}
                   </div>
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isUploading}
-                    className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full bg-primary text-black flex items-center justify-center shadow-lg hover:bg-primary-hover transition-colors disabled:opacity-50"
-                  >
-                    <span className="material-symbols-outlined text-[18px]">edit</span>
-                  </button>
                 </div>
-                <div className="flex-1">
-                  <p className="text-sm text-text-grey mb-3">
-                    Upload an action shot or headshot. This will be the main image on your card.
-                  </p>
-                  {uploadError && (
-                    <p className="text-sm text-red-400 mb-3">{uploadError}</p>
+
+                {/* Rankings placeholder + NCAA */}
+                <div className="flex flex-col items-end gap-2 shrink-0">
+                  <div className="flex gap-2 flex-wrap justify-end">
+                    {["247", "Rivals", "ESPN"].map((src) => (
+                      <div key={src} className="bg-[#1a1a1a] border border-[rgba(255,255,255,0.08)] rounded-lg px-3 py-1.5 flex items-center gap-1.5">
+                        <span className="text-[10px] font-bold text-gray-400 uppercase">{src}</span>
+                        <div className="flex gap-px">
+                          {[1, 2, 3].map((s) => (
+                            <span key={s} className="material-symbols-outlined text-[12px] text-[#d4af35]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="bg-gradient-to-r from-[#d4af35]/20 to-[#d4af35]/5 border border-[#d4af35]/30 rounded-lg px-4 py-2 text-center">
+                    <p className="text-[10px] text-[#d4af35] font-bold uppercase tracking-wider">RM Composite</p>
+                    <p className="text-lg font-black text-[#d4af35] font-mono">—</p>
+                  </div>
+                  {data.ncaaEcId && (
+                    <div className="bg-[#1a1a1a] border border-[rgba(255,255,255,0.08)] rounded-lg px-3 py-1.5">
+                      <p className="text-[10px] text-gray-500">NCAA ID</p>
+                      <p className="text-xs font-mono text-white">{data.ncaaEcId}</p>
+                    </div>
                   )}
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => fileInputRef.current?.click()}
-                      disabled={isUploading}
-                      className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-sm font-medium hover:bg-white/10 transition-colors disabled:opacity-50"
-                    >
-                      {isUploading ? "Uploading..." : "Upload Photo"}
-                    </button>
-                    <button
-                      onClick={() => setShowCamera(true)}
-                      disabled={isUploading}
-                      className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-sm font-medium hover:bg-white/10 transition-colors disabled:opacity-50"
-                    >
-                      Take Photo
-                    </button>
-                  </div>
-                  <p className="text-xs text-text-grey mt-2">
-                    Drag and drop or click to upload. Max 5MB. JPEG, PNG, WebP, or GIF.
-                  </p>
                 </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 pt-6 border-t border-white/5">
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">Organization/Team Name</label>
-                  <input
-                    type="text"
-                    name="organizationName"
-                    value={formData.organizationName}
-                    onChange={handleChange}
-                    placeholder="SoCal Elite 7v7"
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">Jersey Number</label>
-                  <input
-                    type="text"
-                    name="jerseyNumber"
-                    value={formData.jerseyNumber}
-                    onChange={handleChange}
-                    placeholder="#7"
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">Twitter</label>
-                  <input
-                    type="text"
-                    name="twitter"
-                    value={formData.twitter}
-                    onChange={handleChange}
-                    placeholder="@handle"
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">Instagram</label>
-                  <input
-                    type="text"
-                    name="instagram"
-                    value={formData.instagram}
-                    onChange={handleChange}
-                    placeholder="@handle"
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                  />
-                </div>
-              </div>
-            </section>
-
-            {/* Basic Information */}
-            <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
-              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary">person</span>
-                Basic Information
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">Full Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">Primary Position</label>
-                  <select
-                    name="position"
-                    value={formData.position}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:border-primary focus:outline-none transition-colors"
-                  >
-                    <option value="" className="bg-surface-dark">Select position</option>
-                    {positions.map((pos) => (
-                      <option key={pos} value={pos} className="bg-surface-dark">
-                        {pos}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">Secondary Position</label>
-                  <select
-                    name="secondaryPosition"
-                    value={formData.secondaryPosition}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:border-primary focus:outline-none transition-colors"
-                  >
-                    <option value="" className="bg-surface-dark">
-                      None
-                    </option>
-                    {positions.map((pos) => (
-                      <option key={pos} value={pos} className="bg-surface-dark">
-                        {pos}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">Class Year</label>
-                  <select
-                    name="classYear"
-                    value={formData.classYear}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:border-primary focus:outline-none transition-colors"
-                  >
-                    {classYears.map((year) => (
-                      <option key={year} value={year} className="bg-surface-dark">
-                        {year}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">High School</label>
-                  <input
-                    type="text"
-                    name="highSchool"
-                    value={formData.highSchool}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                  />
-                </div>
-                <div className="flex gap-4">
-                  <div className="flex-1">
-                    <label className="block text-sm text-text-grey mb-2">City</label>
-                    <input
-                      type="text"
-                      name="city"
-                      value={formData.city}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                    />
-                  </div>
-                  <div className="w-24">
-                    <label className="block text-sm text-text-grey mb-2">State</label>
-                    <input
-                      type="text"
-                      name="state"
-                      value={formData.state}
-                      onChange={handleChange}
-                      maxLength={2}
-                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors uppercase"
-                    />
-                  </div>
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-sm text-text-grey mb-2">Bio</label>
-                  <textarea
-                    name="bio"
-                    value={formData.bio}
-                    onChange={handleChange}
-                    maxLength={280}
-                    rows={3}
-                    placeholder="Tell coaches about yourself..."
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors resize-none"
-                  />
-                  <p className="text-xs text-text-grey mt-1">{formData.bio.length}/280 characters</p>
-                </div>
-              </div>
-
-              {/* Parent/Guardian subsection */}
-              <div className="border-t border-white/5 mt-6 pt-6">
-                <h3 className="text-sm font-semibold text-text-grey uppercase tracking-wider mb-4 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-primary text-[18px]">family_restroom</span>
-                  Parent/Guardian Information
-                </h3>
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm text-text-grey mb-2 font-medium">Parent/Guardian 1</p>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <label className="block text-sm text-text-grey mb-2">Name</label>
-                        <input
-                          type="text"
-                          name="parent1Name"
-                          value={formData.parent1Name}
-                          onChange={handleChange}
-                          className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm text-text-grey mb-2">Phone</label>
-                        <input
-                          type="tel"
-                          name="parent1Phone"
-                          value={formData.parent1Phone}
-                          onChange={handleChange}
-                          placeholder="(555) 123-4567"
-                          className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm text-text-grey mb-2">Email</label>
-                        <input
-                          type="email"
-                          name="parent1Email"
-                          value={formData.parent1Email}
-                          onChange={handleChange}
-                          placeholder="parent@email.com"
-                          className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-sm text-text-grey mb-2 font-medium">Parent/Guardian 2</p>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <label className="block text-sm text-text-grey mb-2">Name</label>
-                        <input
-                          type="text"
-                          name="parent2Name"
-                          value={formData.parent2Name}
-                          onChange={handleChange}
-                          className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm text-text-grey mb-2">Phone</label>
-                        <input
-                          type="tel"
-                          name="parent2Phone"
-                          value={formData.parent2Phone}
-                          onChange={handleChange}
-                          placeholder="(555) 123-4567"
-                          className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm text-text-grey mb-2">Email</label>
-                        <input
-                          type="email"
-                          name="parent2Email"
-                          value={formData.parent2Email}
-                          onChange={handleChange}
-                          placeholder="parent@email.com"
-                          className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm text-text-grey mb-2">Siblings</label>
-                    <textarea
-                      name="siblingsInfo"
-                      value={formData.siblingsInfo}
-                      onChange={handleChange}
-                      rows={2}
-                      placeholder="Names, ages, schools, sports..."
-                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors resize-none"
-                    />
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* Measurables */}
-            <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
-              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary">straighten</span>
-                Measurables
-              </h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">Height</label>
-                  <input
-                    type="text"
-                    name="height"
-                    value={formData.height}
-                    onChange={handleChange}
-                    placeholder={`6'1"`}
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">Weight (lbs)</label>
-                  <input
-                    type="text"
-                    name="weight"
-                    value={formData.weight}
-                    onChange={handleChange}
-                    placeholder="185"
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">Wingspan (in)</label>
-                  <input
-                    type="text"
-                    name="wingspan"
-                    value={formData.wingspan}
-                    onChange={handleChange}
-                    placeholder="74"
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">40-Yard (s)</label>
-                  <input
-                    type="text"
-                    name="fortyYard"
-                    value={formData.fortyYard}
-                    onChange={handleChange}
-                    placeholder="4.52"
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-primary font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">10Y Split (s)</label>
-                  <input
-                    type="text"
-                    name="tenYardSplit"
-                    value={formData.tenYardSplit}
-                    onChange={handleChange}
-                    placeholder="1.55"
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">5-10-5 (s)</label>
-                  <input
-                    type="text"
-                    name="fiveTenFive"
-                    value={formData.fiveTenFive}
-                    onChange={handleChange}
-                    placeholder="4.35"
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">Broad Jump (in)</label>
-                  <input
-                    type="text"
-                    name="broadJump"
-                    value={formData.broadJump}
-                    onChange={handleChange}
-                    placeholder="120"
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">Bench Press (lbs)</label>
-                  <input
-                    type="text"
-                    name="benchPress"
-                    value={formData.benchPress}
-                    onChange={handleChange}
-                    placeholder="225"
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">Squat (lbs)</label>
-                  <input
-                    type="text"
-                    name="squat"
-                    value={formData.squat}
-                    onChange={handleChange}
-                    placeholder="405"
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">Vertical (in)</label>
-                  <input
-                    type="text"
-                    name="vertical"
-                    value={formData.vertical}
-                    onChange={handleChange}
-                    placeholder="36"
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                  />
-                </div>
-              </div>
-
-              {/* Equipment Sizes subsection */}
-              <div className="border-t border-white/5 mt-6 pt-6">
-                <h3 className="text-sm font-semibold text-text-grey uppercase tracking-wider mb-4 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-primary text-[18px]">checkroom</span>
-                  Equipment Sizes
-                </h3>
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                  <div>
-                    <label className="block text-sm text-text-grey mb-2">Cleat Size</label>
-                    <input
-                      type="text"
-                      name="cleatSize"
-                      value={formData.cleatSize}
-                      onChange={handleChange}
-                      placeholder="10.5"
-                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm text-text-grey mb-2">Shirt</label>
-                    <select
-                      name="shirtSize"
-                      value={formData.shirtSize}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:border-primary focus:outline-none transition-colors"
-                    >
-                      <option value="" className="bg-surface-dark">-</option>
-                      {["S", "M", "L", "XL", "XXL", "XXXL"].map((size) => (
-                        <option key={size} value={size} className="bg-surface-dark">{size}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm text-text-grey mb-2">Pants</label>
-                    <select
-                      name="pantsSize"
-                      value={formData.pantsSize}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:border-primary focus:outline-none transition-colors"
-                    >
-                      <option value="" className="bg-surface-dark">-</option>
-                      {["S", "M", "L", "XL", "XXL", "XXXL"].map((size) => (
-                        <option key={size} value={size} className="bg-surface-dark">{size}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm text-text-grey mb-2">Helmet</label>
-                    <select
-                      name="helmetSize"
-                      value={formData.helmetSize}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:border-primary focus:outline-none transition-colors"
-                    >
-                      <option value="" className="bg-surface-dark">-</option>
-                      {["S", "M", "L", "XL", "XXL"].map((size) => (
-                        <option key={size} value={size} className="bg-surface-dark">{size}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm text-text-grey mb-2">Gloves</label>
-                    <select
-                      name="gloveSize"
-                      value={formData.gloveSize}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:border-primary focus:outline-none transition-colors"
-                    >
-                      <option value="" className="bg-surface-dark">-</option>
-                      {["S", "M", "L", "XL", "XXL"].map((size) => (
-                        <option key={size} value={size} className="bg-surface-dark">{size}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* Academics & Recruiting */}
-            <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
-              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary">school</span>
-                Academics & Recruiting
-              </h2>
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div>
-                    <label className="block text-sm text-text-grey mb-2">GPA</label>
-                    <input
-                      type="text"
-                      name="gpa"
-                      value={formData.gpa}
-                      onChange={handleChange}
-                      placeholder="3.8"
-                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm text-text-grey mb-2">Weighted GPA</label>
-                    <input
-                      type="text"
-                      name="weightedGpa"
-                      value={formData.weightedGpa}
-                      onChange={handleChange}
-                      placeholder="4.2"
-                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm text-text-grey mb-2">SAT Score</label>
-                    <input
-                      type="text"
-                      name="sat"
-                      value={formData.sat}
-                      onChange={handleChange}
-                      placeholder="1280"
-                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm text-text-grey mb-2">ACT Score</label>
-                    <input
-                      type="text"
-                      name="act"
-                      value={formData.act}
-                      onChange={handleChange}
-                      placeholder="28"
-                      className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-mono placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">Academic Interest</label>
-                  <input
-                    type="text"
-                    name="academicInterest"
-                    value={formData.academicInterest}
-                    onChange={handleChange}
-                    placeholder="Business, Engineering, Undecided..."
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">College Priority</label>
-                  <textarea
-                    name="collegePriority"
-                    value={formData.collegePriority}
-                    onChange={handleChange}
-                    rows={2}
-                    placeholder="What's important to you when selecting a college?"
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors resize-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">Awards</label>
-                  <textarea
-                    name="awards"
-                    value={formData.awards}
-                    onChange={handleChange}
-                    rows={2}
-                    placeholder="Academic and sports awards..."
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors resize-none"
-                  />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm text-text-grey mb-2">Other Sports</label>
-                      <input
-                        type="text"
-                        name="otherSports"
-                        value={formData.otherSports}
-                        onChange={handleChange}
-                        placeholder="Track, Basketball..."
-                        className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm text-text-grey mb-2">Dream Schools</label>
-                      <input
-                        type="text"
-                        name="dreamSchools"
-                        value={formData.dreamSchools}
-                        onChange={handleChange}
-                        placeholder="USC, Oregon, UCLA..."
-                        className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                      />
-                    </div>
-                  </div>
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">Camps Attended</label>
-                  <textarea
-                    name="campsAttended"
-                    value={formData.campsAttended}
-                    onChange={handleChange}
-                    rows={2}
-                    placeholder="Nike Elite 11, Rivals Camp..."
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors resize-none"
-                  />
-                </div>
-              </div>
-            </section>
-
-            {/* Film & Highlights */}
-            <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
-              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary">smart_display</span>
-                Film & Highlights
-              </h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">Hudl Profile Link</label>
-                  <input
-                    type="url"
-                    name="hudlLink"
-                    value={formData.hudlLink}
-                    onChange={handleChange}
-                    placeholder="https://www.hudl.com/profile/..."
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">YouTube Highlight Reel</label>
-                  <input
-                    type="url"
-                    name="youtubeLink"
-                    value={formData.youtubeLink}
-                    onChange={handleChange}
-                    placeholder="https://www.youtube.com/watch?v=..."
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                  />
-                </div>
-              </div>
-            </section>
-
-            {/* Coach Notes & Player Summary */}
-            <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
-              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary">sports</span>
-                Coach Notes & Summary
-              </h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">Coach Notes</label>
-                  <textarea
-                    name="coachNotes"
-                    value={formData.coachNotes}
-                    onChange={handleChange}
-                    rows={3}
-                    placeholder="Coach intangibles, work ethic, leadership..."
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors resize-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">Player Summary</label>
-                  <textarea
-                    name="playerSummary"
-                    value={formData.playerSummary}
-                    onChange={handleChange}
-                    rows={3}
-                    placeholder="Player summary and best program fit..."
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors resize-none"
-                  />
-                </div>
-              </div>
-            </section>
-
-            {/* NCAA ID / Recruiting # */}
-            <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
-              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary">verified</span>
-                NCAA ID / Recruiting #
-              </h2>
-              <p className="text-xs text-text-grey mb-4">If applicable</p>
-              <div>
-                <label className="block text-sm text-text-grey mb-2">NCAA ID</label>
-                <input
-                  type="text"
-                  name="ncaaEcId"
-                  value={formData.ncaaEcId}
-                  onChange={handleChange}
-                  placeholder="e.g. 2503129456"
-                  className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                />
-              </div>
-            </section>
-
-            {/* Coach Contact */}
-            <section className="rounded-xl bg-surface-dark border border-white/5 p-6">
-              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary">contact_phone</span>
-                HS Coach Contact
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">Coach Phone</label>
-                  <input
-                    type="tel"
-                    name="coachPhone"
-                    value={formData.coachPhone}
-                    onChange={handleChange}
-                    placeholder="(555) 123-4567"
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-text-grey mb-2">Coach Email</label>
-                  <input
-                    type="email"
-                    name="coachEmail"
-                    value={formData.coachEmail}
-                    onChange={handleChange}
-                    placeholder="coach@school.edu"
-                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors"
-                  />
-                </div>
-              </div>
-            </section>
+            </div>
           </div>
+        </div>
 
-          {/* Live Preview */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-24">
-              <h3 className="text-sm font-medium text-text-grey mb-4">LIVE PREVIEW</h3>
-              <div className="rounded-2xl bg-[#0A0A0A] border border-white/10 overflow-hidden shadow-2xl max-h-[80vh] overflow-y-auto">
-                {/* Hero Image */}
-                <div className="relative aspect-[4/3] bg-gradient-to-b from-[#1a1a1a] to-[#0A0A0A] overflow-hidden">
-                  <Image
-                    src={profileImage}
-                    alt="Preview"
-                    fill
-                    className="object-cover"
+        {/* Two-Column Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* LEFT COLUMN */}
+          <div className="space-y-6">
+            {/* Film & Highlights */}
+            <div className={cardClass}>
+              {sectionTitle("🎬", "Film & Highlights")}
+              {youtubeId ? (
+                <div className="aspect-video rounded-[10px] overflow-hidden mb-4 bg-black">
+                  <iframe
+                    src={`https://www.youtube.com/embed/${youtubeId}`}
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/40 to-transparent" />
-                  <div className="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-purple-900/80 border border-purple-500/30 flex items-center gap-1">
-                    <span className="material-symbols-outlined text-purple-200 text-[10px]">location_on</span>
-                    <span className="text-[8px] font-bold text-purple-200 uppercase">{formData.zone || "Zone"}</span>
+                </div>
+              ) : (
+                <div className="aspect-video rounded-[10px] bg-[#1a1a1a] border border-[rgba(255,255,255,0.08)] flex items-center justify-center mb-4">
+                  <div className="text-center text-gray-500">
+                    <span className="material-symbols-outlined text-3xl mb-2 block">videocam_off</span>
+                    <p className="text-xs">No highlight reel added</p>
                   </div>
                 </div>
+              )}
+              <div className="flex gap-3">
+                {data.hudlLink ? (
+                  <a
+                    href={data.hudlLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 py-3 rounded-[10px] bg-gradient-to-r from-[#f15a29] to-[#e04e1a] border border-white/20 text-center font-bold text-sm text-white hover:opacity-90 transition-opacity"
+                    style={{ textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}
+                  >
+                    Hudl Profile
+                  </a>
+                ) : (
+                  <div className="flex-1 py-3 rounded-[10px] bg-[#1a1a1a] border border-[rgba(255,255,255,0.08)] text-center text-sm text-gray-500">
+                    No Hudl Link
+                  </div>
+                )}
+                {data.youtubeLink ? (
+                  <a
+                    href={data.youtubeLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 py-3 rounded-[10px] bg-gradient-to-r from-[#ff0000] to-[#cc0000] border border-white/20 text-center font-bold text-sm text-white hover:opacity-90 transition-opacity"
+                    style={{ textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}
+                  >
+                    YouTube
+                  </a>
+                ) : (
+                  <div className="flex-1 py-3 rounded-[10px] bg-[#1a1a1a] border border-[rgba(255,255,255,0.08)] text-center text-sm text-gray-500">
+                    No YouTube Link
+                  </div>
+                )}
+              </div>
+            </div>
 
-                {/* Identity */}
-                <div className="px-3 pt-3 text-center">
-                  <h4 className="font-bold text-white text-sm leading-tight">
-                    {formData.name || "Your Name"}
-                  </h4>
-                  <p className="text-[9px] text-text-grey mt-0.5">
-                    {formData.highSchool || "School"}, {formData.city || "City"}, {formData.state || "ST"}
-                  </p>
-
-                  {/* Position Pills */}
-                  <div className="flex gap-1.5 justify-center mt-2">
-                    <span className="px-2 py-0.5 rounded-full bg-primary/20 border border-primary/30 text-primary text-[8px] font-bold">
-                      {formData.position || "POS"}
-                    </span>
-                    {formData.secondaryPosition && (
-                      <span className="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-gray-300 text-[8px] font-bold">
-                        {formData.secondaryPosition}
+            {/* Social Media */}
+            <div className={cardClass}>
+              {sectionTitle("📱", "Social Media")}
+              <div className="space-y-3">
+                {[
+                  { label: "Twitter", value: data.twitter, icon: "𝕏" },
+                  { label: "Instagram", value: data.instagram, icon: "📸" },
+                ].map((social) => (
+                  <div
+                    key={social.label}
+                    className="flex items-center justify-between bg-[#2a2a2d] border border-[#d4af35]/20 rounded-[10px] p-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg">{social.icon}</span>
+                      <div>
+                        <p className="text-xs text-gray-500">{social.label}</p>
+                        <p className="text-sm text-white font-medium">{social.value || "Not added"}</p>
+                      </div>
+                    </div>
+                    {social.value && (
+                      <span className="px-3 py-1 rounded-md bg-[#d4af35]/10 border border-[#d4af35]/30 text-[10px] font-bold text-[#d4af35] uppercase">
+                        View
                       </span>
                     )}
                   </div>
+                ))}
+              </div>
+            </div>
 
-                  {/* Class / Rating row */}
-                  <div className="flex items-center justify-between mt-2 border-y border-white/5 py-2 px-1">
-                    <div className="flex flex-col items-start">
-                      <span className="text-[7px] uppercase tracking-wider text-gray-500 font-bold">Class</span>
-                      <span className="text-[10px] font-bold text-white">{formData.classYear || "N/A"}</span>
-                    </div>
-                    <div className="h-4 w-px bg-white/10" />
-                    <div className="flex flex-col items-center">
-                      <span className="text-[7px] uppercase tracking-wider text-gray-500 font-bold">Rating</span>
-                      <div className="flex gap-px">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <span
-                            key={star}
-                            className="material-symbols-outlined text-[10px] text-primary"
-                            style={{ fontVariationSettings: "'FILL' 1" }}
-                          >
-                            star
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="h-4 w-px bg-white/10" />
-                    <div className="flex flex-col items-end">
-                      <span className="text-[7px] uppercase tracking-wider text-gray-500 font-bold">Offers</span>
-                      <span className="text-[10px] font-bold text-primary">0</span>
-                    </div>
-                  </div>
-                </div>
+            {/* Measurables & Combine */}
+            <div className={cardClass}>
+              {sectionTitle("⚡", "Measurables & Combine")}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {statBox("Height", data.height)}
+                {statBox("Weight", data.weight ? `${data.weight} lbs` : "")}
+                {statBox("40-Yard", data.fortyYard ? `${data.fortyYard}s` : "", true)}
+                {statBox("10Y Split", data.tenYardSplit ? `${data.tenYardSplit}s` : "", true)}
+                {statBox("5-10-5", data.fiveTenFive ? `${data.fiveTenFive}s` : "", true)}
+                {statBox("Broad Jump", data.broadJump ? `${data.broadJump}"` : "", true)}
+                {statBox("Vertical", data.vertical ? `${data.vertical}"` : "", true)}
+                {statBox("Wingspan", data.wingspan ? `${data.wingspan}"` : "")}
+                {statBox("Bench", data.benchPress ? `${data.benchPress} lbs` : "")}
+                {statBox("Squat", data.squat ? `${data.squat} lbs` : "")}
+              </div>
+            </div>
 
-                {/* Bio */}
-                {formData.bio && (
-                  <div className="px-3 pt-3">
-                    <div className="rounded-lg bg-white/5 p-2">
-                      <p className="text-[8px] text-gray-300 leading-relaxed line-clamp-3">{formData.bio}</p>
-                    </div>
+            {/* Academics & Recruiting */}
+            <div className={cardClass}>
+              {sectionTitle("🎓", "Academics & Recruiting")}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                {statBox("GPA", data.gpa)}
+                {statBox("W. GPA", data.weightedGpa)}
+                {statBox("SAT", data.sat)}
+                {statBox("ACT", data.act)}
+              </div>
+              <div className="space-y-3">
+                {data.academicInterest && (
+                  <div className="bg-[#1a1a1a] border border-[rgba(255,255,255,0.08)] rounded-[10px] p-3">
+                    <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Academic Interest</p>
+                    <p className="text-sm text-white">{data.academicInterest}</p>
                   </div>
                 )}
-
-                {/* Athletic Metrics */}
-                <div className="px-3 pt-3">
-                  <div className="flex items-center gap-1 mb-2">
-                    <span className="material-symbols-outlined text-primary text-[12px]">straighten</span>
-                    <span className="text-[8px] font-bold tracking-wider text-gray-400 uppercase">Athletic Metrics</span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-1.5">
-                    {[
-                      { label: "Height", value: formData.height },
-                      { label: "Weight", value: formData.weight, suffix: "lbs" },
-                      { label: "40-Yard", value: formData.fortyYard, suffix: "s", highlight: true },
-                      { label: "10Y Split", value: formData.tenYardSplit, suffix: "s" },
-                      { label: "5-10-5", value: formData.fiveTenFive, suffix: "s" },
-                      { label: "Broad Jump", value: formData.broadJump, suffix: "\"" },
-                      { label: "Vertical", value: formData.vertical, suffix: "\"" },
-                      { label: "Wingspan", value: formData.wingspan, suffix: "\"" },
-                      { label: "Bench", value: formData.benchPress, suffix: "lbs" },
-                      { label: "", value: "" },
-                      { label: "Squat", value: formData.squat, suffix: "lbs" },
-                    ].map((m, i) =>
-                      m.label === "" ? (
-                        <div key={i} />
-                      ) : (
-                        <div key={i} className="rounded-lg bg-white/5 p-1.5">
-                          <p className="text-[7px] text-gray-500">{m.label}</p>
-                          <p className={`text-[11px] font-bold font-mono ${m.highlight ? "text-primary" : "text-white"}`}>
-                            {m.value ? `${m.value}${m.suffix && !m.value.includes(m.suffix) ? m.suffix : ""}` : "N/A"}
-                          </p>
-                        </div>
-                      )
-                    )}
-                  </div>
-                </div>
-
-                {/* Profile Snapshot */}
-                <div className="px-3 pt-3">
-                  <div className="flex items-center gap-1 mb-2">
-                    <span className="material-symbols-outlined text-primary text-[12px]">school</span>
-                    <span className="text-[8px] font-bold tracking-wider text-gray-400 uppercase">Profile Snapshot</span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-1.5 mb-1.5">
-                    <div className="rounded-lg bg-white/5 p-1.5">
-                      <p className="text-[7px] text-gray-500">GPA</p>
-                      <p className="text-[11px] font-bold text-white font-mono">{formData.gpa || "N/A"}</p>
-                    </div>
-                    <div className="rounded-lg bg-white/5 p-1.5">
-                      <p className="text-[7px] text-gray-500">W. GPA</p>
-                      <p className="text-[11px] font-bold text-white font-mono">{formData.weightedGpa || "N/A"}</p>
-                    </div>
-                    <div className="rounded-lg bg-white/5 p-1.5">
-                      <p className="text-[7px] text-gray-500">SAT</p>
-                      <p className="text-[11px] font-bold text-white font-mono">{formData.sat || "N/A"}</p>
-                    </div>
-                  </div>
-                  <div className="rounded-lg bg-white/5 p-2 flex items-center justify-between">
-                    <div>
-                      <p className="text-[7px] text-gray-500">ACT</p>
-                      <p className="text-[11px] font-bold text-white font-mono">{formData.act || "N/A"}</p>
-                    </div>
-                    <div className="h-4 w-px bg-white/10" />
-                    <div>
-                      <p className="text-[7px] text-gray-500">Major</p>
-                      <p className="text-[9px] font-medium text-white truncate max-w-[80px]">{formData.academicInterest || "N/A"}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Coach Notes / Player Summary */}
-                {(formData.coachNotes || formData.playerSummary) && (
-                  <div className="px-3 pt-3">
-                    {formData.coachNotes && (
-                      <div className="mb-2">
-                        <div className="flex items-center gap-1 mb-1">
-                          <span className="material-symbols-outlined text-primary text-[12px]">sports</span>
-                          <span className="text-[8px] font-bold tracking-wider text-gray-400 uppercase">Coach Notes</span>
-                        </div>
-                        <div className="rounded-lg bg-white/5 p-2">
-                          <p className="text-[8px] text-gray-300 leading-relaxed line-clamp-3">{formData.coachNotes}</p>
-                        </div>
-                      </div>
-                    )}
-                    {formData.playerSummary && (
-                      <div>
-                        <div className="flex items-center gap-1 mb-1">
-                          <span className="material-symbols-outlined text-primary text-[12px]">person_search</span>
-                          <span className="text-[8px] font-bold tracking-wider text-gray-400 uppercase">Player Summary</span>
-                        </div>
-                        <div className="rounded-lg bg-white/5 p-2">
-                          <p className="text-[8px] text-gray-300 leading-relaxed line-clamp-3">{formData.playerSummary}</p>
-                        </div>
-                      </div>
-                    )}
+                {data.collegePriority && (
+                  <div className="bg-[#1a1a1a] border border-[rgba(255,255,255,0.08)] rounded-[10px] p-3">
+                    <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">College Priority</p>
+                    <p className="text-sm text-gray-300">{data.collegePriority}</p>
                   </div>
                 )}
+                {data.dreamSchools && (
+                  <div className="bg-[#1a1a1a] border border-[rgba(255,255,255,0.08)] rounded-[10px] p-3">
+                    <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Dream Schools</p>
+                    <p className="text-sm text-white">{data.dreamSchools}</p>
+                  </div>
+                )}
+                {data.awards && (
+                  <div className="bg-[#1a1a1a] border border-[rgba(255,255,255,0.08)] rounded-[10px] p-3">
+                    <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Awards</p>
+                    <p className="text-sm text-gray-300">{data.awards}</p>
+                  </div>
+                )}
+                {data.otherSports && (
+                  <div className="bg-[#1a1a1a] border border-[rgba(255,255,255,0.08)] rounded-[10px] p-3">
+                    <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Other Sports</p>
+                    <p className="text-sm text-white">{data.otherSports}</p>
+                  </div>
+                )}
+                {data.campsAttended && (
+                  <div className="bg-[#1a1a1a] border border-[rgba(255,255,255,0.08)] rounded-[10px] p-3">
+                    <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Camps Attended</p>
+                    <p className="text-sm text-gray-300">{data.campsAttended}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
 
+          {/* RIGHT COLUMN */}
+          <div className="space-y-6">
+            {/* Scouting Report */}
+            <div className={cardClass}>
+              {sectionTitle("🔍", "Scouting Report")}
+              {data.playerSummary ? (
+                <div className="bg-[#1a1a1a] border border-[rgba(255,255,255,0.08)] rounded-[10px] p-4 mb-3">
+                  <p className="text-sm text-gray-300 leading-relaxed">{data.playerSummary}</p>
+                </div>
+              ) : (
+                <div className="bg-[#1a1a1a] border border-[rgba(255,255,255,0.08)] rounded-[10px] p-4 mb-3 text-center">
+                  <p className="text-sm text-gray-500">No player summary added</p>
+                </div>
+              )}
+              {data.coachNotes && (
+                <div className="bg-[#1a1a1a] border-l-2 border-l-[#d4af35] border border-[rgba(255,255,255,0.08)] rounded-[10px] p-4">
+                  <p className="text-[10px] text-[#d4af35] font-bold uppercase tracking-wider mb-2">Coach Quote</p>
+                  <p className="text-sm text-gray-300 italic leading-relaxed">&ldquo;{data.coachNotes}&rdquo;</p>
+                </div>
+              )}
+            </div>
+
+            {/* Contacts */}
+            <div className={cardClass}>
+              {sectionTitle("📞", "Contacts")}
+              <div className="space-y-4">
                 {/* Coach Contact */}
-                {(formData.coachPhone || formData.coachEmail) && (
-                  <div className="px-3 pt-3">
-                    <div className="flex items-center gap-1 mb-1">
-                      <span className="material-symbols-outlined text-primary text-[12px]">call</span>
-                      <span className="text-[8px] font-bold tracking-wider text-gray-400 uppercase">Coach Contact</span>
-                    </div>
-                    <div className="rounded-lg bg-white/5 p-2 space-y-0.5">
-                      {formData.coachPhone && <p className="text-[8px] text-gray-300">{formData.coachPhone}</p>}
-                      {formData.coachEmail && <p className="text-[8px] text-gray-300">{formData.coachEmail}</p>}
+                {(data.coachPhone || data.coachEmail) && (
+                  <div>
+                    <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-2 font-bold">HS Coach</p>
+                    <div className="bg-[#1a1a1a] border border-[rgba(255,255,255,0.08)] rounded-[10px] p-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          {data.coachPhone && <p className="text-sm text-white">{data.coachPhone}</p>}
+                          {data.coachEmail && <p className="text-xs text-gray-400 mt-0.5">{data.coachEmail}</p>}
+                        </div>
+                        <div className="flex gap-2">
+                          {data.coachPhone && (
+                            <a href={`tel:${data.coachPhone}`} className="w-8 h-8 rounded-lg bg-[#10B981]/20 border border-[#10B981]/30 flex items-center justify-center hover:bg-[#10B981]/30 transition-colors">
+                              <span className="material-symbols-outlined text-[#10B981] text-[16px]">call</span>
+                            </a>
+                          )}
+                          {data.coachPhone && (
+                            <a href={`sms:${data.coachPhone}`} className="w-8 h-8 rounded-lg bg-[#d4af35]/20 border border-[#d4af35]/30 flex items-center justify-center hover:bg-[#d4af35]/30 transition-colors">
+                              <span className="material-symbols-outlined text-[#d4af35] text-[16px]">sms</span>
+                            </a>
+                          )}
+                          {data.coachEmail && (
+                            <a href={`mailto:${data.coachEmail}`} className="w-8 h-8 rounded-lg bg-[#8B5CF6]/20 border border-[#8B5CF6]/30 flex items-center justify-center hover:bg-[#8B5CF6]/30 transition-colors">
+                              <span className="material-symbols-outlined text-[#8B5CF6] text-[16px]">mail</span>
+                            </a>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )}
 
-                <div className="h-3" />
+                {/* Parent 1 */}
+                {(data.parent1Name || data.parent1Phone || data.parent1Email) && (
+                  <div>
+                    <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-2 font-bold">Parent/Guardian 1</p>
+                    <div className="bg-[#1a1a1a] border border-[rgba(255,255,255,0.08)] rounded-[10px] p-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          {data.parent1Name && <p className="text-sm text-white font-medium">{data.parent1Name}</p>}
+                          {data.parent1Phone && <p className="text-xs text-gray-400 mt-0.5">{data.parent1Phone}</p>}
+                          {data.parent1Email && <p className="text-xs text-gray-400 mt-0.5">{data.parent1Email}</p>}
+                        </div>
+                        <div className="flex gap-2">
+                          {data.parent1Phone && (
+                            <a href={`tel:${data.parent1Phone}`} className="w-8 h-8 rounded-lg bg-[#10B981]/20 border border-[#10B981]/30 flex items-center justify-center hover:bg-[#10B981]/30 transition-colors">
+                              <span className="material-symbols-outlined text-[#10B981] text-[16px]">call</span>
+                            </a>
+                          )}
+                          {data.parent1Phone && (
+                            <a href={`sms:${data.parent1Phone}`} className="w-8 h-8 rounded-lg bg-[#d4af35]/20 border border-[#d4af35]/30 flex items-center justify-center hover:bg-[#d4af35]/30 transition-colors">
+                              <span className="material-symbols-outlined text-[#d4af35] text-[16px]">sms</span>
+                            </a>
+                          )}
+                          {data.parent1Email && (
+                            <a href={`mailto:${data.parent1Email}`} className="w-8 h-8 rounded-lg bg-[#8B5CF6]/20 border border-[#8B5CF6]/30 flex items-center justify-center hover:bg-[#8B5CF6]/30 transition-colors">
+                              <span className="material-symbols-outlined text-[#8B5CF6] text-[16px]">mail</span>
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Parent 2 */}
+                {(data.parent2Name || data.parent2Phone || data.parent2Email) && (
+                  <div>
+                    <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-2 font-bold">Parent/Guardian 2</p>
+                    <div className="bg-[#1a1a1a] border border-[rgba(255,255,255,0.08)] rounded-[10px] p-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          {data.parent2Name && <p className="text-sm text-white font-medium">{data.parent2Name}</p>}
+                          {data.parent2Phone && <p className="text-xs text-gray-400 mt-0.5">{data.parent2Phone}</p>}
+                          {data.parent2Email && <p className="text-xs text-gray-400 mt-0.5">{data.parent2Email}</p>}
+                        </div>
+                        <div className="flex gap-2">
+                          {data.parent2Phone && (
+                            <a href={`tel:${data.parent2Phone}`} className="w-8 h-8 rounded-lg bg-[#10B981]/20 border border-[#10B981]/30 flex items-center justify-center hover:bg-[#10B981]/30 transition-colors">
+                              <span className="material-symbols-outlined text-[#10B981] text-[16px]">call</span>
+                            </a>
+                          )}
+                          {data.parent2Phone && (
+                            <a href={`sms:${data.parent2Phone}`} className="w-8 h-8 rounded-lg bg-[#d4af35]/20 border border-[#d4af35]/30 flex items-center justify-center hover:bg-[#d4af35]/30 transition-colors">
+                              <span className="material-symbols-outlined text-[#d4af35] text-[16px]">sms</span>
+                            </a>
+                          )}
+                          {data.parent2Email && (
+                            <a href={`mailto:${data.parent2Email}`} className="w-8 h-8 rounded-lg bg-[#8B5CF6]/20 border border-[#8B5CF6]/30 flex items-center justify-center hover:bg-[#8B5CF6]/30 transition-colors">
+                              <span className="material-symbols-outlined text-[#8B5CF6] text-[16px]">mail</span>
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* No contacts fallback */}
+                {!data.coachPhone && !data.coachEmail && !data.parent1Name && !data.parent1Phone && !data.parent1Email && !data.parent2Name && !data.parent2Phone && !data.parent2Email && (
+                  <div className="bg-[#1a1a1a] border border-[rgba(255,255,255,0.08)] rounded-[10px] p-4 text-center">
+                    <p className="text-sm text-gray-500">No contacts added</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Equipment Sizes */}
+            <div className={cardClass}>
+              {sectionTitle("👟", "Equipment Sizes")}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {statBox("Cleat", data.cleatSize)}
+                {statBox("Shirt", data.shirtSize)}
+                {statBox("Pants", data.pantsSize)}
+                {statBox("Helmet", data.helmetSize)}
+                {statBox("Gloves", data.gloveSize)}
+              </div>
+            </div>
+
+            {/* Share Card */}
+            <div className={cardClass}>
+              {sectionTitle("🔗", "Share Card")}
+              <div className="space-y-3">
+                {data.repmaxId ? (
+                  <>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(`https://repmax.io/card/${data.repmaxId}`);
+                      }}
+                      className="w-full py-3 rounded-[10px] bg-[#1a1a1a] border border-[rgba(255,255,255,0.08)] text-sm text-white font-medium hover:bg-white/5 transition-colors flex items-center justify-center gap-2"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">content_copy</span>
+                      Copy Card Link
+                    </button>
+                    <button
+                      onClick={() => window.print()}
+                      className="w-full py-3 rounded-[10px] bg-[#1a1a1a] border border-[rgba(255,255,255,0.08)] text-sm text-white font-medium hover:bg-white/5 transition-colors flex items-center justify-center gap-2"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">print</span>
+                      Print / Save PDF
+                    </button>
+                  </>
+                ) : (
+                  <div className="bg-[#1a1a1a] border border-[rgba(255,255,255,0.08)] rounded-[10px] p-4 text-center">
+                    <p className="text-sm text-gray-500">Complete your profile to share your card</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Camera Modal */}
-      <CameraModal
-        isOpen={showCamera}
-        onClose={() => setShowCamera(false)}
-        onCapture={handleFileSelect}
-      />
+        {/* Full-Width: Documents & Recruiter Actions */}
+        <div className={cardClass}>
+          {sectionTitle("📄", "Documents & Recruiter Actions")}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { icon: "description", label: "Transcripts", desc: "Academic records" },
+              { icon: "recommend", label: "Letters of Rec", desc: "Coach & teacher letters" },
+              { icon: "folder", label: "Other Docs", desc: "Medical, eligibility" },
+            ].map((doc) => (
+              <div
+                key={doc.label}
+                className="bg-[#1a1a1a] border border-[#d4af35]/20 rounded-[10px] p-4 text-center hover:bg-[#1a1a1a]/80 hover:-translate-y-0.5 transition-all cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-[#d4af35] text-2xl mb-2 block">{doc.icon}</span>
+                <p className="text-sm font-bold text-white">{doc.label}</p>
+                <p className="text-[10px] text-gray-500 mt-1">{doc.desc}</p>
+              </div>
+            ))}
+            <div className="bg-[#d4af35] rounded-[10px] p-4 text-center hover:bg-[#c4a030] hover:-translate-y-0.5 transition-all cursor-pointer flex flex-col items-center justify-center">
+              <span className="material-symbols-outlined text-black text-2xl mb-2">person_add</span>
+              <p className="text-sm font-bold text-black">Add to Board</p>
+              <p className="text-[10px] text-black/60 mt-1">Save to recruiting list</p>
+            </div>
+          </div>
+        </div>
+
+        {/* RepMax ID */}
+        {data.repmaxId && (
+          <div className="text-center py-2">
+            <span className="text-xs font-mono text-[#d4af35]/50 bg-[#d4af35]/5 px-3 py-1 rounded-full border border-[#d4af35]/10">
+              {data.repmaxId}
+            </span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
