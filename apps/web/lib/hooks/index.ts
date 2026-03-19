@@ -311,3 +311,18 @@ export { useResourceRecommendations } from "./use-resource-recommendations";
 
 // Checklist Progress (localStorage-backed)
 export { useChecklistProgress } from "./use-checklist-progress";
+
+// Admin Notes
+export { useAdminNotes, type AdminNote } from "./use-admin-notes";
+
+// Admin Tasks
+export { useAdminTasks, type AdminTask } from "./use-admin-tasks";
+
+// Admin Communications
+export { useAdminComms, type AdminMessage, type AdminTemplate } from "./use-admin-comms";
+
+// Admin Events
+export { useAdminEvents, type AdminEvent } from "./use-admin-events";
+
+// Onboard Wizard
+export { useOnboardWizard } from "./use-onboard-wizard";

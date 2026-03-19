@@ -117,12 +117,28 @@ const clubSettingsItems: NavItem[] = [
   { icon: 'help', label: 'Help', href: '/help' },
 ];
 
-const adminNavItems: NavItem[] = [
+const adminCommandItems: NavItem[] = [
   { icon: 'dashboard', label: 'Dashboard', href: '/admin' },
+  { icon: 'notifications_active', label: 'Alerts', href: '/admin/moderation' },
+];
+
+const adminUserItems: NavItem[] = [
   { icon: 'group', label: 'User Management', href: '/admin/users' },
-  { icon: 'shield', label: 'Content Moderation', href: '/admin/moderation' },
-  { icon: 'toggle_on', label: 'Feature Flags', href: '/admin/flags' },
+];
+
+const adminToolItems: NavItem[] = [
+  { icon: 'sticky_note_2', label: 'Notes & Logs', href: '/admin/notes' },
+  { icon: 'checklist', label: 'Tasks & To-Do', href: '/admin/tasks' },
+  { icon: 'edit_note', label: 'Blog Manager', href: '/admin/blog' },
+  { icon: 'library_books', label: 'Resources Hub', href: '/admin/resources' },
+  { icon: 'campaign', label: 'Communications', href: '/admin/comms' },
+  { icon: 'calendar_month', label: 'Calendar & Events', href: '/admin/calendar' },
   { icon: 'trophy', label: 'Off Season Events', href: '/tournaments' },
+];
+
+const adminSystemItems: NavItem[] = [
+  { icon: 'toggle_on', label: 'Feature Flags', href: '/admin/flags' },
+  { icon: 'school', label: 'Onboard HS Program', href: '/admin/onboard' },
 ];
 
 const adminSettingsItems: NavItem[] = [
@@ -595,15 +611,81 @@ function AdminSidebar({ user, onSignOut }: { user: SidebarUser; onSignOut?: () =
         </Link>
 
         {/* Navigation */}
-        <nav className="flex flex-col gap-1">
-          {adminNavItems.map((item) => {
+        <nav className="flex flex-col gap-1 overflow-y-auto">
+          <div className="px-3 pt-1 pb-1 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Command Center</div>
+          {adminCommandItems.map((item) => {
             const isActive = pathname === item.href ||
               (item.href !== '/admin' && pathname.startsWith(item.href));
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all ${
+                  isActive
+                    ? 'bg-white/5 text-primary border border-white/5 group'
+                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <span className={`material-symbols-outlined text-[20px] ${isActive ? 'group-hover:scale-110 transition-transform' : ''}`}>
+                  {item.icon}
+                </span>
+                <p className="text-sm font-medium">{item.label}</p>
+              </Link>
+            );
+          })}
+
+          <div className="px-3 pt-3 pb-1 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Users</div>
+          {adminUserItems.map((item) => {
+            const isActive = pathname.startsWith(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all ${
+                  isActive
+                    ? 'bg-white/5 text-primary border border-white/5 group'
+                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <span className={`material-symbols-outlined text-[20px] ${isActive ? 'group-hover:scale-110 transition-transform' : ''}`}>
+                  {item.icon}
+                </span>
+                <p className="text-sm font-medium">{item.label}</p>
+              </Link>
+            );
+          })}
+
+          <div className="px-3 pt-3 pb-1 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Tools</div>
+          {adminToolItems.map((item) => {
+            const isActive = pathname === item.href ||
+              (item.href !== '/admin' && pathname.startsWith(item.href));
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all ${
+                  isActive
+                    ? 'bg-white/5 text-primary border border-white/5 group'
+                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <span className={`material-symbols-outlined text-[20px] ${isActive ? 'group-hover:scale-110 transition-transform' : ''}`}>
+                  {item.icon}
+                </span>
+                <p className="text-sm font-medium">{item.label}</p>
+              </Link>
+            );
+          })}
+
+          <div className="px-3 pt-3 pb-1 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">System</div>
+          {adminSystemItems.map((item) => {
+            const isActive = pathname === item.href ||
+              (item.href !== '/admin' && pathname.startsWith(item.href));
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all ${
                   isActive
                     ? 'bg-white/5 text-primary border border-white/5 group'
                     : 'text-gray-400 hover:text-white hover:bg-white/5'
