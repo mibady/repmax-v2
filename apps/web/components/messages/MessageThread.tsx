@@ -250,10 +250,10 @@ export function MessageThread({
       <div className="px-6 py-4 border-t border-[#27272a] bg-[#1A1A1A]">
         <div className="flex items-end gap-3">
           <button
-            onClick={() => fileInputRef.current?.click()}
-            aria-label="Add attachment"
-            title="Add attachment"
-            className="p-2 rounded-lg hover:bg-[#2a2a2d] transition-colors text-gray-400 hover:text-white"
+            disabled
+            aria-label="Attachments coming soon"
+            title="Attachments coming soon"
+            className="p-2 rounded-lg transition-colors text-gray-600 cursor-not-allowed"
           >
             <Plus className="w-5 h-5" />
           </button>

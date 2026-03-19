@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import { requireAthleteTier } from "@/lib/utils/subscription-server";
 
 // GET /api/athlete/documents - Fetch athlete's documents
@@ -61,7 +60,7 @@ export async function GET() {
       name: doc.title,
       type: doc.document_type === "transcript" ? "pdf" :
             doc.document_type === "test_score" ? "image" : "doc",
-      size: "N/A", // Would need to store file size in DB
+      size: "N/A",
       uploadDate: new Date(doc.uploaded_at).toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
@@ -76,6 +75,13 @@ export async function GET() {
     console.error("Documents API error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
+}
+
+// Infer document type from file MIME type
+function inferDocumentType(mimeType: string): string {
+  if (mimeType === "application/pdf") return "transcript";
+  if (mimeType.startsWith("image/")) return "test_score";
+  return "other";
 }
 
 // POST /api/athlete/documents - Upload a new document
@@ -117,34 +123,59 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Athlete not found" }, { status: 404 });
     }
 
-    const body = await request.json();
+    // Handle FormData upload
+    const formData = await request.formData();
+    const file = formData.get("file") as File | null;
 
-    const documentSchema = z.object({
-      title: z.string().min(1, "Title is required"),
-      document_type: z.enum(["transcript", "test_score", "medical", "eligibility", "other"]).default("other"),
-      file_url: z.string().url("Valid file URL is required"),
-    });
-
-    const parsed = documentSchema.safeParse(body);
-    if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid request body", details: parsed.error.flatten() }, { status: 400 });
+    if (!file) {
+      return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      return NextResponse.json({ error: "File too large. Maximum size is 10MB" }, { status: 400 });
+    }
+
+    // Upload to Supabase Storage
+    const fileExt = file.name.split(".").pop() || "bin";
+    const fileName = `${athlete.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${fileExt}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("athlete-documents")
+      .upload(fileName, file, {
+        contentType: file.type,
+        upsert: false,
+      });
+
+    if (uploadError) {
+      console.error("Storage upload error:", uploadError);
+      return NextResponse.json({ error: "Failed to upload file" }, { status: 500 });
+    }
+
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from("athlete-documents")
+      .getPublicUrl(fileName);
+
+    const fileUrl = urlData.publicUrl;
+    const documentType = inferDocumentType(file.type);
+    const title = file.name.replace(/\.[^.]+$/, ""); // Strip extension for title
+
     // Insert document record
-    const { data: doc, error } = await supabase
+    const { data: doc, error: insertError } = await supabase
       .from("documents")
       .insert({
         athlete_id: athlete.id,
-        title: parsed.data.title,
-        document_type: parsed.data.document_type,
-        file_url: parsed.data.file_url,
+        title,
+        document_type: documentType,
+        file_url: fileUrl,
         verified: false,
       })
       .select()
       .single();
 
-    if (error) {
-      console.error("Error creating document:", error);
+    if (insertError) {
+      console.error("Error creating document:", insertError);
       return NextResponse.json({ error: "Failed to create document" }, { status: 500 });
     }
 
@@ -154,7 +185,7 @@ export async function POST(request: NextRequest) {
         name: doc.title,
         type: doc.document_type === "transcript" ? "pdf" :
               doc.document_type === "test_score" ? "image" : "doc",
-        size: "N/A",
+        size: `${(file.size / 1024).toFixed(0)} KB`,
         uploadDate: new Date(doc.uploaded_at).toLocaleDateString("en-US", {
           month: "short",
           day: "numeric",
@@ -188,7 +219,17 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { id } = await request.json();
+    // Support both query param and body for ID
+    const { searchParams } = new URL(request.url);
+    let id = searchParams.get("id");
+    if (!id) {
+      try {
+        const body = await request.json();
+        id = body.id;
+      } catch {
+        // No body
+      }
+    }
 
     if (!id) {
       return NextResponse.json({ error: "Document ID required" }, { status: 400 });

@@ -104,8 +104,14 @@ export function useConversation(contactId: string | null): UseConversationReturn
       )
       .subscribe();
 
+    // Polling fallback — refetch every 30s in case realtime drops
+    const pollInterval = setInterval(() => {
+      fetchConversation();
+    }, 30_000);
+
     return () => {
       supabase.removeChannel(channel);
+      clearInterval(pollInterval);
     };
   }, [contactId, fetchConversation]);
 

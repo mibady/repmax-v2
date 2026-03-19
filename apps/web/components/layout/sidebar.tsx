@@ -32,13 +32,13 @@ interface NavItem {
 
 const athleteNavItems: NavItem[] = [
   { icon: 'dashboard', label: 'Dashboard', href: '/athlete' },
-  { icon: 'badge', label: 'My Player Card', href: '/athlete/card/edit' },
+  { icon: 'id_card', label: 'Athletic Profile', href: '/athlete/card/edit' },
   { icon: 'videocam', label: 'Film', href: '/athlete/film' },
   { icon: 'bar_chart', label: 'Analytics', href: '/athlete/analytics' },
   { icon: 'campaign', label: 'Offers', href: '/athlete/offers' },
   { icon: 'calendar_month', label: 'Calendar', href: '/athlete/calendar' },
   { icon: 'description', label: 'Documents', href: '/athlete/documents' },
-  { icon: 'library_books', label: 'Resources', href: '/resources' },
+  { icon: 'library_books', label: 'Resources', href: '/athlete/resources' },
   { icon: 'trophy', label: 'Off Season Events', href: '/tournaments' },
   { icon: 'mail', label: 'Messages', href: '/messages' },
 ];
@@ -74,7 +74,7 @@ const parentNavItems: NavItem[] = [
   { icon: 'calendar_today', label: 'Calendar', href: '/parent/calendar' },
   { icon: 'school', label: 'Schools', href: '/parent/schools' },
   { icon: 'trophy', label: 'Off Season Events', href: '/tournaments' },
-  { icon: 'library_books', label: 'Resources', href: '/resources' },
+  { icon: 'library_books', label: 'Resources', href: '/parent/resources' },
 ];
 
 const parentSettingsItems: NavItem[] = [

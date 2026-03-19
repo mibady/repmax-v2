@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useCallback } from 'react';
+import { getEmbedUrl, isEmbeddable } from '@/lib/utils/video-embed';
 
 interface VideoPlayerModalProps {
   videoUrl: string;
@@ -34,6 +35,9 @@ export function VideoPlayerModal({ videoUrl, title, isOpen, onClose }: VideoPlay
 
   if (!isOpen) return null;
 
+  const embedUrl = getEmbedUrl(videoUrl);
+  const useIframe = isEmbeddable(videoUrl);
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
@@ -61,15 +65,25 @@ export function VideoPlayerModal({ videoUrl, title, isOpen, onClose }: VideoPlay
 
         {/* Video */}
         <div className="w-full aspect-video bg-black">
-          <video
-            className="w-full h-full"
-            src={videoUrl}
-            controls
-            autoPlay
-          >
-            <track kind="captions" />
-            Your browser does not support the video tag.
-          </video>
+          {useIframe && embedUrl ? (
+            <iframe
+              className="w-full h-full"
+              src={embedUrl}
+              title={title || 'Video player'}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          ) : (
+            <video
+              className="w-full h-full"
+              src={videoUrl}
+              controls
+              autoPlay
+            >
+              <track kind="captions" />
+              Your browser does not support the video tag.
+            </video>
+          )}
         </div>
       </div>
     </div>
