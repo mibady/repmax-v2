@@ -14,6 +14,8 @@ export default function VenuesTab({ tournamentId }: VenuesTabProps) {
   const [name, setName] = useState('');
   const [fieldNumber, setFieldNumber] = useState('');
   const [surfaceType, setSurfaceType] = useState<"grass" | "turf" | "indoor" | "">('');
+  const [address, setAddress] = useState('');
+  const [mapsUrl, setMapsUrl] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -24,11 +26,15 @@ export default function VenuesTab({ tournamentId }: VenuesTabProps) {
         name,
         field_number: fieldNumber ? parseInt(fieldNumber, 10) : null,
         surface_type: surfaceType || null,
+        address: address || null,
+        maps_url: mapsUrl || null,
       });
       setIsAdding(false);
       setName('');
       setFieldNumber('');
       setSurfaceType('');
+      setAddress('');
+      setMapsUrl('');
     } catch (err) {
       console.error(err);
     } finally {
@@ -94,6 +100,26 @@ export default function VenuesTab({ tournamentId }: VenuesTabProps) {
                 <option value="indoor">Indoor</option>
               </select>
             </div>
+            <div className="md:col-span-2">
+              <label className="block text-white text-xs font-medium mb-1.5 uppercase tracking-wider">Address</label>
+              <input
+                type="text"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="e.g. 123 Main St, Dallas, TX"
+                className="w-full bg-[#141414] text-white border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-white text-xs font-medium mb-1.5 uppercase tracking-wider">Google Maps URL</label>
+              <input
+                type="url"
+                value={mapsUrl}
+                onChange={(e) => setMapsUrl(e.target.value)}
+                placeholder="https://maps.google.com/..."
+                className="w-full bg-[#141414] text-white border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"
+              />
+            </div>
             <div className="md:col-span-3 flex justify-end">
               <button
                 type="submit"
@@ -142,6 +168,23 @@ export default function VenuesTab({ tournamentId }: VenuesTabProps) {
                       <span className="text-gray-500">Surface:</span>
                       <span className="text-white font-medium capitalize">{venue.surface_type}</span>
                     </div>
+                  )}
+                  {venue.address && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="text-gray-500">Address:</span>
+                      <span className="text-white font-medium text-xs">{venue.address}</span>
+                    </div>
+                  )}
+                  {venue.maps_url && (
+                    <a
+                      href={venue.maps_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs text-primary hover:text-primary/80 mt-1"
+                    >
+                      <span className="material-symbols-outlined text-sm">map</span>
+                      View on Map
+                    </a>
                   )}
                 </div>
               </div>

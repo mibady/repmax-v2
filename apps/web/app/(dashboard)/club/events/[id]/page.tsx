@@ -8,8 +8,9 @@ import ScheduleTab from './_components/ScheduleTab';
 import BracketsTab from './_components/BracketsTab';
 import VenuesTab from './_components/VenuesTab';
 import NotificationsTab from './_components/NotificationsTab';
+import StandingsTab from './_components/StandingsTab';
 
-type Tab = 'overview' | 'registrations' | 'schedule' | 'brackets' | 'venues' | 'notifications';
+type Tab = 'overview' | 'registrations' | 'schedule' | 'brackets' | 'standings' | 'venues' | 'notifications';
 
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
@@ -115,7 +116,7 @@ export default function ClubEventDetailPage() {
 
       {/* Tabs */}
       <div className="flex gap-1 border-b border-white/5 pb-0 flex-wrap">
-        {(['overview', 'registrations', 'schedule', 'brackets', 'venues', 'notifications'] as const).map((tab) => (
+        {(['overview', 'registrations', 'schedule', 'brackets', 'standings', 'venues', 'notifications'] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -245,10 +246,18 @@ export default function ClubEventDetailPage() {
       )}
 
       {/* Schedule Tab */}
-      {activeTab === 'schedule' && <ScheduleTab tournamentId={id} />}
+      {activeTab === 'schedule' && (
+        <ScheduleTab
+          tournamentId={id}
+          schedulePublished={!!tournament.schedule_published}
+        />
+      )}
 
       {/* Brackets Tab */}
       {activeTab === 'brackets' && <BracketsTab tournamentId={id} registrations={registrations} />}
+
+      {/* Standings Tab */}
+      {activeTab === 'standings' && <StandingsTab tournamentId={id} />}
 
       {/* Venues Tab */}
       {activeTab === 'venues' && <VenuesTab tournamentId={id} />}

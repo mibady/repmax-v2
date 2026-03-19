@@ -1,14 +1,45 @@
 'use client';
 
 import { useParams } from 'next/navigation';
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { useTournamentDetail, useBrackets, type BracketGameRecord } from '@/lib/hooks';
+import { useTournamentStandings, type TournamentStanding } from '@/lib/hooks/use-tournament-standings';
+import { createClient } from '@repmax/shared/supabase';
 import { Loader2, Calendar, MapPin, Users, Info, Trophy, ChevronRight } from 'lucide-react';
 
 export default function PublicTournamentDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { tournament, registrationCount, isLoading: detailLoading, error: detailError } = useTournamentDetail(id);
-  const { games, isLoading: bracketsLoading } = useBrackets(id);
+  const { games, isLoading: bracketsLoading, refetch: refetchGames } = useBrackets(id);
+  const { standings, refetch: refetchStandings } = useTournamentStandings(id);
+
+  // Supabase Realtime subscription for live score updates
+  useEffect(() => {
+    if (!id) return;
+
+    const supabase = createClient();
+    const channel = supabase
+      .channel(`tournament-${id}-live`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'tournament_games',
+          filter: `tournament_id=eq.${id}`,
+        },
+        () => {
+          refetchGames();
+          refetchStandings();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [id, refetchGames, refetchStandings]);
 
   if (detailLoading || bracketsLoading) {
     return (
@@ -160,7 +191,7 @@ export default function PublicTournamentDetailPage() {
                 Live Schedule & Scores
               </h2>
               <div className="space-y-4">
-                {games.length === 0 ? (
+                {games.length === 0 || !tournament.schedule_published ? (
                   <div className="bg-[#141414] border border-white/5 rounded-3xl p-12 text-center">
                     <p className="text-gray-500">The game schedule hasn&apos;t been published yet.</p>
                   </div>
@@ -212,6 +243,51 @@ export default function PublicTournamentDetailPage() {
                 )}
               </div>
             </section>
+
+            {/* Standings */}
+            {standings.length > 0 && (
+              <section>
+                <h2 className="text-2xl font-black text-white mb-6 flex items-center gap-3">
+                  <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                    <span className="material-symbols-outlined text-base">leaderboard</span>
+                  </div>
+                  Standings
+                </h2>
+                <div className="bg-[#141414] border border-white/5 rounded-3xl overflow-hidden">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-white/5 bg-white/[0.02]">
+                        <th className="px-4 py-3 text-left text-gray-400 font-medium w-12">#</th>
+                        <th className="px-4 py-3 text-left text-gray-400 font-medium">Team</th>
+                        <th className="px-4 py-3 text-center text-gray-400 font-medium">W</th>
+                        <th className="px-4 py-3 text-center text-gray-400 font-medium">L</th>
+                        <th className="px-4 py-3 text-center text-gray-400 font-medium">T</th>
+                        <th className="px-4 py-3 text-center text-gray-400 font-medium">+/-</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {standings.map((s: TournamentStanding, idx: number) => {
+                        const diff = s.points_for - s.points_against;
+                        return (
+                          <tr key={s.id} className="hover:bg-white/[0.01]">
+                            <td className="px-4 py-3 text-gray-500 font-mono">{idx + 1}</td>
+                            <td className="px-4 py-3 text-white font-bold">{s.team_name || 'Unknown'}</td>
+                            <td className="px-4 py-3 text-center text-green-400 font-mono font-bold">{s.wins}</td>
+                            <td className="px-4 py-3 text-center text-red-400 font-mono font-bold">{s.losses}</td>
+                            <td className="px-4 py-3 text-center text-gray-400 font-mono">{s.ties}</td>
+                            <td className={`px-4 py-3 text-center font-mono font-bold ${
+                              diff > 0 ? 'text-green-400' : diff < 0 ? 'text-red-400' : 'text-gray-400'
+                            }`}>
+                              {diff > 0 ? '+' : ''}{diff}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            )}
           </div>
         </div>
       </div>

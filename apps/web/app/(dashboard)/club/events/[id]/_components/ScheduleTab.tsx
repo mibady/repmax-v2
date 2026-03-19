@@ -9,15 +9,79 @@ import type { BracketGameRecord } from '@/lib/hooks/use-brackets';
 
 interface ScheduleTabProps {
   tournamentId: string;
+  schedulePublished?: boolean;
 }
 
-export default function ScheduleTab({ tournamentId }: ScheduleTabProps) {
+/**
+ * Detect venue conflicts: two games at the same venue with overlapping times.
+ * Returns conflict warnings for a given game assignment.
+ */
+function detectVenueConflict(
+  gameId: string,
+  venueId: string | null,
+  scheduledAt: string | null,
+  allGames: BracketGameRecord[],
+  gameDurationMinutes: number = 60
+): string | null {
+  if (!venueId || !scheduledAt) return null;
+
+  const newStart = new Date(scheduledAt).getTime();
+  const newEnd = newStart + gameDurationMinutes * 60 * 1000;
+
+  for (const other of allGames) {
+    if (other.id === gameId) continue;
+    if (other.venue_id !== venueId || !other.scheduled_at) continue;
+
+    const otherStart = new Date(other.scheduled_at).getTime();
+    const otherEnd = otherStart + gameDurationMinutes * 60 * 1000;
+
+    // Check overlap
+    if (newStart < otherEnd && newEnd > otherStart) {
+      const teamNames = [
+        other.home_reg?.team_name || 'TBD',
+        other.away_reg?.team_name || 'TBD',
+      ].join(' vs ');
+      return `Conflicts with Game #${other.game_number} (${teamNames}) at this venue`;
+    }
+  }
+
+  return null;
+}
+
+export default function ScheduleTab({ tournamentId, schedulePublished = false }: ScheduleTabProps) {
   const { games, isLoading: gamesLoading, refetch, updateGame } = useTournamentSchedule(tournamentId);
   const { venues, isLoading: venuesLoading } = useTournamentVenues(tournamentId);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [scoringGame, setScoringGame] = useState<BracketGameRecord | null>(null);
+  const [isPublished, setIsPublished] = useState(schedulePublished);
+  const [publishing, setPublishing] = useState(false);
+
+  async function handleTogglePublish() {
+    setPublishing(true);
+    try {
+      const res = await fetch(`/api/tournaments/${tournamentId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ schedule_published: !isPublished }),
+      });
+      if (res.ok) {
+        setIsPublished(!isPublished);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setPublishing(false);
+    }
+  }
 
   async function handleUpdateGame(gameId: string, venueId: string | null, scheduledAt: string | null) {
+    // Check for venue conflict before saving
+    const conflict = detectVenueConflict(gameId, venueId, scheduledAt, games);
+    if (conflict) {
+      const proceed = confirm(`⚠️ ${conflict}\n\nDo you want to save anyway?`);
+      if (!proceed) return;
+    }
+
     setSavingId(gameId);
     try {
       const success = await updateGame({
@@ -49,17 +113,23 @@ export default function ScheduleTab({ tournamentId }: ScheduleTabProps) {
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-white">Game Schedule</h3>
         <div className="flex gap-2">
-          <button 
+          <button
             onClick={() => alert('PDF export coming soon!')}
             className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors"
           >
             Download PDF
           </button>
-          <button 
-            onClick={() => alert('Schedule publishing coming soon!')}
-            className="px-4 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors text-sm"
+          <button
+            onClick={handleTogglePublish}
+            disabled={publishing}
+            className={`px-4 py-2 font-bold rounded-lg transition-colors text-sm flex items-center gap-2 ${
+              isPublished
+                ? 'bg-green-500/10 text-green-400 border border-green-500/20 hover:bg-green-500/20'
+                : 'bg-primary text-black hover:bg-primary/90'
+            }`}
           >
-            Publish Schedule
+            {publishing ? <Loader2 className="size-4 animate-spin" /> : null}
+            {isPublished ? 'Published ✓' : 'Publish Schedule'}
           </button>
         </div>
       </div>

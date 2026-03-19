@@ -8,6 +8,8 @@ const createVenueSchema = z.object({
   surface_type: z.enum(["grass", "turf", "indoor"]).nullable().optional(),
   capacity: z.number().int().positive().nullable().optional(),
   location_notes: z.string().max(1000).nullable().optional(),
+  address: z.string().max(500).nullable().optional(),
+  maps_url: z.string().url().max(2000).nullable().optional(),
 });
 
 const updateVenueSchema = z.object({
@@ -17,6 +19,8 @@ const updateVenueSchema = z.object({
   surface_type: z.enum(["grass", "turf", "indoor"]).nullable().optional(),
   capacity: z.number().int().positive().nullable().optional(),
   location_notes: z.string().max(1000).nullable().optional(),
+  address: z.string().max(500).nullable().optional(),
+  maps_url: z.string().url().max(2000).nullable().optional(),
 });
 
 const deleteVenueSchema = z.object({
@@ -124,6 +128,8 @@ export async function POST(
         surface_type: parsed.data.surface_type ?? null,
         capacity: parsed.data.capacity ?? null,
         location_notes: parsed.data.location_notes ?? null,
+        address: parsed.data.address ?? null,
+        maps_url: parsed.data.maps_url ?? null,
       })
       .select()
       .single();
@@ -207,6 +213,10 @@ export async function PATCH(
       updates.capacity = updateData.capacity;
     if (updateData.location_notes !== undefined)
       updates.location_notes = updateData.location_notes;
+    if (updateData.address !== undefined)
+      updates.address = updateData.address;
+    if (updateData.maps_url !== undefined)
+      updates.maps_url = updateData.maps_url;
 
     if (Object.keys(updates).length === 0) {
       return NextResponse.json(

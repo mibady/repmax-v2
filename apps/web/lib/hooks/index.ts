@@ -296,6 +296,12 @@ export {
 // Tournament Schedule
 export { useTournamentSchedule } from "./use-tournament-schedule";
 
+// Tournament Standings
+export {
+  useTournamentStandings,
+  type TournamentStanding,
+} from "./use-tournament-standings";
+
 // Game Scoring
 export { useGameScoring, type ScoreEvent, type ScoreEventType } from "./use-game-scoring";
 

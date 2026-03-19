@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
+import { calculateStandings } from "@/lib/utils/calculate-standings";
+import { updatePowerRankings } from "@/lib/utils/elo-calculator";
 
 const updateGameSchema = z.object({
   game_id: z.string().uuid(),
@@ -175,6 +177,25 @@ export async function PATCH(
 
     if (!game) {
       return NextResponse.json({ error: "Game not found" }, { status: 404 });
+    }
+
+    // When a game goes final, recalculate standings and update power rankings
+    if (parsed.data.status === "final" && game.home_registration_id && game.away_registration_id) {
+      // Fire-and-forget: recalculate standings
+      calculateStandings(supabase, tournamentId).catch((err) =>
+        console.error("Standings calculation error:", err)
+      );
+
+      // Fire-and-forget: update ELO rankings
+      updatePowerRankings(
+        supabase,
+        game.id,
+        tournamentId,
+        game.home_registration_id,
+        game.away_registration_id,
+        game.home_score,
+        game.away_score
+      ).catch((err) => console.error("ELO update error:", err));
     }
 
     return NextResponse.json(game);

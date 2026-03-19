@@ -21,6 +21,10 @@ export interface TournamentDetail {
   registration_url: string | null;
   organizer_name: string | null;
   created_at: string;
+  schedule_published?: boolean;
+  waiver_text?: string | null;
+  age_cutoff_date?: string | null;
+  max_age_years?: number | null;
 }
 
 export interface TournamentRegistration {

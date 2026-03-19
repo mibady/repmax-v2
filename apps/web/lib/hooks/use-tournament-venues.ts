@@ -10,6 +10,8 @@ export interface TournamentVenue {
   surface_type: "grass" | "turf" | "indoor" | null;
   capacity: number | null;
   location_notes: string | null;
+  address: string | null;
+  maps_url: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -20,6 +22,8 @@ interface AddVenueParams {
   surface_type?: "grass" | "turf" | "indoor" | null;
   capacity?: number | null;
   location_notes?: string | null;
+  address?: string | null;
+  maps_url?: string | null;
 }
 
 interface UseTournamentVenuesReturn {
