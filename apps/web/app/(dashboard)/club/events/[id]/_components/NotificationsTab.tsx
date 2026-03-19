@@ -22,6 +22,7 @@ export default function NotificationsTab({ tournamentId }: NotificationsTabProps
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [type, setType] = useState('general');
+  const [sendEmail, setSendEmail] = useState(false);
 
   const fetchNotifications = useCallback(async () => {
     setIsLoading(true);
@@ -53,7 +54,7 @@ export default function NotificationsTab({ tournamentId }: NotificationsTabProps
           notification_type: type,
           title,
           body,
-          channels: ['in_app']
+          channels: sendEmail ? ['in_app', 'email'] : ['in_app']
         }),
       });
 
@@ -115,8 +116,20 @@ export default function NotificationsTab({ tournamentId }: NotificationsTabProps
                   className="w-full bg-[#1F1F22] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:ring-1 focus:ring-primary resize-none"
                 />
               </div>
-              <button 
-                type="submit" 
+              <div>
+                <label className="block text-gray-400 text-[10px] font-black uppercase tracking-widest mb-2">Channels</label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={sendEmail}
+                    onChange={(e) => setSendEmail(e.target.checked)}
+                    className="size-4 rounded border-white/20 bg-[#1F1F22] text-primary focus:ring-primary"
+                  />
+                  <span className="text-sm text-gray-300">Also send via email</span>
+                </label>
+              </div>
+              <button
+                type="submit"
                 disabled={isSending}
                 className="w-full bg-primary hover:bg-primary/90 text-black font-black py-3 rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50"
               >

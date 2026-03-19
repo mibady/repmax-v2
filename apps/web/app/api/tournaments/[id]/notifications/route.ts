@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
+import { sendTournamentEmail } from "@/lib/email/tournament-notification";
 
 const notificationSchema = z.object({
   notification_type: z.enum(['schedule_update', 'score_update', 'bracket_update', 'general']),
@@ -80,6 +81,35 @@ export async function POST(
     if (notifError) {
       console.error("Notification insert error:", notifError);
       return NextResponse.json({ error: notifError.message }, { status: 500 });
+    }
+
+    // If email channel selected, send email to all registered contacts
+    if (parsed.data.channels.includes('email')) {
+      const { data: tournament } = await supabase
+        .from("off_season_events")
+        .select("name")
+        .eq("id", tournamentId)
+        .single();
+
+      const { data: registrations } = await supabase
+        .from("tournament_registrations")
+        .select("contact_email")
+        .eq("tournament_id", tournamentId)
+        .not("contact_email", "is", null);
+
+      const emails = (registrations || [])
+        .map((r) => r.contact_email)
+        .filter((e): e is string => !!e);
+
+      if (emails.length > 0) {
+        // Fire-and-forget email send
+        sendTournamentEmail({
+          tournamentName: tournament?.name || "Tournament",
+          title: parsed.data.title,
+          body: parsed.data.body,
+          recipientEmails: emails,
+        }).catch((err) => console.error("Email send error:", err));
+      }
     }
 
     return NextResponse.json(notification, { status: 201 });

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useBrackets } from '@/lib/hooks/use-brackets';
+import { useTournamentStandings } from '@/lib/hooks/use-tournament-standings';
 import { Loader2 } from 'lucide-react';
 
 interface Registration {
@@ -24,6 +25,7 @@ interface BracketsTabProps {
 
 export default function BracketsTab({ tournamentId, registrations }: BracketsTabProps) {
   const { brackets, isLoading, createBracket } = useBrackets(tournamentId);
+  const { standings } = useTournamentStandings(tournamentId);
   const [isAdding, setIsAdding] = useState(false);
   const [name, setName] = useState('Main Bracket');
   const [bracketType, setBracketType] = useState<"single_elim" | "double_elim" | "round_robin" | "pool_play" | "pool_to_bracket">('single_elim');
@@ -75,13 +77,53 @@ export default function BracketsTab({ tournamentId, registrations }: BracketsTab
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-white">Tournament Brackets</h3>
         {!isAdding && (
-          <button
-            onClick={() => setIsAdding(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
-          >
-            <span className="material-symbols-outlined text-[20px]">add_chart</span>
-            Generate Bracket
-          </button>
+          <div className="flex gap-2">
+            {standings.length > 0 && (
+              <button
+                onClick={() => {
+                  // Auto-seed from standings: sort by wins desc, then point diff
+                  const sorted = [...standings].sort((a, b) => {
+                    if (b.wins !== a.wins) return b.wins - a.wins;
+                    return (b.points_for - b.points_against) - (a.points_for - a.points_against);
+                  });
+                  // Map standings to approved regs in standings order
+                  const standingSeeds = sorted
+                    .map((s, idx) => {
+                      const reg = registrations.find(r => r.id === s.registration_id);
+                      if (!reg) return null;
+                      return {
+                        registrationId: reg.id,
+                        teamName: reg.team_name || 'Unnamed Team',
+                        seed: idx + 1,
+                      };
+                    })
+                    .filter((s): s is NonNullable<typeof s> => s !== null);
+
+                  if (standingSeeds.length < 2) {
+                    alert('Need at least 2 teams in standings to seed.');
+                    return;
+                  }
+
+                  createBracket({
+                    name: 'Playoff Bracket',
+                    bracket_type: 'single_elim',
+                    seeds: standingSeeds,
+                  });
+                }}
+                className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 text-white font-bold rounded-lg hover:bg-white/10 transition-colors"
+              >
+                <span className="material-symbols-outlined text-[20px]">leaderboard</span>
+                Seed from Standings
+              </button>
+            )}
+            <button
+              onClick={() => setIsAdding(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+            >
+              <span className="material-symbols-outlined text-[20px]">add_chart</span>
+              Generate Bracket
+            </button>
+          </div>
         )}
       </div>
 

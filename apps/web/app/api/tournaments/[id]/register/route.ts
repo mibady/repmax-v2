@@ -3,11 +3,12 @@ import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
 
 const registerSchema = z.object({
-  school_id: z.string().uuid(),
+  school_id: z.string().uuid().optional(),
   team_name: z.string().min(1).max(200),
   contact_name: z.string().min(1).max(200),
   contact_email: z.string().email(),
   contact_phone: z.string().max(20).optional(),
+  waiver_accepted: z.boolean().optional(),
 });
 
 export async function POST(
@@ -44,7 +45,7 @@ export async function POST(
     const { data: tournament, error: tError } = await supabase
       .from("off_season_events")
       .select(
-        "id, is_public, registration_deadline, teams_capacity, teams_registered, entry_fee_cents, platform_fee_rate"
+        "id, is_public, registration_deadline, teams_capacity, teams_registered, entry_fee_cents, platform_fee_rate, waiver_text"
       )
       .eq("id", tournamentId)
       .single();
@@ -74,19 +75,29 @@ export async function POST(
       }
     }
 
-    // Check if school is already registered
-    const { data: existingReg } = await supabase
-      .from("tournament_registrations")
-      .select("id")
-      .eq("tournament_id", tournamentId)
-      .eq("school_id", parsed.data.school_id)
-      .maybeSingle();
-
-    if (existingReg) {
+    // Validate waiver acceptance if tournament has waiver
+    if (tournament.waiver_text && !parsed.data.waiver_accepted) {
       return NextResponse.json(
-        { error: "School is already registered for this tournament" },
-        { status: 409 }
+        { error: "Waiver must be accepted to register" },
+        { status: 400 }
       );
+    }
+
+    // Check if school is already registered (only if school_id provided)
+    if (parsed.data.school_id) {
+      const { data: existingReg } = await supabase
+        .from("tournament_registrations")
+        .select("id")
+        .eq("tournament_id", tournamentId)
+        .eq("school_id", parsed.data.school_id)
+        .maybeSingle();
+
+      if (existingReg) {
+        return NextResponse.json(
+          { error: "School is already registered for this tournament" },
+          { status: 409 }
+        );
+      }
     }
 
     // Atomic increment and capacity check
@@ -115,7 +126,7 @@ export async function POST(
       .from("tournament_registrations")
       .insert({
         tournament_id: tournamentId,
-        school_id: parsed.data.school_id,
+        school_id: parsed.data.school_id ?? null,
         team_name: parsed.data.team_name,
         contact_name: parsed.data.contact_name,
         contact_email: parsed.data.contact_email,
@@ -123,6 +134,11 @@ export async function POST(
         amount_cents: entryFeeCents,
         platform_fee_cents: platformFeeCents,
         payment_status: entryFeeCents > 0 ? "pending" : "approved",
+        ...(parsed.data.waiver_accepted ? {
+          waiver_accepted: true,
+          waiver_accepted_at: new Date().toISOString(),
+          waiver_accepted_by: parsed.data.contact_name,
+        } : {}),
       })
       .select()
       .single();
