@@ -1,258 +1,658 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { createClient } from '@repmax/shared/supabase';
-import { toast } from 'sonner';
-import Link from 'next/link';
+import { useRef, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Loader2 } from "lucide-react";
+import { useImageUpload, useDropzone } from "@/hooks/useImageUpload";
+import { useAthleteCardEditor } from "@/lib/hooks";
+import { CameraModal } from "@/components/shared/CameraModal";
+
+const positions = [
+  "Quarterback",
+  "Running Back",
+  "Wide Receiver",
+  "Tight End",
+  "Offensive Line",
+  "Defensive Line",
+  "Linebacker",
+  "Cornerback",
+  "Safety",
+  "Kicker",
+  "Punter",
+];
+
+const currentYear = new Date().getFullYear();
+const classYears = Array.from({ length: 5 }, (_, i) => currentYear + i);
+
+const DEFAULT_AVATAR =
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuCpFOEUz_rfWWSVZf8V8mFWpvSX0XbEvnGhfEPVxD3mYrqKA6J94E78iBa_bR1caG28xt4BCjjnmdpZ8gfWL2lqcqVjfRncL7V0MxJBJxQQLl315vZyu2h6k9L5D4eNTwqVSBKB6cji7NJkO3WIoWyV4PeQrLPwNIgFa36RdDTOOR035pkGUVlwoADx0noxixr0W7lVDf9paHXe5l3fXR4SoKoRwegF0Uejyfdrq-vkbtjy7k-3snSTmQeCc6x5BHmksTTT1Aer9Qo";
+
+const inputClass =
+  "w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-text-grey focus:border-primary focus:outline-none transition-colors";
+const labelClass = "block text-sm text-text-grey mb-2";
+const sectionClass = "rounded-xl bg-surface-dark border border-white/5 p-6";
+const sectionTitleClass = "text-lg font-bold mb-4 flex items-center gap-2";
 
 export default function ProfileSettingsPage() {
-  const [fullName, setFullName] = useState('');
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isUploading, setIsUploading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [originalName, setOriginalName] = useState('');
+  const {
+    data: formData,
+    isLoading,
+    isSaving,
+    error,
+    saveError,
+    updateField,
+    save,
+    profileCompletion,
+  } = useAthleteCardEditor();
+
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [showCamera, setShowCamera] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    async function loadProfile() {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+  const { isUploading, progress, error: uploadError, upload } = useImageUpload({
+    type: "profile",
+    onSuccess: (url) => {
+      updateField("avatarUrl", url);
+    },
+  });
 
-      const { data } = await supabase
-        .from('profiles')
-        .select('full_name, avatar_url')
-        .eq('id', user.id)
-        .single();
-
-      if (data) {
-        setFullName(data.full_name || '');
-        setOriginalName(data.full_name || '');
-        setAvatarUrl(data.avatar_url || null);
-      }
-      setIsLoading(false);
+  const handleFileSelect = async (file: File) => {
+    try {
+      await upload(file);
+    } catch {
+      // Error handled in hook
     }
-    loadProfile();
-  }, []);
+  };
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const { isDragging, dropzoneProps } = useDropzone(handleFileSelect);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    if (formData) {
+      updateField(name as keyof typeof formData, value);
+    }
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Validate client-side
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-    if (!allowedTypes.includes(file.type)) {
-      toast.error('Please upload a JPEG, PNG, WebP, or GIF image');
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('Image must be under 5MB');
-      return;
-    }
-
-    setIsUploading(true);
-    try {
-      // Upload to storage
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('type', 'profile');
-
-      const res = await fetch('/api/upload', { method: 'POST', body: formData });
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Upload failed');
-      }
-
-      const { url } = await res.json();
-
-      // Update profile with new avatar URL
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Not authenticated');
-
-      const { error } = await supabase
-        .from('profiles')
-        .update({ avatar_url: url })
-        .eq('id', user.id);
-
-      if (error) throw new Error(error.message);
-
-      setAvatarUrl(url);
-      toast.success('Profile photo updated');
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to upload photo');
-    } finally {
-      setIsUploading(false);
-      // Reset file input
-      if (fileInputRef.current) fileInputRef.current.value = '';
+    if (file) {
+      handleFileSelect(file);
     }
   };
 
-  const handleRemovePhoto = async () => {
-    if (!confirm('Remove your profile photo?')) return;
-
-    try {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { error } = await supabase
-        .from('profiles')
-        .update({ avatar_url: null })
-        .eq('id', user.id);
-
-      if (error) throw new Error(error.message);
-
-      setAvatarUrl(null);
-      toast.success('Profile photo removed');
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to remove photo');
+  const handleSave = async () => {
+    setSaveSuccess(false);
+    const success = await save();
+    if (success) {
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
     }
   };
-
-  const handleSaveName = async () => {
-    if (fullName === originalName) return;
-    setIsSaving(true);
-    try {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { error } = await supabase
-        .from('profiles')
-        .update({ full_name: fullName })
-        .eq('id', user.id);
-
-      if (error) throw new Error(error.message);
-
-      setOriginalName(fullName);
-      toast.success('Name updated');
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to update name');
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const initials = fullName
-    ? fullName.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()
-    : '?';
 
   if (isLoading) {
     return (
       <div className="h-full flex items-center justify-center">
-        <div className="size-8 rounded-full border-4 border-primary border-t-transparent animate-spin" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
 
+  if (error && !formData) {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">{error.message}</p>
+          <Link href="/athlete" className="text-primary hover:underline">
+            Return to dashboard
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (!formData) return null;
+
+  const profileImage = formData.avatarUrl || DEFAULT_AVATAR;
+
   return (
     <div className="h-full overflow-y-auto">
-      <div className="max-w-4xl mx-auto px-6 py-10 flex flex-col gap-10">
-        {/* Page Heading */}
-        <div className="flex flex-col gap-2">
-          <h1 className="text-4xl font-black tracking-tight text-white">Profile</h1>
-          <p className="text-slate-400 max-w-2xl text-lg">
-            Manage your profile photo and display name.
-          </p>
-        </div>
+      <div className="max-w-4xl mx-auto px-6 py-10 flex flex-col gap-8">
+        {/* Hidden file input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/gif"
+          className="hidden"
+          onChange={handleFileInputChange}
+        />
 
-        {/* Profile Photo Section */}
-        <section>
-          <div className="flex items-center gap-2 mb-6 px-1">
-            <span className="material-symbols-outlined text-primary">account_circle</span>
-            <h2 className="text-xl font-bold tracking-tight text-white">Profile Photo</h2>
+        {/* Page Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-white">Profile Settings</h1>
+            <p className="text-sm text-text-grey mt-1">
+              Manage your athletic profile and player card information.
+            </p>
           </div>
-          <div className="p-6 bg-[#1A1A1A] rounded-xl border border-white/10">
-            <div className="flex items-center gap-6">
-              {/* Avatar preview */}
-              <div className="size-24 rounded-full bg-[#2A2A2E] border-2 border-white/10 flex items-center justify-center overflow-hidden shrink-0">
-                {avatarUrl ? (
-                  <img src={avatarUrl} alt="Profile" className="size-full object-cover" />
-                ) : (
-                  <span className="text-2xl font-bold text-white/40">{initials}</span>
-                )}
-              </div>
-
-              <div className="flex flex-col gap-3">
-                <p className="text-sm text-slate-400">
-                  Upload a photo. JPEG, PNG, WebP, or GIF — max 5MB.
-                </p>
-                <div className="flex items-center gap-3">
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp,image/gif"
-                    className="hidden"
-                    onChange={handleFileSelect}
-                  />
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isUploading}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-black font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50"
-                  >
-                    {isUploading ? (
-                      <>
-                        <div className="size-4 rounded-full border-2 border-black border-t-transparent animate-spin" />
-                        Uploading...
-                      </>
-                    ) : (
-                      <>
-                        <span className="material-symbols-outlined text-[18px]">upload</span>
-                        {avatarUrl ? 'Change Photo' : 'Upload Photo'}
-                      </>
-                    )}
-                  </button>
-                  {avatarUrl && (
-                    <button
-                      onClick={handleRemovePhoto}
-                      className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 text-red-400 font-medium text-sm hover:bg-red-500/10 transition-colors border border-white/10"
-                    >
-                      <span className="material-symbols-outlined text-[18px]">delete</span>
-                      Remove
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Display Name Section */}
-        <section>
-          <div className="flex items-center gap-2 mb-6 px-1">
-            <span className="material-symbols-outlined text-primary">badge</span>
-            <h2 className="text-xl font-bold tracking-tight text-white">Display Name</h2>
-          </div>
-          <div className="p-6 bg-[#1A1A1A] rounded-xl border border-white/10">
-            <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4">
-              <div className="flex flex-col gap-2 flex-1 w-full">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Full Name</label>
-                <input
-                  type="text"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-4 text-white text-sm focus:ring-primary focus:border-primary transition-colors"
-                  placeholder="Enter your full name"
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="h-2 w-24 rounded-full bg-white/10 overflow-hidden">
+                <div
+                  className="h-full bg-primary rounded-full transition-all duration-300"
+                  style={{ width: `${profileCompletion}%` }}
                 />
               </div>
-              <button
-                onClick={handleSaveName}
-                disabled={isSaving || fullName === originalName}
-                className="px-6 py-2.5 rounded-lg bg-primary text-black font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50 shrink-0"
+              <span className="text-sm text-text-grey">{profileCompletion}%</span>
+            </div>
+            {saveSuccess && (
+              <span className="text-sm text-green-500 flex items-center gap-1">
+                <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                Saved!
+              </span>
+            )}
+            {saveError && (
+              <span className="text-sm text-red-500">{saveError.message}</span>
+            )}
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="px-5 py-2.5 rounded-lg bg-primary text-black font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center gap-2"
+            >
+              {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
+              {isSaving ? "Saving..." : "Save Changes"}
+            </button>
+          </div>
+        </div>
+
+        {/* Profile Photo + Social + Team */}
+        <section className={sectionClass}>
+          <h2 className={sectionTitleClass}>
+            <span className="material-symbols-outlined text-primary">photo_camera</span>
+            Profile Photo
+          </h2>
+          <div className="flex items-start gap-6">
+            <div className="relative">
+              <div
+                {...dropzoneProps}
+                className={`h-32 w-32 rounded-xl border-2 border-dashed flex items-center justify-center overflow-hidden transition-colors ${
+                  isDragging
+                    ? "border-primary bg-primary/10"
+                    : "border-white/20 bg-white/5"
+                } ${isUploading ? "opacity-50" : ""}`}
               >
-                {isSaving ? 'Saving...' : 'Save'}
+                {isUploading ? (
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="h-8 w-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                    <span className="text-xs text-text-grey">{progress}%</span>
+                  </div>
+                ) : (
+                  <Image
+                    src={profileImage}
+                    alt="Profile"
+                    width={128}
+                    height={128}
+                    className="object-cover w-full h-full"
+                  />
+                )}
+              </div>
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+                className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full bg-primary text-black flex items-center justify-center shadow-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
+              >
+                <span className="material-symbols-outlined text-[18px]">edit</span>
               </button>
+            </div>
+            <div className="flex-1">
+              <p className="text-sm text-text-grey mb-3">
+                Upload an action shot or headshot. This will be the main image on your card.
+              </p>
+              {uploadError && (
+                <p className="text-sm text-red-400 mb-3">{uploadError}</p>
+              )}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                  className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-sm font-medium hover:bg-white/10 transition-colors disabled:opacity-50"
+                >
+                  {isUploading ? "Uploading..." : "Upload Photo"}
+                </button>
+                <button
+                  onClick={() => setShowCamera(true)}
+                  disabled={isUploading}
+                  className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-sm font-medium hover:bg-white/10 transition-colors disabled:opacity-50"
+                >
+                  Take Photo
+                </button>
+              </div>
+              <p className="text-xs text-text-grey mt-2">
+                Drag and drop or click to upload. Max 5MB. JPEG, PNG, WebP, or GIF.
+              </p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 pt-6 border-t border-white/5">
+            <div>
+              <label className={labelClass}>Organization/Team Name</label>
+              <input
+                type="text"
+                name="organizationName"
+                value={formData.organizationName}
+                onChange={handleChange}
+                placeholder="SoCal Elite 7v7"
+                className={inputClass}
+              />
+            </div>
+            <div>
+              <label className={labelClass}>Jersey Number</label>
+              <input
+                type="text"
+                name="jerseyNumber"
+                value={formData.jerseyNumber}
+                onChange={handleChange}
+                placeholder="#7"
+                className={inputClass}
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <div>
+              <label className={labelClass}>Twitter</label>
+              <input
+                type="text"
+                name="twitter"
+                value={formData.twitter}
+                onChange={handleChange}
+                placeholder="@handle"
+                className={inputClass}
+              />
+            </div>
+            <div>
+              <label className={labelClass}>Instagram</label>
+              <input
+                type="text"
+                name="instagram"
+                value={formData.instagram}
+                onChange={handleChange}
+                placeholder="@handle"
+                className={inputClass}
+              />
             </div>
           </div>
         </section>
 
-        {/* Quick Links */}
+        {/* Basic Information */}
+        <section className={sectionClass}>
+          <h2 className={sectionTitleClass}>
+            <span className="material-symbols-outlined text-primary">person</span>
+            Basic Information
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className={labelClass}>Full Name</label>
+              <input type="text" name="name" value={formData.name} onChange={handleChange} className={inputClass} />
+            </div>
+            <div>
+              <label className={labelClass}>Primary Position</label>
+              <select name="position" value={formData.position} onChange={handleChange} className={inputClass}>
+                <option value="" className="bg-surface-dark">Select position</option>
+                {positions.map((pos) => (
+                  <option key={pos} value={pos} className="bg-surface-dark">{pos}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className={labelClass}>Secondary Position</label>
+              <select name="secondaryPosition" value={formData.secondaryPosition} onChange={handleChange} className={inputClass}>
+                <option value="" className="bg-surface-dark">None</option>
+                {positions.map((pos) => (
+                  <option key={pos} value={pos} className="bg-surface-dark">{pos}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className={labelClass}>Class Year</label>
+              <select name="classYear" value={formData.classYear} onChange={handleChange} className={inputClass}>
+                {classYears.map((year) => (
+                  <option key={year} value={year} className="bg-surface-dark">{year}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className={labelClass}>High School</label>
+              <input type="text" name="highSchool" value={formData.highSchool} onChange={handleChange} className={inputClass} />
+            </div>
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <label className={labelClass}>City</label>
+                <input type="text" name="city" value={formData.city} onChange={handleChange} className={inputClass} />
+              </div>
+              <div className="w-24">
+                <label className={labelClass}>State</label>
+                <input type="text" name="state" value={formData.state} onChange={handleChange} maxLength={2} className={`${inputClass} uppercase`} />
+              </div>
+            </div>
+            <div className="md:col-span-2">
+              <label className={labelClass}>Bio</label>
+              <textarea
+                name="bio"
+                value={formData.bio}
+                onChange={handleChange}
+                maxLength={280}
+                rows={3}
+                placeholder="Tell coaches about yourself..."
+                className={`${inputClass} resize-none`}
+              />
+              <p className="text-xs text-text-grey mt-1">{formData.bio.length}/280 characters</p>
+            </div>
+          </div>
+
+          {/* Parent/Guardian subsection */}
+          <div className="border-t border-white/5 mt-6 pt-6">
+            <h3 className="text-sm font-semibold text-text-grey uppercase tracking-wider mb-4 flex items-center gap-2">
+              <span className="material-symbols-outlined text-primary text-[18px]">family_restroom</span>
+              Parent/Guardian Information
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm text-text-grey mb-2 font-medium">Parent/Guardian 1</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className={labelClass}>Name</label>
+                    <input type="text" name="parent1Name" value={formData.parent1Name} onChange={handleChange} className={inputClass} />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Phone</label>
+                    <input type="tel" name="parent1Phone" value={formData.parent1Phone} onChange={handleChange} placeholder="(555) 123-4567" className={inputClass} />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Email</label>
+                    <input type="email" name="parent1Email" value={formData.parent1Email} onChange={handleChange} placeholder="parent@email.com" className={inputClass} />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <p className="text-sm text-text-grey mb-2 font-medium">Parent/Guardian 2</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className={labelClass}>Name</label>
+                    <input type="text" name="parent2Name" value={formData.parent2Name} onChange={handleChange} className={inputClass} />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Phone</label>
+                    <input type="tel" name="parent2Phone" value={formData.parent2Phone} onChange={handleChange} placeholder="(555) 123-4567" className={inputClass} />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Email</label>
+                    <input type="email" name="parent2Email" value={formData.parent2Email} onChange={handleChange} placeholder="parent@email.com" className={inputClass} />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label className={labelClass}>Siblings</label>
+                <textarea
+                  name="siblingsInfo"
+                  value={formData.siblingsInfo}
+                  onChange={handleChange}
+                  rows={2}
+                  placeholder="Names, ages, schools, sports..."
+                  className={`${inputClass} resize-none`}
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Measurables */}
+        <section className={sectionClass}>
+          <h2 className={sectionTitleClass}>
+            <span className="material-symbols-outlined text-primary">straighten</span>
+            Measurables
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <label className={labelClass}>Height</label>
+              <input type="text" name="height" value={formData.height} onChange={handleChange} placeholder={`6'1"`} className={`${inputClass} font-mono`} />
+            </div>
+            <div>
+              <label className={labelClass}>Weight (lbs)</label>
+              <input type="text" name="weight" value={formData.weight} onChange={handleChange} placeholder="185" className={`${inputClass} font-mono`} />
+            </div>
+            <div>
+              <label className={labelClass}>Wingspan (in)</label>
+              <input type="text" name="wingspan" value={formData.wingspan} onChange={handleChange} placeholder="74" className={`${inputClass} font-mono`} />
+            </div>
+            <div>
+              <label className={labelClass}>40-Yard (s)</label>
+              <input type="text" name="fortyYard" value={formData.fortyYard} onChange={handleChange} placeholder="4.52" className={`${inputClass} font-mono text-primary`} />
+            </div>
+            <div>
+              <label className={labelClass}>10Y Split (s)</label>
+              <input type="text" name="tenYardSplit" value={formData.tenYardSplit} onChange={handleChange} placeholder="1.55" className={`${inputClass} font-mono`} />
+            </div>
+            <div>
+              <label className={labelClass}>5-10-5 (s)</label>
+              <input type="text" name="fiveTenFive" value={formData.fiveTenFive} onChange={handleChange} placeholder="4.35" className={`${inputClass} font-mono`} />
+            </div>
+            <div>
+              <label className={labelClass}>Broad Jump (in)</label>
+              <input type="text" name="broadJump" value={formData.broadJump} onChange={handleChange} placeholder="120" className={`${inputClass} font-mono`} />
+            </div>
+            <div>
+              <label className={labelClass}>Bench Press (lbs)</label>
+              <input type="text" name="benchPress" value={formData.benchPress} onChange={handleChange} placeholder="225" className={`${inputClass} font-mono`} />
+            </div>
+            <div>
+              <label className={labelClass}>Squat (lbs)</label>
+              <input type="text" name="squat" value={formData.squat} onChange={handleChange} placeholder="405" className={`${inputClass} font-mono`} />
+            </div>
+            <div>
+              <label className={labelClass}>Vertical (in)</label>
+              <input type="text" name="vertical" value={formData.vertical} onChange={handleChange} placeholder="36" className={`${inputClass} font-mono`} />
+            </div>
+          </div>
+
+          {/* Equipment Sizes subsection */}
+          <div className="border-t border-white/5 mt-6 pt-6">
+            <h3 className="text-sm font-semibold text-text-grey uppercase tracking-wider mb-4 flex items-center gap-2">
+              <span className="material-symbols-outlined text-primary text-[18px]">checkroom</span>
+              Equipment Sizes
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+              <div>
+                <label className={labelClass}>Cleat Size</label>
+                <input type="text" name="cleatSize" value={formData.cleatSize} onChange={handleChange} placeholder="10.5" className={`${inputClass} font-mono`} />
+              </div>
+              <div>
+                <label className={labelClass}>Shirt</label>
+                <select name="shirtSize" value={formData.shirtSize} onChange={handleChange} className={inputClass}>
+                  <option value="" className="bg-surface-dark">-</option>
+                  {["S", "M", "L", "XL", "XXL", "XXXL"].map((size) => (
+                    <option key={size} value={size} className="bg-surface-dark">{size}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className={labelClass}>Pants</label>
+                <select name="pantsSize" value={formData.pantsSize} onChange={handleChange} className={inputClass}>
+                  <option value="" className="bg-surface-dark">-</option>
+                  {["S", "M", "L", "XL", "XXL", "XXXL"].map((size) => (
+                    <option key={size} value={size} className="bg-surface-dark">{size}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className={labelClass}>Helmet</label>
+                <select name="helmetSize" value={formData.helmetSize} onChange={handleChange} className={inputClass}>
+                  <option value="" className="bg-surface-dark">-</option>
+                  {["S", "M", "L", "XL", "XXL"].map((size) => (
+                    <option key={size} value={size} className="bg-surface-dark">{size}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className={labelClass}>Gloves</label>
+                <select name="gloveSize" value={formData.gloveSize} onChange={handleChange} className={inputClass}>
+                  <option value="" className="bg-surface-dark">-</option>
+                  {["S", "M", "L", "XL", "XXL"].map((size) => (
+                    <option key={size} value={size} className="bg-surface-dark">{size}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Academics & Recruiting */}
+        <section className={sectionClass}>
+          <h2 className={sectionTitleClass}>
+            <span className="material-symbols-outlined text-primary">school</span>
+            Academics & Recruiting
+          </h2>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <label className={labelClass}>GPA</label>
+                <input type="text" name="gpa" value={formData.gpa} onChange={handleChange} placeholder="3.8" className={`${inputClass} font-mono`} />
+              </div>
+              <div>
+                <label className={labelClass}>Weighted GPA</label>
+                <input type="text" name="weightedGpa" value={formData.weightedGpa} onChange={handleChange} placeholder="4.2" className={`${inputClass} font-mono`} />
+              </div>
+              <div>
+                <label className={labelClass}>SAT Score</label>
+                <input type="text" name="sat" value={formData.sat} onChange={handleChange} placeholder="1280" className={`${inputClass} font-mono`} />
+              </div>
+              <div>
+                <label className={labelClass}>ACT Score</label>
+                <input type="text" name="act" value={formData.act} onChange={handleChange} placeholder="28" className={`${inputClass} font-mono`} />
+              </div>
+            </div>
+            <div>
+              <label className={labelClass}>Academic Interest</label>
+              <input type="text" name="academicInterest" value={formData.academicInterest} onChange={handleChange} placeholder="Business, Engineering, Undecided..." className={inputClass} />
+            </div>
+            <div>
+              <label className={labelClass}>College Priority</label>
+              <textarea name="collegePriority" value={formData.collegePriority} onChange={handleChange} rows={2} placeholder="What's important to you when selecting a college?" className={`${inputClass} resize-none`} />
+            </div>
+            <div>
+              <label className={labelClass}>Awards</label>
+              <textarea name="awards" value={formData.awards} onChange={handleChange} rows={2} placeholder="Academic and sports awards..." className={`${inputClass} resize-none`} />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className={labelClass}>Other Sports</label>
+                <input type="text" name="otherSports" value={formData.otherSports} onChange={handleChange} placeholder="Track, Basketball..." className={inputClass} />
+              </div>
+              <div>
+                <label className={labelClass}>Dream Schools</label>
+                <input type="text" name="dreamSchools" value={formData.dreamSchools} onChange={handleChange} placeholder="USC, Oregon, UCLA..." className={inputClass} />
+              </div>
+            </div>
+            <div>
+              <label className={labelClass}>Camps Attended</label>
+              <textarea name="campsAttended" value={formData.campsAttended} onChange={handleChange} rows={2} placeholder="Nike Elite 11, Rivals Camp..." className={`${inputClass} resize-none`} />
+            </div>
+          </div>
+        </section>
+
+        {/* Film & Highlights */}
+        <section className={sectionClass}>
+          <h2 className={sectionTitleClass}>
+            <span className="material-symbols-outlined text-primary">smart_display</span>
+            Film & Highlights
+          </h2>
+          <div className="space-y-4">
+            <div>
+              <label className={labelClass}>Hudl Profile Link</label>
+              <input type="url" name="hudlLink" value={formData.hudlLink} onChange={handleChange} placeholder="https://www.hudl.com/profile/..." className={inputClass} />
+            </div>
+            <div>
+              <label className={labelClass}>YouTube Highlight Reel</label>
+              <input type="url" name="youtubeLink" value={formData.youtubeLink} onChange={handleChange} placeholder="https://www.youtube.com/watch?v=..." className={inputClass} />
+            </div>
+          </div>
+        </section>
+
+        {/* Coach Notes & Player Summary */}
+        <section className={sectionClass}>
+          <h2 className={sectionTitleClass}>
+            <span className="material-symbols-outlined text-primary">sports</span>
+            Coach Notes & Summary
+          </h2>
+          <div className="space-y-4">
+            <div>
+              <label className={labelClass}>Coach Notes</label>
+              <textarea name="coachNotes" value={formData.coachNotes} onChange={handleChange} rows={3} placeholder="Coach intangibles, work ethic, leadership..." className={`${inputClass} resize-none`} />
+            </div>
+            <div>
+              <label className={labelClass}>Player Summary</label>
+              <textarea name="playerSummary" value={formData.playerSummary} onChange={handleChange} rows={3} placeholder="Player summary and best program fit..." className={`${inputClass} resize-none`} />
+            </div>
+          </div>
+        </section>
+
+        {/* NCAA ID */}
+        <section className={sectionClass}>
+          <h2 className={sectionTitleClass}>
+            <span className="material-symbols-outlined text-primary">verified</span>
+            NCAA ID / Recruiting #
+          </h2>
+          <p className="text-xs text-text-grey mb-4">If applicable</p>
+          <div>
+            <label className={labelClass}>NCAA ID</label>
+            <input type="text" name="ncaaEcId" value={formData.ncaaEcId} onChange={handleChange} placeholder="e.g. 2503129456" className={inputClass} />
+          </div>
+        </section>
+
+        {/* HS Coach Contact */}
+        <section className={sectionClass}>
+          <h2 className={sectionTitleClass}>
+            <span className="material-symbols-outlined text-primary">contact_phone</span>
+            HS Coach Contact
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className={labelClass}>Coach Phone</label>
+              <input type="tel" name="coachPhone" value={formData.coachPhone} onChange={handleChange} placeholder="(555) 123-4567" className={inputClass} />
+            </div>
+            <div>
+              <label className={labelClass}>Coach Email</label>
+              <input type="email" name="coachEmail" value={formData.coachEmail} onChange={handleChange} placeholder="coach@school.edu" className={inputClass} />
+            </div>
+          </div>
+        </section>
+
+        {/* Bottom Save */}
+        <div className="flex items-center justify-between py-4 border-t border-white/5">
+          <div className="flex items-center gap-2">
+            <div className="h-2 w-24 rounded-full bg-white/10 overflow-hidden">
+              <div
+                className="h-full bg-primary rounded-full transition-all duration-300"
+                style={{ width: `${profileCompletion}%` }}
+              />
+            </div>
+            <span className="text-sm text-text-grey">{profileCompletion}% Complete</span>
+          </div>
+          <button
+            onClick={handleSave}
+            disabled={isSaving}
+            className="px-5 py-2.5 rounded-lg bg-primary text-black font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center gap-2"
+          >
+            {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
+            {isSaving ? "Saving..." : "Save Changes"}
+          </button>
+        </div>
+
+        {/* Other Settings */}
         <section>
-          <div className="flex items-center gap-2 mb-6 px-1">
+          <div className="flex items-center gap-2 mb-4 px-1">
             <span className="material-symbols-outlined text-primary">tune</span>
-            <h2 className="text-xl font-bold tracking-tight text-white">Other Settings</h2>
+            <h2 className="text-lg font-bold tracking-tight text-white">Other Settings</h2>
           </div>
           <div className="grid gap-px bg-white/10 rounded-xl overflow-hidden border border-white/10">
             <Link
@@ -268,6 +668,13 @@ export default function ProfileSettingsPage() {
           </div>
         </section>
       </div>
+
+      {/* Camera Modal */}
+      <CameraModal
+        isOpen={showCamera}
+        onClose={() => setShowCamera(false)}
+        onCapture={handleFileSelect}
+      />
     </div>
   );
 }
