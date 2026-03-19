@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Loader2 } from 'lucide-react';
@@ -40,7 +40,174 @@ function formatScholarship(type: string | null): string {
   return type.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 }
 
-function OfferCard({ offer, index }: { offer: Offer; index: number }) {
+const DIVISIONS = ['D1', 'D2', 'D3', 'NAIA', 'JUCO'];
+const SCHOLARSHIP_TYPES = ['full-ride', 'partial', 'walk-on', 'preferred-walk-on', 'academic'];
+
+// ─── Offer Modal (Add / Edit) ──────────────────────────────────
+function OfferModal({
+  isOpen,
+  onClose,
+  onSave,
+  initial,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (offer: Omit<Offer, 'id'> & { id?: string }) => Promise<void>;
+  initial?: Offer | null;
+}) {
+  const [schoolName, setSchoolName] = useState('');
+  const [division, setDivision] = useState('D1');
+  const [scholarshipType, setScholarshipType] = useState('');
+  const [offerDate, setOfferDate] = useState('');
+  const [committed, setCommitted] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setSchoolName(initial?.school_name || '');
+      setDivision(initial?.division || 'D1');
+      setScholarshipType(initial?.scholarship_type || '');
+      setOfferDate(initial?.offer_date || new Date().toISOString().split('T')[0]);
+      setCommitted(initial?.committed || false);
+    }
+  }, [isOpen, initial]);
+
+  if (!isOpen) return null;
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!schoolName || !offerDate) return;
+    setSaving(true);
+    try {
+      await onSave({
+        ...(initial ? { id: initial.id } : {}),
+        school_name: schoolName,
+        division,
+        scholarship_type: scholarshipType || null,
+        offer_date: offerDate,
+        committed,
+      });
+      onClose();
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div
+        className="relative bg-[#1a1a1a] border border-[#333] rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-bold text-white">{initial ? 'Edit Offer' : 'Add Offer'}</h2>
+            <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors">
+              <span className="material-symbols-outlined">close</span>
+            </button>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="text-xs font-medium text-gray-400 mb-1 block">School Name *</label>
+              <input
+                type="text"
+                value={schoolName}
+                onChange={e => setSchoolName(e.target.value)}
+                placeholder="e.g. University of Alabama"
+                className="w-full bg-white/5 border border-[#333] rounded-xl px-4 py-3 text-white text-sm placeholder:text-gray-600 focus:outline-none focus:border-primary/50"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-medium text-gray-400 mb-2 block">Division *</label>
+              <div className="flex gap-2 flex-wrap">
+                {DIVISIONS.map(d => (
+                  <button
+                    key={d}
+                    type="button"
+                    onClick={() => setDivision(d)}
+                    className={`px-4 py-2 rounded-xl border text-sm font-medium transition-colors ${
+                      division === d
+                        ? 'border-primary/50 bg-primary/10 text-primary'
+                        : 'border-[#333] text-gray-500 hover:border-[#444] hover:text-gray-300'
+                    }`}
+                  >
+                    {d}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="text-xs font-medium text-gray-400 mb-1 block">Scholarship Type</label>
+              <select
+                value={scholarshipType}
+                onChange={e => setScholarshipType(e.target.value)}
+                className="w-full bg-white/5 border border-[#333] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50 [color-scheme:dark]"
+              >
+                <option value="">Pending</option>
+                {SCHOLARSHIP_TYPES.map(t => (
+                  <option key={t} value={t}>
+                    {t.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="text-xs font-medium text-gray-400 mb-1 block">Offer Date *</label>
+              <input
+                type="date"
+                value={offerDate}
+                onChange={e => setOfferDate(e.target.value)}
+                className="w-full bg-white/5 border border-[#333] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50 [color-scheme:dark]"
+                required
+              />
+            </div>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setCommitted(!committed)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                  committed
+                    ? 'bg-green-500/15 text-green-400 border-green-500/30'
+                    : 'border-[#333] text-gray-500 hover:text-gray-300'
+                }`}
+              >
+                <span className="material-symbols-outlined text-[14px]">verified</span>
+                Committed
+              </button>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 px-4 py-3 rounded-xl border border-[#333] text-gray-400 text-sm font-medium hover:bg-white/5 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={saving || !schoolName || !offerDate}
+                className="flex-1 px-4 py-3 rounded-xl bg-primary text-black text-sm font-bold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <span className="material-symbols-outlined text-[18px]">{initial ? 'save' : 'add'}</span>}
+                {initial ? 'Save Changes' : 'Add Offer'}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function OfferCard({ offer, index, onEdit, onDelete }: { offer: Offer; index: number; onEdit: (o: Offer) => void; onDelete: (id: string) => void }) {
   const meta = getSchoolMeta(offer.school_name);
   const [visible, setVisible] = useState(false);
 
@@ -54,11 +221,8 @@ function OfferCard({ offer, index }: { offer: Offer; index: number }) {
       className={`relative rounded-2xl p-5 flex flex-col gap-4 group overflow-hidden transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
       style={{ background: 'linear-gradient(145deg, rgba(30,30,30,1) 0%, rgba(20,20,20,1) 100%)' }}
     >
-      {/* Ambient glow behind card */}
       <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-br from-primary/30 via-primary/5 to-transparent -z-10 opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
-      {/* Inner border glow */}
       <div className="absolute inset-0 rounded-2xl border border-primary/20 group-hover:border-primary/50 transition-colors duration-500" />
-      {/* Corner accent flare */}
       <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/20 transition-colors duration-700" />
       <div className="absolute -bottom-8 -left-8 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/15 transition-colors duration-700" />
 
@@ -78,9 +242,11 @@ function OfferCard({ offer, index }: { offer: Offer; index: number }) {
             <span className="material-symbols-outlined text-gray-800 text-[32px]">school</span>
           )}
         </div>
-        <span className={`px-3 py-1 rounded-full border text-xs font-bold ${getDivisionColor(offer.division)}`}>
-          {offer.division}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className={`px-3 py-1 rounded-full border text-xs font-bold ${getDivisionColor(offer.division)}`}>
+            {offer.division}
+          </span>
+        </div>
       </div>
 
       {/* School name */}
@@ -95,13 +261,24 @@ function OfferCard({ offer, index }: { offer: Offer; index: number }) {
         </div>
       </div>
 
-      {/* Visit link */}
-      {meta?.url && (
-        <div className="flex items-center gap-1.5 text-xs text-gray-500 group-hover:text-primary transition-colors duration-300 mt-auto relative z-10">
-          <span className="material-symbols-outlined text-[14px]">open_in_new</span>
-          <span>Visit Program</span>
-        </div>
-      )}
+      {/* Actions */}
+      <div className="flex items-center gap-2 relative z-10 mt-auto opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <button
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onEdit(offer); }}
+          className="flex items-center gap-1 text-xs text-gray-400 hover:text-primary transition-colors"
+        >
+          <span className="material-symbols-outlined text-[14px]">edit</span>
+          Edit
+        </button>
+        <span className="text-gray-700">·</span>
+        <button
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDelete(offer.id); }}
+          className="flex items-center gap-1 text-xs text-gray-400 hover:text-red-400 transition-colors"
+        >
+          <span className="material-symbols-outlined text-[14px]">delete</span>
+          Delete
+        </button>
+      </div>
     </div>
   );
 
@@ -120,26 +297,61 @@ export default function AthleteOffersPage() {
   const [offers, setOffers] = useState<Offer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingOffer, setEditingOffer] = useState<Offer | null>(null);
 
-  useEffect(() => {
-    async function fetchOffers() {
-      try {
-        const res = await fetch('/api/athlete/offers');
-        if (!res.ok) {
-          const data = await res.json();
-          throw new Error(data.error || 'Failed to load offers');
-        }
+  const fetchOffers = useCallback(async () => {
+    try {
+      const res = await fetch('/api/athlete/offers');
+      if (!res.ok) {
         const data = await res.json();
-        setOffers(data.offers || []);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load offers');
-      } finally {
-        setIsLoading(false);
+        throw new Error(data.error || 'Failed to load offers');
+      }
+      const data = await res.json();
+      setOffers(data.offers || []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load offers');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { fetchOffers(); }, [fetchOffers]);
+
+  async function handleSaveOffer(offer: Omit<Offer, 'id'> & { id?: string }) {
+    if (offer.id) {
+      // Update existing
+      const res = await fetch('/api/athlete/offers', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(offer),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to update offer');
+      }
+    } else {
+      // Create new
+      const res = await fetch('/api/athlete/offers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(offer),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to create offer');
       }
     }
+    await fetchOffers();
+  }
 
-    fetchOffers();
-  }, []);
+  async function handleDeleteOffer(id: string) {
+    if (!confirm('Are you sure you want to delete this offer?')) return;
+    const res = await fetch(`/api/athlete/offers?id=${id}`, { method: 'DELETE' });
+    if (res.ok) {
+      setOffers(prev => prev.filter(o => o.id !== id));
+    }
+  }
 
   if (isLoading) {
     return (
@@ -154,7 +366,6 @@ export default function AthleteOffersPage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
-      {/* Page-level ambient background glow */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/[0.04] rounded-full blur-[120px]" />
         <div className="absolute bottom-0 left-1/4 w-[500px] h-[300px] bg-primary/[0.03] rounded-full blur-[100px]" />
@@ -173,14 +384,24 @@ export default function AthleteOffersPage() {
               </div>
               <p className="text-gray-500 ml-8">Track your recruiting offers and commitments.</p>
             </div>
-            {/* Offer count badge with glow */}
-            <div className="relative">
-              <div className="absolute -inset-2 bg-primary/10 rounded-2xl blur-xl animate-pulse" />
-              <div className="relative flex items-center gap-3 bg-[#1a1a1a] border border-primary/30 rounded-2xl px-5 py-3">
-                <span className="material-symbols-outlined text-primary text-[28px]">campaign</span>
-                <div>
-                  <div className="text-3xl font-black text-white">{offers.length}</div>
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-primary/70">Total Offers</div>
+            <div className="flex items-center gap-3">
+              {/* Add Offer button */}
+              <button
+                onClick={() => { setEditingOffer(null); setModalOpen(true); }}
+                className="flex items-center gap-2 bg-primary text-black font-bold px-4 py-2.5 rounded-xl text-sm hover:bg-primary/90 transition-colors"
+              >
+                <span className="material-symbols-outlined text-[18px]">add</span>
+                Add Offer
+              </button>
+              {/* Offer count badge */}
+              <div className="relative">
+                <div className="absolute -inset-2 bg-primary/10 rounded-2xl blur-xl animate-pulse" />
+                <div className="relative flex items-center gap-3 bg-[#1a1a1a] border border-primary/30 rounded-2xl px-5 py-3">
+                  <span className="material-symbols-outlined text-primary text-[28px]">campaign</span>
+                  <div>
+                    <div className="text-3xl font-black text-white">{offers.length}</div>
+                    <div className="text-[10px] font-bold uppercase tracking-widest text-primary/70">Total Offers</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -195,7 +416,6 @@ export default function AthleteOffersPage() {
           {/* Committed Banner */}
           {committedOffer && (
             <div className="relative rounded-2xl p-6 overflow-hidden">
-              {/* Committed glow background */}
               <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 via-green-500/5 to-transparent" />
               <div className="absolute inset-0 rounded-2xl border border-green-500/30" />
               <div className="absolute -top-16 -right-16 w-48 h-48 bg-green-500/10 rounded-full blur-3xl" />
@@ -215,7 +435,7 @@ export default function AthleteOffersPage() {
                     <span className="material-symbols-outlined text-gray-800 text-[36px]">school</span>
                   )}
                 </div>
-                <div>
+                <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="material-symbols-outlined text-green-400 text-[20px]">verified</span>
                     <span className="text-xs font-black text-green-400 uppercase tracking-widest">Committed</span>
@@ -229,6 +449,12 @@ export default function AthleteOffersPage() {
                     <span>Committed {formatDate(committedOffer.offer_date)}</span>
                   </div>
                 </div>
+                <button
+                  onClick={() => { setEditingOffer(committedOffer); setModalOpen(true); }}
+                  className="text-gray-500 hover:text-white transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[20px]">edit</span>
+                </button>
               </div>
             </div>
           )}
@@ -242,26 +468,39 @@ export default function AthleteOffersPage() {
                 <span className="material-symbols-outlined text-[64px] text-primary/20 mb-6 block">campaign</span>
                 <h3 className="text-xl font-bold text-white mb-3">Your First Offer Awaits</h3>
                 <p className="text-gray-500 text-sm max-w-md mx-auto mb-8">
-                  Keep your profile updated and film current. When coaches extend offers through RepMax, they&apos;ll light up right here.
+                  Keep your profile updated and film current. Add offers as they come in to track your recruiting journey.
                 </p>
-                <Link
-                  href="/athlete/card/edit"
+                <button
+                  onClick={() => { setEditingOffer(null); setModalOpen(true); }}
                   className="inline-flex items-center gap-2 bg-primary text-black font-bold px-6 py-3 rounded-xl text-sm hover:bg-primary/90 transition-all hover:shadow-lg hover:shadow-primary/20"
                 >
-                  <span className="material-symbols-outlined text-[18px]">edit</span>
-                  Update Profile
-                </Link>
+                  <span className="material-symbols-outlined text-[18px]">add</span>
+                  Add Your First Offer
+                </button>
               </div>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {activeOffers.map((offer, i) => (
-                <OfferCard key={offer.id} offer={offer} index={i} />
+                <OfferCard
+                  key={offer.id}
+                  offer={offer}
+                  index={i}
+                  onEdit={(o) => { setEditingOffer(o); setModalOpen(true); }}
+                  onDelete={handleDeleteOffer}
+                />
               ))}
             </div>
           )}
         </div>
       </div>
+
+      <OfferModal
+        isOpen={modalOpen}
+        onClose={() => { setModalOpen(false); setEditingOffer(null); }}
+        onSave={handleSaveOffer}
+        initial={editingOffer}
+      />
     </div>
   );
 }

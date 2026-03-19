@@ -20,7 +20,7 @@ function getPageTitle(pathname: string): string {
     analytics: 'Analytics',
     settings: 'Settings',
     notifications: 'Notification Settings',
-    edit: 'Edit Profile Card',
+    edit: 'Athletic Profile',
     film: 'Film Room',
     documents: 'Documents',
     map: 'Zone Intel',

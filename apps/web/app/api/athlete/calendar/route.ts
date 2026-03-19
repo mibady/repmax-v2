@@ -135,6 +135,54 @@ export async function POST(req: NextRequest) {
   }
 }
 
+export async function PATCH(req: NextRequest) {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const athleteId = await getAthleteId(supabase, user.id);
+    if (!athleteId) return NextResponse.json({ error: "Athlete not found" }, { status: 404 });
+
+    const body = await req.json();
+    const { id, title, description, event_type, event_date, event_time, location, priority } = body;
+
+    if (!id) return NextResponse.json({ error: "Event ID required" }, { status: 400 });
+    if (!title || !event_type || !event_date) {
+      return NextResponse.json({ error: "Title, event type, and date are required" }, { status: 400 });
+    }
+    if (!VALID_EVENT_TYPES.includes(event_type)) {
+      return NextResponse.json({ error: "Invalid event type" }, { status: 400 });
+    }
+
+    const { data, error } = await supabase
+      .from("athlete_events")
+      .update({
+        title,
+        description: description || null,
+        event_type,
+        event_date,
+        event_time: event_time || null,
+        location: location || null,
+        priority: priority || 'normal',
+      })
+      .eq("id", id)
+      .eq("athlete_id", athleteId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Error updating event:", error);
+      return NextResponse.json({ error: "Failed to update event" }, { status: 500 });
+    }
+
+    return NextResponse.json({ event: data });
+  } catch (error) {
+    console.error("Error in calendar PATCH:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
+
 export async function DELETE(req: NextRequest) {
   try {
     const supabase = await createClient();

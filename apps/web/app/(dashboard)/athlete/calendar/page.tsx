@@ -85,17 +85,19 @@ function formatTime12(timeStr: string | null): string {
   return `${h12}:${minutes} ${ampm}`;
 }
 
-// ─── Add Event Modal ───────────────────────────────────────────
-function AddEventModal({
+// ─── Event Modal (Add / Edit) ─────────────────────────────────
+function EventModal({
   isOpen,
   onClose,
   onSave,
   prefillDate,
+  initial,
 }: {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (event: Omit<CalendarEvent, 'id'>) => Promise<void>;
+  onSave: (event: Omit<CalendarEvent, 'id'> & { id?: string }) => Promise<void>;
   prefillDate?: string;
+  initial?: CalendarEvent | null;
 }) {
   const [title, setTitle] = useState('');
   const [eventType, setEventType] = useState('other');
@@ -107,7 +109,15 @@ function AddEventModal({
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && initial) {
+      setTitle(initial.title);
+      setEventType(initial.event_type);
+      setEventDate(initial.event_date);
+      setEventTime(initial.event_time || '');
+      setLocation(initial.location || '');
+      setDescription(initial.description || '');
+      setPriority(initial.priority || 'normal');
+    } else if (isOpen) {
       setEventDate(prefillDate || '');
       setTitle('');
       setEventType('other');
@@ -116,9 +126,11 @@ function AddEventModal({
       setDescription('');
       setPriority('normal');
     }
-  }, [isOpen, prefillDate]);
+  }, [isOpen, prefillDate, initial]);
 
   if (!isOpen) return null;
+
+  const isEditing = !!initial;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -126,6 +138,7 @@ function AddEventModal({
     setSaving(true);
     try {
       await onSave({
+        ...(initial ? { id: initial.id } : {}),
         title,
         event_type: eventType,
         event_date: eventDate,
@@ -152,7 +165,7 @@ function AddEventModal({
       >
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-bold text-white">Add Event</h2>
+            <h2 className="text-lg font-bold text-white">{isEditing ? 'Edit Event' : 'Add Event'}</h2>
             <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors">
               <span className="material-symbols-outlined">close</span>
             </button>
@@ -275,8 +288,8 @@ function AddEventModal({
                 disabled={saving || !title || !eventDate}
                 className="flex-1 px-4 py-3 rounded-xl bg-primary text-black text-sm font-bold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <span className="material-symbols-outlined text-[18px]">add</span>}
-                Add Event
+                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <span className="material-symbols-outlined text-[18px]">{isEditing ? 'save' : 'add'}</span>}
+                {isEditing ? 'Save Changes' : 'Add Event'}
               </button>
             </div>
           </form>
@@ -509,7 +522,7 @@ function BigCalendar({
 }
 
 // ─── List View ─────────────────────────────────────────────────
-function EventRow({ event, onDelete }: { event: CalendarEvent; onDelete: (id: string) => void }) {
+function EventRow({ event, onDelete, onEdit }: { event: CalendarEvent; onDelete: (id: string) => void; onEdit: (e: CalendarEvent) => void }) {
   const dateObj = parseISO(event.event_date);
   const ncaaPeriods = getPeriodsForDate(event.event_date);
 
@@ -565,13 +578,21 @@ function EventRow({ event, onDelete }: { event: CalendarEvent; onDelete: (id: st
         )}
       </div>
 
-      {/* Delete */}
-      <button
-        onClick={() => onDelete(event.id)}
-        className="opacity-0 group-hover:opacity-100 text-gray-600 hover:text-red-400 transition-all flex-shrink-0 mt-1"
-      >
-        <span className="material-symbols-outlined text-[20px]">delete</span>
-      </button>
+      {/* Edit + Delete */}
+      <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-all flex-shrink-0 mt-1">
+        <button
+          onClick={() => onEdit(event)}
+          className="text-gray-600 hover:text-primary transition-colors"
+        >
+          <span className="material-symbols-outlined text-[20px]">edit</span>
+        </button>
+        <button
+          onClick={() => onDelete(event.id)}
+          className="text-gray-600 hover:text-red-400 transition-colors"
+        >
+          <span className="material-symbols-outlined text-[20px]">delete</span>
+        </button>
+      </div>
     </div>
   );
 }
@@ -587,6 +608,7 @@ export default function AthleteCalendarPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [prefillDate, setPrefillDate] = useState<string | undefined>();
   const [showNcaaPeriods, setShowNcaaPeriods] = useState(true);
+  const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
 
   const fetchEvents = useCallback(async () => {
     try {
@@ -607,15 +629,29 @@ export default function AthleteCalendarPage() {
 
   useEffect(() => { fetchEvents(); }, [fetchEvents]);
 
-  async function handleAddEvent(event: Omit<CalendarEvent, 'id'>) {
-    const res = await fetch('/api/athlete/calendar', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(event),
-    });
-    if (!res.ok) {
-      const data = await res.json();
-      throw new Error(data.error || 'Failed to create event');
+  async function handleSaveEvent(event: Omit<CalendarEvent, 'id'> & { id?: string }) {
+    if (event.id) {
+      // Edit existing
+      const res = await fetch('/api/athlete/calendar', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(event),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to update event');
+      }
+    } else {
+      // Create new
+      const res = await fetch('/api/athlete/calendar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(event),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to create event');
+      }
     }
     await fetchEvents();
   }
@@ -766,7 +802,7 @@ export default function AthleteCalendarPage() {
             ) : (
               <div className="space-y-3">
                 {displayEvents.map(event => (
-                  <EventRow key={event.id} event={event} onDelete={handleDeleteEvent} />
+                  <EventRow key={event.id} event={event} onDelete={handleDeleteEvent} onEdit={(e) => { setEditingEvent(e); setModalOpen(true); }} />
                 ))}
               </div>
             )}
@@ -853,11 +889,12 @@ export default function AthleteCalendarPage() {
         </section>
       </div>
 
-      <AddEventModal
+      <EventModal
         isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onSave={handleAddEvent}
+        onClose={() => { setModalOpen(false); setEditingEvent(null); }}
+        onSave={handleSaveEvent}
         prefillDate={prefillDate}
+        initial={editingEvent}
       />
     </div>
   );
