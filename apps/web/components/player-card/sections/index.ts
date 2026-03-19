@@ -1,0 +1,10 @@
+export { HeroSection } from './HeroSection';
+export { FilmSection } from './FilmSection';
+export { MeasurablesSection } from './MeasurablesSection';
+export { AcademicsSection } from './AcademicsSection';
+export { ScoutingSection } from './ScoutingSection';
+export { ContactsSection } from './ContactsSection';
+export { EquipmentSection } from './EquipmentSection';
+export { SocialSection } from './SocialSection';
+export { DocumentsSection } from './DocumentsSection';
+export { ShareSection } from './ShareSection';

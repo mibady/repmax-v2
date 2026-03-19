@@ -10,6 +10,30 @@ type AthleteWithProfile = Tables<"athletes"> & {
   profile: Tables<"profiles"> | null;
   highlights: Tables<"highlights">[];
   repmax_id?: string | null;
+  // Extended fields (exist in DB, may not be in generated types yet)
+  jersey_number?: string | null;
+  hudl_link?: string | null;
+  youtube_link?: string | null;
+  twitter?: string | null;
+  instagram?: string | null;
+  academic_interest?: string | null;
+  college_priority?: string | null;
+  awards?: string | null;
+  other_sports?: string | null;
+  camps_attended?: string | null;
+  dream_schools?: string | null;
+  parent1_name?: string | null;
+  parent1_phone?: string | null;
+  parent1_email?: string | null;
+  parent2_name?: string | null;
+  parent2_phone?: string | null;
+  parent2_email?: string | null;
+  cleat_size?: string | null;
+  shirt_size?: string | null;
+  pants_size?: string | null;
+  helmet_size?: string | null;
+  glove_size?: string | null;
+  core_gpa?: number | null;
 };
 
 function formatHeight(inches: number | null): string {
@@ -119,6 +143,32 @@ export default async function AthleteCardPage({
       title: typedAthlete.highlights[0].title,
       videoUrl: typedAthlete.highlights[0].video_url || null,
     } : null,
+    // Extended fields
+    jerseyNumber: typedAthlete.jersey_number,
+    hudlLink: typedAthlete.hudl_link,
+    youtubeLink: typedAthlete.youtube_link,
+    twitter: typedAthlete.twitter,
+    instagram: typedAthlete.instagram,
+    academicInterest: typedAthlete.academic_interest,
+    collegePriority: typedAthlete.college_priority,
+    awards: typedAthlete.awards,
+    otherSports: typedAthlete.other_sports,
+    campsAttended: typedAthlete.camps_attended,
+    dreamSchools: typedAthlete.dream_schools,
+    coachPhone: typedAthlete.coach_phone,
+    coachEmail: typedAthlete.coach_email,
+    parent1Name: typedAthlete.parent1_name,
+    parent1Phone: typedAthlete.parent1_phone,
+    parent1Email: typedAthlete.parent1_email,
+    parent2Name: typedAthlete.parent2_name,
+    parent2Phone: typedAthlete.parent2_phone,
+    parent2Email: typedAthlete.parent2_email,
+    cleatSize: typedAthlete.cleat_size,
+    shirtSize: typedAthlete.shirt_size,
+    pantsSize: typedAthlete.pants_size,
+    helmetSize: typedAthlete.helmet_size,
+    gloveSize: typedAthlete.glove_size,
+    coreGpa: typedAthlete.core_gpa,
   };
 
   return (
