@@ -9,13 +9,8 @@ import { calculateProfileCompletion, type ProfileCompletionResult } from '@/lib/
 import { WelcomeModal } from '@/components/athlete/WelcomeModal';
 import { checkMilestones } from '@/lib/utils/milestone-toasts';
 import { RecruitingTipsWidget } from '@/components/content/RecruitingTipsWidget';
-
-function formatHeight(inches: number | null): string {
-  if (!inches) return "N/A";
-  const feet = Math.floor(inches / 12);
-  const remainingInches = inches % 12;
-  return `${feet}'${remainingInches}"`;
-}
+import { PlayerCardContent } from '@/components/player-card';
+import type { PlayerCardData } from '@/components/player-card/types';
 
 function formatDate(dateStr: string): { month: string; day: string } {
   const date = new Date(dateStr);
@@ -33,9 +28,9 @@ function getEventPriorityStyles(priority?: string) {
 
 export default function AthleteDashboardPage() {
   const { profile, stats, shortlistCoaches, calendarEvents, isLoading, error } = useAthleteDashboard();
-  const [shareStatus, setShareStatus] = useState<'idle' | 'copied'>('idle');
   const [completion, setCompletion] = useState<ProfileCompletionResult | null>(null);
   const [showWelcome, setShowWelcome] = useState(false);
+  const [miniCardData, setMiniCardData] = useState<PlayerCardData | null>(null);
 
   useEffect(() => {
     if (!localStorage.getItem('repmax_welcome_seen')) {
@@ -51,40 +46,52 @@ export default function AthleteDashboardPage() {
           const result = calculateProfileCompletion(data);
           setCompletion(result);
           checkMilestones(result.percentage);
+
+          // Build mini card data for preview
+          setMiniCardData({
+            id: data.athleteId || '',
+            name: data.name || '',
+            school: data.highSchool || null,
+            city: data.city || null,
+            state: data.state || null,
+            zone: data.zone || null,
+            classYear: data.classYear || null,
+            primaryPosition: data.position || null,
+            secondaryPosition: data.secondaryPosition || null,
+            starRating: 0,
+            verified: false,
+            avatarUrl: data.avatarUrl || null,
+            bio: data.bio || null,
+            coachNotes: data.coachNotes || null,
+            playerSummary: data.playerSummary || null,
+            ncaaId: data.ncaaEcId || null,
+            repmaxId: data.repmaxId || null,
+            offersCount: 0,
+            metrics: {
+              height: data.height || 'N/A',
+              weight: data.weight ? parseInt(data.weight) : null,
+              fortyYard: data.fortyYard ? parseFloat(data.fortyYard) : null,
+              tenYardSplit: data.tenYardSplit ? parseFloat(data.tenYardSplit) : null,
+              fiveTenFive: data.fiveTenFive ? parseFloat(data.fiveTenFive) : null,
+              broadJump: data.broadJump ? parseInt(data.broadJump) : null,
+              vertical: data.vertical ? parseInt(data.vertical) : null,
+              wingspan: data.wingspan ? parseInt(data.wingspan) : null,
+              bench: data.benchPress ? parseInt(data.benchPress) : null,
+              squat: data.squat ? parseInt(data.squat) : null,
+            },
+            academics: {
+              gpa: data.gpa ? parseFloat(data.gpa) : null,
+              weightedGpa: data.weightedGpa ? parseFloat(data.weightedGpa) : null,
+              sat: data.sat ? parseInt(data.sat) : null,
+              act: data.act ? parseInt(data.act) : null,
+            },
+            documents: { transcripts: [], recommendations: [] },
+            highlight: null,
+          });
         }
       })
       .catch(() => {});
   }, []);
-
-  const handleShare = async () => {
-    if (!profile) return;
-
-    const shareUrl = `${window.location.origin}/card/${profile.id}`;
-    const shareData = {
-      title: `${profile.firstName} ${profile.lastName} - RepMax Profile`,
-      text: `Check out ${profile.firstName}'s recruiting profile on RepMax`,
-      url: shareUrl,
-    };
-
-    try {
-      if (navigator.share && navigator.canShare?.(shareData)) {
-        await navigator.share(shareData);
-      } else {
-        await navigator.clipboard.writeText(shareUrl);
-        setShareStatus('copied');
-        setTimeout(() => setShareStatus('idle'), 2000);
-      }
-    } catch {
-      // User cancelled or error - try clipboard fallback
-      try {
-        await navigator.clipboard.writeText(shareUrl);
-        setShareStatus('copied');
-        setTimeout(() => setShareStatus('idle'), 2000);
-      } catch {
-        console.error('Failed to share or copy');
-      }
-    }
-  };
 
   if (isLoading) {
     return (
@@ -317,73 +324,29 @@ export default function AthleteDashboardPage() {
             </div>
           </div>
 
-          {/* Profile Card */}
+          {/* Profile Card Preview */}
           <div className="flex flex-col gap-6">
-            <div className="bg-surface-dark rounded-xl border border-[#333] p-1 shadow-xl">
-              <div className="relative aspect-[3/4] w-full rounded-lg overflow-hidden group">
-                <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage: profile.avatarUrl ? `url('${profile.avatarUrl}')` : "url('https://images.unsplash.com/photo-1566577134770-3d85bb3a9cc4?w=400&h=600&fit=crop')"}}>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40"></div>
-                </div>
-                <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
-                  <div className="bg-black/60 backdrop-blur-md border border-white/10 px-2 py-1 rounded text-xs font-bold text-primary uppercase tracking-wider">
-                    Class of &apos;{profile.classYear.toString().slice(-2)}
+            {miniCardData ? (
+              <PlayerCardContent
+                data={miniCardData}
+                variant="mini"
+                actions={
+                  <div className="p-3 grid grid-cols-2 gap-3">
+                    <Link href={`/card/${miniCardData.repmaxId || miniCardData.id}`} className="flex items-center justify-center gap-2 bg-white/10 text-white font-bold py-2 rounded-lg text-sm hover:bg-white/15 transition-colors">
+                      <span className="material-symbols-outlined text-[18px]">visibility</span> View Full
+                    </Link>
+                    <Link href="/athlete/card/edit" className="flex items-center justify-center gap-2 bg-primary text-black font-bold py-2 rounded-lg text-sm hover:bg-primary/90 transition-colors">
+                      <span className="material-symbols-outlined text-[18px]">edit</span> Edit
+                    </Link>
                   </div>
-                  <div className="size-10 bg-white rounded-full flex items-center justify-center">
-                    <svg className="size-6 text-black" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"></path>
-                    </svg>
-                  </div>
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black to-transparent">
-                  <div className="flex items-end justify-between mb-1">
-                    <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter leading-none">{profile.lastName}</h2>
-                    <div className="text-3xl font-black text-primary data-point italic">{profile.position}</div>
-                  </div>
-                  <div className="flex items-center gap-1 mb-3">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <span
-                        key={star}
-                        className={`material-symbols-outlined text-[18px] ${
-                          star <= profile.starRating
-                            ? 'text-primary fill'
-                            : 'text-[#444]'
-                        }`}
-                      >
-                        star
-                      </span>
-                    ))}
-                  </div>
-                  <div className="grid grid-cols-3 gap-2 text-center border-t border-white/20 pt-3">
-                    <div>
-                      <div className="text-[10px] text-gray-400 uppercase">Height</div>
-                      <div className="text-sm font-bold text-white data-point">{formatHeight(profile.heightInches)}</div>
-                    </div>
-                    <div>
-                      <div className="text-[10px] text-gray-400 uppercase">Weight</div>
-                      <div className="text-sm font-bold text-white data-point">{profile.weightLbs || 'N/A'}</div>
-                    </div>
-                    <div>
-                      <div className="text-[10px] text-gray-400 uppercase">40YD</div>
-                      <div className="text-sm font-bold text-white data-point">{profile.fortyYardDash?.toFixed(2) || 'N/A'}</div>
-                    </div>
-                  </div>
-                </div>
+                }
+              />
+            ) : (
+              <div className="bg-surface-dark rounded-xl border border-[#333] p-8 text-center">
+                <Loader2 className="w-6 h-6 animate-spin text-primary mx-auto mb-2" />
+                <p className="text-gray-500 text-sm">Loading card preview...</p>
               </div>
-              <div className="p-3 grid grid-cols-2 gap-3">
-                <Link href="/athlete/card/edit" className="flex items-center justify-center gap-2 bg-primary text-black font-bold py-2 rounded-lg text-sm hover:bg-primary/90 transition-colors">
-                  <span className="material-symbols-outlined text-[18px]">edit</span> Edit
-                </Link>
-                <button
-                  onClick={handleShare}
-                  className="flex items-center justify-center gap-2 bg-[#333] text-white font-bold py-2 rounded-lg text-sm hover:bg-[#444] transition-colors"
-                >
-                  <span className="material-symbols-outlined text-[18px]">
-                    {shareStatus === 'copied' ? 'check' : 'share'}
-                  </span>
-                  {shareStatus === 'copied' ? 'Copied!' : 'Share'}
-                </button>
-              </div>
-            </div>
+            )}
 
             {/* Recruiting Tips */}
             <RecruitingTipsWidget />

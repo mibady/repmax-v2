@@ -50,6 +50,12 @@ const FIELD_CONFIG: FieldConfig[] = [
   { field: 'parent1Name', label: 'Parent/Guardian', icon: 'family_restroom', tier: 3, section: 'Contact' },
   { field: 'secondaryPosition', label: 'Secondary Position', icon: 'sports_football', tier: 3, section: 'Basic Information' },
   { field: 'jerseyNumber', label: 'Jersey Number', icon: 'tag', tier: 3, section: 'Basic Information' },
+  { field: 'academicInterest', label: 'Academic Interest', icon: 'school', tier: 3, section: 'Academics' },
+  { field: 'collegePriority', label: 'College Priority', icon: 'priority_high', tier: 3, section: 'Academics' },
+  { field: 'awards', label: 'Awards & Honors', icon: 'emoji_events', tier: 3, section: 'Recruiting' },
+  { field: 'otherSports', label: 'Other Sports', icon: 'sports', tier: 3, section: 'Basic Information' },
+  { field: 'campsAttended', label: 'Camps Attended', icon: 'camping', tier: 3, section: 'Recruiting' },
+  { field: 'dreamSchools', label: 'Dream Schools', icon: 'star', tier: 3, section: 'Recruiting' },
 ];
 
 const TIER_WEIGHTS: Record<number, number> = { 1: 3, 2: 2, 3: 1 };
