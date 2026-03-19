@@ -4,10 +4,21 @@ import type { SanityBlogPost } from '@/lib/sanity/types'
 import BlogPostList from '@/components/admin/BlogPostList'
 
 export default async function AdminBlogPage() {
-  const [posts, categories] = await Promise.all([
-    sanityFetch({ query: BLOG_POSTS_QUERY, tags: ['blog'] }) as Promise<SanityBlogPost[]>,
-    sanityFetch({ query: BLOG_CATEGORIES_QUERY, tags: ['blog'] }) as Promise<string[]>,
-  ])
+  let posts: SanityBlogPost[] = []
+  let categories: string[] = []
+  let sanityConnected = false
+
+  try {
+    const [fetchedPosts, fetchedCategories] = await Promise.all([
+      sanityFetch({ query: BLOG_POSTS_QUERY, tags: ['blog'] }) as Promise<SanityBlogPost[]>,
+      sanityFetch({ query: BLOG_CATEGORIES_QUERY, tags: ['blog'] }) as Promise<string[]>,
+    ])
+    posts = fetchedPosts || []
+    categories = fetchedCategories || []
+    sanityConnected = true
+  } catch {
+    // Sanity not configured — show empty state
+  }
 
   const now = new Date()
   const publishedCount = posts.filter(
@@ -22,17 +33,23 @@ export default async function AdminBlogPage() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl font-bold text-white mb-1">Blog Manager</h1>
-            <p className="text-slate-400">Manage blog posts via Sanity CMS</p>
+            <p className="text-slate-400">
+              {sanityConnected
+                ? 'Manage blog posts via Sanity CMS'
+                : 'Sanity CMS not connected — set NEXT_PUBLIC_SANITY_PROJECT_ID and NEXT_PUBLIC_SANITY_DATASET to enable'}
+            </p>
           </div>
-          <a
-            href="https://repmax-v2.sanity.studio/structure/blogPost"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-white text-black text-sm font-medium hover:bg-white/90 transition-colors"
-          >
-            <span className="material-symbols-outlined text-lg">add</span>
-            Write New Post
-          </a>
+          {sanityConnected && (
+            <a
+              href="https://repmax.sanity.studio/structure/blogPost"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-white text-black text-sm font-medium hover:bg-white/90 transition-colors"
+            >
+              <span className="material-symbols-outlined text-lg">add</span>
+              Write New Post
+            </a>
+          )}
         </div>
 
         {/* Stats */}

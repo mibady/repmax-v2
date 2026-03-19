@@ -78,7 +78,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     // Query moderation_queue with profile join
     let query = supabase
       .from("moderation_queue")
-      .select("*, user:profiles!user_id(full_name, email, avatar_url)")
+      .select("*, user:profiles!user_id(full_name, avatar_url)")
       .order("created_at", { ascending: false });
 
     if (type !== "all") {
@@ -99,7 +99,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const items: ModerationItem[] = (queueItems || []).map((item) => {
       const userProfile = item.user as unknown as {
         full_name: string | null;
-        email: string | null;
         avatar_url: string | null;
       } | null;
 
@@ -107,7 +106,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         id: item.id,
         user: {
           id: item.user_id,
-          name: userProfile?.full_name || userProfile?.email || "Unknown",
+          name: userProfile?.full_name || "Unknown",
           imageUrl: userProfile?.avatar_url || "",
         },
         type: item.content_type as "photo" | "bio" | "film",

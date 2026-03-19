@@ -23,7 +23,7 @@ export default async function AdminResourcesPage() {
             <p className="text-slate-400">Manage resources via Sanity CMS</p>
           </div>
           <a
-            href="https://repmax-v2.sanity.studio/structure/resource"
+            href="https://repmax.sanity.studio/structure/resource"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-white text-black text-sm font-medium hover:bg-white/90 transition-colors"

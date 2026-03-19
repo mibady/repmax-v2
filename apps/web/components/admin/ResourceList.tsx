@@ -122,7 +122,7 @@ export default function ResourceList({ resources }: ResourceListProps) {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <a
-                      href={`https://repmax-v2.sanity.studio/structure/resource;${resource._id}`}
+                      href={`https://repmax.sanity.studio/structure/resource;${resource._id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 bg-white/5 hover:bg-white/10 transition-colors"

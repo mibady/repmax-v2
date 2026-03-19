@@ -50,6 +50,11 @@ export async function GET() {
         color: "bg-[#ef4343]",
       },
       {
+        role: "Parents",
+        percentage: Math.round(((roleCounts["parent"] || 0) / total) * 100),
+        color: "bg-amber-500",
+      },
+      {
         role: "Coaches",
         percentage: Math.round(((roleCounts["coach"] || 0) / total) * 100),
         color: "bg-blue-500",
@@ -60,12 +65,14 @@ export async function GET() {
         color: "bg-emerald-500",
       },
       {
-        role: "Others",
-        percentage: Math.round(
-          (((roleCounts["other"] || 0) + (roleCounts["parent"] || 0)) / total) *
-            100
-        ),
-        color: "bg-gray-500",
+        role: "Clubs",
+        percentage: Math.round(((roleCounts["club"] || 0) / total) * 100),
+        color: "bg-purple-500",
+      },
+      {
+        role: "Admins",
+        percentage: Math.round(((roleCounts["admin"] || 0) / total) * 100),
+        color: "bg-slate-400",
       },
     ];
 
