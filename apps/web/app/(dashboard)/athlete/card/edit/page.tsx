@@ -335,7 +335,7 @@ export default function AthleticProfilePage() {
           </div>
 
           {/* RIGHT COLUMN */}
-          <div className="space-y-6">
+          <div className="flex flex-col gap-6">
             {/* Scouting Report */}
             <div className={cardClass}>
               {sectionTitle("🔍", "Scouting Report")}
@@ -480,13 +480,13 @@ export default function AthleticProfilePage() {
             </div>
 
             {/* Image Gallery */}
-            <div className={cardClass}>
+            <div className={`${cardClass} flex-1 flex flex-col`}>
               {sectionTitle("🖼️", "Image Gallery")}
-              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+              <div className="flex-1 grid grid-cols-2 gap-3 overflow-y-auto pb-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent min-h-[200px]">
                 {data.avatarUrl ? (
                   <>
-                    {[data.avatarUrl, data.avatarUrl, data.avatarUrl].map((src, i) => (
-                      <div key={i} className="w-32 h-32 rounded-[10px] overflow-hidden shrink-0 bg-black/40 relative">
+                    {[data.avatarUrl, data.avatarUrl, data.avatarUrl, data.avatarUrl, data.avatarUrl, data.avatarUrl].map((src, i) => (
+                      <div key={i} className="aspect-square rounded-[10px] overflow-hidden bg-black/40 relative">
                         <Image
                           src={src}
                           alt={`Gallery photo ${i + 1}`}
@@ -497,9 +497,9 @@ export default function AthleticProfilePage() {
                     ))}
                   </>
                 ) : (
-                  <div className="flex-1 h-32 rounded-[10px] bg-[#1a1a1a] border border-[rgba(255,255,255,0.08)] flex items-center justify-center">
+                  <div className="col-span-2 flex-1 rounded-[10px] bg-[#1a1a1a] border border-[rgba(255,255,255,0.08)] flex items-center justify-center min-h-[200px]">
                     <div className="text-center text-gray-500">
-                      <span className="material-symbols-outlined text-2xl mb-1 block">photo_library</span>
+                      <span className="material-symbols-outlined text-3xl mb-2 block">photo_library</span>
                       <p className="text-xs">No photos added</p>
                     </div>
                   </div>
@@ -508,7 +508,7 @@ export default function AthleticProfilePage() {
             </div>
 
             {/* Share Card */}
-            <div className={cardClass}>
+            <div className={`${cardClass} mt-auto`}>
               {sectionTitle("🔗", "Share Card")}
               <div className="space-y-3">
                 {data.repmaxId ? (
