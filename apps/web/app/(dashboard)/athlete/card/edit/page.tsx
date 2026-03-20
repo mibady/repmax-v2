@@ -80,8 +80,11 @@ export default function AthleticProfilePage() {
               <span className="material-symbols-outlined">arrow_back</span>
             </Link>
             <div>
-              <h1 className="text-2xl font-bold text-white">Athletic Profile</h1>
+              <h1 className="text-2xl font-bold text-white">My Athletic Profile</h1>
               <div className="flex items-center gap-3 mt-1">
+                {data.repmaxId && (
+                  <span className="text-sm font-mono text-[#d4af35] font-bold">{data.repmaxId}</span>
+                )}
                 <div className="h-2 w-32 rounded-full bg-white/10 overflow-hidden">
                   <div
                     className="h-full bg-[#d4af35] rounded-full transition-all duration-300"
@@ -186,9 +189,9 @@ export default function AthleticProfilePage() {
         </div>
 
         {/* Two-Column Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* LEFT COLUMN */}
-          <div className="space-y-6">
+          <div className="lg:col-span-2 space-y-6">
             {/* Film & Highlights */}
             <div className={cardClass}>
               {sectionTitle("🎬", "Film & Highlights")}
@@ -246,27 +249,19 @@ export default function AthleticProfilePage() {
             {/* Social Media */}
             <div className={cardClass}>
               {sectionTitle("📱", "Social Media")}
-              <div className="space-y-3">
+              <div className="grid grid-cols-3 gap-3">
                 {[
                   { label: "Twitter", value: data.twitter, icon: "𝕏" },
                   { label: "Instagram", value: data.instagram, icon: "📸" },
+                  { label: "TikTok", value: null, icon: "🎵" },
                 ].map((social) => (
                   <div
                     key={social.label}
-                    className="flex items-center justify-between bg-[#2a2a2d] border border-[#d4af35]/20 rounded-[10px] p-3"
+                    className="bg-[#2a2a2d] border border-[#d4af35]/20 rounded-[10px] p-3 text-center"
                   >
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg">{social.icon}</span>
-                      <div>
-                        <p className="text-xs text-gray-500">{social.label}</p>
-                        <p className="text-sm text-white font-medium">{social.value || "Not added"}</p>
-                      </div>
-                    </div>
-                    {social.value && (
-                      <span className="px-3 py-1 rounded-md bg-[#d4af35]/10 border border-[#d4af35]/30 text-[10px] font-bold text-[#d4af35] uppercase">
-                        View
-                      </span>
-                    )}
+                    <span className="text-2xl block mb-2">{social.icon}</span>
+                    <p className="text-xs text-gray-500 mb-1">{social.label}</p>
+                    <p className="text-xs text-white font-medium truncate">{social.value || "Not added"}</p>
                   </div>
                 ))}
               </div>
