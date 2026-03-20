@@ -479,6 +479,34 @@ export default function AthleticProfilePage() {
               </div>
             </div>
 
+            {/* Image Gallery */}
+            <div className={cardClass}>
+              {sectionTitle("🖼️", "Image Gallery")}
+              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+                {data.avatarUrl ? (
+                  <>
+                    {[data.avatarUrl, data.avatarUrl, data.avatarUrl].map((src, i) => (
+                      <div key={i} className="w-32 h-32 rounded-[10px] overflow-hidden shrink-0 bg-black/40 relative">
+                        <Image
+                          src={src}
+                          alt={`Gallery photo ${i + 1}`}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  <div className="flex-1 h-32 rounded-[10px] bg-[#1a1a1a] border border-[rgba(255,255,255,0.08)] flex items-center justify-center">
+                    <div className="text-center text-gray-500">
+                      <span className="material-symbols-outlined text-2xl mb-1 block">photo_library</span>
+                      <p className="text-xs">No photos added</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
             {/* Share Card */}
             <div className={cardClass}>
               {sectionTitle("🔗", "Share Card")}
